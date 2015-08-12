@@ -2,8 +2,8 @@ package edu.stanford.nlp.ling.tokensregex;
 
 import edu.stanford.nlp.pipeline.ChunkAnnotationUtils;
 import edu.stanford.nlp.pipeline.CoreMapAttributeAggregator;
+import edu.stanford.nlp.util.AbstractInterval;
 import edu.stanford.nlp.util.CoreMap;
-import edu.stanford.nlp.util.Interval;
 
 import java.util.*;
 
@@ -34,9 +34,9 @@ public class MultiCoreMapNodePattern extends MultiNodePattern<CoreMap> {
     this.aggregators = aggregators;
   }
 
-  protected Collection<Interval<Integer>> match(List<? extends CoreMap> nodes, int start)
+  protected Collection<AbstractInterval<Integer>> match(List<? extends CoreMap> nodes, int start)
   {
-    List<Interval<Integer>> matched = new ArrayList<>();
+    List<AbstractInterval<Integer>> matched = new ArrayList<>();
     int minEnd = start + minNodes;
     int maxEnd = nodes.size();
     if (maxNodes >= 0 && maxNodes + start < nodes.size()) {
@@ -45,7 +45,7 @@ public class MultiCoreMapNodePattern extends MultiNodePattern<CoreMap> {
     for (int end = minEnd; end <= maxEnd; end++) {
       CoreMap chunk = ChunkAnnotationUtils.getMergedChunk(nodes, start, end, aggregators);
       if (nodePattern.match(chunk)) {
-        matched.add(Interval.toInterval(start, end));
+        matched.add(AbstractInterval.toInterval(start, end));
       }
     }
     return matched;
@@ -81,10 +81,10 @@ public class MultiCoreMapNodePattern extends MultiNodePattern<CoreMap> {
       this(textKey, targets, false);
     }
 
-    protected Collection<Interval<Integer>> match(List<? extends CoreMap> nodes, int start) {
+    protected Collection<AbstractInterval<Integer>> match(List<? extends CoreMap> nodes, int start) {
       PhraseTable.WordList words = new PhraseTable.TokenList(nodes, textKey);
       List<PhraseTable.PhraseMatch> matches = phraseTable.findMatches(words, start, nodes.size(), false);
-      Collection<Interval<Integer>> intervals = new ArrayList<>(matches.size());
+      Collection<AbstractInterval<Integer>> intervals = new ArrayList<>(matches.size());
       for (PhraseTable.PhraseMatch match:matches) {
         intervals.add(match.getInterval());
       }

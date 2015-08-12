@@ -1,5 +1,6 @@
 package edu.stanford.nlp.ling.tokensregex;
 
+import edu.stanford.nlp.util.AbstractInterval;
 import edu.stanford.nlp.util.Comparators;
 import java.util.function.Function;
 import edu.stanford.nlp.util.HasInterval;
@@ -262,11 +263,11 @@ public interface SequenceMatchResult<T> extends MatchResult, HasInterval<Integer
   public MatchedGroupInfo<T> groupInfo(String var);
 
   public static final GroupToIntervalFunc TO_INTERVAL = new GroupToIntervalFunc(0);
-  public static class GroupToIntervalFunc<MR extends MatchResult> implements Function<MR, Interval<Integer>> {
+  public static class GroupToIntervalFunc<MR extends MatchResult> implements Function<MR, AbstractInterval<Integer>> {
     int group;
     public GroupToIntervalFunc(int group) { this.group = group; }
     public Interval<Integer> apply(MR in) {
-      return Interval.toInterval(in.start(group), in.end(group), Interval.INTERVAL_OPEN_END);
+      return AbstractInterval.toInterval(in.start(group), in.end(group), AbstractInterval.INTERVAL_OPEN_END);
     }
   }
 

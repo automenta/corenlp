@@ -1,7 +1,8 @@
 package edu.stanford.nlp.ling.tokensregex;
 
 import java.util.function.Function;
-import edu.stanford.nlp.util.Interval;
+
+import edu.stanford.nlp.util.AbstractInterval;
 import edu.stanford.nlp.util.StringUtils;
 
 import java.util.ArrayList;
@@ -65,7 +66,7 @@ public class BasicSequenceMatchResult<T> implements SequenceMatchResult<T>
   }
 
   @Override
-  public Interval<Integer> getInterval() {
+  public AbstractInterval<Integer> getInterval() {
     return TO_INTERVAL.apply(this);
   }
 

@@ -7,6 +7,7 @@ import edu.stanford.nlp.ling.tokensregex.MatchedExpression;
 import edu.stanford.nlp.ling.tokensregex.types.Expressions;
 import edu.stanford.nlp.ling.tokensregex.types.Value;
 import edu.stanford.nlp.pipeline.CoreMapAttributeAggregator;
+import edu.stanford.nlp.util.AbstractInterval;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.ErasureUtils;
 import java.util.function.Function;
@@ -60,7 +61,7 @@ public class TimeExpression extends MatchedExpression {
     super(expr);
   }
 
-  public TimeExpression(Interval<Integer> charOffsets, Interval<Integer> tokenOffsets,
+  public TimeExpression(AbstractInterval<Integer> charOffsets, Interval<Integer> tokenOffsets,
                         Function<CoreMap, SUTime.Temporal> temporalFunc, double priority, double weight)
   {
     super(charOffsets, tokenOffsets, getSingleAnnotationExtractor(temporalFunc), priority, weight);

@@ -42,7 +42,7 @@ public class UnorderedPair<T1,T2> extends Pair<T1,T2> {
 
   @SuppressWarnings("unchecked")
   @Override
-  public int compareTo(Pair<T1,T2> o) {
+  public int compareTo(IPair<T1,T2> o) {
     UnorderedPair other = (UnorderedPair) o;
     // get canonical order of this and other
     Object this1 = first;

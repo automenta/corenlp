@@ -1010,8 +1010,8 @@ public class PhraseTable implements Serializable
       return sb.toString();
     }
 
-    public Interval<Integer> getInterval() {
-      if (span == null) span = Interval.toInterval(tokenBegin, tokenEnd, Interval.INTERVAL_OPEN_END);
+    public AbstractInterval<Integer> getInterval() {
+      if (span == null) span = AbstractInterval.toInterval(tokenBegin, tokenEnd, AbstractInterval.INTERVAL_OPEN_END);
       return span;
     }
   }

@@ -59,7 +59,7 @@ public class CoreMapAggregator implements Function<List<? extends CoreMap>, Core
     return CollectionUtils.mergeList(list, matched, this);
   }
 
-  public <M> List<CoreMap> merge(List<? extends CoreMap> list, List<M> matched, Function<M, Interval<Integer>> toIntervalFunc)
+  public <M> List<CoreMap> merge(List<? extends CoreMap> list, List<M> matched, Function<M, AbstractInterval<Integer>> toIntervalFunc)
   {
     return CollectionUtils.mergeList(list, matched, toIntervalFunc, this);
   }

@@ -4,12 +4,9 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.tokensregex.types.Value;
 import edu.stanford.nlp.pipeline.ChunkAnnotationUtils;
 import edu.stanford.nlp.pipeline.CoreMapAttributeAggregator;
-import edu.stanford.nlp.util.Comparators;
-import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.*;
+
 import java.util.function.Function;
-import edu.stanford.nlp.util.Generics;
-import edu.stanford.nlp.util.Interval;
-import edu.stanford.nlp.util.IntervalTree;
 
 import java.util.*;
 
@@ -30,11 +27,11 @@ public class MatchedExpression {
    *     from which the text was matched against
    *  If matched using tokens, the character offsets are with respect to the overall document
    */
-  protected Interval<Integer> charOffsets;
+  protected AbstractInterval<Integer> charOffsets;
   /**Token offsets (relative to original text tokenization) */
   protected Interval<Integer> tokenOffsets;
   /** Chunk offsets (relative to chunking on top of original text) */
-  protected Interval<Integer> chunkOffsets;
+  protected AbstractInterval<Integer> chunkOffsets;
   protected CoreMap annotation;
 
   // TODO: Should we keep some context from the source so we can perform more complex evaluation?
@@ -141,7 +138,7 @@ public class MatchedExpression {
       }
     }
 
-    public MatchedExpression createMatchedExpression(Interval<Integer> charOffsets, Interval<Integer> tokenOffsets)
+    public MatchedExpression createMatchedExpression(AbstractInterval<Integer> charOffsets, Interval<Integer> tokenOffsets)
     {
       MatchedExpression me = new MatchedExpression(charOffsets, tokenOffsets, this, priority, weight);
       return me;
@@ -163,7 +160,7 @@ public class MatchedExpression {
     this.chunkOffsets = me.tokenOffsets;
   }
 
-  public MatchedExpression(Interval<Integer> charOffsets, Interval<Integer> tokenOffsets,
+  public MatchedExpression(AbstractInterval<Integer> charOffsets, Interval<Integer> tokenOffsets,
                            SingleAnnotationExtractor extractFunc, double priority, double weight)
   {
     this.charOffsets = charOffsets;
@@ -198,9 +195,9 @@ public class MatchedExpression {
         }
       }
 
-      charOffsets = Interval.toInterval(annotation.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class), annotation.get(CoreAnnotations.CharacterOffsetEndAnnotation.class));
-      tokenOffsets = Interval.toInterval(annotation.get(CoreAnnotations.TokenBeginAnnotation.class),
-              annotation.get(CoreAnnotations.TokenEndAnnotation.class), Interval.INTERVAL_OPEN_END);
+      charOffsets = AbstractInterval.toInterval(annotation.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class), annotation.get(CoreAnnotations.CharacterOffsetEndAnnotation.class));
+      tokenOffsets = AbstractInterval.toInterval(annotation.get(CoreAnnotations.TokenBeginAnnotation.class),
+              annotation.get(CoreAnnotations.TokenEndAnnotation.class), AbstractInterval.INTERVAL_OPEN_END);
     } else {
       Integer baseCharOffset = sourceAnnotation.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class);
       if (baseCharOffset == null) {
@@ -213,8 +210,8 @@ public class MatchedExpression {
               chunkOffsets.getBegin(), chunkOffsets.getEnd(), aggregators );
 
       annotation = ChunkAnnotationUtils.getAnnotatedChunkUsingCharOffsets(sourceAnnotation, charOffsets.getBegin(), charOffsets.getEnd());
-      tokenOffsets = Interval.toInterval(annotation.get(CoreAnnotations.TokenBeginAnnotation.class),
-              annotation.get(CoreAnnotations.TokenEndAnnotation.class), Interval.INTERVAL_OPEN_END);
+      tokenOffsets = AbstractInterval.toInterval(annotation.get(CoreAnnotations.TokenBeginAnnotation.class),
+              annotation.get(CoreAnnotations.TokenEndAnnotation.class), AbstractInterval.INTERVAL_OPEN_END);
       annotation.set(tokensAnnotationKey, annotation2.get(tokensAnnotationKey));
     }
     text = annotation.get(CoreAnnotations.TextAnnotation.class);
@@ -230,24 +227,24 @@ public class MatchedExpression {
   protected boolean extractAnnotation(List<? extends CoreMap> source, Map<Class, CoreMapAttributeAggregator> chunkAggregators)
   {
     annotation = ChunkAnnotationUtils.getMergedChunk(source,  chunkOffsets.getBegin(), chunkOffsets.getEnd(), chunkAggregators);
-    charOffsets = Interval.toInterval(annotation.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class),
-            annotation.get(CoreAnnotations.CharacterOffsetEndAnnotation.class), Interval.INTERVAL_OPEN_END);
-    tokenOffsets = Interval.toInterval(annotation.get(CoreAnnotations.TokenBeginAnnotation.class),
-              annotation.get(CoreAnnotations.TokenEndAnnotation.class), Interval.INTERVAL_OPEN_END);
+    charOffsets = AbstractInterval.toInterval(annotation.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class),
+            annotation.get(CoreAnnotations.CharacterOffsetEndAnnotation.class), AbstractInterval.INTERVAL_OPEN_END);
+    tokenOffsets = AbstractInterval.toInterval(annotation.get(CoreAnnotations.TokenBeginAnnotation.class),
+              annotation.get(CoreAnnotations.TokenEndAnnotation.class), AbstractInterval.INTERVAL_OPEN_END);
     text = annotation.get(CoreAnnotations.TextAnnotation.class);
     extractFunc.annotate(this, source.subList(chunkOffsets.getBegin(), chunkOffsets.getEnd()));
     return true;
   }
 
-  public Interval<Integer> getCharOffsets() {
+  public AbstractInterval<Integer> getCharOffsets() {
     return charOffsets;
   }
 
-  public Interval<Integer> getTokenOffsets() {
+  public AbstractInterval<Integer> getTokenOffsets() {
     return tokenOffsets;
   }
 
-  public Interval<Integer> getChunkOffsets() {
+  public AbstractInterval<Integer> getChunkOffsets() {
     return chunkOffsets;
   }
 
@@ -407,18 +404,18 @@ public class MatchedExpression {
   }
 
   @SuppressWarnings("unused")
-  public static final Function<CoreMap, Interval<Integer>> COREMAP_TO_TOKEN_OFFSETS_INTERVAL_FUNC =
-      in -> Interval.toInterval(
+  public static final Function<CoreMap, AbstractInterval<Integer>> COREMAP_TO_TOKEN_OFFSETS_INTERVAL_FUNC =
+      in -> AbstractInterval.toInterval(
             in.get(CoreAnnotations.TokenBeginAnnotation.class),
             in.get(CoreAnnotations.TokenEndAnnotation.class));
 
-  public static final Function<CoreMap, Interval<Integer>> COREMAP_TO_CHAR_OFFSETS_INTERVAL_FUNC =
-      in -> Interval.toInterval(
+  public static final Function<CoreMap, AbstractInterval<Integer>> COREMAP_TO_CHAR_OFFSETS_INTERVAL_FUNC =
+      in -> AbstractInterval.toInterval(
               in.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class),
               in.get(CoreAnnotations.CharacterOffsetEndAnnotation.class));
 
-  public static final Function<MatchedExpression, Interval<Integer>> EXPR_TO_TOKEN_OFFSETS_INTERVAL_FUNC =
-    new Function<MatchedExpression, Interval<Integer>>() {
+  public static final Function<MatchedExpression, AbstractInterval<Integer>> EXPR_TO_TOKEN_OFFSETS_INTERVAL_FUNC =
+    new Function<MatchedExpression, AbstractInterval<Integer>>() {
       @Override
       public Interval<Integer> apply(MatchedExpression in) {
         return in.tokenOffsets;
@@ -486,10 +483,10 @@ public class MatchedExpression {
     new Comparator<MatchedExpression>() {
       @Override
       public int compare(MatchedExpression e1, MatchedExpression e2) {
-        Interval.RelType rel = e1.tokenOffsets.getRelation(e2.tokenOffsets);
-        if (rel.equals(Interval.RelType.CONTAIN)) {
+        AbstractInterval.RelType rel = e1.tokenOffsets.getRelation(e2.tokenOffsets);
+        if (rel.equals(AbstractInterval.RelType.CONTAIN)) {
           return 1;
-        } else if (rel.equals(Interval.RelType.INSIDE)) {
+        } else if (rel.equals(AbstractInterval.RelType.INSIDE)) {
           return -1;
         } else {
           return (e1.tokenOffsets.compareTo(e2.tokenOffsets));

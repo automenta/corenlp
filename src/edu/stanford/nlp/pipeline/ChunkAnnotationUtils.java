@@ -253,8 +253,8 @@ public class ChunkAnnotationUtils {
    * @param charEnd - character end offset
    * @return chunk offsets
    */
-  public static Interval<Integer> getChunkOffsetsUsingCharOffsets(List<? extends CoreMap> chunkList,
-                                       int charStart, int charEnd)
+  public static AbstractInterval<Integer> getChunkOffsetsUsingCharOffsets(List<? extends CoreMap> chunkList,
+                                                                          int charStart, int charEnd)
   {
     int chunkStart = 0;
     int chunkEnd = chunkList.size();
@@ -274,7 +274,7 @@ public class ChunkAnnotationUtils {
         break;
       }
     }
-    return Interval.toInterval(chunkStart, chunkEnd, Interval.INTERVAL_OPEN_END);
+    return AbstractInterval.toInterval(chunkStart, chunkEnd, AbstractInterval.INTERVAL_OPEN_END);
   }
 
 

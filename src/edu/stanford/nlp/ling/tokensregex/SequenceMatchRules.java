@@ -896,7 +896,7 @@ public class SequenceMatchRules {
         CoreMap t = seq.get(i);
         Value v = extractor.apply(t);
         if (v != null) {
-          MatchedExpression te = extractor.createMatchedExpression(Interval.toInterval(i, i + 1, Interval.INTERVAL_OPEN_END), null);
+          MatchedExpression te = extractor.createMatchedExpression(AbstractInterval.toInterval(i, i + 1, AbstractInterval.INTERVAL_OPEN_END), null);
           out.add(te);
           extracted = true;
         }
@@ -1052,7 +1052,7 @@ public class SequenceMatchRules {
     }
 
     public MatchedExpression apply(MatchResult matched) {
-      MatchedExpression te = extractor.createMatchedExpression(Interval.toInterval(matched.start(group), matched.end(group), Interval.INTERVAL_OPEN_END), null);
+      MatchedExpression te = extractor.createMatchedExpression(AbstractInterval.toInterval(matched.start(group), matched.end(group), AbstractInterval.INTERVAL_OPEN_END), null);
       return te;
     }
   }
@@ -1067,7 +1067,7 @@ public class SequenceMatchRules {
       this.group = group;
     }
     public MatchedExpression apply(SequenceMatchResult<CoreMap> matched) {
-      MatchedExpression te = extractor.createMatchedExpression(null, Interval.toInterval(matched.start(group), matched.end(group), Interval.INTERVAL_OPEN_END));
+      MatchedExpression te = extractor.createMatchedExpression(null, AbstractInterval.toInterval(matched.start(group), matched.end(group), AbstractInterval.INTERVAL_OPEN_END));
       if (Double.isNaN(te.priority)) {
         te.priority = matched.priority();
       }

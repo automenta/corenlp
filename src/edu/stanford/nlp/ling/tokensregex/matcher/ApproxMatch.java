@@ -1,6 +1,6 @@
 package edu.stanford.nlp.ling.tokensregex.matcher;
 
-import edu.stanford.nlp.util.Interval;
+import edu.stanford.nlp.util.AbstractInterval;
 import edu.stanford.nlp.util.StringUtils;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.List;
 */
 public class ApproxMatch<K,V> extends MultiMatch<K,V> {
   double cost;
-  Interval<Integer>[] alignments;  // Tracks alignments from original sequence to matched sequence (null indicates not aligned)
+  AbstractInterval<Integer>[] alignments;  // Tracks alignments from original sequence to matched sequence (null indicates not aligned)
 
   public ApproxMatch() {
   }
@@ -34,7 +34,7 @@ public class ApproxMatch<K,V> extends MultiMatch<K,V> {
     this.cost = cost;
   }
 
-  public ApproxMatch(List<K> matched, V value, int begin, int end, List<Match<K,V>> multimatches, double cost, Interval[] alignments) {
+  public ApproxMatch(List<K> matched, V value, int begin, int end, List<Match<K,V>> multimatches, double cost, AbstractInterval[] alignments) {
     this.matched = matched;
     this.value = value;
     this.begin = begin;
@@ -48,7 +48,7 @@ public class ApproxMatch<K,V> extends MultiMatch<K,V> {
     return cost;
   }
 
-  public Interval<Integer>[] getAlignments() {
+  public AbstractInterval<Integer>[] getAlignments() {
     return alignments;
   }
 

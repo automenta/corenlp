@@ -1,5 +1,6 @@
 package edu.stanford.nlp.ling.tokensregex.matcher;
 
+import edu.stanford.nlp.util.AbstractInterval;
 import edu.stanford.nlp.util.HasInterval;
 import edu.stanford.nlp.util.Interval;
 import edu.stanford.nlp.util.StringUtils;
@@ -93,8 +94,8 @@ public class Match<K,V> implements HasInterval<Integer>
     return sb.toString();
   }
 
-  public Interval<Integer> getInterval() {
-    if (span == null) span = Interval.toInterval(begin, end, Interval.INTERVAL_OPEN_END);
+  public AbstractInterval<Integer> getInterval() {
+    if (span == null) span = AbstractInterval.toInterval(begin, end, AbstractInterval.INTERVAL_OPEN_END);
     return span;
   }
 }

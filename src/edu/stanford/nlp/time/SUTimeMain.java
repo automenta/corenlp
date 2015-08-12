@@ -930,8 +930,8 @@ public class SUTimeMain {
 
   private static List<Node> createTimexNodes(String str, Integer charBeginOffset, List<CoreMap> timexAnns) {
     List<ValuedInterval<CoreMap,Integer>> timexList = new ArrayList<>(timexAnns.size());
-    for (CoreMap timexAnn:timexAnns) {
-      timexList.add(new ValuedInterval<>(timexAnn,
+    for (CoreMap timexAnn : timexAnns) {
+      timexList.add(new ValuedInterval(timexAnn,
               MatchedExpression.COREMAP_TO_CHAR_OFFSETS_INTERVAL_FUNC.apply(timexAnn)));
     }
     Collections.sort(timexList, HasInterval.CONTAINS_FIRST_ENDPOINTS_COMPARATOR );

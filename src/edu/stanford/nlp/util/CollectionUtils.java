@@ -652,8 +652,8 @@ public class CollectionUtils {
     return prefixesAndSuffixes;
   }
 
-  public static <T, M> List<T> mergeList(List<? extends T> list, Collection<M> matched, Function<M, Interval<Integer>> toIntervalFunc, Function<List<? extends T>, T> aggregator) {
-    List<Interval<Integer>> matchedIntervals = new ArrayList<>(matched.size());
+  public static <T, M> List<T> mergeList(List<? extends T> list, Collection<M> matched, Function<M, AbstractInterval<Integer>> toIntervalFunc, Function<List<? extends T>, T> aggregator) {
+    List<AbstractInterval<Integer>> matchedIntervals = new ArrayList<>(matched.size());
     for (M m : matched) {
       matchedIntervals.add(toIntervalFunc.apply(m));
     }
@@ -669,7 +669,7 @@ public class CollectionUtils {
     List<T> merged = new ArrayList<>(list.size()); // Approximate size
     int last = 0;
     for (HasInterval<Integer> m : matched) {
-      Interval<Integer> interval = m.getInterval();
+      AbstractInterval<Integer> interval = m.getInterval();
       int start = interval.getBegin();
       int end = interval.getEnd();
       if (start >= last) {
@@ -686,11 +686,11 @@ public class CollectionUtils {
     return merged;
   }
 
-  public static <T> List<T> mergeListWithSortedMatchedPreAggregated(List<? extends T> list, List<? extends T> matched, Function<T, Interval<Integer>> toIntervalFunc) {
+  public static <T> List<T> mergeListWithSortedMatchedPreAggregated(List<? extends T> list, List<? extends T> matched, Function<T, AbstractInterval<Integer>> toIntervalFunc) {
     List<T> merged = new ArrayList<>(list.size()); // Approximate size
     int last = 0;
     for (T m : matched) {
-      Interval<Integer> interval = toIntervalFunc.apply(m);
+      AbstractInterval<Integer> interval = toIntervalFunc.apply(m);
       int start = interval.getBegin();
       int end = interval.getEnd();
       if (start >= last) {

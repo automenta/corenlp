@@ -1,5 +1,7 @@
 package edu.stanford.nlp.util;
 
+import com.gs.collections.impl.list.mutable.FastList;
+
 import java.io.Serializable;
 import java.util.*;
 
@@ -56,7 +58,7 @@ public abstract class CollectionFactory<T> implements Serializable {
 
     @Override
     public Collection<T> newCollection() {
-      return new ArrayList<>();
+      return new FastList<>();
     }
 
     @Override
@@ -76,7 +78,7 @@ public abstract class CollectionFactory<T> implements Serializable {
 
     @Override
     public Collection<T> newCollection() {
-      return new ArrayList<>(defaultSize);
+      return new FastList<>(defaultSize);
     }
 
     @Override

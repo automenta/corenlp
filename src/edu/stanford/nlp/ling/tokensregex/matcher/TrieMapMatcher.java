@@ -247,8 +247,8 @@ public class TrieMapMatcher<K,V> {
     return findNonOverlapping(list, 0, list.size());
   }
 
-  public final static Comparator<Match> MATCH_LENGTH_ENDPOINTS_COMPARATOR = Interval.<Match>lengthEndpointsComparator();
-  public final static Function<Match, Double> MATCH_LENGTH_SCORER = Interval.<Match>lengthScorer();
+  public final static Comparator<Match> MATCH_LENGTH_ENDPOINTS_COMPARATOR = AbstractInterval.<Match>lengthEndpointsComparator();
+  public final static Function<Match, Double> MATCH_LENGTH_SCORER = AbstractInterval.<Match>lengthScorer();
 
   /**
    * Given a sequence to search through (e.g. piece of text would be a sequence of words),
@@ -454,7 +454,7 @@ public class TrieMapMatcher<K,V> {
       this.cost = cost;
       this.value = (trie != null)? this.trie.value:null;
       if (alignmentLength > 0) {
-        this.alignments = new Interval[alignmentLength];
+        this.alignments = new AbstractInterval[alignmentLength];
       }
     }
 
@@ -483,14 +483,14 @@ public class TrieMapMatcher<K,V> {
       }
       // Update alignments
       if (alignments != null) {
-        res.alignments = new Interval[alignments.length];
+        res.alignments = new AbstractInterval[alignments.length];
         System.arraycopy(alignments, 0, res.alignments, 0, alignments.length);
         if (k != null && res.end > 0) {
           int p = res.end-1;
           if (res.alignments[p] == null) {
-            res.alignments[p] = Interval.toInterval(res.matched.size()-1, res.matched.size());
+            res.alignments[p] = AbstractInterval.toInterval(res.matched.size()-1, res.matched.size());
           } else {
-            res.alignments[p] = Interval.toInterval(res.alignments[p].getBegin(), res.alignments[p].getEnd() + 1);
+            res.alignments[p] = AbstractInterval.toInterval(res.alignments[p].getBegin(), res.alignments[p].getEnd() + 1);
           }
         }
       }

@@ -25,7 +25,7 @@ import edu.stanford.nlp.util.logging.Redwood.RedwoodChannels;
  * @version 2002/08/25
  */
 
-public class Pair <T1,T2> implements Comparable<Pair<T1,T2>>, Serializable, PrettyLoggable {
+public class Pair<T1,T2> implements IPair<T1,T2> {
 
   /**
    * Direct access is deprecated.  Use first().
@@ -50,10 +50,12 @@ public class Pair <T1,T2> implements Comparable<Pair<T1,T2>>, Serializable, Pret
     this.second = second;
   }
 
+  @Override
   public T1 first() {
     return first;
   }
 
+  @Override
   public T2 second() {
     return second;
   }
@@ -90,6 +92,7 @@ public class Pair <T1,T2> implements Comparable<Pair<T1,T2>>, Serializable, Pret
     return firstHash*31 + secondHash;
   }
 
+  @Override
   public List<Object> asList() {
     return CollectionUtils.makeList(first, second);
   }
@@ -126,6 +129,7 @@ public class Pair <T1,T2> implements Comparable<Pair<T1,T2>>, Serializable, Pret
    * This might not allow one to recover the pair of objects unless they
    * are of type <code>String</code>.
    */
+  @Override
   public void save(DataOutputStream out) {
     try {
       out.writeUTF(first.toString());
@@ -156,8 +160,9 @@ public class Pair <T1,T2> implements Comparable<Pair<T1,T2>>, Serializable, Pret
    *                            <code>Pair</code>.
    * @see java.lang.Comparable
    */
+  @Override
   @SuppressWarnings("unchecked")
-  public int compareTo(Pair<T1,T2> another) {
+  public int compareTo(IPair<T1, T2> another) {
     if (first() instanceof Comparable) {
       int comp = ((Comparable<T1>) first()).compareTo(another.first());
       if (comp != 0) {
@@ -215,118 +220,12 @@ public class Pair <T1,T2> implements Comparable<Pair<T1,T2>>, Serializable, Pret
   private static final long serialVersionUID = 1360822168806852921L;
 
 
-  static class MutableInternedPair extends Pair<String, String> {
-
-    private MutableInternedPair(Pair<String, String> p) {
-      super(p.first, p.second);
-      internStrings();
-    }
-
-    private MutableInternedPair(String first, String second) {
-      super(first, second);
-      internStrings();
-    }
-
-    protected Object readResolve() {
-      internStrings();
-      return this;
-    }
-
-    private void internStrings() {
-      if (first != null) {
-        first = first.intern();
-      }
-      if (second != null) {
-        second = second.intern();
-      }
-    }
-
-    // use serialVersionUID for cross version serialization compatibility
-    private static final long serialVersionUID = 1360822168806852922L;
-
-  }
-
   /**
    * {@inheritDoc}
    */
+  @Override
   public void prettyLog(RedwoodChannels channels, String description) {
     PrettyLogger.log(channels, description, this.asList());
   }
-  
-  /**
-   * Compares a <code>Pair</code> to another <code>Pair</code> according to the first object of the pair only
-   * This function will work providing
-   * the first element of the <code>Pair</code> is comparable, otherwise will throw a 
-   * <code>ClassCastException</code>
-   * @author jonathanberant
-   *
-   * @param <T1>
-   * @param <T2>
-   */
-  public static class ByFirstPairComparator<T1,T2> implements Comparator<Pair<T1,T2>> {
 
-    @SuppressWarnings("unchecked")
-    @Override
-    public int compare(Pair<T1, T2> pair1, Pair<T1, T2> pair2) {
-      return ((Comparable<T1>) pair1.first()).compareTo(pair2.first());
-    }
-  }
-  
-  /**
-   * Compares a <code>Pair</code> to another <code>Pair</code> according to the first object of the pair only in decreasing order
-   * This function will work providing
-   * the first element of the <code>Pair</code> is comparable, otherwise will throw a 
-   * <code>ClassCastException</code>
-   * @author jonathanberant
-   *
-   * @param <T1>
-   * @param <T2>
-   */
-  public static class ByFirstReversePairComparator<T1,T2> implements Comparator<Pair<T1,T2>> {
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public int compare(Pair<T1, T2> pair1, Pair<T1, T2> pair2) {
-      return -((Comparable<T1>) pair1.first()).compareTo(pair2.first());
-    }
-  }
-  
-  /**
-   * Compares a <code>Pair</code> to another <code>Pair</code> according to the second object of the pair only
-   * This function will work providing
-   * the first element of the <code>Pair</code> is comparable, otherwise will throw a 
-   * <code>ClassCastException</code>
-   * @author jonathanberant
-   *
-   * @param <T1>
-   * @param <T2>
-   */
-  public static class BySecondPairComparator<T1,T2> implements Comparator<Pair<T1,T2>> {
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public int compare(Pair<T1, T2> pair1, Pair<T1, T2> pair2) {
-      return ((Comparable<T2>) pair1.second()).compareTo(pair2.second());
-    }
-  }
-  
-  /**
-   * Compares a <code>Pair</code> to another <code>Pair</code> according to the second object of the pair only in decreasing order
-   * This function will work providing
-   * the first element of the <code>Pair</code> is comparable, otherwise will throw a 
-   * <code>ClassCastException</code>
-   * @author jonathanberant
-   *
-   * @param <T1>
-   * @param <T2>
-   */
-  public static class BySecondReversePairComparator<T1,T2> implements Comparator<Pair<T1,T2>> {
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public int compare(Pair<T1, T2> pair1, Pair<T1, T2> pair2) {
-      return -((Comparable<T2>) pair1.second()).compareTo(pair2.second());
-    }
-  }
-  
 }

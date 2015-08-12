@@ -3,7 +3,6 @@ package edu.stanford.nlp.time;
 import edu.stanford.nlp.ling.tokensregex.types.Expressions;
 import edu.stanford.nlp.util.*;
 
-import edu.stanford.nlp.util.Interval;
 import org.joda.time.*;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
@@ -1382,7 +1381,7 @@ public class SUTime {
     }
 
     @Override
-    public Interval<Time> getInterval() {
+    public AbstractInterval<Time> getInterval() {
       Range r = getRange();
       if (r != null) {
         return r.getInterval();
@@ -4339,7 +4338,7 @@ public class SUTime {
     }
 
     @Override
-    public Interval<Time> getInterval() {
+    public AbstractInterval<Time> getInterval() {
       return FuzzyInterval.toInterval(begin, end);
     }
 

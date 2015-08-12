@@ -11,18 +11,18 @@ import java.util.*;
  */
 public class IntervalTreeTest extends TestCase {
 
-  private void checkOverlapping(Collection<Interval<Integer>> all,
-                                Collection<Interval<Integer>> overlapping,
-                                Interval<Integer> target) {
-    for (Interval<Integer> interval: all) {
+  private void checkOverlapping(Collection<AbstractInterval<Integer>> all,
+                                Collection<AbstractInterval<Integer>> overlapping,
+                                AbstractInterval<Integer> target) {
+    for (AbstractInterval<Integer> interval: all) {
       assertNotNull(interval);
     }
-    for (Interval<Integer> interval: overlapping) {
+    for (AbstractInterval<Integer> interval: overlapping) {
       assertTrue(interval.overlaps(target));
     }
-    List<Interval<Integer>> rest = new ArrayList<Interval<Integer>>(all);
+    List<AbstractInterval<Integer>> rest = new ArrayList<AbstractInterval<Integer>>(all);
     rest.removeAll(overlapping);
-    for (Interval<Integer> interval: rest) {
+    for (AbstractInterval<Integer> interval: rest) {
       assertNotNull(interval);
       assertFalse("Should not overlap: " + interval + " with " + target, interval.overlaps(target));
     }
@@ -30,19 +30,19 @@ public class IntervalTreeTest extends TestCase {
 
   public void testGetOverlapping() throws Exception
   {
-    Interval<Integer> a = Interval.toInterval(249210699, 249212659);
-    Interval<Integer> before = Interval.toInterval(249210000, 249210600);
-    Interval<Integer> included = Interval.toInterval(249210800, 249212000);
-    Interval<Integer> after = Interval.toInterval(249213000, 249214000);
+    AbstractInterval<Integer> a = AbstractInterval.toInterval(249210699, 249212659);
+    AbstractInterval<Integer> before = AbstractInterval.toInterval(249210000, 249210600);
+    AbstractInterval<Integer> included = AbstractInterval.toInterval(249210800, 249212000);
+    AbstractInterval<Integer> after = AbstractInterval.toInterval(249213000, 249214000);
 
-    IntervalTree<Integer, Interval<Integer>> tree = new IntervalTree<Integer, Interval<Integer>>();
+    IntervalTree<Integer, AbstractInterval<Integer>> tree = new IntervalTree<Integer, AbstractInterval<Integer>>();
     tree.add(a);
 
-    List<Interval<Integer>> overlapping1 = tree.getOverlapping(before);
+    List<AbstractInterval<Integer>> overlapping1 = tree.getOverlapping(before);
     assertTrue(overlapping1.isEmpty());
-    List<Interval<Integer>> overlapping2 = tree.getOverlapping(included);
+    List<AbstractInterval<Integer>> overlapping2 = tree.getOverlapping(included);
     assertTrue(overlapping2.size() == 1);
-    List<Interval<Integer>> overlapping3 = tree.getOverlapping(after);
+    List<AbstractInterval<Integer>> overlapping3 = tree.getOverlapping(after);
     assertTrue(overlapping3.isEmpty());
 
     // Remove a
@@ -54,7 +54,7 @@ public class IntervalTreeTest extends TestCase {
     for (int i = 0; i < n; i++) {
       int x = i;
       int y = i+1;
-      Interval<Integer> interval = Interval.toInterval(x,y);
+      AbstractInterval<Integer> interval = AbstractInterval.toInterval(x,y);
       tree.add(interval);
     }
     tree.add(a);
@@ -88,11 +88,11 @@ public class IntervalTreeTest extends TestCase {
     // Add a bunch of random interval before adding a
 
     Random rand = new Random();
-    List<Interval<Integer>> list = new ArrayList<Interval<Integer>>(n+1);
+    List<AbstractInterval<Integer>> list = new ArrayList<AbstractInterval<Integer>>(n+1);
     for (int i = 0; i < n; i++) {
       int x = rand.nextInt();
       int y = rand.nextInt();
-      Interval<Integer> interval = Interval.toValidInterval(x,y);
+      AbstractInterval<Integer> interval = AbstractInterval.toValidInterval(x,y);
       tree.add(interval);
       list.add(interval);
     }
@@ -111,22 +111,22 @@ public class IntervalTreeTest extends TestCase {
   public void testIteratorRandom() throws Exception
   {
     int n = 1000;
-    IntervalTree<Integer, Interval<Integer>> tree = new IntervalTree<Integer, Interval<Integer>>();
+    IntervalTree<Integer, AbstractInterval<Integer>> tree = new IntervalTree<Integer, AbstractInterval<Integer>>();
 
     Random rand = new Random();
-    List<Interval<Integer>> list = new ArrayList<Interval<Integer>>(n+1);
+    List<Interval<Integer>> list = new ArrayList<>(n+1);
     for (int i = 0; i < n; i++) {
       int x = rand.nextInt();
       int y = rand.nextInt();
-      Interval<Integer> interval = Interval.toValidInterval(x,y);
+      Interval<Integer> interval = AbstractInterval.toValidInterval(x,y);
       tree.add(interval);
       list.add(interval);
     }
 
     Collections.sort(list);
 
-    Interval<Integer> next = null;
-    Iterator<Interval<Integer>> iterator = tree.iterator();
+    AbstractInterval<Integer> next = null;
+    Iterator<AbstractInterval<Integer>> iterator = tree.iterator();
     for (int i = 0; i < list.size(); i++) {
       assertTrue("HasItem " + i, iterator.hasNext());
       next = iterator.next();
@@ -138,21 +138,21 @@ public class IntervalTreeTest extends TestCase {
   public void testIteratorOrdered() throws Exception
   {
     int n = 1000;
-    IntervalTree<Integer, Interval<Integer>> tree = new IntervalTree<Integer, Interval<Integer>>();
+    IntervalTree<Integer, AbstractInterval<Integer>> tree = new IntervalTree<Integer, AbstractInterval<Integer>>();
 
-    List<Interval<Integer>> list = new ArrayList<Interval<Integer>>(n+1);
+    List<Interval<Integer>> list = new ArrayList<>(n+1);
     for (int i = 0; i < n; i++) {
       int x = i;
       int y = i+1;
-      Interval<Integer> interval = Interval.toValidInterval(x,y);
+      Interval<Integer> interval = AbstractInterval.toValidInterval(x,y);
       tree.add(interval);
       list.add(interval);
     }
 
     Collections.sort(list);
 
-    Interval<Integer> next = null;
-    Iterator<Interval<Integer>> iterator = tree.iterator();
+    AbstractInterval<Integer> next = null;
+    Iterator<AbstractInterval<Integer>> iterator = tree.iterator();
     for (int i = 0; i < list.size(); i++) {
       assertTrue("HasItem " + i, iterator.hasNext());
       next = iterator.next();

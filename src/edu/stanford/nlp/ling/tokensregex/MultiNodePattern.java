@@ -1,6 +1,6 @@
 package edu.stanford.nlp.ling.tokensregex;
 
-import edu.stanford.nlp.util.Interval;
+import edu.stanford.nlp.util.AbstractInterval;
 
 import java.util.Collection;
 import java.util.List;
@@ -21,7 +21,7 @@ public abstract class MultiNodePattern<T> {
    * @param nodes
    * @param start
    */
-  protected abstract Collection<Interval<Integer>> match(List<? extends T> nodes, int start);
+  protected abstract Collection<AbstractInterval<Integer>> match(List<? extends T> nodes, int start);
 
   public int getMinNodes() {
     return minNodes;
@@ -46,11 +46,11 @@ public abstract class MultiNodePattern<T> {
       this.nodePatterns = nodePatterns;
     }
 
-    protected Collection<Interval<Integer>> match(List<? extends T> nodes, int start)
+    protected Collection<AbstractInterval<Integer>> match(List<? extends T> nodes, int start)
     {
-      Collection<Interval<Integer>> matched = null;
+      Collection<AbstractInterval<Integer>> matched = null;
       for (MultiNodePattern<T> p:nodePatterns) {
-        Collection<Interval<Integer>> m = p.match(nodes, start);
+        Collection<AbstractInterval<Integer>> m = p.match(nodes, start);
         if (m == null || m.size() == 0) {
           return null;
         }
@@ -74,16 +74,16 @@ public abstract class MultiNodePattern<T> {
       this.nodePatterns = nodePatterns;
     }
 
-    protected Collection<Interval<Integer>> match(List<? extends T> nodes, int start)
+    protected Collection<AbstractInterval<Integer>> match(List<? extends T> nodes, int start)
     {
-      Collection<Interval<Integer>> matched = null;
+      Collection<AbstractInterval<Integer>> matched = null;
       for (MultiNodePattern<T> p:nodePatterns) {
-        Collection<Interval<Integer>> m = p.match(nodes, start);
+        Collection<AbstractInterval<Integer>> m = p.match(nodes, start);
         if (m != null && m.size() > 0) {
           if (matched == null) {
             matched = m;
           } else {
-            for (Interval<Integer> i:m) {
+            for (AbstractInterval<Integer> i:m) {
               if (!matched.contains(i)) {
                 matched.add(i);
               }

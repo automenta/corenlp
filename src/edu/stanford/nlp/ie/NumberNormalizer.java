@@ -14,7 +14,6 @@ import edu.stanford.nlp.util.*;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Function;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -749,7 +748,7 @@ public class NumberNormalizer {
     //merge numbers
     final Integer startTokenOffsetFinal = startTokenOffset;
     List<CoreMap> mergedNumbers = numberAggregator.merge(annotation.get(CoreAnnotations.TokensAnnotation.class), numbers,
-        in -> Interval.toInterval(
+        in -> AbstractInterval.toInterval(
               in.get(CoreAnnotations.TokenBeginAnnotation.class) - startTokenOffsetFinal,
               in.get(CoreAnnotations.TokenEndAnnotation.class) - startTokenOffsetFinal)
     );
@@ -788,7 +787,7 @@ public class NumberNormalizer {
     final Integer startTokenOffsetFinal = startTokenOffset;
     List<CoreMap> mergedNumbersWithRanges = CollectionUtils.mergeListWithSortedMatchedPreAggregated(
             annotation.get(CoreAnnotations.NumerizedTokensAnnotation.class), numberRanges,
-        (CoreMap in) -> Interval.toInterval(
+        (CoreMap in) -> AbstractInterval.toInterval(
               in.get(CoreAnnotations.TokenBeginAnnotation.class) - startTokenOffsetFinal,
               in.get(CoreAnnotations.TokenEndAnnotation.class) - startTokenOffsetFinal)
     );

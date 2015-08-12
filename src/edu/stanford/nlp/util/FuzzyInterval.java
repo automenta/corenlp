@@ -1,5 +1,9 @@
 package edu.stanford.nlp.util;
 
+import static edu.stanford.nlp.util.AbstractInterval.addIntervalRelationFlags;
+import static edu.stanford.nlp.util.AbstractInterval.extractRelationSubflags;
+import static edu.stanford.nlp.util.AbstractInterval.toRelFlags;
+
 /**
  * A FuzzyInterval is an extension of Interval where not all endpoints are always
  *   specified or comparable.  It is assumed that most endpoints will be comparable
@@ -55,7 +59,7 @@ public class FuzzyInterval<E extends FuzzyInterval.FuzzyComparable<E>> extends I
     }
   }
 
-  public int getRelationFlags(Interval<E> other)
+  public int getRelationFlags(AbstractInterval<E> other)
   {
     if (other == null) return 0;
 
@@ -77,7 +81,7 @@ public class FuzzyInterval<E extends FuzzyInterval.FuzzyComparable<E>> extends I
     }
     if (this.first.isComparable(other.second())) {
       int comp12 = this.first.compareTo(other.second());   // 3 choices
-      flags |= toRelFlags(comp12, REL_FLAGS_SE_SHIFT);
+      flags |= AbstractInterval.toRelFlags(comp12, REL_FLAGS_SE_SHIFT);
     } else {
       flags |= REL_FLAGS_SE_UNKNOWN;
       hasUnknown = true;
@@ -92,7 +96,7 @@ public class FuzzyInterval<E extends FuzzyInterval.FuzzyComparable<E>> extends I
     if (hasUnknown) {
       flags = restrictFlags(flags);
     }
-    flags = addIntervalRelationFlags(flags, hasUnknown);
+    flags = AbstractInterval.addIntervalRelationFlags(flags, hasUnknown);
     return flags;
   }
 
@@ -142,7 +146,7 @@ public class FuzzyInterval<E extends FuzzyInterval.FuzzyComparable<E>> extends I
             & (f21 << REL_FLAGS_ES_SHIFT) & (f22 << REL_FLAGS_EE_SHIFT));
   }
 
-  public RelType getRelation(Interval<E> other)
+  public RelType getRelation(AbstractInterval<E> other)
   {
     if (other == null) return RelType.NONE;
     int flags = getRelationFlags(other);

@@ -7,9 +7,9 @@ package edu.stanford.nlp.util;
 */
 public class ValuedInterval<T,E extends Comparable<E>> implements HasInterval<E> {
   T value;
-  Interval<E> interval;
+  AbstractInterval<E> interval;
 
-  public ValuedInterval(T value, Interval<E> interval) {
+  public ValuedInterval(T value, AbstractInterval<E> interval) {
     this.value = value;
     this.interval = interval;
   }
@@ -18,7 +18,7 @@ public class ValuedInterval<T,E extends Comparable<E>> implements HasInterval<E>
     return value;
   }
 
-  public Interval<E> getInterval() {
+  public AbstractInterval<E> getInterval() {
     return interval;
   }
 }
