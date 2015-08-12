@@ -1,14 +1,7 @@
 package edu.stanford.nlp.hcoref.sieve;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Set;
+import java.util.*;
 
 import edu.stanford.nlp.hcoref.CorefPrinter;
 import edu.stanford.nlp.hcoref.CorefProperties;
@@ -52,8 +45,8 @@ public abstract class Sieve implements Serializable {
   public Sieve() {
     this.lang = Locale.ENGLISH;
     this.sievename = this.getClass().getSimpleName();
-    this.aType = new HashSet<>(Arrays.asList(MentionType.values()));
-    this.mType = new HashSet<>(Arrays.asList(MentionType.values()));
+    this.aType = EnumSet.allOf(MentionType.class); //new HashSet<>(Arrays.asList(MentionType.values()));
+    this.mType = EnumSet.allOf(MentionType.class); //new HashSet<>(Arrays.asList(MentionType.values()));
     this.maxSentDist = 1000;
     this.mTypeStr = Generics.newHashSet();
     this.aTypeStr = Generics.newHashSet();

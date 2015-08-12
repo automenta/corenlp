@@ -188,19 +188,6 @@ public class JollyDayHolidays implements Env.Binder {
     }
 
     @Override
-    public boolean isGrounded()  { return false; }
-
-    @Override
-    public SUTime.Time getTime() { return this; }
-
-    // TODO: compute duration/range => uncertainty of this time
-    @Override
-    public SUTime.Duration getDuration() { return SUTime.DURATION_NONE; }
-
-    @Override
-    public SUTime.Range getRange(int flags, SUTime.Duration granularity) { return new SUTime.Range(this,this); }
-
-    @Override
     public String toISOString() { return base.toString(); }
 
     @Override

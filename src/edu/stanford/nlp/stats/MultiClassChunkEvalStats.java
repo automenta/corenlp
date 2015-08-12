@@ -29,7 +29,7 @@ public class MultiClassChunkEvalStats extends MultiClassPrecisionRecallExtendedS
   private LabeledChunkIdentifier.LabelTagType prevCorrect = null;
   private LabeledChunkIdentifier.LabelTagType prevGuess = null;
   private LabeledChunkIdentifier chunker;
-  private boolean useLabel = false;
+  private static final boolean useLabel = false;
 
   public <F> MultiClassChunkEvalStats(Classifier<String,F> classifier, GeneralDataset<String,F> data, String negLabel)
   {
@@ -140,12 +140,6 @@ public class MultiClassChunkEvalStats extends MultiClassPrecisionRecallExtendedS
     tokensCount++;
     prevGuess = guess;
     prevCorrect = correct;
-  }
-
-  // Returns string precision recall in ConllEval format
-  public String getConllEvalString()
-  {
-    return getConllEvalString(true);
   }
 
   public static void main(String[] args) throws Exception

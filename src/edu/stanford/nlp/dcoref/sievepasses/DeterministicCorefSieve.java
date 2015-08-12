@@ -409,7 +409,7 @@ public abstract class DeterministicCorefSieve  {
       }
     }
     if(flags.USE_WN_SYNONYM) {
-      Method meth = semantics.wordnet.getClass().getMethod("checkSynonym", new Class[]{Mention.class, Mention.class});
+      Method meth = semantics.wordnet.getClass().getMethod("checkSynonym", Mention.class, Mention.class);
       if((Boolean) meth.invoke(semantics.wordnet, mention, ant)) {
         ret = true;
       } else if (mention.goldCorefClusterID == ant.goldCorefClusterID

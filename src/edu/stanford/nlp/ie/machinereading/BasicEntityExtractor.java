@@ -228,7 +228,7 @@ public class BasicEntityExtractor implements Extractor {
    * @param entityType
    *          The type of the {@link EntityMention} objects created
    */
-  public void makeAnnotationFromGivenNERTag(CoreMap sentence, String nerTag, String entityType) {
+  public static void makeAnnotationFromGivenNERTag(CoreMap sentence, String nerTag, String entityType) {
     List<CoreLabel> words = sentence.get(CoreAnnotations.TokensAnnotation.class);
     List<EntityMention> mentions = sentence.get(MachineReadingAnnotations.EntityMentionsAnnotation.class);
     assert words != null;

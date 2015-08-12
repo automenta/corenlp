@@ -42,15 +42,11 @@ public class SVMLightClassifierFactory<L, F> implements ClassifierFactory<L, F, 
   private String svmLightLearn = "/u/nlp/packages/svm_light/svm_learn";
   private String svmStructLearn = "/u/nlp/packages/svm_multiclass/svm_multiclass_learn";
   private String svmPerfLearn = "/u/nlp/packages/svm_perf/svm_perf_learn";
-  private String svmLightClassify = "/u/nlp/packages/svm_light/svm_classify";
-  private String svmStructClassify = "/u/nlp/packages/svm_multiclass/svm_multiclass_classify";
-  private String svmPerfClassify = "/u/nlp/packages/svm_perf/svm_perf_classify";
 
   private boolean useAlphaFile = false;
   protected File alphaFile;
   private boolean deleteTempFilesOnExit = true;
   private int svmLightVerbosity = 0;  // not verbose
-  private boolean doEval = false;
   private boolean useSVMPerf = false;
 
   /** @param svmLightLearn is the fullPathname of the training program of svmLight with default value "/u/nlp/packages/svm_light/svm_learn"
@@ -456,11 +452,15 @@ public class SVMLightClassifierFactory<L, F> implements ClassifierFactory<L, F, 
       SystemUtils.run(new ProcessBuilder(whitespacePattern.split(cmd)),
         new PrintWriter(System.err), new PrintWriter(System.err));
 
+      boolean doEval = false;
       if (doEval) {
         File predictFile = File.createTempFile("svm-", ".pred");
         if (deleteTempFilesOnExit) {
           predictFile.deleteOnExit();
         }
+        String svmPerfClassify = "/u/nlp/packages/svm_perf/svm_perf_classify";
+        String svmStructClassify = "/u/nlp/packages/svm_multiclass/svm_multiclass_classify";
+        String svmLightClassify = "/u/nlp/packages/svm_light/svm_classify";
         String evalCmd = (multiclass ? svmStructClassify : (useSVMPerf ? svmPerfClassify : svmLightClassify)) + ' '
                 + dataFile.getAbsolutePath() + ' ' + modelFile.getAbsolutePath() + ' ' + predictFile.getAbsolutePath();
         if (verbose) System.err.println("<< "+evalCmd+" >>");

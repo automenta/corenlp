@@ -2197,11 +2197,6 @@ public class SUTime {
     }
 
     @Override
-    public Time getTime() {
-      return this;
-    }
-
-    @Override
     public Duration getDuration() {
       if (duration != null)
         return duration;
@@ -2373,11 +2368,6 @@ public class SUTime {
     @Override
     public Duration getDuration() {
       return null;
-    }
-
-    @Override
-    public Range getRange(int flags, Duration granularity) {
-      return new Range(this, this);
     }
 
     @Override
@@ -2764,11 +2754,6 @@ public class SUTime {
         appendTimeFormats(builder, flags);
       }
       return builder.toFormatter();
-    }
-
-    @Override
-    public boolean isGrounded() {
-      return false;
     }
 
     // TODO: compute duration/range => uncertainty of this time
@@ -3627,16 +3612,6 @@ public class SUTime {
     @Override
     public boolean isGrounded() {
       return true;
-    }
-
-    @Override
-    public Duration getDuration() {
-      return DURATION_NONE;
-    }
-
-    @Override
-    public Range getRange(int flags, Duration granularity) {
-      return new Range(this, this);
     }
 
     @Override

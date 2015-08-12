@@ -117,11 +117,6 @@ public class ScaledSGDMinimizer<Q extends AbstractStochasticCachingDiffFunction>
     return new Pair<>(bSize, gain);
   }
 
-  @Override
-  public void shutUp() {
-    this.quiet = true;
-  }
-
   public void setBatchSize(int batchSize) {
     bSize = batchSize;
   }

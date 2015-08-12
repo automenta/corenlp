@@ -84,7 +84,6 @@ public class LogPrior implements Serializable {
 //  private double[] regularizationHyperparameters = null;
 
   private double[] sigmaSqM = null;
-  private double[] sigmaQuM = null;
 
 
 //  public double[] getRegularizationHyperparameters() {
@@ -209,7 +208,7 @@ public class LogPrior implements Serializable {
       for (int i = 0;i<sigmaSq.length;i++){
         sigmaQuM[i] = sigmaSqM[i] * sigmaSqM[i];
       }
-      this.sigmaQuM = sigmaQuM;
+      double[] sigmaQuM1 = sigmaQuM;
 
     } else {
       throw new RuntimeException("LogPrior.getSigmaSquaredM is undefined for any prior but MULTIPLE_QUADRATIC" + this);

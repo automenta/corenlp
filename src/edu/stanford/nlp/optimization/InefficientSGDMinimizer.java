@@ -31,11 +31,6 @@ import edu.stanford.nlp.util.Pair;
 public class InefficientSGDMinimizer<T extends Function> extends StochasticMinimizer<T> {
 
 
-  @Override
-  public void shutUp() {
-    this.quiet = true;
-  }
-
   public void setBatchSize(int batchSize) {
     bSize = batchSize;
   }

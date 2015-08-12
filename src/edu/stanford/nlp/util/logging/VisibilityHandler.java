@@ -121,14 +121,4 @@ public class VisibilityHandler extends LogRecordHandler {
     }
   }
 
-  /** {@inheritDoc} */
-  @Override
-  public List<Record> signalStartTrack(Record signal) {
-    return EMPTY;
-  }
-  /** {@inheritDoc} */
-  @Override
-  public List<Record> signalEndTrack(int newDepth, long timeOfEnd) {
-    return EMPTY;
-  }
 }

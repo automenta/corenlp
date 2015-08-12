@@ -16,7 +16,7 @@ import java.util.*;
  */
 public class Alignment {
 
-  private Map<IndexedWord, IndexedWord> map;
+  private final Map<IndexedWord, IndexedWord> map;
   protected double score;               // kill RecursiveAlignment, make this private!
   private String justification;
 

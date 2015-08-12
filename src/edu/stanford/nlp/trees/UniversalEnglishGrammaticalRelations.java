@@ -1507,17 +1507,15 @@ public class UniversalEnglishGrammaticalRelations {
   public static final ReadWriteLock valuesLock = new ReentrantReadWriteLock();
   //Relations that can connect two clauses.
   public static final Set<GrammaticalRelation> clauseRelations =
-      Collections.unmodifiableSet(CollectionUtils.asSet(new GrammaticalRelation[] {
-          CONJUNCT,
-          XCLAUSAL_COMPLEMENT,
-          CLAUSAL_COMPLEMENT,
-          CLAUSAL_MODIFIER,
-          ADV_CLAUSE_MODIFIER,
-          RELATIVE_CLAUSE_MODIFIER,
-          PARATAXIS,
-          APPOSITIONAL_MODIFIER,
-          LIST
-      }));
+      Collections.unmodifiableSet(CollectionUtils.asSet(CONJUNCT,
+              XCLAUSAL_COMPLEMENT,
+              CLAUSAL_COMPLEMENT,
+              CLAUSAL_MODIFIER,
+              ADV_CLAUSE_MODIFIER,
+              RELATIVE_CLAUSE_MODIFIER,
+              PARATAXIS,
+              APPOSITIONAL_MODIFIER,
+              LIST));
 
   // Map from English GrammaticalRelation short names to their corresponding
   // GrammaticalRelation objects

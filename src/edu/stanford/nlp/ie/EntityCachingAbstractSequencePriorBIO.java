@@ -44,7 +44,7 @@ public abstract class EntityCachingAbstractSequencePriorBIO <IN extends CoreMap>
     }
   }
 
-  private boolean VERBOSE = false;
+  private static final boolean VERBOSE = false;
 
   EntityBIO[] entities;
 

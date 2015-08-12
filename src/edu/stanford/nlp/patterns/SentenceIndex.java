@@ -84,7 +84,7 @@ public abstract class SentenceIndex<E extends Pattern> {
     try{
       Execution.fillOptions(SentenceIndex.class, props);
       Method m = indexClass.getMethod("createIndex", Map.class, Properties.class, Set.class, String.class, Function.class);
-      SentenceIndex index = (SentenceIndex) m.invoke(null, new Object[]{sents, props, stopWords, indexDirectory, transformCoreLabeltoString});
+      SentenceIndex index = (SentenceIndex) m.invoke(null, sents, props, stopWords, indexDirectory, transformCoreLabeltoString);
       return index;
     }catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
       throw new RuntimeException(e);
@@ -110,7 +110,7 @@ public abstract class SentenceIndex<E extends Pattern> {
     try{
       Execution.fillOptions(SentenceIndex.class, props);
       Method m = indexClass.getMethod("loadIndex", Properties.class, Set.class, String.class, Function.class);
-      SentenceIndex index = (SentenceIndex) m.invoke(null, new Object[]{props, stopWords, indexDirectory, transformCoreLabeltoString});
+      SentenceIndex index = (SentenceIndex) m.invoke(null, props, stopWords, indexDirectory, transformCoreLabeltoString);
       return index;
     }catch(NoSuchMethodException | IllegalAccessException | InvocationTargetException e){
       throw new RuntimeException(e);

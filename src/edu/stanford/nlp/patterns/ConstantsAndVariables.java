@@ -984,8 +984,7 @@ public class ConstantsAndVariables implements Serializable {
       allowedTagsInitials = new HashMap<>();
       for(String labelstr : targetAllowedTagsInitialsStr.split(";")){
         String[] t = labelstr.split(",");
-        Set<String> st = new HashSet<>();
-        st.addAll(Arrays.asList(t).subList(1, t.length));
+        Set<String> st = new HashSet<>(Arrays.asList(t).subList(1, t.length));
         allowedTagsInitials.put(t[0], st);
       }
     }
@@ -994,8 +993,7 @@ public class ConstantsAndVariables implements Serializable {
       allowedNERsforLabels = new HashMap<>();
       for(String labelstr : targetAllowedNERs.split(";")){
         String[] t = labelstr.split(",");
-        Set<String> st = new HashSet<>();
-        st.addAll(Arrays.asList(t).subList(1, t.length));
+        Set<String> st = new HashSet<>(Arrays.asList(t).subList(1, t.length));
         allowedNERsforLabels.put(t[0], st);
 
       }

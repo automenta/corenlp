@@ -702,7 +702,6 @@ pat = new NodePattern(r, underNodeNegation, attributes, isRoot, isEmpty, name !=
   }
 
   private java.util.List<int[]> jj_expentries = new java.util.ArrayList<>();
-  private int[] jj_expentry;
   private int jj_kind = -1;
 
   /** Generate ParseException. */
@@ -724,7 +723,7 @@ pat = new NodePattern(r, underNodeNegation, attributes, isRoot, isEmpty, name !=
     }
     for (int i = 0; i < 26; i++) {
       if (la1tokens[i]) {
-        jj_expentry = new int[1];
+        int[] jj_expentry = new int[1];
         jj_expentry[0] = i;
         jj_expentries.add(jj_expentry);
       }

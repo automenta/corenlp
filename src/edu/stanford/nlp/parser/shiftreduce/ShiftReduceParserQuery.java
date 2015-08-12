@@ -33,8 +33,6 @@ public class ShiftReduceParserQuery implements ParserQuery {
   boolean success;
   boolean unparsable;
 
-  private List<State> bestParses;
-
   final ShiftReduceParser parser;
 
   List<ParserConstraint> constraints = null;
@@ -121,6 +119,7 @@ public class ShiftReduceParserQuery implements ParserQuery {
         break;
       }
     }
+    List<State> bestParses;
     if (beam.size() == 0) {
       success = false;
       unparsable = true;

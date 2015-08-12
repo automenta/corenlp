@@ -113,7 +113,7 @@ public class DVParser {
     //   be optimized by the QN.
 
     Timing timing = new Timing();
-    long maxTrainTimeMillis = op.trainOptions.maxTrainTimeSeconds * 1000;
+    long maxTrainTimeMillis = op.trainOptions.maxTrainTimeSeconds * 1000L;
     int batchCount = 0;
     int debugCycle = 0;
     double bestLabelF1 = 0.0;

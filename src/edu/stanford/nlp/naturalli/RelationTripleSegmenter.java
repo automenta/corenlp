@@ -277,7 +277,7 @@ public class RelationTripleSegmenter {
               if (rel != null && rel.startsWith("nmod:") && !"nmod:poss".equals(rel)) {
                 prep = rel.substring("nmod:".length()).replace("tmod", "at_time");
               } else if (rel != null && (rel.startsWith("acl:") || rel.startsWith("advcl:")) ) {
-                prep = rel.substring(rel.indexOf(":"));
+                prep = rel.substring(rel.indexOf(':'));
               } else if (rel != null && rel.equals("nmod:poss")) {
                 relationTokens.clear();
                 prep = "'s";
@@ -396,7 +396,7 @@ public class RelationTripleSegmenter {
           ) ||
                   relStr.startsWith("acl:") || relStr.startsWith("advcl:")) {
             chunk.add(mockNode(edge.getGovernor().backingLabel(), 1,
-                            edge.getRelation().toString().substring(edge.getRelation().toString().indexOf(":") + 1).replace("tmod","at_time"),
+                            edge.getRelation().toString().substring(edge.getRelation().toString().indexOf(':') + 1).replace("tmod","at_time"),
                             "PP"),
                     -(((double) edge.getGovernor().index()) + 0.9));
           }
@@ -581,7 +581,7 @@ public class RelationTripleSegmenter {
         // (add preposition edge)
         if (prepEdge != null) {
           verbChunk.add(mockNode(verb.backingLabel(), 1,
-                  prepEdge.substring(prepEdge.indexOf(":") + 1).replace("_", " ").replace("tmod", "at_time"), "PP"), -(verb.index() + 10));
+                  prepEdge.substring(prepEdge.indexOf(':') + 1).replace("_", " ").replace("tmod", "at_time"), "PP"), -(verb.index() + 10));
         }
         // (check for additional edges)
         if (consumeAll && parse.outDegree(verb) > numKnownDependents) {

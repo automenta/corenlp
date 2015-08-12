@@ -69,8 +69,8 @@ public class Rules {
     if(mention.mentionType!=MentionType.PROPER
         || antecedent.mentionType!=MentionType.PROPER) return false;
     
-    Method meth = semantics.wordnet.getClass().getMethod("alias", new Class[]{Mention.class, Mention.class});
-    if((Boolean) meth.invoke(semantics.wordnet, new Object[]{mention, antecedent})) {
+    Method meth = semantics.wordnet.getClass().getMethod("alias", Mention.class, Mention.class);
+    if((Boolean) meth.invoke(semantics.wordnet, mention, antecedent)) {
       return true;
     }
     return false;
@@ -99,7 +99,7 @@ public class Rules {
   }
 
   private static final List<String> entityWordsToExclude =
-          Arrays.asList(new String[]{ "the","this", "mr.", "miss", "mrs.", "dr.", "ms.", "inc.", "ltd.", "corp.", "'s"});
+          Arrays.asList("the","this", "mr.", "miss", "mrs.", "dr.", "ms.", "inc.", "ltd.", "corp.", "'s");
   /** Word inclusion except stop words  */
   public static boolean entityWordsIncluded(CorefCluster mentionCluster, CorefCluster potentialAntecedent, Mention mention, Mention ant) {
     Set<String> wordsExceptStopWords = Generics.newHashSet(mentionCluster.words);

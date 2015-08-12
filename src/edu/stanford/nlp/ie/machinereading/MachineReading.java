@@ -95,9 +95,7 @@ public class MachineReading {
   
   private Set<ResultsPrinter> entityResultsPrinterSet;
   private Set<ResultsPrinter> relationResultsPrinterSet;
-  @SuppressWarnings("unused")
-  private Set<ResultsPrinter> eventResultsPrinterSet;
-  
+
   public static final int ENTITY_LEVEL = 0;
   public static final int RELATION_LEVEL = 1;
   public static final int EVENT_LEVEL = 2;
@@ -756,7 +754,7 @@ public class MachineReading {
   private void makeResultsPrinters(String[] args) {
     entityResultsPrinterSet = makeResultsPrinters(MachineReadingProperties.entityResultsPrinters, args);
     setRelationResultsPrinterSet(makeResultsPrinters(MachineReadingProperties.relationResultsPrinters, args));
-    eventResultsPrinterSet = makeResultsPrinters(MachineReadingProperties.eventResultsPrinters, args);
+    Set<ResultsPrinter> eventResultsPrinterSet = makeResultsPrinters(MachineReadingProperties.eventResultsPrinters, args);
   }
   
   private static Set<ResultsPrinter> makeResultsPrinters(String classes, String[] args) {

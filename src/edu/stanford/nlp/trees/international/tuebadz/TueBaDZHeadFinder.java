@@ -18,11 +18,6 @@ public class TueBaDZHeadFinder extends AbstractCollinsHeadFinder {
 
   private static final boolean DEBUG = false;
 
-  private final String left;
-  private String right;
-
-  private boolean coordSwitch = false;
-
 
   public TueBaDZHeadFinder() {
     super(new TueBaDZLanguagePack());
@@ -35,8 +30,9 @@ public class TueBaDZHeadFinder extends AbstractCollinsHeadFinder {
 
     nonTerminalInfo = Generics.newHashMap();
 
-    left = (coordSwitch ? "right" : "left");
-    right = (coordSwitch ? "left" : "right");
+    boolean coordSwitch = false;
+    String left = (coordSwitch ? "right" : "left");
+    String right = (coordSwitch ? "left" : "right");
     nonTerminalInfo.put("VROOT", new String[][]{{left, "SIMPX"},{left,"NX"},{left,"P"},{left,"PX","ADVX"},{left,"EN","EN_ADD","ENADD"},{left}}); // we'll arbitrarily choose the leftmost.
 
     nonTerminalInfo.put("ROOT", new String[][]{{left, "SIMPX"},{left,"NX"},{left,"P"},{left,"PX","ADVX"},{left,"EN","EN_ADD","ENADD"},{left}}); // we'll arbitrarily choose the leftmost.

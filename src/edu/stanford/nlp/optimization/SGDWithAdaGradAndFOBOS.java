@@ -36,7 +36,6 @@ public class SGDWithAdaGradAndFOBOS<T extends DiffFunction> implements Minimizer
   public List<double[]> yList = null;
   public List<double[]> sList = null;
   public double[] diag;
-  private int hessSampleSize = -1;
   private double[] s,y = null;
 
   protected Random gen = new Random(1);
@@ -62,7 +61,7 @@ public class SGDWithAdaGradAndFOBOS<T extends DiffFunction> implements Minimizer
   private double[] sumDeltaXSquare;
 
   public void setHessSampleSize(int hessSize) {
-    this.hessSampleSize = hessSize;
+    int hessSampleSize = hessSize;
     // (TODO) should initialize relevant data structure as well
   }
 

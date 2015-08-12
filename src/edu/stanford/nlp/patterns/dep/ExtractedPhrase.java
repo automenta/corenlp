@@ -12,10 +12,10 @@ public class ExtractedPhrase implements Serializable{
    */
   private static final long serialVersionUID = 1L;
   
-  int startIndex;
-  int endIndex;
+  final int startIndex;
+  final int endIndex;
   SemgrexPattern pattern;
-  String value;
+  final String value;
   double confidence = 1;
   String articleId = null;
   Integer sentId = null;

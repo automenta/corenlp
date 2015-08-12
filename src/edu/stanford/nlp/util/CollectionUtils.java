@@ -179,7 +179,7 @@ public class CollectionUtils {
    *          String constructor.
    */
   public static <T> Collection<T> loadCollection(File file, Class<T> c, CollectionFactory<T> cf) throws Exception {
-    Constructor<T> m = c.getConstructor(new Class[] { String.class });
+    Constructor<T> m = c.getConstructor(String.class);
     Collection<T> result = cf.newCollection();
     BufferedReader in = new BufferedReader(new FileReader(file));
     String line = in.readLine();
@@ -233,8 +233,8 @@ public class CollectionUtils {
 
   public static <K, V> Map<K, V> getMapFromString(String s, Class<K> keyClass, Class<V> valueClass, MapFactory<K, V> mapFactory) throws ClassNotFoundException,
       NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-    Constructor<K> keyC = keyClass.getConstructor(new Class[] { String.class });
-    Constructor<V> valueC = valueClass.getConstructor(new Class[] { String.class });
+    Constructor<K> keyC = keyClass.getConstructor(String.class);
+    Constructor<V> valueC = valueClass.getConstructor(String.class);
     if (s.charAt(0) != '{')
       throw new RuntimeException("");
     s = s.substring(1); // get rid of first brace

@@ -42,12 +42,11 @@ public class SentimentAnnotator implements Annotator {
 
   private static final String DEFAULT_MODEL = "edu/stanford/nlp/models/sentiment/sentiment.ser.gz";
 
-  private final String modelPath;
   private final SentimentModel model;
   private final CollapseUnaryTransformer transformer = new CollapseUnaryTransformer();
 
   public SentimentAnnotator(String name, Properties props) {
-    this.modelPath = props.getProperty(name + ".model", DEFAULT_MODEL);
+    String modelPath = props.getProperty(name + ".model", DEFAULT_MODEL);
     if (modelPath == null) {
       throw new IllegalArgumentException("No model specified for Sentiment annotator");
     }

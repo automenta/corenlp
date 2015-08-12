@@ -13,11 +13,9 @@ import java.io.*;
 */
 public class BZip2PipedOutputStream extends OutputStream
 {
-  private String filename;
   private Process process;
   private ByteStreamGobbler outGobbler;
   private StreamGobbler errGobbler;
-  private PrintWriter errWriter;
 
   public BZip2PipedOutputStream(String filename) throws IOException {
     this(filename, System.err);
@@ -30,9 +28,9 @@ public class BZip2PipedOutputStream extends OutputStream
     ProcessBuilder pb = new ProcessBuilder();
     pb.command(cmd);
     this.process = pb.start();
-    this.filename = filename;
+    String filename1 = filename;
     OutputStream outStream = new FileOutputStream(filename);
-    errWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(err)));
+    PrintWriter errWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(err)));
     outGobbler = new ByteStreamGobbler("Output stream gobbler: " + cmd + ' ' + filename,
             process.getInputStream(), outStream);
     errGobbler = new StreamGobbler(process.getErrorStream(), errWriter);

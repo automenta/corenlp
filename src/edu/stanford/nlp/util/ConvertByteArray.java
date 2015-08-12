@@ -12,9 +12,9 @@ public final class ConvertByteArray {
 
   private ConvertByteArray() {} // static methods
 
-  private static short SHORTFLAG = 0x00ff;
-  private static int INTFLAG = 0x000000ff;
-  private static long LONGFLAG = 0x00000000000000ff;
+  private static final short SHORTFLAG = 0x00ff;
+  private static final int INTFLAG = 0x000000ff;
+  private static final long LONGFLAG = 0x00000000000000ff;
 
   public static void writeIntToByteArr(byte[] b, int off, int i) {
     b[off] = (byte) i;

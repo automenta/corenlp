@@ -21,7 +21,7 @@ import edu.stanford.nlp.util.concurrent.ThreadsafeProcessor;
  *
  * @author Anna Rafferty
  */
-public class POSTaggerAnnotator implements Annotator {
+public class POSTaggerAnnotator implements Annotator, ThreadsafeProcessor<CoreMap, CoreMap> {
 
   private final MaxentTagger pos;
 
@@ -110,7 +110,7 @@ public class POSTaggerAnnotator implements Annotator {
           doOneSentence(sentence);
         }
       } else {
-        MulticoreWrapper<CoreMap, CoreMap> wrapper = new MulticoreWrapper<>(nThreads, new POSTaggerProcessor());
+        MulticoreWrapper<CoreMap, CoreMap> wrapper = new MulticoreWrapper<>(nThreads, this);
         for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
           wrapper.put(sentence);
           while (wrapper.peek()) {
@@ -127,7 +127,7 @@ public class POSTaggerAnnotator implements Annotator {
     }
   }
 
-  private class POSTaggerProcessor implements ThreadsafeProcessor<CoreMap, CoreMap> {
+  //private class POSTaggerProcessor implements ThreadsafeProcessor<CoreMap, CoreMap> {
     @Override
     public CoreMap process(CoreMap sentence) {
       return doOneSentence(sentence);
@@ -137,7 +137,7 @@ public class POSTaggerAnnotator implements Annotator {
     public ThreadsafeProcessor<CoreMap, CoreMap> newInstance() {
       return this;
     }
-  }
+  //}
 
   private CoreMap doOneSentence(CoreMap sentence) {
     List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);

@@ -42,7 +42,9 @@ public class IntInterval extends Int2 implements AbstractInterval<Integer> {
 
     @Override
     public int getFlags() {
-        return getFlags();
+        while (true) {
+
+        }
     }
 
 

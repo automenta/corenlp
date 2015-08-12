@@ -101,11 +101,6 @@ public class DeltaCollectionValuedMap<K, V> extends CollectionValuedMap<K, V> {
   }
 
   @Override
-  public void putAll(Map<? extends K, ? extends Collection<V>> m) {
-    throw new UnsupportedOperationException();
-  }
-
-  @Override
   public void add(K key, V value) {
     Collection<V> deltaC = deltaMap.get(key);
     if (deltaC == null) {
@@ -168,11 +163,6 @@ public class DeltaCollectionValuedMap<K, V> extends CollectionValuedMap<K, V> {
       return false;
     }
     return true;
-  }
-
-  @Override
-  public boolean containsValue(Object value) {
-    throw new UnsupportedOperationException();
   }
 
   // Bulk Operations

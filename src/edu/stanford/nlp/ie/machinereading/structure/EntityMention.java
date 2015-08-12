@@ -1,14 +1,15 @@
 package edu.stanford.nlp.ie.machinereading.structure;
 
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeCoreAnnotations;
 import edu.stanford.nlp.util.CoreMap;
+
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Each entity mention is described by a type (possibly subtype) and a span of text
@@ -272,14 +273,13 @@ public class EntityMention extends ExtractionObject {
     Collections.sort(mentions, new CompByHead());
   }
 
-  private static int MENTION_COUNTER = 0;
+  private static AtomicInteger MENTION_COUNTER = new AtomicInteger(0);
 
   /**
    * Creates a new unique id for an entity mention
    * @return the new id
    */
   public static synchronized String makeUniqueId() {
-    MENTION_COUNTER ++;
-    return "EntityMention-" + MENTION_COUNTER;
+    return "EntityMention-" + MENTION_COUNTER.incrementAndGet();
   }
 }

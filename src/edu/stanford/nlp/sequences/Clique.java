@@ -5,6 +5,7 @@ import edu.stanford.nlp.util.Generics;
 
 import java.io.Serializable;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * This class is meant to represent a clique in a (directed
@@ -215,7 +216,7 @@ public class Clique implements Serializable {
     @Override
     public int hashCode() {
         if (hashCode == -1) {
-            hashCode = toString().hashCode();
+            hashCode = Objects.hash(relativeIndices); //toString().hashCode();
         }
         return hashCode;
     }

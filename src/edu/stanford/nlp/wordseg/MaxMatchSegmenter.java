@@ -37,9 +37,8 @@ public class MaxMatchSegmenter implements WordSegmenter {
 
   private static final boolean DEBUG = false;
 
-  private Set<String> words = Generics.newHashSet();
+  private final Set<String> words = Generics.newHashSet();
   private int len=-1;
-  private int edgesNb=0;
   private static final int maxLength = 10;
   private List<DFSAState<Word, Integer>> states;
   private DFSA<Word, Integer> lattice=null;
@@ -59,9 +58,7 @@ public class MaxMatchSegmenter implements WordSegmenter {
 
   @Override
   public void train(Collection<Tree> trees) {
-    for (Tree tree : trees) {
-      train(tree);
-    }
+    trees.forEach(this::train);
   }
 
   @Override
@@ -71,11 +68,9 @@ public class MaxMatchSegmenter implements WordSegmenter {
 
   @Override
   public void train(List<TaggedWord> sentence) {
-    for (TaggedWord word : sentence) {
-      if (word.word().length() <= maxLength) {
-        addStringToLexicon(word.word());
-      }
-    }
+    sentence.stream().filter(word -> word.word().length() <= maxLength).forEach(word -> {
+      addStringToLexicon(word.word());
+    });
   }
 
   @Override
@@ -144,7 +139,7 @@ public class MaxMatchSegmenter implements WordSegmenter {
    * running maxMatchSegmentation.
    */
   public void buildSegmentationLattice(String s) {
-    edgesNb = 0;
+    int edgesNb = 0;
     len = s.length();
     // Initialize word lattice:
     states = new ArrayList<>();
@@ -246,7 +241,8 @@ public class MaxMatchSegmenter implements WordSegmenter {
     if(DEBUG) {
       // Print lattice density ([1,+inf[) : if equal to 1, it means
       // there is only one segmentation using words of the lexicon.
-      double density = edgesNb*1.0/segmentedWords.size();
+      int edgesNb = 0;
+      double density = edgesNb *1.0/segmentedWords.size();
       System.err.println("latticeDensity: "+density+" cost: "+costs[len]);
     }
     return new ArrayList<>(segmentedWords);

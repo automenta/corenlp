@@ -1,16 +1,12 @@
 package edu.stanford.nlp.hcoref;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Locale;
-import java.util.Properties;
-import java.util.Set;
-
 import edu.stanford.nlp.hcoref.data.Dictionaries.MentionType;
 import edu.stanford.nlp.hcoref.sieve.Sieve.ClassifierType;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.PropertiesUtils;
+
+import java.io.File;
+import java.util.*;
 
 
 public class CorefProperties {
@@ -246,7 +242,8 @@ public class CorefProperties {
   
   private static Set<MentionType> getMentionTypes(Properties props, String propKey) {
     if(!props.containsKey(propKey) || props.getProperty(propKey).equalsIgnoreCase("all")){
-      return new HashSet<>(Arrays.asList(MentionType.values()));
+      return EnumSet.allOf(MentionType.class);
+      //return new HashSet<>(Arrays.asList(MentionType.values()));
     }
 
     Set<MentionType> types = new HashSet<>();

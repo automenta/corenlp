@@ -85,13 +85,13 @@ public abstract class ParserGrammar implements Function<List<? extends HasWord>,
   public Function<List<? extends HasWord>, List<TaggedWord>> loadTagger() {
     Options op = getOp();
     if (op.testOptions.preTag) {
-      synchronized(this) { // TODO: rather coarse synchronization
+      //synchronized(this) { // TODO: rather coarse synchronization
         if (!op.testOptions.taggerSerializedFile.equals(taggerPath)) {
           taggerPath = op.testOptions.taggerSerializedFile;
           tagger = ReflectionLoading.loadByReflection("edu.stanford.nlp.tagger.maxent.MaxentTagger", taggerPath);
         }
         return tagger;
-      }
+      //}
     } else {
       return null;
     }

@@ -381,7 +381,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
     }
 
     Method meth = semantics.wordnet.getClass().getDeclaredMethod("findSynset", List.class);
-    synsets = meth.invoke(semantics.wordnet, new Object[]{preprocessedTerms});
+    synsets = meth.invoke(semantics.wordnet, preprocessedTerms);
 
     if(this.isPronominal()) return;
   }

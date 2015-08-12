@@ -96,10 +96,15 @@ public class Comparators {
       if (size1 > size2) return 1;
       return 0;
     }
-
-    public static <C extends Comparable> Comparator<List<C>> getListComparator() {
-      return Comparators::compareLists;
-    }
+//
+//    protected <C> Comparator<List<C extends Comparable>> getListComparator = new Comparator<List<C extends Comparable>>() {
+//      @Override
+//      public int compare(List o1, List<C> o2) {
+//        return compareLists(o1, o2);
+//      }
+//
+//
+//    };
 
     /**
      * A <code>Comparator</code> that compares objects by comparing their
@@ -117,9 +122,9 @@ public class Comparators {
     public static Comparator<boolean[]> getBooleanArrayComparator() {
       return ArrayUtils::compareBooleanArrays;
     }
-
-    public static <C extends Comparable> Comparator<C[]> getArrayComparator() {
-      return ArrayUtils::compareArrays;
-    }
+//
+//    public static <C extends Comparable> Comparator<C[]> getArrayComparator() {
+//      return ArrayUtils::compareArrays;
+//    }
 
   }

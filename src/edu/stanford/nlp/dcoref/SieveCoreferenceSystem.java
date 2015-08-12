@@ -111,16 +111,6 @@ public class SieveCoreferenceSystem {
    */
   private final int maxSentDist;
 
-  /**
-   * automatically set by looking at sieves
-   */
-  private final boolean useSemantics;
-
-  /**
-   * Singleton predictor from Recasens, de Marneffe, and Potts (NAACL 2013)
-   */
-  private final boolean useSingletonPredictor;
-
   /** flag for replicating CoNLL result */
   private final boolean replicateCoNLL;
 
@@ -206,7 +196,10 @@ public class SieveCoreferenceSystem {
     //
     // setting singleton predictor
     //
-    useSingletonPredictor = Boolean.parseBoolean(props.getProperty(Constants.SINGLETON_PROP, "true"));
+    /*
+    Singleton predictor from Recasens, de Marneffe, and Potts (NAACL 2013)
+   */
+    boolean useSingletonPredictor = Boolean.parseBoolean(props.getProperty(Constants.SINGLETON_PROP, "true"));
 
     //
     // setting maximum sentence distance between two mentions for resolution (-1: no constraint on distance)
@@ -216,7 +209,10 @@ public class SieveCoreferenceSystem {
     //
     // set useWordNet
     //
-    useSemantics = sievePasses.contains("AliasMatch") || sievePasses.contains("LexicalChainMatch");
+    /*
+    automatically set by looking at sieves
+   */
+    boolean useSemantics = sievePasses.contains("AliasMatch") || sievePasses.contains("LexicalChainMatch");
 
     // flag for replicating CoNLL result
     replicateCoNLL = Boolean.parseBoolean(props.getProperty(Constants.REPLICATECONLL_PROP, "false"));

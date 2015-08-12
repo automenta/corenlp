@@ -70,9 +70,6 @@ public class MachineReadingAnnotations {
    */
 	@Deprecated
   public static class DocumentIdAnnotation extends CoreAnnotations.DocIDAnnotation {
-    public Class<String> getType() {
-      return String.class;
-    }
   }
   public static class DocumentDirectoryAnnotation implements CoreAnnotation<String> {
     public Class<String> getType() {

@@ -116,7 +116,7 @@ public class GoogleNGramsSQLBacked {
       int ngram = str.split("\\s+").length;
       String table = tablenamePrefix + ngram;
       if (!existsTable(table)){
-        counts.add(new Pair(str, (long) -1));
+        counts.add(new Pair(str, -1L));
         continue;
       }
       String phrase = escapeString(str);
@@ -137,7 +137,7 @@ public class GoogleNGramsSQLBacked {
       if (rs.next()) {
         counts.add(new Pair(ph, rs.getLong("count")));
       } else
-        counts.add(new Pair(ph, (long) -1));
+        counts.add(new Pair(ph, -1L));
 
       isresult = stmt.getMoreResults();
     } while (isresult);

@@ -545,11 +545,6 @@ public abstract class AbstractStochasticCachingDiffFunction extends AbstractCach
     return derivative;
   }
 
-  @Override
-  public double lastValue() {
-    return value;
-  }
-
   // It doesn't seem like this should exist in the class and it wasn't used.
   // public void setValue(double v) {
   //   value = v;

@@ -182,7 +182,7 @@ public class BuildBinarizedDataset {
       DocumentPreprocessor document = new DocumentPreprocessor(sin);
       document.setSentenceFinalPuncWords(new String[] {"\n"});
       List<HasWord> tokens = document.iterator().next();
-      int mainLabel = new Integer(tokens.get(0).word());
+      int mainLabel = Integer.parseInt(tokens.get(0).word());
       //System.out.print("Main Sentence Label: " + mainLabel.toString() + "; ");
       tokens = tokens.subList(1, tokens.size());
       //System.err.println(tokens);

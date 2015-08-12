@@ -173,10 +173,10 @@ public class IdentityHashSet<E> extends AbstractSet<E> implements Cloneable, Ser
     Integer x = Integer.valueOf(3);
     Integer y = Integer.valueOf(4);
     Integer z = Integer.valueOf(5);
-    List<Integer> a = Arrays.asList(new Integer[] {x, y, z});
-    List<String> b = Arrays.asList(new String[] {"Larry", "Moe", "Curly"});
-    List<Integer> c = Arrays.asList(new Integer[] {x, y, z});
-    List<String> d = Arrays.asList(new String[] {"Larry", "Moe", "Curly"});
+    List<Integer> a = Arrays.asList(x, y, z);
+    List<String> b = Arrays.asList("Larry", "Moe", "Curly");
+    List<Integer> c = Arrays.asList(x, y, z);
+    List<String> d = Arrays.asList("Larry", "Moe", "Curly");
     Set<List<?>> hs = Generics.newHashSet();
     IdentityHashSet<List<?>> ihs = new IdentityHashSet<>();
     hs.add(a);

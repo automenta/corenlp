@@ -36,8 +36,7 @@ public class SGDToQNMinimizer implements Minimizer<DiffFunction>, Serializable  
   // private int memory = 5;
   public int SGDPasses = -1;
   public int QNPasses = -1;
-  private final int hessSampleSize;
-  private final int QNMem;
+    private final int QNMem;
 
 
   public SGDToQNMinimizer(double SGDGain, int batchSize, int SGDPasses, int QNPasses){
@@ -53,7 +52,7 @@ public class SGDToQNMinimizer implements Minimizer<DiffFunction>, Serializable  
     this.bSize = batchSize;
     this.SGDPasses = sgdPasses;
     this.QNPasses = qnPasses;
-    this.hessSampleSize = hessSamples;
+      int hessSampleSize = hessSamples;
     this.QNMem = QNMem;
     this.outputIterationsToFile = outputToFile;
   }

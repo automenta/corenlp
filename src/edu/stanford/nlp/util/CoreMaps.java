@@ -39,23 +39,23 @@ public class CoreMaps {
     return rtn;
   }
 
-  /**
-   * see merge(CoreMap base, CoreMap toBeMerged)
-   */
-  public static CoreLabel merge(CoreLabel base, CoreLabel toBeMerged){
-    //(variables)
-    CoreLabel rtn = new CoreLabel(base.size());
-    //(copy base)
-    for(Class key : base.keySet()){
-      rtn.set(key,base.get(key));
-    }
-    //(merge)
-    for(Class key : toBeMerged.keySet()){
-      rtn.set(key,toBeMerged.get(key));
-    }
-    //(return)
-    return rtn;
-  }
+//  /**
+//   * see merge(CoreMap base, CoreMap toBeMerged)
+//   */
+//  public static CoreLabel merge(CoreLabel base, CoreLabel toBeMerged){
+//    //(variables)
+//    CoreLabel rtn = new CoreLabel(base.size());
+//    //(copy base)
+//    for(Map.Entry<Class<?>, Object> classObjectEntry : base.entrySet()){
+//      rtn.set(classObjectEntry.getKey(), classObjectEntry.getValue());
+//    }
+//    //(merge)
+//    for(Map.Entry<Class<?>, Object> classObjectEntry : toBeMerged.entrySet()){
+//      rtn.set(classObjectEntry.getKey(), classObjectEntry.getValue());
+//    }
+//    //(return)
+//    return rtn;
+//  }
 
   /**
    * Returns a view of a collection of CoreMaps as a Map from each CoreMap to

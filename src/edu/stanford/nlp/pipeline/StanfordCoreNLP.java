@@ -1113,7 +1113,7 @@ public class StanfordCoreNLP extends AnnotationPipeline {
             StringBuilder os = new StringBuilder();
             for (Object key : properties.keySet()) {
                 String skey = (String) key;
-                os.append(skey + ":" + properties.getProperty(skey));
+                os.append(skey + ':' + properties.getProperty(skey));
             }
             return os.toString();
         }

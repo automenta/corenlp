@@ -422,8 +422,8 @@ public class EquivalenceClassEval<IN, OUT> {
 
   public static void main(String[] args) {
     final Pattern p = Pattern.compile("^([^:]*):(.*)$");
-    Collection<String> guesses = Arrays.asList(new String[]{"S:a", "S:b", "VP:c", "VP:d", "S:a"});
-    Collection<String> golds = Arrays.asList(new String[]{"S:a", "S:b", "S:b", "VP:d", "VP:a"});
+    Collection<String> guesses = Arrays.asList("S:a", "S:b", "VP:c", "VP:d", "S:a");
+    Collection<String> golds = Arrays.asList("S:a", "S:b", "S:b", "VP:d", "VP:a");
     EqualityChecker<String> e = (o1, o2) -> {
       Matcher m1 = p.matcher(o1);
       m1.find();

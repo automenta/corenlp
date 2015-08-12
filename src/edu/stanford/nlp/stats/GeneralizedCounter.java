@@ -886,10 +886,10 @@ public class GeneralizedCounter<K> implements Serializable {
 
 
     GeneralizedCounter<String> gc = new GeneralizedCounter<>(3);
-    gc.incrementCount(Arrays.asList(new String[]{"a", "j", "x"}), 3.0);
-    gc.incrementCount(Arrays.asList(new String[]{"a", "l", "x"}), 3.0);
-    gc.incrementCount(Arrays.asList(new String[]{"b", "k", "y"}), 3.0);
-    gc.incrementCount(Arrays.asList(new String[]{"b", "k", "z"}), 3.0);
+    gc.incrementCount(Arrays.asList("a", "j", "x"), 3.0);
+    gc.incrementCount(Arrays.asList("a", "l", "x"), 3.0);
+    gc.incrementCount(Arrays.asList("b", "k", "y"), 3.0);
+    gc.incrementCount(Arrays.asList("b", "k", "z"), 3.0);
 
     System.out.println("incremented counts.");
 
@@ -904,15 +904,15 @@ public class GeneralizedCounter<K> implements Serializable {
     System.out.println("entry set:\n" + gc.entrySet());
 
 
-    arrayPrintDouble(gc.getCounts(Arrays.asList(new String[]{"a", "j", "x"})));
-    arrayPrintDouble(gc.getCounts(Arrays.asList(new String[]{"a", "j", "z"})));
-    arrayPrintDouble(gc.getCounts(Arrays.asList(new String[]{"b", "k", "w"})));
-    arrayPrintDouble(gc.getCounts(Arrays.asList(new String[]{"b", "k", "z"})));
+    arrayPrintDouble(gc.getCounts(Arrays.asList("a", "j", "x")));
+    arrayPrintDouble(gc.getCounts(Arrays.asList("a", "j", "z")));
+    arrayPrintDouble(gc.getCounts(Arrays.asList("b", "k", "w")));
+    arrayPrintDouble(gc.getCounts(Arrays.asList("b", "k", "z")));
 
-    GeneralizedCounter<String> gc1 = gc.conditionalize(Arrays.asList(new String[]{"a"}));
-    gc1.incrementCount(Arrays.asList(new String[]{"j", "x"}));
+    GeneralizedCounter<String> gc1 = gc.conditionalize(Arrays.asList("a"));
+    gc1.incrementCount(Arrays.asList("j", "x"));
     gc1.incrementCount2D("j", "z");
-    GeneralizedCounter<String> gc2 = gc1.conditionalize(Arrays.asList(new String[]{"j"}));
+    GeneralizedCounter<String> gc2 = gc1.conditionalize(Arrays.asList("j"));
     gc2.incrementCount1D("x");
     System.out.println("Pretty-printing gc after incrementing gc1:");
     gc.prettyPrint();
@@ -927,15 +927,15 @@ public class GeneralizedCounter<K> implements Serializable {
     System.out.println("string representation of counter view:");
     System.out.println(c.toString());
 
-    double d1 = c.getCount(Arrays.asList(new String[]{"a", "j", "x"}));
-    double d2 = c.getCount(Arrays.asList(new String[]{"a", "j", "w"}));
+    double d1 = c.getCount(Arrays.asList("a", "j", "x"));
+    double d2 = c.getCount(Arrays.asList("a", "j", "w"));
 
     System.out.println(d1 + " " + d2);
 
 
     DefaultCounter<List<String>> c1 = gc1.counterView();
 
-    System.out.println("Count of {j,x} -- should be 3.0\t" + c1.getCount(Arrays.asList(new String[]{"j", "x"})));
+    System.out.println("Count of {j,x} -- should be 3.0\t" + c1.getCount(Arrays.asList("j", "x")));
 
 
     System.out.println(c.keySet() + " size " + c.keySet().size());

@@ -322,7 +322,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
       constVars.invertedIndexDirectory = f.getAbsolutePath();
     }
 
-    Set<String> extremelySmallStopWordsList = CollectionUtils.asSet(new String[]{".", ",", "in", "on", "of", "a", "the", "an"});
+    Set<String> extremelySmallStopWordsList = CollectionUtils.asSet(".", ",", "in", "on", "of", "a", "the", "an");
 
     //Function to use to how to add corelabels to index
     Function transformCoreLabelToString = new Function<CoreLabel, Map<String, String>>() {

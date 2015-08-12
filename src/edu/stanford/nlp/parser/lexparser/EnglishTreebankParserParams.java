@@ -230,16 +230,6 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
   }
 
   /**
-   * contains Treebank-specific (but not parser-specific) info such
-   * as what is punctuation, and also information about the structure
-   * of labels
-   */
-  @Override
-  public TreebankLanguagePack treebankLanguagePack() {
-    return tlp;
-  }
-
-  /**
    * The PrintWriter used to print output to OutputStream o. It's the
    * responsibility of pw to deal properly with character encodings
    * for the relevant treebank.

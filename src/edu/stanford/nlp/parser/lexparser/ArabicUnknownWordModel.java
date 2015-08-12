@@ -240,9 +240,4 @@ public class ArabicUnknownWordModel extends BaseUnknownWordModel {
     return sb.toString();
   } // end getSignature()
 
-  @Override
-  public int getUnknownLevel() {
-    return unknownLevel;
-  }
-
 }

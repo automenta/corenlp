@@ -39,7 +39,7 @@ public abstract class EntityCachingAbstractSequencePrior<IN extends CoreMap> imp
     this.doc = doc;
   }
 
-  private boolean VERBOSE = false;
+  private static final boolean VERBOSE = false;
 
   Entity[] entities;
 

@@ -40,7 +40,6 @@ public class TaggerFeature extends Feature {
 
   private final int start;
   private final int end;
-  private final FeatureKey key;
   private final int yTag;
   private final TaggerExperiments domain;
 
@@ -48,7 +47,7 @@ public class TaggerFeature extends Feature {
                           int yTag, TaggerExperiments domain) {
     this.start = start;
     this.end = end;
-    this.key = key;
+    FeatureKey key1 = key;
     this.domain = domain;
     this.yTag = yTag;
   }

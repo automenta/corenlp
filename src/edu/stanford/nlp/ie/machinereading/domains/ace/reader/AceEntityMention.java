@@ -54,7 +54,7 @@ public class AceEntityMention extends AceMention {
   public AceEntity getParent() { return mParent; }
 
   public AceCharSeq getHead() { return mHead; }
-  public AceCharSeq getExtent() { return mExtent; }
+
   public int getHeadTokenPosition() { return mHeadTokenPosition; }
 
   public void setType(String s) { mType = s; }

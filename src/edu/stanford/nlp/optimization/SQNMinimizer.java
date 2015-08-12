@@ -49,10 +49,6 @@ import edu.stanford.nlp.util.Pair;
 public class SQNMinimizer<T extends Function> extends StochasticMinimizer<T> {
 
   private int M = 0;
-  private double lambda = 1.0;
-
-  private double cPosDef = 1;
-  private double epsilon = 1e-10;
 
   private List<double[]> sList = new ArrayList<>();
   private List<double[]> yList = new ArrayList<>();
@@ -123,12 +119,14 @@ public class SQNMinimizer<T extends Function> extends StochasticMinimizer<T> {
       ArrayMath.multiplyInPlace(dir, gamma);
     }else if(mmm == 0){
       //This is a safety feature preventing too large of an initial step (see Yu Schraudolph Gunter)
-      ArrayMath.multiplyInPlace(dir,epsilon);
+      double epsilon = 1e-10;
+      ArrayMath.multiplyInPlace(dir, epsilon);
     }
 
     for (int i = 0; i < mmm; i++) {
       double b = roList.get(i) * ArrayMath.innerProduct(yList.get(i), dir);
-      plusAndConstMult(dir, sList.get(i), cPosDef*as[i] - b, dir);
+      double cPosDef = 1;
+      plusAndConstMult(dir, sList.get(i), cPosDef *as[i] - b, dir);
       plusAndConstMult(ArrayMath.pairwiseMultiply(yList.get(i),sList.get(i)),factors,1,factors);
     }
 
@@ -178,7 +176,8 @@ public class SQNMinimizer<T extends Function> extends StochasticMinimizer<T> {
     ro = 0;
     for(int i=0;i<x.length;i++){
       s[i] = newX[i] - x[i];
-      y[i] = y[i] - newGrad[i] + lambda*s[i];
+      double lambda = 1.0;
+      y[i] = y[i] - newGrad[i] + lambda *s[i];
       ro += s[i]*y[i];
     }
 

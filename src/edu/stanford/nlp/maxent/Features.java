@@ -9,6 +9,7 @@
 
 package edu.stanford.nlp.maxent;
 
+import com.gs.collections.impl.list.mutable.FastList;
 import edu.stanford.nlp.util.Index;
 import edu.stanford.nlp.util.IntPair;
 
@@ -19,28 +20,17 @@ import java.util.ArrayList;
 /**
  * An ArrayList of Feature
  */
-public class Features {
-  private ArrayList<Feature> f = new ArrayList<>();
+public class Features extends FastList<Feature> {
+  //private final ArrayList<Feature> f = new ArrayList<>();
   private static int maxValue = 11000000;
 
   public Features() {
   }
 
-  public void add(Feature m) {
-    f.add(m);
-  }
+
 
   public void removeLast() {
-    f.remove(f.size() - 1);
-
-  }
-
-  public Feature get(int index) {
-    return f.get(index);
-  }
-
-  public int size() {
-    return f.size();
+    remove(size() - 1);
   }
 
   public Experiments domain() {

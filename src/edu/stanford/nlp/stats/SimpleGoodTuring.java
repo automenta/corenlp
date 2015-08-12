@@ -25,13 +25,10 @@ public class SimpleGoodTuring {
 
   private int bigN = 0;          // total count of all items
   private double pZero;          // probability of unseen items
-  private double bigNPrime;
   private double slope;
   private double intercept;
-  private double[] z;
   private double[] logR;
   private double[] logZ;
-  private double[] rStar;
   private double[] p;
 
   /**
@@ -82,10 +79,10 @@ public class SimpleGoodTuring {
     double k, x, y;
     boolean indiffValsSeen = false;
 
-    z = new double[rows];
+    double[] z = new double[rows];
     logR = new double[rows];
     logZ = new double[rows];
-    rStar = new double[rows];
+    double[] rStar = new double[rows];
     p = new double[rows];
         
     for (j = 0; j < rows; ++j) bigN += r[j] * n[j]; // count all items
@@ -118,7 +115,7 @@ public class SimpleGoodTuring {
       if (indiffValsSeen)
         rStar[j] = y;
     }
-    bigNPrime = 0.0;
+    double bigNPrime = 0.0;
     for (j = 0; j < rows; ++j)
       bigNPrime += n[j] * rStar[j];
     for (j = 0; j < rows; ++j)

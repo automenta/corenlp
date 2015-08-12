@@ -48,11 +48,6 @@ public class SMDMinimizer<T extends Function> extends StochasticMinimizer<T> {
   private double[] Hv,gains;
   StochasticCalculateMethods method; // = null;
 
-  @Override
-  public void shutUp() {
-    this.quiet = true;
-  }
-
   public void setBatchSize(int batchSize) {
     bSize = batchSize;
   }

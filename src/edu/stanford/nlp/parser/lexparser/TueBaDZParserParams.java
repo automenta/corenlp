@@ -37,7 +37,6 @@ public class TueBaDZParserParams extends AbstractTreebankParserParams {
   private boolean markColons = false;
   private boolean leftPhrasal = false;
   private boolean markHDParent = false;
-  private boolean leaveGF = false;
 
 
   public TueBaDZParserParams() {
@@ -128,7 +127,7 @@ public class TueBaDZParserParams extends AbstractTreebankParserParams {
       markHDParent = Boolean.parseBoolean(args[i+1]);
       i += 2;
     }  else if (args[i].equalsIgnoreCase("-leaveGF")) {
-      leaveGF = Boolean.parseBoolean(args[i+1]);
+      boolean leaveGF = Boolean.parseBoolean(args[i + 1]);
       ((TueBaDZLanguagePack) treebankLanguagePack()).setLeaveGF(leaveGF);
       i += 2;
     } else if (args[i].equalsIgnoreCase("-evalGF")) {

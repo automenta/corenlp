@@ -66,10 +66,10 @@ public class DefaultLexicalMapper implements Mapper, Serializable {
 
   //wsg: "LATIN" does not appear in the Bies tagset, so be sure to pass
   //in the extended POS tags during normalization
-  private final String parentTagString = "PUNC LATIN -NONE-";
+  private final static String parentTagString = "PUNC LATIN -NONE-";
   private final Set<String> parentTagsToEscape;
 
-  private final String utf8CliticString = "ل ف و ما ه ها هم هن نا كم تن تم ى ي هما ك ب م";
+  private final static String utf8CliticString = "ل ف و ما ه ها هم هن نا كم تن تم ى ي هما ك ب م";
 //  private final Set<String> utf8Clitics;
   private final Set<String> bwClitics;
 

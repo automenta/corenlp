@@ -98,7 +98,8 @@ public class Span implements Serializable, Iterable<Integer> {
   
   @Override
   public int hashCode() {
-    return (new Pair<>(start, end)).hashCode();
+    return start * 31 + end;
+//    return (new Pair<>(start, end)).hashCode();
   }
   
   @Override
