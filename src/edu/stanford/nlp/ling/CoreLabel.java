@@ -649,14 +649,14 @@ public class CoreLabel extends UnifiedMap<Class<?>, Object> /* ArrayCoreMap*/ im
 
     public static final OutputFormat DEFAULT_FORMAT = OutputFormat.VALUE_INDEX;
 
-//    @Override
-//    public String toString() {
-//        return toString(DEFAULT_FORMAT);
-//    }
-
-
     @Override
     public String toString() {
+        return toString(DEFAULT_FORMAT);
+    }
+
+
+
+    public String toStringSimpleKeys() {
         StringBuilder sb = new StringBuilder();
         entrySet().stream().map(e -> e.getKey().getSimpleName() +"=" + e.getValue())
                 .forEach(s->sb.append(s).append(","));

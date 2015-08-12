@@ -386,23 +386,31 @@ public class IndexedWord implements AbstractCoreLabel, Comparable<IndexedWord> {
     if (cachedHashCode != 0) {
       return cachedHashCode;
     }
-    boolean sensible = false;
+
     int result = 0;
-    if (get(CoreAnnotations.DocIDAnnotation.class) != null) {
-      result = get(CoreAnnotations.DocIDAnnotation.class).hashCode();
-      sensible = true;
+
+    Object hashed = get(CoreAnnotations.DocIDAnnotation.class);
+    boolean ok = false;
+    if (hashed != null) {
+        result = hashed.hashCode();
+        ok = true;
     }
-    if (has(CoreAnnotations.SentenceIndexAnnotation.class)) {
-      result = 29 * result + get(CoreAnnotations.SentenceIndexAnnotation.class).hashCode();
-      sensible = true;
+    hashed = get(CoreAnnotations.SentenceIndexAnnotation.class);
+    if (hashed != null) {
+        result = 29 * result + hashed.hashCode();
+        ok = true;
     }
-    if (has(CoreAnnotations.IndexAnnotation.class)) {
-      result = 29 * result + get(CoreAnnotations.IndexAnnotation.class).hashCode();
-      sensible = true;
+    hashed = get(CoreAnnotations.IndexAnnotation.class);
+    if (hashed!=null) {
+        result = 29 * result + hashed.hashCode();
+        ok = true;
     }
-    if ( ! sensible) {
-      System.err.println("WARNING!!!  You have hashed an IndexedWord with no docID, sentIndex or wordIndex. You will almost certainly lose");
+
+    if (!ok) {
+        throw new RuntimeException("WARNING!!!  You have hashed an IndexedWord with no docID, sentIndex or wordIndex. You will almost certainly lose");
     }
+
+
     cachedHashCode = result;
     return result;
   }
