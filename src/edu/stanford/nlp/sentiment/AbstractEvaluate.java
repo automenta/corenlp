@@ -2,7 +2,7 @@ package edu.stanford.nlp.sentiment;
 
 import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
 import edu.stanford.nlp.neural.rnn.TopNGramRecord;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.IntCounter;
 import edu.stanford.nlp.trees.Tree;
@@ -197,7 +197,7 @@ public abstract class AbstractEvaluate {
         Set<Integer> keys = Generics.newHashSet();
         keys.addAll(lengthLabelsCorrect.keySet());
         keys.addAll(lengthLabelsIncorrect.keySet());
-        Counter<Integer> results = new ClassicCounter<>();
+        Counter<Integer> results = new DefaultCounter<>();
         for (Integer key : keys) {
             results.setCount(key, lengthLabelsCorrect.getCount(key) / (lengthLabelsCorrect.getCount(key) + lengthLabelsIncorrect.getCount(key)));
         }

@@ -7,7 +7,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import edu.stanford.nlp.patterns.ConstantsAndVariables.ScorePhraseMeasures;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
@@ -40,9 +40,9 @@ public class ScorePhrasesAverageFeatures<E extends Pattern> extends PhraseScorer
     Redwood.log(ConstantsAndVariables.extremedebug, "Considering terms: " + terms.firstKeySet());
 
     // calculate TF-IDF like scores
-    Counter<CandidatePhrase> tfidfScores = new ClassicCounter<>();
+    Counter<CandidatePhrase> tfidfScores = new DefaultCounter<>();
     if (constVars.usePhraseEvalPatWtByFreq) {
-      for (Entry<CandidatePhrase, ClassicCounter<E>> en : terms.entrySet()) {
+      for (Entry<CandidatePhrase, DefaultCounter<E>> en : terms.entrySet()) {
         double score = getPatTFIDFScore(en.getKey(), en.getValue(), allSelectedPatterns);
         tfidfScores.setCount(en.getKey(), score);
       }
@@ -50,11 +50,11 @@ public class ScorePhrasesAverageFeatures<E extends Pattern> extends PhraseScorer
       Counters.divideInPlace(tfidfScores, Data.processedDataFreq);
     }
 
-    Counter<CandidatePhrase> externalFeatWtsNormalized = new ClassicCounter<>();
-    Counter<CandidatePhrase> domainNgramNormScores = new ClassicCounter<>();
-    Counter<CandidatePhrase> googleNgramNormScores = new ClassicCounter<>();
-    Counter<CandidatePhrase> editDistanceOtherBinaryScores = new ClassicCounter<>();
-    Counter<CandidatePhrase> editDistanceSameBinaryScores = new ClassicCounter<>();
+    Counter<CandidatePhrase> externalFeatWtsNormalized = new DefaultCounter<>();
+    Counter<CandidatePhrase> domainNgramNormScores = new DefaultCounter<>();
+    Counter<CandidatePhrase> googleNgramNormScores = new DefaultCounter<>();
+    Counter<CandidatePhrase> editDistanceOtherBinaryScores = new DefaultCounter<>();
+    Counter<CandidatePhrase> editDistanceSameBinaryScores = new DefaultCounter<>();
 
     for (CandidatePhrase gc : terms.firstKeySet()) {
       String g = gc.getPhrase();
@@ -106,7 +106,7 @@ public class ScorePhrasesAverageFeatures<E extends Pattern> extends PhraseScorer
     for (CandidatePhrase word : terms.firstKeySet()) {
       if (alreadyIdentifiedWords.contains(word))
         continue;
-      Counter<ScorePhraseMeasures> scoreslist = new ClassicCounter<>();
+      Counter<ScorePhraseMeasures> scoreslist = new DefaultCounter<>();
       assert normTFIDFScores.containsKey(word) : "NormTFIDF score does not contain" + word;
       double tfscore = normTFIDFScores.getCount(word);
       scoreslist.setCount(ScorePhraseMeasures.PATWTBYFREQ, tfscore);
@@ -164,7 +164,7 @@ public class ScorePhrasesAverageFeatures<E extends Pattern> extends PhraseScorer
       scores.put(word, scoreslist);
       phraseScoresNormalized.setCounter(word, scoreslist);
     }
-    Counter<CandidatePhrase> phraseScores = new ClassicCounter<>();
+    Counter<CandidatePhrase> phraseScores = new DefaultCounter<>();
     for (Entry<CandidatePhrase, Counter<ScorePhraseMeasures>> wEn : scores
         .entrySet()) {
       Double avgScore = Counters.mean(wEn.getValue());

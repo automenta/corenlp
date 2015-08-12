@@ -117,7 +117,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
    */
   public static <E> Distribution<E> getUniformDistribution(Collection<E> s) {
     Distribution<E> norm = new Distribution<>();
-    norm.counter = new ClassicCounter<>();
+    norm.counter = new DefaultCounter<>();
     norm.numberOfKeys = s.size();
     norm.reservedMass = 0;
     double total = s.size();
@@ -133,7 +133,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
    */
   public static <E> Distribution<E> getPerturbedUniformDistribution(Collection<E> s, Random r) {
     Distribution<E> norm = new Distribution<>();
-    norm.counter = new ClassicCounter<>();
+    norm.counter = new DefaultCounter<>();
     norm.numberOfKeys = s.size();
     norm.reservedMass = 0;
     double total = s.size();
@@ -147,7 +147,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
 
   public static <E> Distribution<E> getPerturbedDistribution(Counter<E> wordCounter, Random r) {
     Distribution<E> norm = new Distribution<>();
-    norm.counter = new ClassicCounter<>();
+    norm.counter = new DefaultCounter<>();
     norm.numberOfKeys = wordCounter.size();
     norm.reservedMass = 0;
     double totalCount = wordCounter.totalCount();
@@ -175,7 +175,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
 
   public static <E> Distribution<E> getDistributionWithReservedMass(Counter<E> counter, double reservedMass) {
     Distribution<E> norm = new Distribution<>();
-    norm.counter = new ClassicCounter<>();
+    norm.counter = new DefaultCounter<>();
     norm.numberOfKeys = counter.size();
     norm.reservedMass = reservedMass;
     double total = counter.totalCount() * (1 + reservedMass);
@@ -197,7 +197,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
    * @return a new Distribution
    */
   public static <E> Distribution<E> getDistributionFromLogValues(Counter<E> counter) {
-    Counter<E> c = new ClassicCounter<>();
+    Counter<E> c = new DefaultCounter<>();
     // go through once to get the max
     // shift all by max so as to minimize the possibility of underflow
     double max = Counters.max(counter); // Thang 17Feb12: max should operate on counter instead of c, fixed!
@@ -210,7 +210,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
 
   public static <E> Distribution<E> absolutelyDiscountedDistribution(Counter<E> counter, int numberOfKeys, double discount) {
     Distribution<E> norm = new Distribution<>();
-    norm.counter = new ClassicCounter<>();
+    norm.counter = new DefaultCounter<>();
     double total = counter.totalCount();
     double reservedMass = 0.0;
     for (E key : counter.keySet()) {
@@ -269,7 +269,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
    */
   public static <E> Distribution<E> laplaceSmoothedDistribution(Counter<E> counter, int numberOfKeys, double lambda) {
     Distribution<E> norm = new Distribution<>();
-    norm.counter = new ClassicCounter<>();
+    norm.counter = new DefaultCounter<>();
     double total = counter.totalCount();
     double newTotal = total + (lambda * numberOfKeys);
     double reservedMass = ((double) numberOfKeys - counter.size()) * lambda / newTotal;
@@ -307,7 +307,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
    */
   public static <E> Distribution<E> laplaceWithExplicitUnknown(Counter<E> counter, double lambda, E UNK) {
     Distribution<E> norm = new Distribution<>();
-    norm.counter = new ClassicCounter<>();
+    norm.counter = new DefaultCounter<>();
     double total = counter.totalCount() + (lambda * (counter.size() - 1));
     norm.numberOfKeys = counter.size();
     norm.reservedMass = 0.0;
@@ -352,7 +352,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
     double normFactor = (1.0 - reservedMass) / observedMass;
 
     Distribution<E> norm = new Distribution<>();
-    norm.counter = new ClassicCounter<>();
+    norm.counter = new DefaultCounter<>();
 
     // fill in the new Distribution, renormalizing as we go
     for (E key : counter.keySet()) {
@@ -402,7 +402,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
     }
 
     Distribution<E> norm = new Distribution<>();
-    norm.counter = new ClassicCounter<>();
+    norm.counter = new DefaultCounter<>();
 
     // fill in the new Distribution, renormalizing as we go
     for (E key : counter.keySet()) {
@@ -458,7 +458,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
     SimpleGoodTuring sgt = new SimpleGoodTuring(r, n);
 
     // collate results
-    Counter<Integer> probsByCount = new ClassicCounter<>();
+    Counter<Integer> probsByCount = new DefaultCounter<>();
     double[] probs = sgt.getProbabilities();
     for (int i = 0; i < probs.length; i++) {
       probsByCount.setCount(r[i], probs[i]);
@@ -466,7 +466,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
 
     // make smoothed distribution
     Distribution<E> dist = new Distribution<>();
-    dist.counter = new ClassicCounter<>();
+    dist.counter = new DefaultCounter<>();
     for (Map.Entry<E, Double> entry : counter.entrySet()) {
       E item = entry.getKey();
       Integer count = (int) Math.round(entry.getValue());
@@ -494,7 +494,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
 
   /* Helper to simpleGoodTuringSmoothedCounter() */
   private static <E> Counter<Integer> collectCountCounts(Counter<E> counts) {
-    Counter<Integer> cc = new ClassicCounter<>(); // counts of counts
+    Counter<Integer> cc = new DefaultCounter<>(); // counts of counts
     for (Map.Entry<E, Double> entry : counts.entrySet()) {
       //E item = entry.getKey();
       Integer count = (int) Math.round(entry.getValue());
@@ -564,7 +564,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
   public static <E> Distribution<E> dynamicCounterWithDirichletPrior(Counter<E> c, Distribution<E> prior, double weight) {
     double totalWeight = c.totalCount() + weight;
     Distribution<E> norm = new DynamicDistribution<>(prior, weight / totalWeight);
-    norm.counter = new ClassicCounter<>();
+    norm.counter = new DefaultCounter<>();
     // this might be done more efficiently with entrySet but there isn't a way to get
     // the entrySet from a Counter now.  In most cases c will be small(-ish) anyway
     for (E key : c.keySet()) {
@@ -646,7 +646,7 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
       numKeys++;
     }
     Distribution<E> probs = new Distribution<>();
-    probs.counter = new ClassicCounter<>();
+    probs.counter = new DefaultCounter<>();
     probs.reservedMass = 0.0;
     probs.numberOfKeys = numKeys;
     for (E key : cntr.keySet()) {
@@ -781,14 +781,14 @@ public class Distribution<E> implements Sampler<E>, ProbabilityDistribution<E> {
    * For internal testing purposes only.
    */
   public static void main(String[] args) {
-    Counter<String> c2 = new ClassicCounter<>();
+    Counter<String> c2 = new DefaultCounter<>();
     c2.incrementCount("p", 13);
     c2.setCount("q", 12);
     c2.setCount("w", 5);
     c2.incrementCount("x", 7.5);
     // System.out.println(getDistribution(c2).getCount("w") + " should be 0.13333");
 
-    ClassicCounter<String> c = new ClassicCounter<>();
+    DefaultCounter<String> c = new DefaultCounter<>();
 
     final double p = 1000;
 

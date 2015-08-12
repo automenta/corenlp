@@ -11,7 +11,7 @@ import junit.framework.TestCase;
 
 import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.io.RuntimeIOException;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.StringUtils;
 
@@ -87,9 +87,9 @@ public class DcorefBenchmarkSlowITest extends TestCase {
           Pattern.compile("Final conll score .* = ((?:\\d|\\.)+).*");
 
   public void testDcoref() throws Exception {
-    Counter<String> lowResults = new ClassicCounter<String>();
-    Counter<String> highResults = new ClassicCounter<String>();
-    Counter<String> expectedResults = new ClassicCounter<String>();
+    Counter<String> lowResults = new DefaultCounter<String>();
+    Counter<String> highResults = new DefaultCounter<String>();
+    Counter<String> expectedResults = new DefaultCounter<String>();
 
     lowResults.setCount(MENTION_TP, 12400);
     expectedResults.setCount(MENTION_TP, 12405);
@@ -134,7 +134,7 @@ public class DcorefBenchmarkSlowITest extends TestCase {
     expectedResults.setCount(CONLL_SCORE, 59.65);
     highResults.setCount(CONLL_SCORE, 59.7);
 
-    Counter<String> results = new ClassicCounter<String>();
+    Counter<String> results = new DefaultCounter<String>();
     BufferedReader r = new BufferedReader(new StringReader(runCorefTest(true)));
     for (String line; (line = r.readLine()) != null; ) {
       Matcher m1 = MENTION_PATTERN.matcher(line);

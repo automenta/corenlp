@@ -7,7 +7,7 @@ import java.util.StringTokenizer;
 import java.io.File;
 
 import edu.stanford.nlp.ling.RVFDatum;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.objectbank.ObjectBank;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.HashIndex;
@@ -43,7 +43,7 @@ public class NominalDataReader {
   }
 
   static RVFDatum<String, Integer> readDatum(String[] values, int classColumn, Set<Integer> skip, Map<Integer, Index<String>> indices) {
-    ClassicCounter<Integer> c = new ClassicCounter<>();
+    DefaultCounter<Integer> c = new DefaultCounter<>();
     RVFDatum<String, Integer> d = new RVFDatum<>(c);
     int attrNo = 0;
     for (int index = 0; index < values.length; index++) {

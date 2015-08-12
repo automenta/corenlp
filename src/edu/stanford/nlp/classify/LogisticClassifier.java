@@ -37,7 +37,7 @@ import edu.stanford.nlp.optimization.DiffFunction;
 import edu.stanford.nlp.optimization.Minimizer;
 import edu.stanford.nlp.optimization.QNMinimizer;
 import edu.stanford.nlp.stats.Counter;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.objectbank.ObjectBank;
 import edu.stanford.nlp.util.ErasureUtils;
 import edu.stanford.nlp.util.Index;
@@ -95,7 +95,7 @@ public class LogisticClassifier<L, F> implements Classifier<L, F>, RVFClassifier
   }
 
   public Counter<F> weightsAsCounter() {
-    Counter<F> c = new ClassicCounter<>();
+    Counter<F> c = new DefaultCounter<>();
     for (F f : featureIndex) {
       double w =  weights[featureIndex.indexOf(f)];
       if (w != 0.0) {
@@ -205,7 +205,7 @@ public class LogisticClassifier<L, F> implements Classifier<L, F>, RVFClassifier
    * nmramesh@cs.stanford.edu
    */
   public Counter<F> justificationOf(Counter<F> features){
-    Counter<F> fWts = new ClassicCounter<>();
+    Counter<F> fWts = new DefaultCounter<>();
     for (F feature : features.keySet()) {
       int f = featureIndex.indexOf(feature);
       if (f >= 0) {
@@ -218,7 +218,7 @@ public class LogisticClassifier<L, F> implements Classifier<L, F>, RVFClassifier
    * returns the weights assigned by the classifier to each feature
    */
   public Counter<F> justificationOf(Collection<F> features){
-    Counter<F> fWts = new ClassicCounter<>();
+    Counter<F> fWts = new DefaultCounter<>();
     for (F feature : features) {
       int f = featureIndex.indexOf(feature);
       if (f >= 0) {
@@ -236,7 +236,7 @@ public class LogisticClassifier<L, F> implements Classifier<L, F>, RVFClassifier
     if(datum instanceof RVFDatum<?,?>)return scoresOfRVFDatum((RVFDatum<L,F>)datum);
     Collection<F> features = datum.asFeatures();
     double sum = scoreOf(features);
-    Counter<L> c = new ClassicCounter<>();
+    Counter<L> c = new DefaultCounter<>();
     c.setCount(classes[0], -sum);
     c.setCount(classes[1], sum);
     return c;
@@ -253,7 +253,7 @@ public class LogisticClassifier<L, F> implements Classifier<L, F>, RVFClassifier
   private Counter<L> scoresOfRVFDatum(RVFDatum<L, F> example) {
     Counter<F> features = example.asFeaturesCounter();
     double sum = scoreOf(features);
-    Counter<L> c = new ClassicCounter<>();
+    Counter<L> c = new DefaultCounter<>();
     c.setCount(classes[0], -sum);
     c.setCount(classes[1], sum);
     return c;

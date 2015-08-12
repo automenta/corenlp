@@ -1,7 +1,7 @@
 package edu.stanford.nlp.classify;
 
 import edu.stanford.nlp.ling.RVFDatum;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import junit.framework.Assert;
 import junit.framework.TestCase;
 
@@ -16,7 +16,7 @@ public class LinearClassifierITest extends TestCase {
   private static <L, F> RVFDatum<L, F> newDatum(L label,
                                                 F[] features,
                                                 Double[] counts) {
-    ClassicCounter<F> counter = new ClassicCounter<F>();
+    DefaultCounter<F> counter = new DefaultCounter<F>();
     for (int i = 0; i < features.length; i++) {
       counter.setCount(features[i], counts[i]);
     }

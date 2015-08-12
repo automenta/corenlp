@@ -1,9 +1,8 @@
 package edu.stanford.nlp.patterns;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
-import edu.stanford.nlp.util.logging.Redwood;
 
 import java.io.Serializable;
 import java.util.*;
@@ -62,7 +61,7 @@ public class CandidatePhrase implements Serializable, Comparable  {
       //If features are non-empty, add to the current set
       if(features != null && features.size() > 0){
       if(p.features == null)
-        p.features = new ClassicCounter<>();
+        p.features = new DefaultCounter<>();
         p.features.addAll(features);
       }
 
@@ -157,14 +156,14 @@ public class CandidatePhrase implements Serializable, Comparable  {
 
   public void addFeature(String s, double v) {
     if(features == null){
-      features = new ClassicCounter<>();
+      features = new DefaultCounter<>();
     }
     features.setCount(s, v);
   }
 
   public void addFeatures(Collection<String> feat) {
     if(features == null){
-      features = new ClassicCounter<>();
+      features = new DefaultCounter<>();
     }
     Counters.addInPlace(features, feat);
   }

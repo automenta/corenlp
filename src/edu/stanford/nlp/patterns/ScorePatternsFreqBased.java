@@ -5,7 +5,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 import edu.stanford.nlp.patterns.GetPatternsFromDataMultiClass.PatternScoring;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
@@ -31,23 +31,23 @@ public class ScorePatternsFreqBased<E> extends ScorePatterns<E> {
   @Override
   public Counter<E> score() {
 
-    Counter<E> currentPatternWeights4Label = new ClassicCounter<>();
+    Counter<E> currentPatternWeights4Label = new DefaultCounter<>();
 
-    Counter<E> pos_i = new ClassicCounter<>();
-    Counter<E> neg_i = new ClassicCounter<>();
-    Counter<E> unlab_i = new ClassicCounter<>();
+    Counter<E> pos_i = new DefaultCounter<>();
+    Counter<E> neg_i = new DefaultCounter<>();
+    Counter<E> unlab_i = new DefaultCounter<>();
 
-    for (Entry<E, ClassicCounter<CandidatePhrase>> en : negPatternsandWords4Label
+    for (Entry<E, DefaultCounter<CandidatePhrase>> en : negPatternsandWords4Label
         .entrySet()) {
       neg_i.setCount(en.getKey(), en.getValue().size());
     }
 
-    for (Entry<E, ClassicCounter<CandidatePhrase>> en : unLabeledPatternsandWords4Label
+    for (Entry<E, DefaultCounter<CandidatePhrase>> en : unLabeledPatternsandWords4Label
         .entrySet()) {
       unlab_i.setCount(en.getKey(), en.getValue().size());
     }
 
-    for (Entry<E, ClassicCounter<CandidatePhrase>> en : patternsandWords4Label
+    for (Entry<E, DefaultCounter<CandidatePhrase>> en : patternsandWords4Label
         .entrySet()) {
       pos_i.setCount(en.getKey(), en.getValue().size());
     }
@@ -60,7 +60,7 @@ public class ScorePatternsFreqBased<E> extends ScorePatterns<E> {
 //    }
 
     Counter<E> posneg_i = Counters.add(pos_i, neg_i);
-    Counter<E> logFi = new ClassicCounter<>(pos_i);
+    Counter<E> logFi = new DefaultCounter<>(pos_i);
     Counters.logInPlace(logFi);
 
     if (patternScoring.equals(PatternScoring.RlogF)) {

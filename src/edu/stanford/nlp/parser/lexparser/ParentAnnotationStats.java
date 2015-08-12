@@ -3,11 +3,11 @@ package edu.stanford.nlp.parser.lexparser;
 import edu.stanford.nlp.io.NumberRangeFileFilter;
 import edu.stanford.nlp.ling.StringLabelFactory;
 import edu.stanford.nlp.trees.*;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Pair;
-import java.io.Reader;
+
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -29,14 +29,14 @@ public class ParentAnnotationStats implements TreeVisitor {
 
   private final boolean doTags;
 
-  private Map<String,ClassicCounter<List<String>>> nodeRules = Generics.newHashMap();
-  private Map<List<String>,ClassicCounter<List<String>>> pRules = Generics.newHashMap();
-  private Map<List<String>,ClassicCounter<List<String>>> gPRules = Generics.newHashMap();
+  private Map<String,DefaultCounter<List<String>>> nodeRules = Generics.newHashMap();
+  private Map<List<String>,DefaultCounter<List<String>>> pRules = Generics.newHashMap();
+  private Map<List<String>,DefaultCounter<List<String>>> gPRules = Generics.newHashMap();
 
   // corresponding ones for tags
-  private Map<String,ClassicCounter<List<String>>> tagNodeRules = Generics.newHashMap();
-  private Map<List<String>,ClassicCounter<List<String>>> tagPRules = Generics.newHashMap();
-  private Map<List<String>,ClassicCounter<List<String>>> tagGPRules = Generics.newHashMap();
+  private Map<String,DefaultCounter<List<String>>> tagNodeRules = Generics.newHashMap();
+  private Map<List<String>,DefaultCounter<List<String>>> tagPRules = Generics.newHashMap();
+  private Map<List<String>,DefaultCounter<List<String>>> tagGPRules = Generics.newHashMap();
 
   /**
    * Minimum support * KL to be included in output and as feature
@@ -67,9 +67,9 @@ public class ParentAnnotationStats implements TreeVisitor {
 
   public void processTreeHelper(String gP, String p, Tree t) {
     if (!t.isLeaf() && (doTags || !t.isPreTerminal())) { // stop at words/tags
-      Map<String,ClassicCounter<List<String>>> nr;
-      Map<List<String>,ClassicCounter<List<String>>> pr;
-      Map<List<String>,ClassicCounter<List<String>>> gpr;
+      Map<String,DefaultCounter<List<String>>> nr;
+      Map<List<String>,DefaultCounter<List<String>>> pr;
+      Map<List<String>,DefaultCounter<List<String>>> gpr;
       if (t.isPreTerminal()) {
         nr = tagNodeRules;
         pr = tagPRules;
@@ -85,9 +85,9 @@ public class ParentAnnotationStats implements TreeVisitor {
         gP = tlp.basicCategory(gP);
       }
       List<String> kidn = kidLabels(t);
-      ClassicCounter<List<String>> cntr = nr.get(n);
+      DefaultCounter<List<String>> cntr = nr.get(n);
       if (cntr == null) {
-        cntr = new ClassicCounter<>();
+        cntr = new DefaultCounter<>();
         nr.put(n, cntr);
       }
       cntr.incrementCount(kidn);
@@ -96,7 +96,7 @@ public class ParentAnnotationStats implements TreeVisitor {
       pairStr.add(p);
       cntr = pr.get(pairStr);
       if (cntr == null) {
-        cntr = new ClassicCounter<>();
+        cntr = new DefaultCounter<>();
         pr.put(pairStr, cntr);
       }
       cntr.incrementCount(kidn);
@@ -106,7 +106,7 @@ public class ParentAnnotationStats implements TreeVisitor {
       tripleStr.add(gP);
       cntr = gpr.get(tripleStr);
       if (cntr == null) {
-        cntr = new ClassicCounter<>();
+        cntr = new DefaultCounter<>();
         gpr.put(tripleStr, cntr);
       }
       cntr.incrementCount(kidn);
@@ -134,17 +134,17 @@ public class ParentAnnotationStats implements TreeVisitor {
       javaSB[i] = new StringBuffer("  private static String[] splitters" + (i + 1) + " = new String[] {");
     }
 
-    ClassicCounter<List<String>> allScores = new ClassicCounter<>();
+    DefaultCounter<List<String>> allScores = new DefaultCounter<>();
     // do value of parent
-    for (Map.Entry<String, ClassicCounter<List<String>>> stringClassicCounterEntry : nodeRules.entrySet()) {
+    for (Map.Entry<String, DefaultCounter<List<String>>> stringClassicCounterEntry : nodeRules.entrySet()) {
       ArrayList<Pair<List<String>,Double>> answers = Generics.newArrayList();
-      ClassicCounter<List<String>> cntr = stringClassicCounterEntry.getValue();
+      DefaultCounter<List<String>> cntr = stringClassicCounterEntry.getValue();
       double support = (cntr.totalCount());
       System.out.println("Node " + stringClassicCounterEntry.getKey() + " support is " + support);
       for (Iterator<List<String>> it2 = pRules.keySet().iterator(); it2.hasNext();) {
         List<String> key = it2.next();
         if (key.get(0).equals(stringClassicCounterEntry.getKey())) {   // only do it if they match
-          ClassicCounter<List<String>> cntr2 = pRules.get(key);
+          DefaultCounter<List<String>> cntr2 = pRules.get(key);
           double support2 = (cntr2.totalCount());
           double kl = Counters.klDivergence(cntr2, cntr);
           System.out.println("KL(" + key + "||" + stringClassicCounterEntry.getKey() + ") = " + nf.format(kl) + '\t' + "support(" + key + ") = " + support2);
@@ -230,17 +230,17 @@ public class ParentAnnotationStats implements TreeVisitor {
     */
 
     // do value of grandparent
-    for (Map.Entry<List<String>, ClassicCounter<List<String>>> listClassicCounterEntry : pRules.entrySet()) {
+    for (Map.Entry<List<String>, DefaultCounter<List<String>>> listClassicCounterEntry : pRules.entrySet()) {
       ArrayList<Pair<List<String>, Double>> answers = Generics.newArrayList();
-      ClassicCounter<List<String>> cntr = listClassicCounterEntry.getValue();
+      DefaultCounter<List<String>> cntr = listClassicCounterEntry.getValue();
       double support = (cntr.totalCount());
       if (support < SUPPCUTOFF) {
         continue;
       }
       System.out.println("Node " + listClassicCounterEntry.getKey() + " support is " + support);
-      for (Map.Entry<List<String>, ClassicCounter<List<String>>> listClassicCounterEntry1 : gPRules.entrySet()) {
+      for (Map.Entry<List<String>, DefaultCounter<List<String>>> listClassicCounterEntry1 : gPRules.entrySet()) {
         if (listClassicCounterEntry1.getKey().get(0).equals(listClassicCounterEntry.getKey().get(0)) && listClassicCounterEntry1.getKey().get(1).equals(listClassicCounterEntry.getKey().get(1))) {  // only do it if they match
-          ClassicCounter<List<String>> cntr2 = listClassicCounterEntry1.getValue();
+          DefaultCounter<List<String>> cntr2 = listClassicCounterEntry1.getValue();
           double support2 = (cntr2.totalCount());
           double kl = Counters.klDivergence(cntr2, cntr);
           System.out.println("KL(" + listClassicCounterEntry1.getKey() + "||" + listClassicCounterEntry.getKey() + ") = " + nf.format(kl) + '\t' + "support(" + listClassicCounterEntry1.getKey() + ") = " + support2);
@@ -305,19 +305,19 @@ public class ParentAnnotationStats implements TreeVisitor {
   }
 
 
-  private static void getSplitters(double cutOff, Map<String,ClassicCounter<List<String>>> nr,
-                                   Map<List<String>,ClassicCounter<List<String>>> pr,
-                                   Map<List<String>,ClassicCounter<List<String>>> gpr,
+  private static void getSplitters(double cutOff, Map<String,DefaultCounter<List<String>>> nr,
+                                   Map<List<String>,DefaultCounter<List<String>>> pr,
+                                   Map<List<String>,DefaultCounter<List<String>>> gpr,
                                    Set<String> splitters) {
 
     // do value of parent
-    for (Map.Entry<String, ClassicCounter<List<String>>> stringClassicCounterEntry : nr.entrySet()) {
+    for (Map.Entry<String, DefaultCounter<List<String>>> stringClassicCounterEntry : nr.entrySet()) {
       List<Pair<List<String>,Double>> answers = new ArrayList<>();
-      ClassicCounter<List<String>> cntr = stringClassicCounterEntry.getValue();
+      DefaultCounter<List<String>> cntr = stringClassicCounterEntry.getValue();
       double support = (cntr.totalCount());
-      for (Map.Entry<List<String>, ClassicCounter<List<String>>> listClassicCounterEntry : pr.entrySet()) {
+      for (Map.Entry<List<String>, DefaultCounter<List<String>>> listClassicCounterEntry : pr.entrySet()) {
         if (listClassicCounterEntry.getKey().get(0).equals(stringClassicCounterEntry.getKey())) {   // only do it if they match
-          ClassicCounter<List<String>> cntr2 = listClassicCounterEntry.getValue();
+          DefaultCounter<List<String>> cntr2 = listClassicCounterEntry.getValue();
           double support2 = cntr2.totalCount();
           double kl = Counters.klDivergence(cntr2, cntr);
           answers.add(new Pair<>(listClassicCounterEntry.getKey(), new Double(kl * support2)));
@@ -383,17 +383,17 @@ public class ParentAnnotationStats implements TreeVisitor {
     */
 
     // do value of grandparent
-    for (Map.Entry<List<String>, ClassicCounter<List<String>>> listClassicCounterEntry : pr.entrySet()) {
+    for (Map.Entry<List<String>, DefaultCounter<List<String>>> listClassicCounterEntry : pr.entrySet()) {
       ArrayList<Pair<List<String>,Double>> answers = Generics.newArrayList();
-      ClassicCounter<List<String>> cntr = listClassicCounterEntry.getValue();
+      DefaultCounter<List<String>> cntr = listClassicCounterEntry.getValue();
       double support = (cntr.totalCount());
       if (support < SUPPCUTOFF) {
         continue;
       }
-      for (Map.Entry<List<String>, ClassicCounter<List<String>>> listClassicCounterEntry1 : gpr.entrySet()) {
+      for (Map.Entry<List<String>, DefaultCounter<List<String>>> listClassicCounterEntry1 : gpr.entrySet()) {
         if (listClassicCounterEntry1.getKey().get(0).equals(listClassicCounterEntry.getKey().get(0)) && listClassicCounterEntry1.getKey().get(1).equals(listClassicCounterEntry.getKey().get(1))) {
           // only do it if they match
-          ClassicCounter<List<String>> cntr2 = listClassicCounterEntry1.getValue();
+          DefaultCounter<List<String>> cntr2 = listClassicCounterEntry1.getValue();
           double support2 = (cntr2.totalCount());
           double kl = Counters.klDivergence(cntr2, cntr);
           answers.add(new Pair<>(listClassicCounterEntry1.getKey(), new Double(kl * support2)));

@@ -32,7 +32,7 @@ import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.optimization.DiffFunction;
 import edu.stanford.nlp.optimization.Minimizer;
 import edu.stanford.nlp.optimization.QNMinimizer;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Index;
@@ -75,13 +75,13 @@ public class NaiveBayesClassifierFactory<L, F> implements ClassifierFactory<L, F
       int numClasses, Index<L> labelIndex, Index<F> featureIndex) {
     Set<L> labelSet = Generics.newHashSet();
     NBWeights nbWeights = trainWeights(data, labels, numFeatures, numClasses);
-    Counter<L> priors = new ClassicCounter<>();
+    Counter<L> priors = new DefaultCounter<>();
     double[] pr = nbWeights.priors;
     for (int i = 0; i < pr.length; i++) {
       priors.incrementCount(labelIndex.get(i), pr[i]);
       labelSet.add(labelIndex.get(i));
     }
-    Counter<Pair<Pair<L, F>, Number>> weightsCounter = new ClassicCounter<>();
+    Counter<Pair<Pair<L, F>, Number>> weightsCounter = new DefaultCounter<>();
     double[][][] wts = nbWeights.weights;
     for (int c = 0; c < numClasses; c++) {
       L label = labelIndex.get(c);

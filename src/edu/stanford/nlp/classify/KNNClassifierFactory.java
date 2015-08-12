@@ -50,7 +50,7 @@ public class KNNClassifierFactory<K, V> {
       K label = labelMap.get(vector);
       RVFDatum<K, V> datum;
       if (l2NormalizeVectors) { 
-        datum = new RVFDatum<>(Counters.L2Normalize(new ClassicCounter<>(vector)), label);
+        datum = new RVFDatum<>(Counters.L2Normalize(new DefaultCounter<>(vector)), label);
       } else {
         datum = new RVFDatum<>(vector, label);
       }
@@ -74,7 +74,7 @@ public class KNNClassifierFactory<K, V> {
       RVFDatum<K, V> datum;
       for (Counter<V> vector : kCollectionEntry.getValue()) {
         if (l2NormalizeVectors) {
-          datum = new RVFDatum<>(Counters.L2Normalize(new ClassicCounter<>(vector)), kCollectionEntry.getKey());
+          datum = new RVFDatum<>(Counters.L2Normalize(new DefaultCounter<>(vector)), kCollectionEntry.getKey());
         }  else {
          datum = new RVFDatum<>(vector, kCollectionEntry.getKey());
         }

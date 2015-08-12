@@ -6,7 +6,7 @@ import java.util.regex.Pattern;
 import java.io.*;
 
 import edu.stanford.nlp.io.EncodingPrintWriter;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.trees.international.arabic.ATBTreeUtils;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.StringUtils;
@@ -113,7 +113,7 @@ public class Buckwalter implements SerializableFunction<String,String> {
   private boolean unicode2Buckwalter = false;
   private final Map<Character,Character> u2bMap;
   private final Map<Character,Character> b2uMap;
-  private ClassicCounter<String> unmappable;
+  private DefaultCounter<String> unmappable;
 
   private static boolean DEBUG = false;
   private static final boolean PASS_ASCII_IN_UNICODE = true;
@@ -139,7 +139,7 @@ public class Buckwalter implements SerializableFunction<String,String> {
       b2uMap.put(charB, charU);
     }
 
-    if (DEBUG) unmappable = new ClassicCounter<>();
+    if (DEBUG) unmappable = new DefaultCounter<>();
   }
 
   public Buckwalter(boolean unicodeToBuckwalter) {

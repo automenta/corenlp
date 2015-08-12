@@ -4,12 +4,11 @@ import edu.stanford.nlp.classify.Dataset;
 import edu.stanford.nlp.classify.LinearClassifierFactory;
 import edu.stanford.nlp.classify.RVFDataset;
 import edu.stanford.nlp.ie.crf.CRFClassifier;
-import edu.stanford.nlp.ie.machinereading.structure.AnnotationUtils;
 import edu.stanford.nlp.ling.*;
 import edu.stanford.nlp.optimization.DiffFunction;
 import edu.stanford.nlp.optimization.Minimizer;
 import edu.stanford.nlp.optimization.SGDMinimizer;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.Factory;
 
@@ -38,7 +37,7 @@ public class Benchmarks {
         RVFDataset<String, String> data = new RVFDataset<>();
         for (int i = 0; i < 10000; i++) {
             Random r = new Random(42);
-            Counter<String> features = new ClassicCounter<>();
+            Counter<String> features = new DefaultCounter<>();
 
             boolean cl = r.nextBoolean();
 

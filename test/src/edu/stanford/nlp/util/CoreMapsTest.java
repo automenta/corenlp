@@ -1,12 +1,12 @@
 package edu.stanford.nlp.util;
 
+import edu.stanford.nlp.util.CoreMapTest.IntegerA;
+import junit.framework.TestCase;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
-
-import junit.framework.TestCase;
-import edu.stanford.nlp.util.CoreMapTest.IntegerA;
 
 /**
  * Tests for the CoreMaps utilities class.
@@ -22,7 +22,7 @@ public class CoreMapsTest extends TestCase {
     List<CoreMap> maps = new LinkedList<CoreMap>();
     for (int i = 0; i < 25; i++) {
       ArrayCoreMap m = new ArrayCoreMap();
-      m.set(CoreMapTest.IntegerA.class, random.nextInt());
+      m.set(edu.stanford.nlp.util.CoreMapTest.IntegerA.class, random.nextInt());
       maps.add(m);
     }
 

@@ -1,7 +1,7 @@
 package edu.stanford.nlp.optimization;
 
 import edu.stanford.nlp.stats.Counter;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.util.Timing;
 
 import java.text.DecimalFormat;
@@ -49,7 +49,7 @@ public class SparseAdaGradMinimizer<K, F extends SparseOnlineFunction<K>> implem
 	this.lambdaL1 = lambdaL1;
 	this.lambdaL2 = lambdaL2;
 	// can use another counter to make this thread-safe
-	this.sumGradSquare = new ClassicCounter<>();
+	this.sumGradSquare = new DefaultCounter<>();
   }
 
   @Override
@@ -73,7 +73,7 @@ public class SparseAdaGradMinimizer<K, F extends SparseOnlineFunction<K>> implem
 	sayln("       Number of passes is = " + numPasses);
 	sayln("       Max iterations is = " + maxIterations);
 
-	Counter<K> lastUpdated = new ClassicCounter<>();
+	Counter<K> lastUpdated = new DefaultCounter<>();
 	int timeStep = 0;
 
 	Timing total = new Timing();

@@ -1,11 +1,10 @@
 package edu.stanford.nlp.ling.tokensregex.matcher;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.CollectionFactory;
 import edu.stanford.nlp.util.CollectionValuedMap;
 import edu.stanford.nlp.util.MapFactory;
-import edu.stanford.nlp.util.MutableDouble;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -19,7 +18,7 @@ import java.util.Set;
  */
 public class TrieMapUtils {
   public static <K> Counter<Iterable<K>> trieMapCounter() {
-    return new ClassicCounter<>(TrieMapUtils.<K, MutableDouble>trieMapFactory());
+    return new DefaultCounter(); //TrieMapUtils.<K, MutableDouble>trieMapFactory());
   }
 
   public static <K,V> CollectionValuedMap<Iterable<K>, V> collectionValuedTrieMap() {

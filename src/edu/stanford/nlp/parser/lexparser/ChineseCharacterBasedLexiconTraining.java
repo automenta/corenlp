@@ -53,9 +53,9 @@ public class ChineseCharacterBasedLexiconTraining {
   protected static final NumberFormat formatter = new DecimalFormat("0.000");
 
   public static void printStats(Collection<Tree> trees, PrintWriter pw) {
-    ClassicCounter<Integer> wordLengthCounter = new ClassicCounter<>();
-    ClassicCounter<TaggedWord> wordCounter = new ClassicCounter<>();
-    ClassicCounter<Symbol> charCounter = new ClassicCounter<>();
+    DefaultCounter<Integer> wordLengthCounter = new DefaultCounter<>();
+    DefaultCounter<TaggedWord> wordCounter = new DefaultCounter<>();
+    DefaultCounter<Symbol> charCounter = new DefaultCounter<>();
     int counter = 0;
     for (Tree tree : trees) {
       counter++;
@@ -79,13 +79,13 @@ public class ChineseCharacterBasedLexiconTraining {
     Set<Symbol> singletonChars = Counters.keysBelow(charCounter, 1.5);
     Set<TaggedWord> singletonWords = Counters.keysBelow(wordCounter, 1.5);
 
-    ClassicCounter<String> singletonWordPOSes = new ClassicCounter<>();
+    DefaultCounter<String> singletonWordPOSes = new DefaultCounter<>();
     for (TaggedWord taggedWord : singletonWords) {
       singletonWordPOSes.incrementCount(taggedWord.tag());
     }
     Distribution<String> singletonWordPOSDist = Distribution.getDistribution(singletonWordPOSes);
 
-    ClassicCounter<Character> singletonCharRads = new ClassicCounter<>();
+    DefaultCounter<Character> singletonCharRads = new DefaultCounter<>();
     for (Symbol s : singletonChars) {
       singletonCharRads.incrementCount(Character.valueOf(RadicalMap.getRadical(s.getCh())));
     }

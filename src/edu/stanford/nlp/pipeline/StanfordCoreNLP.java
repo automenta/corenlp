@@ -80,6 +80,7 @@ import static edu.stanford.nlp.util.logging.Redwood.Util.*;
 
 public class StanfordCoreNLP extends AnnotationPipeline {
 
+
   enum OutputFormat { TEXT, XML, JSON, CONLL, SERIALIZED }
 
   // other constants

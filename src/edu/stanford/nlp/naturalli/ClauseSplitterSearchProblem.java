@@ -5,7 +5,7 @@ import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.ling.*;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphEdge;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.trees.GrammaticalRelation;
@@ -502,7 +502,7 @@ public class ClauseSplitterSearchProblem {
   public void search(final Predicate<Triple<Double, List<Counter<String>>, Supplier<SentenceFragment>>> candidateFragments) {
     if (!isClauseClassifier.isPresent()) {
       search(candidateFragments,
-          new LinearClassifier<>(new ClassicCounter<>()),
+          new LinearClassifier<>(new DefaultCounter<>()),
           HARD_SPLITS,
           this.featurizer.isPresent() ? this.featurizer.get() : DEFAULT_FEATURIZER,
           1000);
@@ -905,7 +905,7 @@ public class ClauseSplitterSearchProblem {
     boolean parentHasObj = false;
     boolean childHasSubj = false;
     boolean childHasObj = false;
-    Counter<String> feats = new ClassicCounter<>();
+    Counter<String> feats = new DefaultCounter<>();
 
     // 1. edge taken
     feats.incrementCount(signature + "&edge:" + edgeRelTaken);

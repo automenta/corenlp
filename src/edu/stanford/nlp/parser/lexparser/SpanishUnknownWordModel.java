@@ -1,7 +1,7 @@
 package edu.stanford.nlp.parser.lexparser;
 
 import edu.stanford.nlp.international.spanish.SpanishUnknownWordSignatures;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.util.Index;
 import edu.stanford.nlp.util.StringUtils;
 
@@ -16,7 +16,7 @@ public class SpanishUnknownWordModel extends BaseUnknownWordModel {
   public SpanishUnknownWordModel(Options op, Lexicon lex,
                                  Index<String> wordIndex,
                                  Index<String> tagIndex,
-                                 ClassicCounter<IntTaggedWord> unSeenCounter) {
+                                 DefaultCounter<IntTaggedWord> unSeenCounter) {
     super(op, lex, wordIndex, tagIndex, unSeenCounter, null, null, null);
     this.smartMutation = op.lexOptions.smartMutation;
     this.unknownSuffixSize = op.lexOptions.unknownSuffixSize;
@@ -31,7 +31,7 @@ public class SpanishUnknownWordModel extends BaseUnknownWordModel {
   public SpanishUnknownWordModel(Options op, Lexicon lex,
                                  Index<String> wordIndex,
                                  Index<String> tagIndex) {
-    this(op, lex, wordIndex, tagIndex, new ClassicCounter<>());
+    this(op, lex, wordIndex, tagIndex, new DefaultCounter<>());
   }
 
   @Override

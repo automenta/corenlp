@@ -2,10 +2,9 @@ package edu.stanford.nlp.parser.lexparser;
 
 import edu.stanford.nlp.ling.*;
 import edu.stanford.nlp.trees.*;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 
 import java.util.*;
-import java.io.Reader;
 
 /**
  * Binarizes trees in such a way that head-argument structure is respected.
@@ -34,7 +33,7 @@ public class TreeBinarizer implements TreeTransformer {
   private boolean markFinalStates;
   private boolean unaryAtTop;
   private boolean doSelectiveSplit = false;
-  private ClassicCounter<String> stateCounter = new ClassicCounter<>();
+  private DefaultCounter<String> stateCounter = new DefaultCounter<>();
   private final boolean simpleLabels;
   private final boolean noRebinarization;
 
@@ -49,7 +48,7 @@ public class TreeBinarizer implements TreeTransformer {
   public void setDoSelectiveSplit(boolean doSelectiveSplit) {
     this.doSelectiveSplit = doSelectiveSplit;
     if (!doSelectiveSplit) {
-      stateCounter = new ClassicCounter<>();
+      stateCounter = new DefaultCounter<>();
     }
   }
 

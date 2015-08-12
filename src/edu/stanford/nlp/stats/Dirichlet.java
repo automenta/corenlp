@@ -16,7 +16,7 @@ public class Dirichlet<E> implements ConjugatePrior<Multinomial<E>, E> {
 
   public Dirichlet(Counter<E> parameters) {
     checkParameters(parameters);
-    this.parameters = new ClassicCounter<>(parameters);
+    this.parameters = new DefaultCounter<>(parameters);
   }
 
   private void checkParameters(Counter<E> parameters) {
@@ -35,7 +35,7 @@ public class Dirichlet<E> implements ConjugatePrior<Multinomial<E>, E> {
   }
   
   public static <F> Multinomial<F> drawSample(Random random, Counter<F> parameters) {
-    Counter<F> multParameters = new ClassicCounter<>();
+    Counter<F> multParameters = new DefaultCounter<>();
     double sum = 0.0;
     for (F o : parameters.keySet()) {
       double parameter = Gamma.drawSample(random, parameters.getCount(o));
@@ -66,7 +66,7 @@ public class Dirichlet<E> implements ConjugatePrior<Multinomial<E>, E> {
 
 
   public static double sampleBeta(double a, double b, Random random) {
-    Counter<Boolean> c = new ClassicCounter<>();
+    Counter<Boolean> c = new DefaultCounter<>();
     c.setCount(true, a);
     c.setCount(false, b);
     Multinomial<Boolean> beta = (new Dirichlet<>(c)).drawSample(random);
@@ -82,7 +82,7 @@ public class Dirichlet<E> implements ConjugatePrior<Multinomial<E>, E> {
   }
   
   public Dirichlet<E> getPosteriorDistribution(Counter<E> counts) {
-    Counter<E> newParameters = new ClassicCounter<>(parameters);
+    Counter<E> newParameters = new DefaultCounter<>(parameters);
     Counters.addInPlace(newParameters, counts);
     return new Dirichlet<>(newParameters);
   }

@@ -16,7 +16,7 @@ import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.StringUtils;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counters;
 
 /**
@@ -254,8 +254,8 @@ public class DependencyScoring {
     int labelCnt = 0;
     int labelCorrect = 0;
 
-    ClassicCounter<String> unlabeledErrorCounts = new ClassicCounter<>();
-    ClassicCounter<String> labeledErrorCounts = new ClassicCounter<>();
+    DefaultCounter<String> unlabeledErrorCounts = new DefaultCounter<>();
+    DefaultCounter<String> labeledErrorCounts = new DefaultCounter<>();
     //System.out.println("Gold size: "+ goldDeps.size() + " System size: "+system.size());
     for (int i = 0; i < system.size(); i++) {
       List<Set<TypedDependency>> l = toSets(system.get(i));
@@ -322,10 +322,10 @@ public class DependencyScoring {
     final int correctUnlabeledAttachment;
     final int labelCnt;
     final int labelCorrect;
-    final ClassicCounter<String> unlabeledErrorCounts;
-    final ClassicCounter<String> labeledErrorCounts;
+    final DefaultCounter<String> unlabeledErrorCounts;
+    final DefaultCounter<String> labeledErrorCounts;
 
-    public Score(int parserCnt, int goldCnt, int parserUnlabeledCnt, int goldUnlabeledCnt, int correctAttachment, int correctUnlabeledAttachment, int labelCnt, int labelCorrect, ClassicCounter<String> labeledErrorCounts, ClassicCounter<String> unlabeledErrorCounts) {
+    public Score(int parserCnt, int goldCnt, int parserUnlabeledCnt, int goldUnlabeledCnt, int correctAttachment, int correctUnlabeledAttachment, int labelCnt, int labelCorrect, DefaultCounter<String> labeledErrorCounts, DefaultCounter<String> unlabeledErrorCounts) {
       this.parserCnt = parserCnt;
       this.goldCnt = goldCnt;
       this.parserUnlabeledCnt = parserUnlabeledCnt;
@@ -334,8 +334,8 @@ public class DependencyScoring {
       this.correctUnlabeledAttachment = correctUnlabeledAttachment;
       this.labelCnt = labelCnt;
       this.labelCorrect = labelCorrect;
-      this.unlabeledErrorCounts = new ClassicCounter<>(unlabeledErrorCounts);
-      this.labeledErrorCounts = new ClassicCounter<>(labeledErrorCounts);
+      this.unlabeledErrorCounts = new DefaultCounter<>(unlabeledErrorCounts);
+      this.labeledErrorCounts = new DefaultCounter<>(labeledErrorCounts);
     }
 
     public String toString() {

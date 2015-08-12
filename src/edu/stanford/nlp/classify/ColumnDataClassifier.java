@@ -297,7 +297,7 @@ public class ColumnDataClassifier {
 
   private RVFDatum<String,String> makeRVFDatumFromStrings(String[] strings) {
     if (globalFlags.featureFormat) {
-      ClassicCounter<String> theFeatures = new ClassicCounter<>();
+      DefaultCounter<String> theFeatures = new DefaultCounter<>();
       for (int i = 0; i < strings.length; i++) {
         if (i != globalFlags.goldAnswerColumn) {
           if (flags[i] != null && (flags[i].isRealValued || flags[i].logTransform || flags[i].logitTransform || flags[i].sqrtTransform)) {
@@ -694,7 +694,7 @@ public class ColumnDataClassifier {
       }
     }
 
-    Counter<String> contingency = new ClassicCounter<>();  // store tp,fp,fn,tn
+    Counter<String> contingency = new DefaultCounter<>();  // store tp,fp,fn,tn
     for (int i = 0, sz = test.size(); i < sz; i++) {
       testExample(cl, test, lineInfos, contingency, i);
     }
@@ -851,15 +851,15 @@ public class ColumnDataClassifier {
    */
   private RVFDatum<String,String> makeRVFDatum(String[] strs) {
     String goldAnswer = globalFlags.goldAnswerColumn < strs.length ? strs[globalFlags.goldAnswerColumn]: "";
-    ClassicCounter<String> theFeatures = new ClassicCounter<>();
-    ClassicCounter<String> globalFeatures = new ClassicCounter<>();
+    DefaultCounter<String> theFeatures = new DefaultCounter<>();
+    DefaultCounter<String> globalFeatures = new DefaultCounter<>();
     if (globalFlags.useClassFeature) {
       globalFeatures.setCount("CLASS", 1.0);
     }
     addAllInterningAndPrefixingRVF(theFeatures, globalFeatures, "");
 
     for (int i = 0; i < flags.length; i++) {
-      ClassicCounter<String> featuresC = new ClassicCounter<>();
+      DefaultCounter<String> featuresC = new DefaultCounter<>();
       makeDatum(strs[i], flags[i], featuresC, goldAnswer);
       addAllInterningAndPrefixingRVF(theFeatures, featuresC, i + "-");
     }
@@ -871,7 +871,7 @@ public class ColumnDataClassifier {
     return new RVFDatum<>(theFeatures, goldAnswer);
   }
 
-  private void addAllInterningAndPrefixingRVF(ClassicCounter<String> accumulator, ClassicCounter<String> addend, String prefix) {
+  private void addAllInterningAndPrefixingRVF(DefaultCounter<String> accumulator, DefaultCounter<String> addend, String prefix) {
     assert prefix != null;
     for (String protoFeat : addend.keySet()) {
       double count = addend.getCount(protoFeat);
@@ -1287,7 +1287,7 @@ public class ColumnDataClassifier {
     cliqueWriter = null;
   }
 
-  private static void printFeatures(String[] wi, ClassicCounter<String> features) {
+  private static void printFeatures(String[] wi, DefaultCounter<String> features) {
     if (cliqueWriter != null) {
       for (int i = 0; i < wi.length; i++) {
         if (i > 0) {
@@ -1867,7 +1867,7 @@ public class ColumnDataClassifier {
         // System.err.println("Constraints is " + constraints);
         if (val != null && val.trim().length() > 0) {
           String[] bits = val.split("[, ]+");
-          myFlags[col].biasedHyperplane = new ClassicCounter<>();
+          myFlags[col].biasedHyperplane = new DefaultCounter<>();
           for (int i = 0; i < bits.length; i += 2) {
             myFlags[col].biasedHyperplane.setCount(bits[i], Double.parseDouble(bits[i + 1]));
           }
@@ -2192,7 +2192,7 @@ public class ColumnDataClassifier {
     char[] countChars = null;
     int[] countCharsBins = {0, 1};
 
-    ClassicCounter<String> biasedHyperplane = null;
+    DefaultCounter<String> biasedHyperplane = null;
 
     boolean justify = false;
 

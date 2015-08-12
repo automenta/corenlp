@@ -102,7 +102,7 @@ public class ChineseMaxentLexicon implements Lexicon {
     }
     lastWord = word;
     if (functionWordTags.containsKey(wordIndex.get(word))) {
-      logProbs = new ClassicCounter<>();
+      logProbs = new DefaultCounter<>();
       String trueTag = functionWordTags.get(wordIndex.get(word));
       for (String tag : tagIndex.objectsList()) {
         if (ctlp.basicCategory(tag).equals(trueTag)) {

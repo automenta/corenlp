@@ -11,10 +11,7 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
-import edu.stanford.nlp.util.ArrayCoreMap;
-import edu.stanford.nlp.util.CoreMap;
-import edu.stanford.nlp.util.Generics;
-import edu.stanford.nlp.util.Pair;
+import edu.stanford.nlp.util.*;
 
 /**
  * Represents any object that can be extracted - entity, relation, event
@@ -211,7 +208,7 @@ public class ExtractionObject implements Serializable {
   
   public CoreMap attributeMap() {
     if(attributeMap == null){
-      attributeMap = new ArrayCoreMap();
+      attributeMap = new DefaultCoreMap();
     }
     return attributeMap;
   }

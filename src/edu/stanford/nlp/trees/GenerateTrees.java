@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.Random;
 
 import edu.stanford.nlp.io.RuntimeIOException;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.trees.tregex.TregexPattern;
@@ -135,7 +135,7 @@ public class GenerateTrees {
         case TERMINALS: {
           Counter<String> productions = terminals.get(pieces[0]);
           if (productions == null) {
-            productions = new ClassicCounter<>();
+            productions = new DefaultCounter<>();
             terminals.put(pieces[0], productions);
           }
           for (int i = 1; i < pieces.length; ++i) {
@@ -146,7 +146,7 @@ public class GenerateTrees {
         case NONTERMINALS: {
           Counter<List<String>> productions = nonTerminals.get(pieces[0]);
           if (productions == null) {
-            productions = new ClassicCounter<>();
+            productions = new DefaultCounter<>();
             nonTerminals.put(pieces[0], productions);
           }
           String[] sublist = Arrays.copyOfRange(pieces, 1, pieces.length);

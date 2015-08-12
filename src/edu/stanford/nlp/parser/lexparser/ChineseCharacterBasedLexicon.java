@@ -4,7 +4,7 @@ import java.io.*;
 import java.util.*;
 
 import edu.stanford.nlp.ling.TaggedWord;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.Distribution;
 import edu.stanford.nlp.stats.GeneralizedCounter;
@@ -112,7 +112,7 @@ public class ChineseCharacterBasedLexicon implements Lexicon {
   @Override
   public void finishTraining() {
     Timing.tick("Counting characters...");
-    ClassicCounter<Symbol> charCounter = new ClassicCounter<>();
+    DefaultCounter<Symbol> charCounter = new DefaultCounter<>();
 
     // first find all chars that occur only once
     for (List<TaggedWord> labels : trainingSentences) {
@@ -138,7 +138,7 @@ public class ChineseCharacterBasedLexicon implements Lexicon {
       POSspecificCharNGrams[i] = new GeneralizedCounter(i + 2);
     }
 
-    ClassicCounter<String> POSCounter = new ClassicCounter<>();
+    DefaultCounter<String> POSCounter = new DefaultCounter<>();
     List<Serializable> context = new ArrayList<>(CONTEXT_LENGTH + 1);
     for (List<TaggedWord> words : trainingSentences) {
       for (TaggedWord taggedWord : words) {
@@ -208,11 +208,11 @@ public class ChineseCharacterBasedLexicon implements Lexicon {
     charDistributions.put(Collections.emptyList(), prior);
 
     for (int i = 0; i <= CONTEXT_LENGTH; i++) {
-      Set<Map.Entry<List<Serializable>, ClassicCounter<Symbol>>> counterEntries = POSspecificCharNGrams[i].lowestLevelCounterEntrySet();
+      Set<Map.Entry<List<Serializable>, DefaultCounter<Symbol>>> counterEntries = POSspecificCharNGrams[i].lowestLevelCounterEntrySet();
       Timing.tick("Creating " + counterEntries.size() + " character " + (i + 1) + "-gram distributions...");
-      for (Map.Entry<List<Serializable>, ClassicCounter<Symbol>> entry : counterEntries) {
+      for (Map.Entry<List<Serializable>, DefaultCounter<Symbol>> entry : counterEntries) {
         context = entry.getKey();
-        ClassicCounter<Symbol> c = entry.getValue();
+        DefaultCounter<Symbol> c = entry.getValue();
         Distribution<Symbol> thisPrior = charDistributions.get(context.subList(0, context.size() - 1));
         double priorWeight = thisPrior.getNumberOfKeys() / 200.0;
         Distribution<Symbol> newDist = Distribution.dynamicCounterWithDirichletPrior(c, thisPrior, priorWeight);
@@ -380,7 +380,7 @@ public class ChineseCharacterBasedLexicon implements Lexicon {
 
   private Distribution<Integer> getWordLengthDistribution() {
     int samples = 0;
-    ClassicCounter<Integer> c = new ClassicCounter<>();
+    DefaultCounter<Integer> c = new DefaultCounter<>();
     while (samples++ < 10000) {
       String s = sampleFrom();
       c.incrementCount(Integer.valueOf(s.length()));

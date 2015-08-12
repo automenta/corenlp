@@ -5,10 +5,14 @@ package edu.stanford.nlp.util;
  */
 public class IntInterval extends Int2 implements AbstractInterval<Integer> {
 
-    int flags;
+    final int flags;
 
     public IntInterval(int a, int b) {
+        this(a, b, 0);
+    }
+    public IntInterval(int a, int b, int flags) {
         super(a, b);
+        this.flags = flags;
     }
 
     @Override

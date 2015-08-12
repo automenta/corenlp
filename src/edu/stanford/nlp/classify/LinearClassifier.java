@@ -33,7 +33,7 @@ import edu.stanford.nlp.ling.BasicDatum;
 import edu.stanford.nlp.ling.Datum;
 import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.util.*;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Distribution;
 import edu.stanford.nlp.stats.Counters;
@@ -131,8 +131,9 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
    *  values the score (unnormalized log probability) of each class.
    */
   @Override
-  public Counter<L> scoresOf(Datum<L, F> example) {
-    if(example instanceof RVFDatum<?, ?>)return scoresOfRVFDatum((RVFDatum<L,F>)example);
+  public DefaultCounter<L> scoresOf(Datum<L, F> example) {
+    if(example instanceof RVFDatum<?, ?>)
+      return scoresOfRVFDatum((RVFDatum<L,F>)example);
     Collection<F> feats = example.asFeatures();
     int[] features = new int[feats.size()];
     int i = 0;
@@ -145,10 +146,10 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
       }
     }
     int[] activeFeatures = new int[i];
-    synchronized (System.class) {
+    /* synchronized (System.class) */ {
       System.arraycopy(features, 0, activeFeatures, 0, i);
     }
-    Counter<L> scores = new ClassicCounter<>();
+    DefaultCounter<L> scores = new DefaultCounter<>();
     for (L lab : labels()) {
       scores.setCount(lab, scoreOf(activeFeatures, lab));
     }
@@ -160,7 +161,7 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
    *  for each class.
    */
   public Counter<L> scoresOf(int[] features) {
-    Counter<L> scores = new ClassicCounter<>();
+    Counter<L> scores = new DefaultCounter<>();
     for (L label : labels())
       scores.setCount(label, scoreOf(features, label));
     return scores;
@@ -186,7 +187,7 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
   @Override
   @Deprecated
   public Counter<L> scoresOf(RVFDatum<L, F> example) {
-    Counter<L> scores = new ClassicCounter<>();
+    Counter<L> scores = new DefaultCounter<>();
     for (L l : labels()) {
       scores.setCount(l, scoreOf(example, l));
     }
@@ -198,8 +199,8 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
    *  values the score (unnormalized log probability) of each class
    *  for an RVFDatum.
    */
-  private Counter<L> scoresOfRVFDatum(RVFDatum<L, F> example) {
-    Counter<L> scores = new ClassicCounter<>();
+  private DefaultCounter<L> scoresOfRVFDatum(RVFDatum<L, F> example) {
+    DefaultCounter<L> scores = new DefaultCounter<>();
     for (L l : labels()) {
       scores.setCount(l, scoreOfRVFDatum(example, l));
     }
@@ -304,7 +305,7 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
   @Override
   public Counter<L> logProbabilityOf(Datum<L, F> example) {
     if(example instanceof RVFDatum<?, ?>)return logProbabilityOfRVFDatum((RVFDatum<L,F>)example);
-    Counter<L> scores = scoresOf(example);
+    DefaultCounter<L> scores = scoresOf(example);
     Counters.logNormalizeInPlace(scores);
     return scores;
   }
@@ -682,7 +683,7 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
    * @return A human readable string about the classifier distribution.
    */
   public String toDistributionString(int threshold) {
-    Counter<Double> weightCounts = new ClassicCounter<>();
+    Counter<Double> weightCounts = new DefaultCounter<>();
     StringBuilder s = new StringBuilder();
     s.append("Total number of weights: ").append(totalSize());
     for (double[] weightArray : weights) {
@@ -1194,7 +1195,7 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
     Map<L,Counter<F>> mapOfCounters = Generics.newHashMap();
     for(L label : labelIndex){
       int labelID = labelIndex.indexOf(label);
-      Counter<F> c = new ClassicCounter<>();
+      Counter<F> c = new DefaultCounter<>();
       mapOfCounters.put(label, c);
       for (F f : featureIndex) {
         c.incrementCount(f, weights[featureIndex.indexOf(f)][labelID]);
@@ -1233,7 +1234,7 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
 
 
   public Counter<L> scoresOf(Datum<L, F> example, Collection<L> possibleLabels) {
-    Counter<L> scores = new ClassicCounter<>();
+    Counter<L> scores = new DefaultCounter<>();
     for (L l : possibleLabels) {
       if (labelIndex.indexOf(l) == -1) {
         continue;
@@ -1335,7 +1336,7 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
   }
 
   private static <F, L> Counter<Pair<F, L>> makeWeightCounter(double[] weights, Index<Pair<F, L>> weightIndex) {
-    Counter<Pair<F,L>> weightCounter = new ClassicCounter<>();
+    Counter<Pair<F,L>> weightCounter = new DefaultCounter<>();
     for (int i = 0; i < weightIndex.size(); i++) {
       if (weights[i] == 0) {
         continue; // no need to save 0 weights
@@ -1350,7 +1351,7 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
   }
 
   public LinearClassifier(Counter<? extends Pair<F, L>> weightCounter) {
-    this(weightCounter, new ClassicCounter<>());
+    this(weightCounter, new DefaultCounter<>());
   }
 
   public LinearClassifier(Counter<? extends Pair<F, L>> weightCounter, Counter<L> thresholdsC) {

@@ -4,7 +4,7 @@ import edu.stanford.nlp.fsm.*;
 import edu.stanford.nlp.io.NumberRangeFileFilter;
 import edu.stanford.nlp.trees.*;
 import edu.stanford.nlp.util.*;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import java.util.*;
 
 
@@ -633,11 +633,11 @@ public class GrammarCompactionTester {
     for (Map.Entry<String, List<List<String>>> stringListEntry : allTrainPaths.entrySet()) {
       System.out.println("creating graph for " + stringListEntry.getKey());
       List<List<String>> paths = stringListEntry.getValue();
-      ClassicCounter<List<String>> pathCounter = new ClassicCounter<>();
+      DefaultCounter<List<String>> pathCounter = new DefaultCounter<>();
       for (List<String> o : paths) {
         pathCounter.incrementCount(o);
       }
-      ClassicCounter<List<String>> newPathCounter = removeLowCountPaths(pathCounter, 2);
+      DefaultCounter<List<String>> newPathCounter = removeLowCountPaths(pathCounter, 2);
       paths.retainAll(newPathCounter.keySet()); // get rid of the low count ones
       TransducerGraph result = TransducerGraph.createGraphFromPaths(newPathCounter, 1000);
       // exact compaction
@@ -675,8 +675,8 @@ public class GrammarCompactionTester {
     }
   }
 
-  private static ClassicCounter<List<String>> removeLowCountPaths(ClassicCounter<List<String>> paths, double thresh) {
-    ClassicCounter<List<String>> result = new ClassicCounter<>();
+  private static DefaultCounter<List<String>> removeLowCountPaths(DefaultCounter<List<String>> paths, double thresh) {
+    DefaultCounter<List<String>> result = new DefaultCounter<>();
     int numRetained = 0;
     for (List<String> path : paths.keySet()) {
       double count = paths.getCount(path);

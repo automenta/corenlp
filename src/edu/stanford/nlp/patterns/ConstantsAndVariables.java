@@ -19,7 +19,7 @@ import edu.stanford.nlp.patterns.GetPatternsFromDataMultiClass.WordScoring;
 import edu.stanford.nlp.patterns.dep.DepPatternFactory;
 import edu.stanford.nlp.patterns.surface.SurfacePatternFactory;
 import edu.stanford.nlp.process.WordShapeClassifier;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.*;
 import edu.stanford.nlp.util.Execution.Option;
@@ -490,7 +490,7 @@ public class ConstantsAndVariables implements Serializable {
 
   public void addLearnedWords(String trainLabel, Counter<CandidatePhrase> identifiedWords) {
     if(!learnedWords.containsKey(trainLabel))
-      learnedWords.put(trainLabel, new ClassicCounter<>());
+      learnedWords.put(trainLabel, new DefaultCounter<>());
     this.learnedWords.get(trainLabel).addAll(identifiedWords);
   }
 
@@ -1002,7 +1002,7 @@ public class ConstantsAndVariables implements Serializable {
     }
 
     for(String label: labels){
-      learnedWords.put(label, new ClassicCounter<>());
+      learnedWords.put(label, new DefaultCounter<>());
     }
 
    if(usePhraseEvalGoogleNgram || usePatternEvalDomainNgram) {
@@ -1112,7 +1112,7 @@ public class ConstantsAndVariables implements Serializable {
 
   public void addWordShapes(String label, Set<CandidatePhrase> words){
     if(!this.wordShapesForLabels.containsKey(label)){
-      this.wordShapesForLabels.put(label, new ClassicCounter<>());
+      this.wordShapesForLabels.put(label, new DefaultCounter<>());
     }
     for(CandidatePhrase wc: words){
       String w = wc.getPhrase();
@@ -1155,7 +1155,7 @@ public class ConstantsAndVariables implements Serializable {
   public Counter<CandidatePhrase> getLearnedWords(String label) {
     Counter<CandidatePhrase> learned = this.learnedWords.get(label);
     if(learned == null){
-      learned = new ClassicCounter<>();
+      learned = new DefaultCounter<>();
       this.learnedWords.put(label, learned);
     }
     return learned;

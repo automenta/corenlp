@@ -1,7 +1,7 @@
 package edu.stanford.nlp.classify;
 
 import edu.stanford.nlp.util.Pair;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.ling.Datum;
 import edu.stanford.nlp.ling.RVFDatum;
@@ -23,11 +23,11 @@ public class SVMLightClassifier<L, F> extends LinearClassifier<L, F> {
   private static final long serialVersionUID = 1L;
   public LinearClassifier<L, L> platt = null;
 
-  public SVMLightClassifier(ClassicCounter<Pair<F, L>> weightCounter, ClassicCounter<L> thresholds) {
+  public SVMLightClassifier(DefaultCounter<Pair<F, L>> weightCounter, DefaultCounter<L> thresholds) {
     super(weightCounter, thresholds);
   }
 
-  public SVMLightClassifier(ClassicCounter<Pair<F, L>> weightCounter, ClassicCounter<L> thresholds, LinearClassifier<L, L> platt) {
+  public SVMLightClassifier(DefaultCounter<Pair<F, L>> weightCounter, DefaultCounter<L> thresholds, LinearClassifier<L, L> platt) {
     super(weightCounter, thresholds);
     this.platt = platt;
   }

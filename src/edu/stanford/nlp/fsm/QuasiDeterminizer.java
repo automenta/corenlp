@@ -1,6 +1,6 @@
 package edu.stanford.nlp.fsm;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import java.util.*;
 
 /**
@@ -14,7 +14,7 @@ public class QuasiDeterminizer implements TransducerGraph.GraphProcessor {
 
   public TransducerGraph processGraph(TransducerGraph graph) {
     // compute lambda function
-    ClassicCounter lambda = computeLambda(graph); // not destructive
+    DefaultCounter lambda = computeLambda(graph); // not destructive
     // do the pushing
     TransducerGraph result = pushLambdas(graph, lambda); // creates a new one
     return result;
@@ -23,10 +23,10 @@ public class QuasiDeterminizer implements TransducerGraph.GraphProcessor {
   /**
    * Takes time linear in number of arcs.
    */
-  public static ClassicCounter computeLambda(TransducerGraph graph) {
+  public static DefaultCounter computeLambda(TransducerGraph graph) {
     LinkedList queue = new LinkedList();
-    ClassicCounter lambda = new ClassicCounter();
-    ClassicCounter length = new ClassicCounter();
+    DefaultCounter lambda = new DefaultCounter();
+    DefaultCounter length = new DefaultCounter();
     Map first = new HashMap();
     Set nodes = graph.getNodes();
     for (Object node : nodes) {
@@ -82,7 +82,7 @@ public class QuasiDeterminizer implements TransducerGraph.GraphProcessor {
   /**
    * Takes time linear in number of arcs.
    */
-  public static TransducerGraph pushLambdas(TransducerGraph graph, ClassicCounter lambda) {
+  public static TransducerGraph pushLambdas(TransducerGraph graph, DefaultCounter lambda) {
 
     TransducerGraph result = null;
     try {

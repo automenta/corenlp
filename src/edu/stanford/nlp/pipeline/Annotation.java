@@ -26,13 +26,11 @@
 
 package edu.stanford.nlp.pipeline;
 
-import com.gs.collections.impl.map.mutable.UnifiedMap;
-import edu.stanford.nlp.ling.CoreAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.util.CoreMap;
-import edu.stanford.nlp.util.logging.Redwood;
+import edu.stanford.nlp.util.DefaultCoreMap;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +47,7 @@ import java.util.Map;
  * @author Anna Rafferty
  * @author bethard
  */
-public class Annotation extends UnifiedMap<Class<?>, Object> implements CoreMap {
+public class Annotation extends DefaultCoreMap {
 
   /**
    * SerialUID
@@ -68,13 +66,6 @@ public class Annotation extends UnifiedMap<Class<?>, Object> implements CoreMap 
     super((Map)map);
   }
 
-  /** Copies the map, but not a deep copy.
-   *  @return The copy
-   */
-  public Annotation copy() {
-    return new Annotation((Map)this);
-  }
-
   /**
    * The text becomes the CoreAnnotations.TextAnnotation of the newly
    * created Annotation.
@@ -82,21 +73,6 @@ public class Annotation extends UnifiedMap<Class<?>, Object> implements CoreMap 
   public Annotation(String text) {
     this.set(CoreAnnotations.TextAnnotation.class, text);
   }
-
-
-  /** The basic toString() method of an Annotation simply
-   *  prints out the text over which any annotations have
-   *  been made (TextAnnotation). To print all the
-   *  Annotation keys, use {@code toShorterString();}.
-   *
-   *  @return The text underlying this Annotation
-   */
-  @Override
-  public String toString() {
-      return this.get(CoreAnnotations.TextAnnotation.class).toString();
-  }
-
-
 
 
   /** Make a new Annotation from a List of tokenized sentences. */
@@ -133,52 +109,10 @@ public class Annotation extends UnifiedMap<Class<?>, Object> implements CoreMap 
     super(12);
   }
 
-  public String toShorterString() {
-    return toString();
-  }
 
-  @Override
-  public String toShorterString(String... what) {
-    return null;
-  }
-
-  @Override
-  public void prettyLog(Redwood.RedwoodChannels channels, String description) {
-
-  }
-
-  @Override
-  public <VALUE> boolean has(Class<? extends Key<VALUE>> key) {
-    return super.containsKey(key);
-  }
-
-
-
-  public <X> X get(Class<? extends Key<X>> c) {
-    return (X)super.get(c);
-  }
-
-//  @Override
+  //  @Override
 //  public <VALUE> VALUE get(Class<? extends Key<VALUE>> key) {
 //    return (VALUE) super.get(key);
 //  }
 
-  @Override
-  public <VALUE> VALUE set(Class<? extends Key<VALUE>> key, VALUE value) {
-    if (value == null) {
-        return (VALUE)remove(key);
-    }
-    else
-      return (VALUE)super.put(key, value);
-  }
-
-  @Override
-  public <VALUE> VALUE remove(Class<? extends Key<VALUE>> key) {
-    return (VALUE) super.remove(key);
-  }
-
-  @Override
-  public <VALUE> boolean containsKey(Class<? extends Key<VALUE>> key) {
-    return super.containsKey(key);
-  }
 }

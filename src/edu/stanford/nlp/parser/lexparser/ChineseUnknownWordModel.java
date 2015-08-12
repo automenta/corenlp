@@ -8,7 +8,7 @@ import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.ling.WordTag;
 import edu.stanford.nlp.ling.Tag;
 import edu.stanford.nlp.ling.Label;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Index;
 
@@ -46,8 +46,8 @@ public class ChineseUnknownWordModel extends BaseUnknownWordModel {
   public ChineseUnknownWordModel(Options op, Lexicon lex,
                                  Index<String> wordIndex,
                                  Index<String> tagIndex,
-                                 ClassicCounter<IntTaggedWord> unSeenCounter,
-                                 Map<Label,ClassicCounter<String>> tagHash,
+                                 DefaultCounter<IntTaggedWord> unSeenCounter,
+                                 Map<Label,DefaultCounter<String>> tagHash,
                                  Map<String,Float> unknownGT,
                                  boolean useGT,
                                  Set<String> seenFirst) {
@@ -70,8 +70,8 @@ public class ChineseUnknownWordModel extends BaseUnknownWordModel {
                                  Index<String> wordIndex,
                                  Index<String> tagIndex) {
     this(op, lex, wordIndex, tagIndex,
-            new ClassicCounter<>(),
-         Generics.<Label,ClassicCounter<String>>newHashMap(),
+            new DefaultCounter<>(),
+         Generics.<Label,DefaultCounter<String>>newHashMap(),
          Generics.<String,Float>newHashMap(),
          false, Generics.<String>newHashSet());
   }
@@ -164,7 +164,7 @@ public class ChineseUnknownWordModel extends BaseUnknownWordModel {
           }
 
           /* get the Counter of terminal rewrites for the relevant tag */
-          ClassicCounter<String> wordProbs = tagHash.get(tagL);
+          DefaultCounter<String> wordProbs = tagHash.get(tagL);
 
           /* if the proposed tag has never been seen before, issue a
              warning and return probability 0. */
@@ -224,7 +224,7 @@ public class ChineseUnknownWordModel extends BaseUnknownWordModel {
     }
 
     System.out.println("Testing tagged word");
-    ClassicCounter<TaggedWord> c = new ClassicCounter<>();
+    DefaultCounter<TaggedWord> c = new DefaultCounter<>();
     TaggedWord tw1 = new TaggedWord("w", "t");
     c.incrementCount(tw1);
     TaggedWord tw2 = new TaggedWord("w", "t2");

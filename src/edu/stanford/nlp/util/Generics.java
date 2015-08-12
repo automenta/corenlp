@@ -1,25 +1,13 @@
 package edu.stanford.nlp.util;
 
+import com.gs.collections.impl.map.mutable.UnifiedMap;
+import com.gs.collections.impl.set.mutable.UnifiedSet;
+import edu.stanford.nlp.util.concurrent.SynchronizedInterner;
+
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Constructor;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.IdentityHashMap;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
-import java.util.SortedSet;
-import java.util.Stack;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.WeakHashMap;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
-
-import edu.stanford.nlp.util.concurrent.SynchronizedInterner;
 
 /**
  * A collection of utilities to make dealing with Java generics less
@@ -128,30 +116,27 @@ public class Generics {
   }
 
   public static <E> Set<E> newHashSet() {
-    try {
-      return ErasureUtils.uncheckedCast(HASH_SET_CLASS.newInstance());
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    //try {
+      //return ErasureUtils.uncheckedCast(HASH_SET_CLASS.newInstance());
+      return new UnifiedSet();
+    //} catch (Exception e) {
+      //throw new RuntimeException(e);
+    //}
   }
 
   public static <E> Set<E> newHashSet(int initialCapacity) {
-    if (HASH_SET_SIZE_CONSTRUCTOR == null) {
+    //if (HASH_SET_SIZE_CONSTRUCTOR == null) {
       return newHashSet();
-    }
+    /*}
     try {
       return ErasureUtils.uncheckedCast(HASH_SET_SIZE_CONSTRUCTOR.newInstance(initialCapacity));
     } catch (Exception e) {
       throw new RuntimeException(e);
-    }
+    }*/
   }
 
   public static <E> Set<E> newHashSet(Collection<? extends E> c) {
-    try {
-      return ErasureUtils.uncheckedCast(HASH_SET_COLLECTION_CONSTRUCTOR.newInstance(c));
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    return new UnifiedSet(c);
   }
 
   public static final String HASH_MAP_PROPERTY = "edu.stanford.nlp.hashmap.impl";
@@ -193,30 +178,15 @@ public class Generics {
 
   /* Maps */
   public static <K,V> Map<K,V> newHashMap() {
-    try {
-      return ErasureUtils.uncheckedCast(HASH_MAP_CLASS.newInstance());
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    return new UnifiedMap();
   }
 
   public static <K,V> Map<K,V> newHashMap(int initialCapacity) {
-    if (HASH_MAP_SIZE_CONSTRUCTOR == null) {
-      return newHashMap();
-    }
-    try {
-      return ErasureUtils.uncheckedCast(HASH_MAP_SIZE_CONSTRUCTOR.newInstance(initialCapacity));
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    return new UnifiedMap(initialCapacity);
   }
 
   public static <K,V> Map<K,V> newHashMap(Map<? extends K,? extends V> m) {
-    try {
-      return ErasureUtils.uncheckedCast(HASH_MAP_FROM_MAP_CONSTRUCTOR.newInstance(m));
-    } catch (Exception e) {
-      throw new RuntimeException(e);
-    }
+    return new UnifiedMap(m);
   }
 
   public static <K,V> IdentityHashMap<K,V> newIdentityHashMap() {

@@ -8,7 +8,7 @@ import edu.stanford.nlp.patterns.CandidatePhrase;
 import edu.stanford.nlp.patterns.ConstantsAndVariables;
 import edu.stanford.nlp.patterns.GetPatternsFromDataMultiClass.PatternScoring;
 import edu.stanford.nlp.patterns.ScorePatterns;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
@@ -45,14 +45,14 @@ public class ScorePatternsF1<E> extends ScorePatterns<E> {
   
   @Override
   public Counter<E> score() {
-    Counter<E> specificity = new ClassicCounter<>();
-    Counter<E> sensitivity = new ClassicCounter<>();
+    Counter<E> specificity = new DefaultCounter<>();
+    Counter<E> sensitivity = new DefaultCounter<>();
 
     if (p0Set.keySet().size() == 0)
       throw new RuntimeException("how come p0set size is empty for " + p0
           + '?');
 
-    for (Entry<E, ClassicCounter<CandidatePhrase>> en : patternsandWords4Label
+    for (Entry<E, DefaultCounter<CandidatePhrase>> en : patternsandWords4Label
         .entrySet()) {
 
       int common = CollectionUtils.intersection(en.getValue().keySet(),

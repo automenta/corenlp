@@ -8,7 +8,7 @@ import edu.stanford.nlp.ling.HasTag;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.ling.Label;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import java.util.function.Predicate;
 import edu.stanford.nlp.util.Generics;
@@ -154,7 +154,7 @@ public class Dependencies {
 
   public static Counter<List<TypedDependency>> getTypedDependencyChains(List<TypedDependency> deps, int maxLength) {
     Map<IndexedWord,List<TypedDependency>> govToDepMap = govToDepMap(deps);
-    Counter<List<TypedDependency>> tdc = new ClassicCounter<>();
+    Counter<List<TypedDependency>> tdc = new DefaultCounter<>();
     for (IndexedWord gov : govToDepMap.keySet()) {
       Set<List<TypedDependency>> maxChains = getGovMaxChains(govToDepMap, gov, maxLength);
       for (List<TypedDependency> maxChain : maxChains) {

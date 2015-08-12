@@ -15,7 +15,7 @@ import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.patterns.CandidatePhrase;
 import edu.stanford.nlp.patterns.DataInstance;
 import edu.stanford.nlp.patterns.PatternsAnnotations;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.CollectionValuedMap;
@@ -139,7 +139,7 @@ public class LearnImportantFeatures {
 
   public Counter<String> getTopFeatures(Iterator<Pair<Map<String, DataInstance>, File>> sentsf,
       double perSelectRand, double perSelectNeg, String externalFeatureWeightsFileLabel) throws IOException, ClassNotFoundException {
-    Counter<String> features = new ClassicCounter<>();
+    Counter<String> features = new DefaultCounter<>();
     RVFDataset<String, String> dataset = new RVFDataset<>();
     Random r = new Random(10);
     Random rneg = new Random(10);
@@ -184,7 +184,7 @@ public class LearnImportantFeatures {
   }
 
   private RVFDatum<String, String> getDatum(CoreLabel[] sent, int i) {
-    Counter<String> feat = new ClassicCounter<>();
+    Counter<String> feat = new DefaultCounter<>();
     CoreLabel l = sent[i];
 
     String label;

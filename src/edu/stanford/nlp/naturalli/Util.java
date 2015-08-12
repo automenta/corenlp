@@ -10,7 +10,7 @@ import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.AnnotationPipeline;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphEdge;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.CoreMap;
@@ -40,7 +40,7 @@ public class Util {
    * @return
    */
   public static String guessNER(List<CoreLabel> tokens, Span span) {
-    Counter<String> nerGuesses = new ClassicCounter<>();
+    Counter<String> nerGuesses = new DefaultCounter<>();
     for (int i : span) {
       nerGuesses.incrementCount(tokens.get(i).ner());
     }

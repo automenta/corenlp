@@ -69,7 +69,7 @@ import edu.stanford.nlp.sequences.FeatureFactory;
 import edu.stanford.nlp.sequences.PlainTextDocumentReaderAndWriter;
 import edu.stanford.nlp.sequences.SeqClassifierFlags;
 import edu.stanford.nlp.sequences.SequenceModel;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
 import edu.stanford.nlp.util.*;
@@ -369,7 +369,7 @@ public class CMMClassifier<IN extends CoreLabel> extends AbstractSequenceClassif
           }
 
           // first pass, compute all of the scores
-          ClassicCounter<Pair<Integer,Integer>> prevScores = new ClassicCounter<>();
+          DefaultCounter<Pair<Integer,Integer>> prevScores = new DefaultCounter<>();
           for (j = start; j < end; j++) {
             // clear the sequence
             for (int k = start; k < end; k++) {

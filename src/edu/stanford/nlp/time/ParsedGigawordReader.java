@@ -8,6 +8,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import edu.stanford.nlp.util.DefaultCoreMap;
 import nu.xom.Builder;
 import nu.xom.Element;
 import nu.xom.Elements;
@@ -193,7 +194,7 @@ public class ParsedGigawordReader implements Iterable<Annotation> {
     Elements sentenceElements = textElem.getChildElements("SENT");
     for (int crtsent = 0; crtsent < sentenceElements.size(); crtsent ++){
       Element sentElem = sentenceElements.get(crtsent);
-      CoreMap sentence = new ArrayCoreMap();
+      CoreMap sentence = new DefaultCoreMap();
       sentence.set(CoreAnnotations.CharacterOffsetBeginAnnotation.class, offset);
       Tree tree = Tree.valueOf(sentElem.getChild(0).getValue()); // XXX ms: is this the same as sentElem.getText() in JDOM?
       List<CoreLabel> tokens = new ArrayList<>();

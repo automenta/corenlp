@@ -9,7 +9,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Index;
 import edu.stanford.nlp.util.Pair;
@@ -88,7 +88,7 @@ public class ChineseSimWordAvgDepGrammar extends MLEDependencyGrammar {
     this.lex = lex;
   }
 
-  private ClassicCounter<String> statsCounter = new ClassicCounter<>();
+  private DefaultCounter<String> statsCounter = new DefaultCounter<>();
 
   static {
     System.runFinalizersOnExit(true);

@@ -6,7 +6,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
-import java.text.DecimalFormat;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,7 +13,7 @@ import java.util.Map;
 
 import edu.stanford.nlp.ling.Datum;
 import edu.stanford.nlp.ling.RVFDatum;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.ErasureUtils;
@@ -84,7 +83,7 @@ public class MultinomialLogisticClassifier<L, F> implements ProbabilisticClassif
     }
      
     // calculate probability of each class
-    Counter<L> result = new ClassicCounter<>();
+    Counter<L> result = new DefaultCounter<>();
     int numClasses = labelIndex.size();
     double[] sigmoids = LogisticUtils.calculateSigmoids(weights, featureIndices, featureValues);
 
@@ -139,7 +138,7 @@ public class MultinomialLogisticClassifier<L, F> implements ProbabilisticClassif
 
     Map<L, Counter<F>> allweights = new HashMap<>();
     for(int i = 0; i < weights.length; i++){
-      Counter<F> c = new ClassicCounter<>();
+      Counter<F> c = new DefaultCounter<>();
       L label  = labelIndex.get(i);
       double[] w =  weights[i];
       for (F f : featureIndex) {

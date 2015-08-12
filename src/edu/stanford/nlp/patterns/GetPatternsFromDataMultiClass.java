@@ -31,7 +31,7 @@ import edu.stanford.nlp.pipeline.StanfordCoreNLP;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphEdge;
 import edu.stanford.nlp.sequences.IOBUtils;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
@@ -351,7 +351,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
 
     boolean computeDataFreq = false;
     if (Data.rawFreq == null) {
-      Data.rawFreq = new ClassicCounter<>();
+      Data.rawFreq = new DefaultCounter<>();
       computeDataFreq = true;
     }
 
@@ -450,7 +450,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
               externalFeatureWeightsFileLabel);
 
         }
-        Counter<Integer> distSimWeightsLabel = new ClassicCounter<>();
+        Counter<Integer> distSimWeightsLabel = new DefaultCounter<>();
         for (String line : IOUtils.readLines(externalFeatureWeightsFileLabel)) {
           String[] t = line.split(":");
           if (!t[0].startsWith("Cluster"))
@@ -465,8 +465,8 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
 
     // computing semantic odds values
     if (constVars.usePatternEvalSemanticOdds || constVars.usePhraseEvalSemanticOdds) {
-      Counter<CandidatePhrase> dictOddsWeightsLabel = new ClassicCounter<>();
-      Counter<CandidatePhrase> otherSemanticClassFreq = new ClassicCounter<>();
+      Counter<CandidatePhrase> dictOddsWeightsLabel = new DefaultCounter<>();
+      Counter<CandidatePhrase> otherSemanticClassFreq = new DefaultCounter<>();
       for (CandidatePhrase s : constVars.getOtherSemanticClassesWords()) {
         for (String s1 : StringUtils.getNgrams(Arrays.asList(s.getPhrase().split("\\s+")), 1, PatternFactory.numWordsCompoundMax))
           otherSemanticClassFreq.incrementCount(CandidatePhrase.createOrGet(s1));
@@ -476,7 +476,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
 
       Map<String, Counter<CandidatePhrase>> labelDictNgram = new HashMap<>();
       for (Entry<String, Set<CandidatePhrase>> stringSetEntry : seedSets.entrySet()) {
-        Counter<CandidatePhrase> classFreq = new ClassicCounter<>();
+        Counter<CandidatePhrase> classFreq = new DefaultCounter<>();
         for (CandidatePhrase s : stringSetEntry.getValue()) {
           for (String s1 : StringUtils.getNgrams(Arrays.asList(s.getPhrase().split("\\s+")), 1, PatternFactory.numWordsCompoundMax))
             classFreq.incrementCount(CandidatePhrase.createOrGet(s1));
@@ -487,7 +487,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
       }
 
       for (String label : seedSets.keySet()) {
-        Counter<CandidatePhrase> otherLabelFreq = new ClassicCounter<>();
+        Counter<CandidatePhrase> otherLabelFreq = new DefaultCounter<>();
         for (String label2 : seedSets.keySet()) {
           if (label.equals(label2))
             continue;
@@ -578,7 +578,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
 
     for(Map.Entry<String, DataInstance> en: sents.entrySet()) {
       List<CoreMap> temp = new ArrayList<>();
-      CoreMap s= new ArrayCoreMap();
+      CoreMap s= new DefaultCoreMap();
       s.set(CoreAnnotations.TokensAnnotation.class, en.getValue().getTokens());
       temp.add(s);
       Annotation doc = new Annotation(temp);
@@ -1234,7 +1234,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
     if (currentPatternWeights == null)
       currentPatternWeights = new HashMap<>();
 
-    Counter<E> currentPatternWeights4Label = new ClassicCounter<>();
+    Counter<E> currentPatternWeights4Label = new DefaultCounter<>();
 
     Set<E> removePats = enforceMinSupportRequirements(patternsandWords4Label, unLabeledPatternsandWords4Label);
     Counters.removeKeys(patternsandWords4Label, removePats);
@@ -1303,7 +1303,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
     PriorityQueue<E> q = Counters.toPriorityQueue(currentPatternWeights4Label);
     int num = 0;
 
-    Counter<E> chosenPat = new ClassicCounter<>();
+    Counter<E> chosenPat = new DefaultCounter<>();
 
     Set<E> removePatterns = new HashSet<>();
 
@@ -1439,16 +1439,16 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
 
     if (constVars.outDir != null && !constVars.outDir.isEmpty()) {
       CollectionValuedMap<E, CandidatePhrase> posWords = new CollectionValuedMap<>();
-      for (Entry<E, ClassicCounter<CandidatePhrase>> en : patternsandWords4Label.entrySet()) {
+      for (Entry<E, DefaultCounter<CandidatePhrase>> en : patternsandWords4Label.entrySet()) {
         posWords.addAll(en.getKey(), en.getValue().keySet());
       }
 
       CollectionValuedMap<E, CandidatePhrase> negWords = new CollectionValuedMap<>();
-      for (Entry<E, ClassicCounter<CandidatePhrase>> en : negPatternsandWords4Label.entrySet()) {
+      for (Entry<E, DefaultCounter<CandidatePhrase>> en : negPatternsandWords4Label.entrySet()) {
         negWords.addAll(en.getKey(), en.getValue().keySet());
       }
       CollectionValuedMap<E, CandidatePhrase> unlabWords = new CollectionValuedMap<>();
-      for (Entry<E, ClassicCounter<CandidatePhrase>> en : unLabeledPatternsandWords4Label.entrySet()) {
+      for (Entry<E, DefaultCounter<CandidatePhrase>> en : unLabeledPatternsandWords4Label.entrySet()) {
         unlabWords.addAll(en.getKey(), en.getValue().keySet());
       }
       String outputdir = constVars.outDir + '/' + constVars.identifier + '/' + label;
@@ -1812,7 +1812,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
   private Set<E> enforceMinSupportRequirements(TwoDimensionalCounter<E, CandidatePhrase> patternsandWords4Label,
       TwoDimensionalCounter<E, CandidatePhrase> unLabeledPatternsandWords4Label) {
     Set<E> remove = new HashSet<>();
-    for (Entry<E, ClassicCounter<CandidatePhrase>> en : patternsandWords4Label.entrySet()) {
+    for (Entry<E, DefaultCounter<CandidatePhrase>> en : patternsandWords4Label.entrySet()) {
       if (en.getValue().size() < constVars.minPosPhraseSupportForPat) {
         remove.add(en.getKey());
       }
@@ -1822,7 +1822,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
     Redwood.log(Redwood.DBG, "Removing " + numRemoved + " patterns that do not meet minPosPhraseSupportForPat requirement of >= "
         + constVars.minPosPhraseSupportForPat);
 
-    for (Entry<E, ClassicCounter<CandidatePhrase>> en : unLabeledPatternsandWords4Label.entrySet()) {
+    for (Entry<E, DefaultCounter<CandidatePhrase>> en : unLabeledPatternsandWords4Label.entrySet()) {
       if (en.getValue().size() < constVars.minUnlabPhraseSupportForPat) {
         remove.add(en.getKey());
       }
@@ -1847,14 +1847,14 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
       Counters.removeKeys(en.getValue(), pats);
 
     if (wordsPatExtracted.containsKey(label))
-      for (Entry<CandidatePhrase, ClassicCounter<E>> en : this.wordsPatExtracted.get(label).entrySet()) {
+      for (Entry<CandidatePhrase, DefaultCounter<E>> en : this.wordsPatExtracted.get(label).entrySet()) {
         Counters.removeKeys(en.getValue(), pats);
       }
   }
 
   public static <E> Counter<E> normalizeSoftMaxMinMaxScores(Counter<E> scores, boolean minMaxNorm, boolean softmax, boolean oneMinusSoftMax) {
     double minScore = Double.MAX_VALUE, maxScore = Double.MIN_VALUE;
-    Counter<E> newscores = new ClassicCounter<>();
+    Counter<E> newscores = new DefaultCounter<>();
     if (softmax) {
       for (Entry<E, Double> en : scores.entrySet()) {
         Double score = null;
@@ -2254,7 +2254,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
       TwoDimensionalCounter<CandidatePhrase, E> terms, int numIter) throws IOException, ClassNotFoundException {
 
     if (!learnedPatterns.containsKey(label)) {
-      learnedPatterns.put(label, new ClassicCounter<>());
+      learnedPatterns.put(label, new DefaultCounter<>());
     }
 
     if (!learnedPatternsEachIter.containsKey(label)) {
@@ -2263,11 +2263,11 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
 
 
     if (!constVars.getLearnedWords().containsKey(label)) {
-      constVars.getLearnedWords().put(label, new ClassicCounter<>());
+      constVars.getLearnedWords().put(label, new DefaultCounter<>());
     }
 
-    Counter<CandidatePhrase> identifiedWords = new ClassicCounter<>();
-    Counter<E> patterns = new ClassicCounter<>();
+    Counter<CandidatePhrase> identifiedWords = new DefaultCounter<>();
+    Counter<E> patterns = new DefaultCounter<>();
 
     Counter<E> patternThisIter = getPatterns(label, learnedPatterns.get(label).keySet(), p0, p0Set, ignorePatterns);
 
@@ -2279,7 +2279,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
       if (sentsOutFile != null)
         sentsOutFile = sentsOutFile + '_' + numIter + "iter.ser";
 
-      Counter<String> scoreForAllWordsThisIteration = new ClassicCounter<>();
+      Counter<String> scoreForAllWordsThisIteration = new DefaultCounter<>();
 
       identifiedWords.addAll(scorePhrases.learnNewPhrases(label, this.patsForEachToken, patterns, learnedPatterns.get(label), matchedTokensByPat,
         scoreForAllWordsThisIteration, terms, wordsPatExtracted.get(label), this.patternsandWords.get(label), constVars.identifier, ignoreWords));
@@ -2327,7 +2327,7 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
   }
 
   static Counter<CandidatePhrase> readLearnedWordsFromFile(File file) {
-    Counter<CandidatePhrase> words = new ClassicCounter<>();
+    Counter<CandidatePhrase> words = new DefaultCounter<>();
     for (String line : IOUtils.readLines(file)) {
       String[] t = line.split("\t");
       words.setCount(CandidatePhrase.createOrGet(t[0]), Double.parseDouble(t[1]));
@@ -2729,14 +2729,14 @@ public class  GetPatternsFromDataMultiClass<E extends Pattern> implements Serial
 
     for (Entry<String, Class<? extends Key<String>>> anscl : constVars.getAnswerClass().entrySet()) {
       String label = anscl.getKey();
-      Counter<String> entityTP = new ClassicCounter<>();
-      Counter<String> entityFP = new ClassicCounter<>();
-      Counter<String> entityFN = new ClassicCounter<>();
+      Counter<String> entityTP = new DefaultCounter<>();
+      Counter<String> entityFP = new DefaultCounter<>();
+      Counter<String> entityFN = new DefaultCounter<>();
 
-      Counter<String> wordTP = new ClassicCounter<>();
-      Counter<String> wordTN = new ClassicCounter<>();
-      Counter<String> wordFP = new ClassicCounter<>();
-      Counter<String> wordFN = new ClassicCounter<>();
+      Counter<String> wordTP = new DefaultCounter<>();
+      Counter<String> wordTN = new DefaultCounter<>();
+      Counter<String> wordFP = new DefaultCounter<>();
+      Counter<String> wordFN = new DefaultCounter<>();
 
       for (Entry<String, DataInstance> docEn : testSentences.entrySet()) {
         DataInstance doc = docEn.getValue();

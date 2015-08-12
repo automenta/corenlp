@@ -15,7 +15,7 @@ import edu.stanford.nlp.ie.machinereading.structure.Span;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.Label;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.trees.TreeCoreAnnotations;
@@ -158,7 +158,7 @@ public class GenericDataSetReader {
         for (EntityMention en : entities) {
           //System.out.println("old ner tag for " + en.getExtentString() + " was " + en.getType());
           Span s = en.getExtent();
-          Counter<String> allNertagforSpan = new ClassicCounter<>();
+          Counter<String> allNertagforSpan = new DefaultCounter<>();
           for (int i = s.start(); i < s.end(); i++) {
             allNertagforSpan.incrementCount(tokens.get(i).ner());
           }

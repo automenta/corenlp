@@ -37,7 +37,7 @@ import edu.stanford.nlp.ling.Datum;
 import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.math.ArrayMath;
 import edu.stanford.nlp.optimization.*;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.MultiClassAccuracyStats;
@@ -614,7 +614,7 @@ public class LinearClassifierFactory<L, F> extends AbstractLinearClassifierFacto
         }
       }
     }
-    Counter<F> feature2freq = new ClassicCounter<>();
+    Counter<F> feature2freq = new DefaultCounter<>();
     for(int f = 0; f < dataset.numFeatures(); f++){
      int maxF = ArrayMath.max(feature2label[f]);
      int total = ArrayMath.sum(feature2label[f]);

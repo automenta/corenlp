@@ -8,7 +8,7 @@ import java.util.Properties;
 
 import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.parser.lexparser.TreebankLangParserParams;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.trees.DiskTreebank;
@@ -77,7 +77,7 @@ public class RuleBranchingFactor {
     tb.loadPath(fileName);
 
     // Statistics
-    Counter<String> binaryRuleTypes = new ClassicCounter<>(20000);
+    Counter<String> binaryRuleTypes = new DefaultCounter<>(20000);
     List<Integer> branchingFactors = new ArrayList<>(20000);
     int nTrees = 0;
     int nUnaryRules = 0;

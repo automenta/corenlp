@@ -1,14 +1,13 @@
 package edu.stanford.nlp.patterns;
 
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.*;
 import edu.stanford.nlp.util.Execution.Option;
@@ -27,7 +26,7 @@ public class Data {
   public static String inMemorySaveFileLocation= "";
 
   public static Counter<CandidatePhrase> processedDataFreq = null;
-  public static Counter<String> domainNGramRawFreq = new ClassicCounter<>();;
+  public static Counter<String> domainNGramRawFreq = new DefaultCounter<>();;
 
   public static double ratioGoogleNgramFreqWithDataFreq = 1;
 

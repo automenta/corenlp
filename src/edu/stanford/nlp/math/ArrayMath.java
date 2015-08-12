@@ -941,6 +941,7 @@ public class ArrayMath {
     return logSum(logInputs,0,logInputs.length);
   }
 
+
   /**
    * Returns the log of the portion between <code>fromIndex</code>, inclusive, and
    * <code>toIndex</code>, exclusive, of an array of numbers, which are

@@ -1,25 +1,24 @@
 package edu.stanford.nlp.patterns.surface;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.Reader;
-import java.io.StringReader;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.patterns.DataInstance;
+import edu.stanford.nlp.util.DefaultCoreMap;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.process.PTBTokenizer.PTBTokenizerFactory;
 import edu.stanford.nlp.sequences.CoNLLDocumentReaderAndWriter;
 import edu.stanford.nlp.sequences.SeqClassifierFlags;
-import edu.stanford.nlp.util.ArrayCoreMap;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.StringUtils;
 import edu.stanford.nlp.util.TypesafeMap;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * CanNOT handle overlapping labeled text (that is one token cannot belong to
@@ -188,7 +187,7 @@ public class AnnotatedTextReader {
             }
           }
         }
-        CoreMap sentcm = new ArrayCoreMap();
+        DefaultCoreMap sentcm = new DefaultCoreMap();
         sentcm.set(CoreAnnotations.TextAnnotation.class, sentStr.trim());
         sentcm.set(CoreAnnotations.TokensAnnotation.class, sent);
         sentcm.set(CoreAnnotations.DocIDAnnotation.class, id + '-' + sentNum);

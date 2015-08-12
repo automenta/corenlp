@@ -1,7 +1,7 @@
 package edu.stanford.nlp.classify;
 
 import edu.stanford.nlp.ling.Datum;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.ArrayMap;
@@ -71,7 +71,7 @@ public class OneVsAllClassifier<L,F> implements Classifier<L,F> {
   }
 
   public Counter<L> scoresOf(Datum<L, F> example) {
-    Counter<L> scores = new ClassicCounter<>();
+    Counter<L> scores = new DefaultCounter<>();
     for (L label:labelIndex) {
       Map<L,String> posLabelMap = new ArrayMap<>();
       posLabelMap.put(label, POS_LABEL);

@@ -17,7 +17,7 @@ import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.io.RuntimeIOException;
 import edu.stanford.nlp.math.ArrayMath;
 import edu.stanford.nlp.pipeline.DefaultPaths;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Pair;
@@ -109,7 +109,7 @@ public class Dictionaries {
   public final Map<List<String>, Gender> genderNumber = Generics.newHashMap();
 
   public final ArrayList<Counter<Pair<String, String>>> corefDict = new ArrayList<>(4);
-  public final Counter<Pair<String, String>> corefDictPMI = new ClassicCounter<>();
+  public final Counter<Pair<String, String>> corefDictPMI = new DefaultCounter<>();
   public final Map<String,Counter<String>> NE_signatures = Generics.newHashMap();
 
   private void readWordLists(Locale lang) {
@@ -205,7 +205,7 @@ public class Dictionaries {
   public Map<String, float[]> vectors = Generics.newHashMap();
 
   public Map<String, String> strToEntity = Generics.newHashMap();
-  public Counter<String> dictScore = new ClassicCounter<>();
+  public Counter<String> dictScore = new DefaultCounter<>();
   
   private void setPronouns() {
     for(String s: animatePronouns){
@@ -465,7 +465,7 @@ public class Dictionaries {
       ArrayList<Counter<Pair<String, String>>> dict) {
 
     for(int i = 0; i < 4; i++){
-      dict.add(new ClassicCounter<>());
+      dict.add(new DefaultCounter<>());
 
       BufferedReader reader = null;
       try {
@@ -513,7 +513,7 @@ public class Dictionaries {
 
       while(reader.ready()) {
         String[] split = reader.readLine().split("\t");
-        Counter<String> cntr = new ClassicCounter<>();
+        Counter<String> cntr = new DefaultCounter<>();
         sigs.put(split[0], cntr);
         for (int i = 1; i < split.length; i=i+2) {
           cntr.setCount(split[i], Double.parseDouble(split[i+1]));

@@ -2,7 +2,7 @@ package edu.stanford.nlp.parser.lexparser;
 
 import edu.stanford.nlp.fsm.TransducerGraph;
 import edu.stanford.nlp.fsm.TransducerGraph.Arc;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Distribution;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.HashIndex;
@@ -100,7 +100,7 @@ public abstract class GrammarCompactor {
   }
 
   protected static Distribution<String> computeInputPrior(Map<String, List<List<String>>> allTrainPaths) {
-    ClassicCounter<String> result = new ClassicCounter<>();
+    DefaultCounter<String> result = new DefaultCounter<>();
     for (List<List<String>> pathList : allTrainPaths.values()) {
       for (List<String> path : pathList) {
         for (String input : path) {
@@ -329,7 +329,7 @@ public abstract class GrammarCompactor {
       }
     }
     // by now, the unaryRules and binaryRules Sets have old untouched and new rules with scores
-    ClassicCounter<String> symbolCounter = new ClassicCounter<>();
+    DefaultCounter<String> symbolCounter = new DefaultCounter<>();
     if (outputType == RAW_COUNTS) {
       // now we take the sets of rules and turn them into grammars
       // the scores of the rules we are given are actually counts

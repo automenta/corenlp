@@ -21,7 +21,7 @@ import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations.TokensAnnotation;
 import edu.stanford.nlp.process.Morphology;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.trees.EnglishGrammaticalRelations;
 import edu.stanford.nlp.trees.GrammaticalRelation;
@@ -84,7 +84,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
   }
 
   public Datum<String,String> createDatum(RelationMention rel, Logger logger) {
-    Counter<String> features = new ClassicCounter<>();
+    Counter<String> features = new DefaultCounter<>();
     if (rel.getArgs().size() != 2) {
       return null;
     }
@@ -101,7 +101,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
   }
 
   public Datum<String,String> createDatum(RelationMention rel, String positiveLabel) {
-    Counter<String> features = new ClassicCounter<>();
+    Counter<String> features = new DefaultCounter<>();
     if (rel.getArgs().size() != 2) {
       return null;
     }
@@ -396,7 +396,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
 
     // entity_counts: For each type, the total number of entities of that type in the sentence (integer-valued feature)
     // entity_counts_binary: Counts of entity types as binary features.
-    Counter<String> typeCounts = new ClassicCounter<>();
+    Counter<String> typeCounts = new DefaultCounter<>();
     if(rel.getSentence().get(MachineReadingAnnotations.EntityMentionsAnnotation.class) != null){ // may be null due to annotation errors!
       for (EntityMention arg : rel.getSentence().get(MachineReadingAnnotations.EntityMentionsAnnotation.class))
         typeCounts.incrementCount(arg.getType());
@@ -969,7 +969,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
   }
 
   public Set<String> getFeatures(RelationMention rel, String featureType) {
-    Counter<String> features = new ClassicCounter<>();
+    Counter<String> features = new DefaultCounter<>();
     List<String> singleton = new ArrayList<>();
     singleton.add(featureType);
     addFeatures(features, rel, singleton);

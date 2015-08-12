@@ -7,7 +7,7 @@ import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.Treebank;
 import edu.stanford.nlp.trees.DiskTreebank;
 import edu.stanford.nlp.trees.TreebankLanguagePack;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.*;
@@ -91,7 +91,7 @@ public class BaseLexicon implements Lexicon {
   /** Records the number of times word/tag pair was seen in training data.
    *  Includes word/tag pairs where one is a wildcard not a real word/tag.
    */
-  public ClassicCounter<IntTaggedWord> seenCounter = new ClassicCounter<>();
+  public DefaultCounter<IntTaggedWord> seenCounter = new DefaultCounter<>();
 
   double[] smooth = { 1.0, 1.0 };
 
@@ -435,7 +435,7 @@ public class BaseLexicon implements Lexicon {
 
     Counter<String> counts = baseTagCounts.get(baseTag);
     if (counts == null) {
-      counts = new ClassicCounter<>();
+      counts = new DefaultCounter<>();
       baseTagCounts.put(baseTag, counts);
     }
     counts.incrementCount(tag, weight);

@@ -4,7 +4,7 @@ import edu.stanford.nlp.trees.TreeTransformer;
 import edu.stanford.nlp.trees.TreeFactory;
 import edu.stanford.nlp.trees.HeadFinder;
 import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.ling.CategoryWordTag;
 import edu.stanford.nlp.ling.Word;
@@ -21,7 +21,7 @@ import java.util.*;
  */
 class PostSplitter implements TreeTransformer {
 
-  private final ClassicCounter<String> nonTerms = new ClassicCounter<>();
+  private final DefaultCounter<String> nonTerms = new DefaultCounter<>();
   private final TreebankLangParserParams tlpParams;
   private final HeadFinder hf;
   private final TrainOptions trainOptions;

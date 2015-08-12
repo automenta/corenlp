@@ -75,9 +75,9 @@ public class MorphaAnnotatorITest extends TestCase {
   public void testSentencesAnnotation() throws Exception {
     List<CoreLabel> words = getTestWords();
 
-    CoreMap sentence = new ArrayCoreMap();
+    CoreMap sentence = new DefaultCoreMap();
     sentence.set(CoreAnnotations.TokensAnnotation.class, words);
-    List<CoreMap> sentences = new ArrayList<CoreMap>();
+    List<CoreMap> sentences = new FastList(1);
     sentences.add(sentence);
     Annotation document = new Annotation(text);
     document.set(CoreAnnotations.SentencesAnnotation.class, sentences);

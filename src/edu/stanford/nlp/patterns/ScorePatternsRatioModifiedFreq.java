@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 import edu.stanford.nlp.patterns.ConstantsAndVariables.ScorePhraseMeasures;
 import edu.stanford.nlp.patterns.GetPatternsFromDataMultiClass.PatternScoring;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
@@ -50,7 +50,7 @@ public class ScorePatternsRatioModifiedFreq<E> extends ScorePatterns<E> {
           .normalizeSoftMaxMinMaxScores(constVars.dictOddsWeights.get(label),
             true, true, false);
 
-    Counter<E> currentPatternWeights4Label = new ClassicCounter<>();
+    Counter<E> currentPatternWeights4Label = new DefaultCounter<>();
 
     boolean useFreqPhraseExtractedByPat = false;
     if (patternScoring.equals(PatternScoring.SqrtAllRatio))
@@ -103,8 +103,8 @@ public class ScorePatternsRatioModifiedFreq<E> extends ScorePatterns<E> {
 
     //Multiplying by logP
     if (patternScoring.equals(PatternScoring.PhEvalInPatLogP) || patternScoring.equals(PatternScoring.LOGREGlogP)) {
-      Counter<E> logpos_i = new ClassicCounter<>();
-      for (Entry<E, ClassicCounter<CandidatePhrase>> en : patternsandWords4Label
+      Counter<E> logpos_i = new DefaultCounter<>();
+      for (Entry<E, DefaultCounter<CandidatePhrase>> en : patternsandWords4Label
           .entrySet()) {
         logpos_i.setCount(en.getKey(), Math.log(en.getValue().size()));
       }
@@ -123,14 +123,14 @@ public class ScorePatternsRatioModifiedFreq<E> extends ScorePatterns<E> {
 //      Data.loadGoogleNGrams();
 //    }
 
-    Counter<E> patterns = new ClassicCounter<>();
+    Counter<E> patterns = new DefaultCounter<>();
 
-    Counter<CandidatePhrase> googleNgramNormScores = new ClassicCounter<>();
-    Counter<CandidatePhrase> domainNgramNormScores = new ClassicCounter<>();
+    Counter<CandidatePhrase> googleNgramNormScores = new DefaultCounter<>();
+    Counter<CandidatePhrase> domainNgramNormScores = new DefaultCounter<>();
 
-    Counter<CandidatePhrase> externalFeatWtsNormalized = new ClassicCounter<>();
-    Counter<CandidatePhrase> editDistanceFromOtherSemanticBinaryScores = new ClassicCounter<>();
-    Counter<CandidatePhrase> editDistanceFromAlreadyExtractedBinaryScores = new ClassicCounter<>();
+    Counter<CandidatePhrase> externalFeatWtsNormalized = new DefaultCounter<>();
+    Counter<CandidatePhrase> editDistanceFromOtherSemanticBinaryScores = new DefaultCounter<>();
+    Counter<CandidatePhrase> editDistanceFromAlreadyExtractedBinaryScores = new DefaultCounter<>();
     double externalWtsDefault = 0.5;
     Counter<String> classifierScores = null;
 
@@ -201,96 +201,102 @@ public class ScorePatternsRatioModifiedFreq<E> extends ScorePatterns<E> {
       classifierScores = scoreclassifier.phraseScorer.scorePhrases(label, allCandidatePhrases,  true);
     }
 
-    Counter<CandidatePhrase> cachedScoresForThisIter = new ClassicCounter<>();
+    Counter<CandidatePhrase> cachedScoresForThisIter = new DefaultCounter<>();
 
-    for (Map.Entry<E, ClassicCounter<CandidatePhrase>> en: positivePatternsAndWords.entrySet()) {
+    for (Map.Entry<E, DefaultCounter<CandidatePhrase>> en: positivePatternsAndWords.entrySet()) {
 
-        for(Entry<CandidatePhrase, Double> en2: en.getValue().entrySet()) {
-          CandidatePhrase word = en2.getKey();
-          Counter<ScorePhraseMeasures> scoreslist = new ClassicCounter<>();
-          double score = 1;
-          if ((patternScoring.equals(PatternScoring.PhEvalInPat) || patternScoring
-            .equals(PatternScoring.PhEvalInPatLogP))
-            && scorePhrasesInPatSelection) {
-            if (cachedScoresForThisIter.containsKey(word)) {
-              score = cachedScoresForThisIter.getCount(word);
-            } else {
-              if (constVars.getOtherSemanticClassesWords().contains(word)
-                || constVars.getCommonEngWords().contains(word))
-                score = 1;
-              else {
+      final Counter<CandidatePhrase> finalGoogleNgramNormScores = googleNgramNormScores;
+      final Counter<CandidatePhrase> finalDomainNgramNormScores = domainNgramNormScores;
+      final Counter<CandidatePhrase> finalExternalFeatWtsNormalized = externalFeatWtsNormalized;
+      final Counter<String> finalClassifierScores = classifierScores;
 
-                if (constVars.usePatternEvalSemanticOdds) {
-                  double semanticClassOdds = 1;
-                  if (dictOddsWordWeights.containsKey(word))
-                    semanticClassOdds = 1 - dictOddsWordWeights.getCount(word);
-                  scoreslist.setCount(ScorePhraseMeasures.SEMANTICODDS,
-                    semanticClassOdds);
-                }
+      en.getValue().map.forEachKeyValue((word, v) -> {
 
-                if (constVars.usePatternEvalGoogleNgram) {
-                  double gscore = 0;
-                  if (googleNgramNormScores.containsKey(word)) {
-                    gscore = 1 - googleNgramNormScores.getCount(word);
-                  }
-                  scoreslist.setCount(ScorePhraseMeasures.GOOGLENGRAM, gscore);
-                }
+        Counter<ScorePhraseMeasures> scoreslist = new DefaultCounter<>();
+        double score = 1;
+        if ((patternScoring.equals(PatternScoring.PhEvalInPat) || patternScoring
+                .equals(PatternScoring.PhEvalInPatLogP))
+                && scorePhrasesInPatSelection) {
+          if (cachedScoresForThisIter.containsKey(word)) {
+            score = cachedScoresForThisIter.getCount(word);
+          } else {
+            if (constVars.getOtherSemanticClassesWords().contains(word)
+                    || constVars.getCommonEngWords().contains(word))
+              score = 1;
+            else {
 
-                if (constVars.usePatternEvalDomainNgram) {
-                  double domainscore;
-                  if (domainNgramNormScores.containsKey(word)) {
-                    domainscore = 1 - domainNgramNormScores.getCount(word);
-                  } else
-                    domainscore = 1 - scorePhrases.phraseScorer
-                      .getPhraseWeightFromWords(domainNgramNormScores, word,
-                        scorePhrases.phraseScorer.OOVDomainNgramScore);
-                  scoreslist.setCount(ScorePhraseMeasures.DOMAINNGRAM,
-                    domainscore);
-                }
-                if (constVars.usePatternEvalWordClass) {
-                  double externalFeatureWt = externalWtsDefault;
-                  if (externalFeatWtsNormalized.containsKey(word))
-                    externalFeatureWt = 1 - externalFeatWtsNormalized.getCount(word);
-                  scoreslist.setCount(ScorePhraseMeasures.DISTSIM,
-                    externalFeatureWt);
-                }
-
-                if (constVars.usePatternEvalEditDistOther) {
-                  assert editDistanceFromOtherSemanticBinaryScores.containsKey(word) : "How come no edit distance info for word " + word;
-                  scoreslist.setCount(ScorePhraseMeasures.EDITDISTOTHER,
-                    editDistanceFromOtherSemanticBinaryScores.getCount(word));
-                }
-                if (constVars.usePatternEvalEditDistSame) {
-                  scoreslist.setCount(ScorePhraseMeasures.EDITDISTSAME,
-                    editDistanceFromAlreadyExtractedBinaryScores.getCount(word));
-                }
-
-                // taking average
-                score = Counters.mean(scoreslist);
-
-                phInPatScores.setCounter(word, scoreslist);
+              if (constVars.usePatternEvalSemanticOdds) {
+                double semanticClassOdds = 1;
+                if (dictOddsWordWeights.containsKey(word))
+                  semanticClassOdds = 1 - dictOddsWordWeights.getCount(word);
+                scoreslist.setCount(ScorePhraseMeasures.SEMANTICODDS,
+                        semanticClassOdds);
               }
 
-              cachedScoresForThisIter.setCount(word, score);
+              if (constVars.usePatternEvalGoogleNgram) {
+                double gscore = 0;
+                if (finalGoogleNgramNormScores.containsKey(word)) {
+                  gscore = 1 - finalGoogleNgramNormScores.getCount(word);
+                }
+                scoreslist.setCount(ScorePhraseMeasures.GOOGLENGRAM, gscore);
+              }
+
+              if (constVars.usePatternEvalDomainNgram) {
+                double domainscore;
+                if (finalDomainNgramNormScores.containsKey(word)) {
+                  domainscore = 1 - finalDomainNgramNormScores.getCount(word);
+                } else
+                  domainscore = 1 - scorePhrases.phraseScorer
+                          .getPhraseWeightFromWords(finalDomainNgramNormScores, word,
+                                  scorePhrases.phraseScorer.OOVDomainNgramScore);
+                scoreslist.setCount(ScorePhraseMeasures.DOMAINNGRAM,
+                        domainscore);
+              }
+              if (constVars.usePatternEvalWordClass) {
+                double externalFeatureWt = externalWtsDefault;
+                if (finalExternalFeatWtsNormalized.containsKey(word))
+                  externalFeatureWt = 1 - finalExternalFeatWtsNormalized.getCount(word);
+                scoreslist.setCount(ScorePhraseMeasures.DISTSIM,
+                        externalFeatureWt);
+              }
+
+              if (constVars.usePatternEvalEditDistOther) {
+                assert editDistanceFromOtherSemanticBinaryScores.containsKey(word) : "How come no edit distance info for word " + word;
+                scoreslist.setCount(ScorePhraseMeasures.EDITDISTOTHER,
+                        editDistanceFromOtherSemanticBinaryScores.getCount(word));
+              }
+              if (constVars.usePatternEvalEditDistSame) {
+                scoreslist.setCount(ScorePhraseMeasures.EDITDISTSAME,
+                        editDistanceFromAlreadyExtractedBinaryScores.getCount(word));
+              }
+
+              // taking average
+              score = Counters.mean(scoreslist);
+
+              phInPatScores.setCounter(word, scoreslist);
             }
-          } else if ((patternScoring.equals(PatternScoring.LOGREG) || patternScoring.equals(PatternScoring.LOGREGlogP))
-            && scorePhrasesInPatSelection) {
-            score = 1 - classifierScores.getCount(word);
-            // score = 1 - scorePhrases.scoreUsingClassifer(classifier,
-            // e.getKey(), label, true, null, null, dictOddsWordWeights);
-            // throw new RuntimeException("not implemented yet");
+
+            cachedScoresForThisIter.setCount(word, score);
           }
-
-          if (useFreqPhraseExtractedByPat)
-            score = score * scoringFunction.apply(new Pair(en.getKey(), word));
-          if (constVars.sqrtPatScore)
-            patterns.incrementCount(en.getKey(), Math.sqrt(score));
-          else
-            patterns.incrementCount(en.getKey(), score);
+        } else if ((patternScoring.equals(PatternScoring.LOGREG) || patternScoring.equals(PatternScoring.LOGREGlogP))
+                && scorePhrasesInPatSelection) {
+          score = 1 - finalClassifierScores.getCount(word);
+          // score = 1 - scorePhrases.scoreUsingClassifer(classifier,
+          // e.getKey(), label, true, null, null, dictOddsWordWeights);
+          // throw new RuntimeException("not implemented yet");
         }
+
+        if (useFreqPhraseExtractedByPat)
+          score = score * scoringFunction.apply(new Pair(en.getKey(), word));
+        if (constVars.sqrtPatScore)
+          patterns.incrementCount(en.getKey(), Math.sqrt(score));
+        else
+          patterns.incrementCount(en.getKey(), score);
+
+
+      });
+
     }
-
-
 
     return patterns;
   }

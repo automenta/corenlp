@@ -1,7 +1,7 @@
 package edu.stanford.nlp.parser.lexparser;
 
 import edu.stanford.nlp.international.french.FrenchUnknownWordSignatures;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.util.Index;
 
 
@@ -17,7 +17,7 @@ public class FrenchUnknownWordModel extends BaseUnknownWordModel {
   public FrenchUnknownWordModel(Options op, Lexicon lex,
                                 Index<String> wordIndex,
                                 Index<String> tagIndex,
-                                ClassicCounter<IntTaggedWord> unSeenCounter) {
+                                DefaultCounter<IntTaggedWord> unSeenCounter) {
     super(op, lex, wordIndex, tagIndex, unSeenCounter, null, null, null);
     this.smartMutation = op.lexOptions.smartMutation;
     this.unknownSuffixSize = op.lexOptions.unknownSuffixSize;
@@ -32,7 +32,7 @@ public class FrenchUnknownWordModel extends BaseUnknownWordModel {
   public FrenchUnknownWordModel(Options op, Lexicon lex,
                                 Index<String> wordIndex,
                                 Index<String> tagIndex) {
-    this(op, lex, wordIndex, tagIndex, new ClassicCounter<>());
+    this(op, lex, wordIndex, tagIndex, new DefaultCounter<>());
   }
 
   @Override

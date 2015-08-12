@@ -9,7 +9,7 @@ import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.parser.lexparser.EnglishTreebankParserParams;
 import edu.stanford.nlp.parser.lexparser.TreebankLangParserParams;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.trees.DiskTreebank;
@@ -74,7 +74,7 @@ public class VocabFrequency {
       }
     }
 
-    Counter<String> vocab = new ClassicCounter<>();
+    Counter<String> vocab = new DefaultCounter<>();
     for(Tree t : tb) {
       List<? extends Label> yield = t.yield();
       for(Label word : yield)

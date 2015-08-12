@@ -7,7 +7,7 @@ import java.util.Map;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.patterns.PatternFactory;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.concurrent.ConcurrentHashIndex;
 import org.junit.Before;
@@ -70,7 +70,7 @@ public class SurfacePatternTest {
 
     assert p.compareTo(p2) == 0;
 
-    Counter<SurfacePattern> pats = new ClassicCounter<SurfacePattern>();
+    Counter<SurfacePattern> pats = new DefaultCounter<SurfacePattern>();
     pats.setCount(p, 1);
     pats.setCount(p2, 1);
 

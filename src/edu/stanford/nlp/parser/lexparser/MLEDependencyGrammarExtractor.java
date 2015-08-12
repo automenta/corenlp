@@ -3,7 +3,7 @@ package edu.stanford.nlp.parser.lexparser;
 import java.util.*;
 
 import edu.stanford.nlp.util.Index;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.trees.Tree;
 
 
@@ -18,7 +18,7 @@ public class MLEDependencyGrammarExtractor extends AbstractTreeExtractor<Depende
   protected final Index<String> tagIndex;
 
   /** This is where all dependencies are stored (using full tag space). */
-  protected ClassicCounter<IntDependency> dependencyCounter = new ClassicCounter<>();
+  protected DefaultCounter<IntDependency> dependencyCounter = new DefaultCounter<>();
   //private Set dependencies = new HashSet();
 
   protected TreebankLangParserParams tlpParams;

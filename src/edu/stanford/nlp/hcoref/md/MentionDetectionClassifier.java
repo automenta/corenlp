@@ -13,7 +13,7 @@ import edu.stanford.nlp.hcoref.rf.RandomForest;
 import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.RVFDatum;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.Generics;
@@ -29,7 +29,7 @@ public class MentionDetectionClassifier implements Serializable {
   }
 
   public static Counter<String> extractFeatures(Mention p, Set<Mention> shares, Set<String> neStrings, Dictionaries dict, Properties props) {
-    Counter<String> features = new ClassicCounter<>();
+    Counter<String> features = new DefaultCounter<>();
     
     String span = p.lowercaseNormalizedSpanString();
     String ner = p.headWord.ner();
@@ -122,7 +122,7 @@ public class MentionDetectionClassifier implements Serializable {
       for(Map.Entry<Integer, Set<Mention>> integerSetEntry : headPositions.entrySet()) {
         Set<Mention> shares = integerSetEntry.getValue();
         if(shares.size() > 1) {
-          Counter<Mention> probs = new ClassicCounter<>();
+          Counter<Mention> probs = new DefaultCounter<>();
           for(Mention p : shares) {
             double trueProb = probabilityOf(p, shares, neStrings, dict, props);
             probs.incrementCount(p, trueProb);

@@ -1,16 +1,15 @@
 package edu.stanford.nlp.ling;
 
-import com.gs.collections.impl.map.mutable.UnifiedMap;
 import com.gs.collections.impl.set.mutable.UnifiedSet;
 import edu.stanford.nlp.ling.AnnotationLookup.KeyLookup;
 import edu.stanford.nlp.util.ArrayCoreMap;
 import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.DefaultCoreMap;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.logging.PrettyLogger;
 import edu.stanford.nlp.util.logging.Redwood;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 /**
@@ -31,7 +30,7 @@ import java.util.stream.Collectors;
  * @author dramage
  * @author rafferty
  */
-public class CoreLabel extends UnifiedMap<Class<?>, Object> /* ArrayCoreMap*/ implements AbstractCoreLabel, HasCategory, HasContext, CoreMap {
+public class CoreLabel extends DefaultCoreMap /* ArrayCoreMap*/ implements AbstractCoreLabel, HasCategory, HasContext, CoreMap {
 
     private static final long serialVersionUID = 2L;
 
@@ -122,69 +121,7 @@ public class CoreLabel extends UnifiedMap<Class<?>, Object> /* ArrayCoreMap*/ im
         }
     }
 
-    @Override
-    public String toShorterString(String... what) {
-        final StringBuilder s = new StringBuilder();
-        s.append('[');
-        final Set<String> whatSet = UnifiedSet.newSetWith(what);
-        forEachKeyValue((klass, v) -> {
 
-            String name = ArrayCoreMap.shortNames.get(klass);
-
-            if (name == null) {
-                name = klass.getSimpleName();
-                int annoIdx = name.lastIndexOf("Annotation");
-                if (annoIdx >= 0) {
-                    name = name.substring(0, annoIdx);
-                }
-                ArrayCoreMap.shortNames.put(klass, name);
-            }
-
-
-            if (whatSet.contains(name)) {
-                if (s.length() > 1) {
-                    s.append(' ');
-                }
-                s.append(name);
-                s.append('=');
-                s.append(v);
-            }
-
-        });
-        s.append(']');
-
-
-        return s.toString();
-    }
-
-
-    @Override
-    public <VALUE> boolean has(Class<? extends Key<VALUE>> key) {
-        return super.contains(key);
-    }
-
-    @Override
-    public <VALUE> VALUE get(Class<? extends Key<VALUE>> key) {
-        return (VALUE) super.get(key);
-    }
-
-    @Override
-    public <VALUE> VALUE set(Class<? extends Key<VALUE>> key, VALUE value) {
-        if (value == null)
-            return (VALUE) super.remove(key);
-        else
-            return (VALUE) super.put(key, value);
-    }
-
-    @Override
-    public <VALUE> VALUE remove(Class<? extends Key<VALUE>> key) {
-        return (VALUE) super.remove(key);
-    }
-
-    @Override
-    public <VALUE> boolean containsKey(Class<? extends Key<VALUE>> key) {
-        return super.containsKey(key);
-    }
 
     /**
      * This constructor attempts to parse the String keys

@@ -112,17 +112,17 @@ public class GeneralizedCounter<K> implements Serializable {
   /**
    * Returns a set of entries, where each key is a read-only {@link
    * List} of size one less than the depth of the GeneralizedCounter, and
-   * each value is a {@link ClassicCounter}.  Each entry is a {@link java.util.Map.Entry} object, but these objects
+   * each value is a {@link DefaultCounter}.  Each entry is a {@link java.util.Map.Entry} object, but these objects
    * do not support the {@link java.util.Map.Entry#setValue} method; attempts to call that method with result
    * in an {@link UnsupportedOperationException} being thrown.
    */
-  public Set<Map.Entry<List<K>, ClassicCounter<K>>> lowestLevelCounterEntrySet() {
-    return ErasureUtils.<Set<Map.Entry<List<K>, ClassicCounter<K>>>>uncheckedCast(lowestLevelCounterEntrySet(new HashSet<>(), zeroKey, true));
+  public Set<Map.Entry<List<K>, DefaultCounter<K>>> lowestLevelCounterEntrySet() {
+    return ErasureUtils.<Set<Map.Entry<List<K>, DefaultCounter<K>>>>uncheckedCast(lowestLevelCounterEntrySet(new HashSet<>(), zeroKey, true));
   }
 
   /* this is (non-tail) recursive right now, haven't figured out a way
   * to speed it up */
-  private Set<Map.Entry<Object, ClassicCounter<K>>> lowestLevelCounterEntrySet(Set<Map.Entry<Object, ClassicCounter<K>>> s, Object[] key, boolean useLists) {
+  private Set<Map.Entry<Object, DefaultCounter<K>>> lowestLevelCounterEntrySet(Set<Map.Entry<Object, DefaultCounter<K>>> s, Object[] key, boolean useLists) {
     Set<K> keys = map.keySet();
     if (depth == 2) {
       // add these counters to set
@@ -132,7 +132,7 @@ public class GeneralizedCounter<K> implements Serializable {
           System.arraycopy(key, 0, newKey, 0, key.length);
         }
         newKey[key.length] = finalKey;
-        ClassicCounter<K> c = conditionalizeHelper(finalKey).oneDimensionalCounterView();
+        DefaultCounter<K> c = conditionalizeHelper(finalKey).oneDimensionalCounterView();
         if (useLists) {
           s.add(new Entry<>(Arrays.asList(newKey), c));
         } else {
@@ -561,7 +561,7 @@ public class GeneralizedCounter<K> implements Serializable {
   }
 
   /**
-   * Like {@link ClassicCounter}, this currently returns true if the count is
+   * Like {@link DefaultCounter}, this currently returns true if the count is
    * explicitly 0.0 for something
    */
   public boolean containsKey(List<K> key) {
@@ -596,16 +596,16 @@ public class GeneralizedCounter<K> implements Serializable {
 
   /**
    * Returns a read-only synchronous view (not a snapshot) of
-   * <code>this</code> as a {@link ClassicCounter}.  Any calls to
+   * <code>this</code> as a {@link DefaultCounter}.  Any calls to
    * count-changing or entry-removing operations will result in an
    * {@link UnsupportedOperationException}.  At some point in the
    * future, this view may gain limited writable functionality.
    */
-  public ClassicCounter<List<K>> counterView() {
+  public DefaultCounter<List<K>> counterView() {
     return new CounterView();
   }
 
-  private class CounterView extends ClassicCounter<List<K>> {
+  private class CounterView extends DefaultCounter<List<K>> {
 
     /**
      *
@@ -678,14 +678,14 @@ public class GeneralizedCounter<K> implements Serializable {
         return true;
       }
       //return false;
-      if (!(o instanceof ClassicCounter)) {
+      if (!(o instanceof DefaultCounter)) {
         return false;
       } else {
         // System.out.println("it's a counter!");
         // Set e = entrySet();
         // Set e1 = ((Counter) o).entrySet();
         // System.out.println(e + "\n" + e1);
-        return entrySet().equals(((ClassicCounter<?>) o).entrySet());
+        return entrySet().equals(((DefaultCounter<?>) o).entrySet());
       }
     }
 
@@ -717,7 +717,7 @@ public class GeneralizedCounter<K> implements Serializable {
 
   /**
    * Returns a read-only synchronous view (not a snapshot) of
-   * <code>this</code> as a {@link ClassicCounter}.  Works only with one-dimensional
+   * <code>this</code> as a {@link DefaultCounter}.  Works only with one-dimensional
    * GeneralizedCounters.  Exactly like {@link #counterView}, except
    * that {@link #getCount} operates on primitive objects of the counter instead
    * of singleton lists.  Any calls to
@@ -725,14 +725,14 @@ public class GeneralizedCounter<K> implements Serializable {
    * {@link UnsupportedOperationException}.  At some point in the
    * future, this view may gain limited writable functionality.
    */
-  public ClassicCounter<K> oneDimensionalCounterView() {
+  public DefaultCounter<K> oneDimensionalCounterView() {
     if (depth != 1) {
       throw new UnsupportedOperationException();
     }
     return new OneDimensionalCounterView();
   }
 
-  private class OneDimensionalCounterView extends ClassicCounter<K> {
+  private class OneDimensionalCounterView extends DefaultCounter<K> {
 
     /**
      *
@@ -800,14 +800,14 @@ public class GeneralizedCounter<K> implements Serializable {
         return true;
       }
       //return false;
-      if (!(o instanceof ClassicCounter)) {
+      if (!(o instanceof DefaultCounter)) {
         return false;
       } else {
         // System.out.println("it's a counter!");
         // Set e = entrySet();
         // Set e1 = ((Counter) o).map.entrySet();
         // System.out.println(e + "\n" + e1);
-        return entrySet().equals(((ClassicCounter<?>) o).entrySet());
+        return entrySet().equals(((DefaultCounter<?>) o).entrySet());
       }
     }
 
@@ -922,7 +922,7 @@ public class GeneralizedCounter<K> implements Serializable {
     System.out.println("another entry set:\n" + gc1.entrySet());
 
 
-    ClassicCounter<List<String>> c = gc.counterView();
+    DefaultCounter<List<String>> c = gc.counterView();
 
     System.out.println("string representation of counter view:");
     System.out.println(c.toString());
@@ -933,7 +933,7 @@ public class GeneralizedCounter<K> implements Serializable {
     System.out.println(d1 + " " + d2);
 
 
-    ClassicCounter<List<String>> c1 = gc1.counterView();
+    DefaultCounter<List<String>> c1 = gc1.counterView();
 
     System.out.println("Count of {j,x} -- should be 3.0\t" + c1.getCount(Arrays.asList(new String[]{"j", "x"})));
 
@@ -947,8 +947,8 @@ public class GeneralizedCounter<K> implements Serializable {
 
     System.out.println("### testing equality of regular Counter...");
 
-    ClassicCounter<String> z1 = new ClassicCounter<>();
-    ClassicCounter<String> z2 = new ClassicCounter<>();
+    DefaultCounter<String> z1 = new DefaultCounter<>();
+    DefaultCounter<String> z2 = new DefaultCounter<>();
 
     z1.incrementCount("a1");
     z1.incrementCount("a2");

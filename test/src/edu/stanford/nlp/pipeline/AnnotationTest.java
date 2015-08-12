@@ -1,12 +1,12 @@
 package edu.stanford.nlp.pipeline;
 
+import edu.stanford.nlp.util.DefaultCoreMap;
 import junit.framework.TestCase;
 
 import java.util.List;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.Sentence;
-import edu.stanford.nlp.util.ArrayCoreMap;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Generics;
 
@@ -20,7 +20,7 @@ public class AnnotationTest extends TestCase {
   public void testFromList() {
     List<CoreMap> sentences = Generics.newArrayList();
 
-    CoreMap sentence = new ArrayCoreMap();
+    CoreMap sentence = new DefaultCoreMap();
     List<CoreLabel> words = Sentence.toCoreLabelList("This", "is", "a", "test", ".");
     sentence.set(CoreAnnotations.TokensAnnotation.class, words);
     sentences.add(sentence);

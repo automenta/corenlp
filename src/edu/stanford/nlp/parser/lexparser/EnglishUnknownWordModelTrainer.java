@@ -2,7 +2,7 @@ package edu.stanford.nlp.parser.lexparser;
 
 import edu.stanford.nlp.io.EncodingPrintWriter;
 import edu.stanford.nlp.ling.TaggedWord;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.util.Index;
 
 
@@ -12,9 +12,9 @@ public class EnglishUnknownWordModelTrainer
   private static final boolean DOCUMENT_UNKNOWNS = false;
 
   // Records the number of times word/tag pair was seen in training data.
-  ClassicCounter<IntTaggedWord> seenCounter;
+  DefaultCounter<IntTaggedWord> seenCounter;
 
-  ClassicCounter<IntTaggedWord> unSeenCounter;
+  DefaultCounter<IntTaggedWord> unSeenCounter;
 
   double indexToStartUnkCounting;
 
@@ -28,8 +28,8 @@ public class EnglishUnknownWordModelTrainer
 
     this.indexToStartUnkCounting = (totalTrees * op.trainOptions.fractionBeforeUnseenCounting);
 
-    seenCounter = new ClassicCounter<>();
-    unSeenCounter = new ClassicCounter<>();
+    seenCounter = new DefaultCounter<>();
+    unSeenCounter = new DefaultCounter<>();
 
     model = new EnglishUnknownWordModel(op, lex, wordIndex, tagIndex,
                                         unSeenCounter);

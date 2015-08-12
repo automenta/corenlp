@@ -3,12 +3,9 @@ package edu.stanford.nlp.classify;
 import java.lang.reflect.Array;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 
 import edu.stanford.nlp.ling.Datum;
 import edu.stanford.nlp.math.ADMath;
@@ -16,11 +13,10 @@ import edu.stanford.nlp.math.ArrayMath;
 import edu.stanford.nlp.math.DoubleAD;
 import edu.stanford.nlp.optimization.AbstractStochasticCachingDiffUpdateFunction;
 import edu.stanford.nlp.optimization.StochasticCalculateMethods;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.Execution;
 import edu.stanford.nlp.util.Index;
-import edu.stanford.nlp.util.SystemUtils;
 
 
 /**
@@ -226,7 +222,7 @@ public class LogConditionalObjectiveFunction<L, F> extends AbstractStochasticCac
     double localValue = 0.0;
     double[] x;
     int[] batch;
-    Counter<Integer> sparseGradient = new ClassicCounter<>();
+    Counter<Integer> sparseGradient = new DefaultCounter<>();
     CountDownLatch latch;
 
     public CLBatchDerivativeCalculation(int numThreads, int threadIdx, int[] batch, double[] x, int derivativeSize, CountDownLatch latch) {

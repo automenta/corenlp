@@ -2,7 +2,7 @@ package edu.stanford.nlp.parser.lexparser;
 
 import edu.stanford.nlp.ling.StringLabelFactory;
 import edu.stanford.nlp.trees.*;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.Pair;
 
@@ -124,7 +124,7 @@ public class SisterAnnotationStats implements TreeVisitor {
     String label = t.label().value();
 
     if (!nodeRules.containsKey(label)) {
-      nodeRules.put(label, new ClassicCounter());
+      nodeRules.put(label, new DefaultCounter());
     }
 
     if (!rightRules.containsKey(label)) {
@@ -136,7 +136,7 @@ public class SisterAnnotationStats implements TreeVisitor {
     }
 
 
-    ((ClassicCounter) nodeRules.get(label)).incrementCount(rewrite);
+    ((DefaultCounter) nodeRules.get(label)).incrementCount(rewrite);
 
 
     sideCounters(label, rewrite, left, leftRules);
@@ -149,10 +149,10 @@ public class SisterAnnotationStats implements TreeVisitor {
       String sis = (String) i.next();
 
       if (!((Map) sideRules.get(label)).containsKey(sis)) {
-        ((Map) sideRules.get(label)).put(sis, new ClassicCounter());
+        ((Map) sideRules.get(label)).put(sis, new DefaultCounter());
       }
 
-      ((ClassicCounter) ((HashMap) sideRules.get(label)).get(sis)).incrementCount(rewrite);
+      ((DefaultCounter) ((HashMap) sideRules.get(label)).get(sis)).incrementCount(rewrite);
     }
   }
 
@@ -180,14 +180,14 @@ public class SisterAnnotationStats implements TreeVisitor {
     for (Iterator it = nodeRules.keySet().iterator(); it.hasNext();) {
       ArrayList answers = new ArrayList();
       String label = (String) it.next();
-      ClassicCounter cntr = (ClassicCounter) nodeRules.get(label);
+      DefaultCounter cntr = (DefaultCounter) nodeRules.get(label);
       double support = (cntr.totalCount());
       System.out.println("Node " + label + " support is " + support);
 
 
       for (Iterator it2 = ((HashMap) leftRules.get(label)).keySet().iterator(); it2.hasNext();) {
         String sis = (String) it2.next();
-        ClassicCounter cntr2 = (ClassicCounter) ((HashMap) leftRules.get(label)).get(sis);
+        DefaultCounter cntr2 = (DefaultCounter) ((HashMap) leftRules.get(label)).get(sis);
         double support2 = (cntr2.totalCount());
 
         /* alternative 1: use full distribution to calculate score */
@@ -217,7 +217,7 @@ public class SisterAnnotationStats implements TreeVisitor {
 
       for (Iterator it2 = ((HashMap) rightRules.get(label)).keySet().iterator(); it2.hasNext();) {
         String sis = (String) it2.next();
-        ClassicCounter cntr2 = (ClassicCounter) ((HashMap) rightRules.get(label)).get(sis);
+        DefaultCounter cntr2 = (DefaultCounter) ((HashMap) rightRules.get(label)).get(sis);
         double support2 = (cntr2.totalCount());
         double kl = Counters.klDivergence(cntr2, cntr);
         String annotatedLabel = label + "=r=" + sis;
@@ -322,7 +322,7 @@ public class SisterAnnotationStats implements TreeVisitor {
    */
   public static void main(String[] args) {
 
-    ClassicCounter<String> c = new ClassicCounter<>();
+    DefaultCounter<String> c = new DefaultCounter<>();
     c.setCount("A", 0);
     c.setCount("B", 1);
 

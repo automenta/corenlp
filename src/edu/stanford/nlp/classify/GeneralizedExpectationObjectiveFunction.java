@@ -4,7 +4,7 @@ import edu.stanford.nlp.ling.Datum;
 import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.math.ArrayMath;
 import edu.stanford.nlp.optimization.AbstractCachingDiffFunction;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Triple;
@@ -76,7 +76,7 @@ public class GeneralizedExpectationObjectiveFunction<L,F> extends AbstractCachin
     } else {
       Arrays.fill(derivative, 0.0);
     }
-    Counter<Triple<Integer,Integer,Integer>> feature2classPairDerivatives = new ClassicCounter<>();
+    Counter<Triple<Integer,Integer,Integer>> feature2classPairDerivatives = new DefaultCounter<>();
 
     value = 0.0;
     for(int n = 0; n < geFeatures.size(); n++){

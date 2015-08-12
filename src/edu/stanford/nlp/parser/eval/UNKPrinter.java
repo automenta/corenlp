@@ -11,7 +11,7 @@ import edu.stanford.nlp.parser.lexparser.EnglishTreebankParserParams;
 import edu.stanford.nlp.parser.lexparser.Lexicon;
 import edu.stanford.nlp.parser.lexparser.TreebankLangParserParams;
 import edu.stanford.nlp.parser.lexparser.Options;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.trees.DiskTreebank;
@@ -99,8 +99,8 @@ public class UNKPrinter {
     Lexicon lex = tlpp.lex(op, wordIndex, tagIndex);
     
     int computeAfter = (int) (0.50 * tb.size());
-    Counter<String> vocab = new ClassicCounter<>();
-    Counter<String> unkCounter = new ClassicCounter<>();
+    Counter<String> vocab = new DefaultCounter<>();
+    Counter<String> unkCounter = new DefaultCounter<>();
     int treeId = 0;
     for(Tree t : tb) {
       List<? extends Label> yield = t.yield();

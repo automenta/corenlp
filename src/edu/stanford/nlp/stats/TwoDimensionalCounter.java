@@ -29,18 +29,20 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   private static final long serialVersionUID = 1L;
 
   // the outermost Map
-  private Map<K1, ClassicCounter<K2>> map;
+  private Map<K1, DefaultCounter<K2>> map;
 
   // the total of all counts
   private double total;
 
-  // the MapFactory used to make new maps to counters
-  private MapFactory<K1, ClassicCounter<K2>> outerMF;
+//  // the MapFactory used to make new maps to counters
+//  private MapFactory<K1, ClassicCounter<K2>> outerMF;
 
-  // the MapFactory used to make new maps in the inner counter
-  private MapFactory<K2, MutableDouble> innerMF;
+//  // the MapFactory used to make new maps in the inner counter
+//  private MapFactory<K2, MutableDouble> innerMF;
 
   private double defaultValue = 0.0;
+  private MapFactory<K1, DefaultCounter<K2>> outerMF;
+  private MapFactory<K2, MutableDouble> innerMF;
 
   public void defaultReturnValue(double rv) {
     defaultValue = rv;
@@ -68,17 +70,17 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   /**
    * @return the inner Counter associated with key o
    */
-  public ClassicCounter<K2> getCounter(K1 o) {
-    ClassicCounter<K2> c = map.get(o);
+  public DefaultCounter<K2> getCounter(K1 o) {
+    DefaultCounter<K2> c = map.get(o);
     if (c == null) {
-      c = new ClassicCounter<>(innerMF);
+      c = new DefaultCounter();
       c.setDefaultReturnValue(defaultValue);
       map.put(o, c);
     }
     return c;
   }
 
-  public Set<Map.Entry<K1, ClassicCounter<K2>>> entrySet() {
+  public Set<Map.Entry<K1, DefaultCounter<K2>>> entrySet() {
     return map.entrySet();
   }
 
@@ -88,7 +90,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   public int size() {
     int result = 0;
     for (K1 o : firstKeySet()) {
-      ClassicCounter<K2> c = map.get(o);
+      DefaultCounter<K2> c = map.get(o);
       result += c.size();
     }
     return result;
@@ -104,7 +106,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   public boolean containsKey(K1 o1, K2 o2) {
     if (!map.containsKey(o1))
       return false;
-    ClassicCounter<K2> c = map.get(o1);
+    DefaultCounter<K2> c = map.get(o1);
     return c.containsKey(o2);
   }
   
@@ -124,7 +126,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   /**
    */
   public void incrementCount(K1 o1, K2 o2, double count) {
-    ClassicCounter<K2> c = getCounter(o1);
+    DefaultCounter<K2> c = getCounter(o1);
     c.incrementCount(o2, count);
     total += count;
   }
@@ -144,7 +146,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   /**
    */
   public void setCount(K1 o1, K2 o2, double count) {
-    ClassicCounter<K2> c = getCounter(o1);
+    DefaultCounter<K2> c = getCounter(o1);
     double oldCount = getCount(o1, o2);
     total -= oldCount;
     c.setCount(o2, count);
@@ -152,7 +154,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   }
 
   public double remove(K1 o1, K2 o2) {
-    ClassicCounter<K2> c = getCounter(o1);
+    DefaultCounter<K2> c = getCounter(o1);
     double oldCount = getCount(o1, o2);
     total -= oldCount;
     c.remove(o2);
@@ -165,8 +167,8 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   /**
    */
   public double getCount(K1 o1, K2 o2) {
-    ClassicCounter<K2> c = getCounter(o1);
-    if (c.totalCount() == 0.0 && !c.keySet().contains(o2)) {
+    DefaultCounter<K2> c = getCounter(o1);
+    if (c.totalCount() == 0.0 && !map.containsKey(o2)) {
       return defaultReturnValue();
     }
     return c.getCount(o2);
@@ -183,7 +185,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   /**
    */
   public double totalCount(K1 k1) {
-    ClassicCounter<K2> c = getCounter(k1);
+    DefaultCounter<K2> c = getCounter(k1);
     return c.totalCount();
   }
 
@@ -194,13 +196,13 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   /**
    * replace the counter for K1-index o by new counter c
    */
-  public ClassicCounter<K2> setCounter(K1 o, Counter<K2> c) {
-    ClassicCounter<K2> old = getCounter(o);
+  public DefaultCounter<K2> setCounter(K1 o, Counter<K2> c) {
+    DefaultCounter<K2> old = getCounter(o);
     total -= old.totalCount();
-    if (c instanceof ClassicCounter) {
-      map.put(o, (ClassicCounter<K2>) c);
+    if (c instanceof DefaultCounter) {
+      map.put(o, (DefaultCounter<K2>) c);
     } else {
-      map.put(o, new ClassicCounter<>(c));
+      map.put(o, new DefaultCounter<>(c));
     }
     total += c.totalCount();
     return old;
@@ -218,7 +220,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
             (MapFactory) cc.innerMF);
 
     for (K1 key1 : cc.firstKeySet()) {
-      ClassicCounter<K2> c = cc.getCounter(key1);
+      DefaultCounter<K2> c = cc.getCounter(key1);
       for (K2 key2 : c.keySet()) {
         double count = c.getCount(key2);
         result.setCount(key2, key1, count);
@@ -238,7 +240,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   public String toString() {
     StringBuilder buff = new StringBuilder();
     for (K1 key1 : map.keySet()) {
-      ClassicCounter<K2> c = getCounter(key1);
+      DefaultCounter<K2> c = getCounter(key1);
       for (K2 key2 : c.keySet()) {
         double score = c.getCount(key2);
         buff.append(key1).append('\t').append(key2).append('\t').append(score).append('\n');
@@ -300,9 +302,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   public Set<K2> secondKeySet() {
     Set<K2> result = Generics.newHashSet();
     for (K1 k1 : firstKeySet()) {
-      for (K2 k2 : getCounter(k1).keySet()) {
-        result.add(k2);
-      }
+      result.addAll(getCounter(k1).keySet());
     }
     return result;
   }
@@ -311,11 +311,11 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
     return map.isEmpty();
   }
 
-  public ClassicCounter<Pair<K1, K2>> flatten() {
-    ClassicCounter<Pair<K1, K2>> result = new ClassicCounter<>();
+  public DefaultCounter<Pair<K1, K2>> flatten() {
+    DefaultCounter<Pair<K1, K2>> result = new DefaultCounter<>();
     result.setDefaultReturnValue(defaultValue);
     for (K1 key1 : firstKeySet()) {
-      ClassicCounter<K2> inner = getCounter(key1);
+      DefaultCounter<K2> inner = getCounter(key1);
       for (K2 key2 : inner.keySet()) {
         result.setCount(new Pair<>(key1, key2), inner.getCount(key2));
       }
@@ -326,20 +326,20 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   public void addAll(TwoDimensionalCounterInterface<K1, K2> c) {
     for (K1 key : c.firstKeySet()) {
       Counter<K2> inner = c.getCounter(key);
-      ClassicCounter<K2> myInner = getCounter(key);
+      DefaultCounter<K2> myInner = getCounter(key);
       Counters.addInPlace(myInner, inner);
       total += inner.totalCount();
     }
   }
 
   public void addAll(K1 key, Counter<K2> c) {
-    ClassicCounter<K2> myInner = getCounter(key);
+    DefaultCounter<K2> myInner = getCounter(key);
     Counters.addInPlace(myInner, c);
     total += c.totalCount();
   }
 
   public void subtractAll(K1 key, Counter<K2> c) {
-    ClassicCounter<K2> myInner = getCounter(key);
+    DefaultCounter<K2> myInner = getCounter(key);
     Counters.subtractInPlace(myInner, c);
     total -= c.totalCount();
   }
@@ -347,7 +347,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   public void subtractAll(TwoDimensionalCounterInterface<K1, K2> c, boolean removeKeys) {
     for (K1 key : c.firstKeySet()) {
       Counter<K2> inner = c.getCounter(key);
-      ClassicCounter<K2> myInner = getCounter(key);
+      DefaultCounter<K2> myInner = getCounter(key);
       Counters.subtractInPlace(myInner, inner);
       if (removeKeys)
         Counters.retainNonZeros(myInner);
@@ -362,7 +362,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
    * @return counter of type K1
    */
   public Counter<K1> sumInnerCounter() {
-    Counter<K1> summed = new ClassicCounter<>();
+    Counter<K1> summed = new DefaultCounter<>();
     for (K1 key : this.firstKeySet()) {
       summed.incrementCount(key, this.getCounter(key).totalCount());
     }
@@ -372,7 +372,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   public void removeZeroCounts() {
     Set<K1> firstKeySet = Generics.newHashSet(firstKeySet());
     for (K1 k1 : firstKeySet) {
-      ClassicCounter<K2> c = getCounter(k1);
+      DefaultCounter<K2> c = getCounter(k1);
       Counters.retainNonZeros(c);
       if (c.size() == 0)
         map.remove(k1); // it's empty, get rid of it!
@@ -380,7 +380,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   }
 
   public void remove(K1 key) {
-    ClassicCounter<K2> counter = map.get(key);
+    DefaultCounter<K2> counter = map.get(key);
     if (counter != null) {
       total -= counter.totalCount();
     }
@@ -399,7 +399,7 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
 
   public void clean() {
     for (K1 key1 : Generics.newHashSet(map.keySet())) {
-      ClassicCounter<K2> c = map.get(key1);
+      DefaultCounter<K2> c = map.get(key1);
       for (K2 key2 : Generics.newHashSet(c.keySet())) {
         if (SloppyMath.isCloseTo(0.0, c.getCount(key2))) {
           c.remove(key2);
@@ -411,7 +411,8 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
     }
   }
 
-  public MapFactory<K1, ClassicCounter<K2>> getOuterMapFactory() {
+  public MapFactory<K1, DefaultCounter<K2>> getOuterMapFactory() {
+
     return outerMF;
   }
 
@@ -420,24 +421,24 @@ public class TwoDimensionalCounter<K1, K2> implements TwoDimensionalCounterInter
   }
 
   public TwoDimensionalCounter() {
-    this(MapFactory.<K1, ClassicCounter<K2>> hashMapFactory(), MapFactory.<K2, MutableDouble> hashMapFactory());
+    this(MapFactory.<K1, DefaultCounter<K2>> hashMapFactory(), MapFactory.<K2, MutableDouble> hashMapFactory());
   }
 
-  public TwoDimensionalCounter(MapFactory<K1, ClassicCounter<K2>> outerFactory,
+  public TwoDimensionalCounter(MapFactory<K1, DefaultCounter<K2>> outerFactory,
       MapFactory<K2, MutableDouble> innerFactory) {
-    innerMF = innerFactory;
-    outerMF = outerFactory;
+//    innerMF = innerFactory;
+//    outerMF = outerFactory;
     map = outerFactory.newMap();
     total = 0.0;
   }
 
   public static <K1, K2> TwoDimensionalCounter<K1, K2> identityHashMapCounter() {
-    return new TwoDimensionalCounter<>(MapFactory.<K1, ClassicCounter<K2>>identityHashMapFactory(), MapFactory.<K2, MutableDouble>identityHashMapFactory());
+    return new TwoDimensionalCounter<>(MapFactory.<K1, DefaultCounter<K2>>identityHashMapFactory(), MapFactory.<K2, MutableDouble>identityHashMapFactory());
   }
 
   public void recomputeTotal(){
     total = 0;
-    for(Entry<K1, ClassicCounter<K2>> c: map.entrySet()){
+    for(Entry<K1, DefaultCounter<K2>> c: map.entrySet()){
       total += c.getValue().totalCount();
     }
   }

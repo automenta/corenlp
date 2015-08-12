@@ -1,6 +1,6 @@
 package edu.stanford.nlp.ling;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 
 import java.util.Collection;
@@ -55,7 +55,7 @@ public class RVFDatum<L, F> implements Datum<L, F> {
    * @param m The Datum to copy.
    */
   public RVFDatum(Datum<L, F> m) {
-    this.features = new ClassicCounter<>();
+    this.features = new DefaultCounter<>();
     for (F key : m.asFeatures()) {
       features.incrementCount(key, 1.0);
     }
@@ -73,7 +73,7 @@ public class RVFDatum<L, F> implements Datum<L, F> {
    * Constructs a new RVFDatum with no features or labels.
    */
   public RVFDatum() {
-    this((ClassicCounter<F>) null);
+    this((DefaultCounter<F>) null);
   }
 
   /**

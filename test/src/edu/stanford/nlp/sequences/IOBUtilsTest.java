@@ -5,7 +5,7 @@ import java.util.List;
 
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import junit.framework.TestCase;
 
@@ -140,9 +140,9 @@ public class IOBUtilsTest extends TestCase {
 
   private static void runIOBResultsTest(String[] gold, String[] guess, double tp, double fp, double fn) {
     List<CoreLabel> sentence = makeListCoreLabel(gold, guess);
-    Counter<String> entityTP = new ClassicCounter<>();
-    Counter<String> entityFP = new ClassicCounter<>();
-    Counter<String> entityFN = new ClassicCounter<>();
+    Counter<String> entityTP = new DefaultCounter<>();
+    Counter<String> entityFP = new DefaultCounter<>();
+    Counter<String> entityFN = new DefaultCounter<>();
     IOBUtils.countEntityResults(sentence, entityTP, entityFP, entityFN, BG);
     assertEquals("For true positives", tp, entityTP.totalCount(), 0.0001);
     assertEquals("For false positives", fp, entityFP.totalCount(), 0.0001);

@@ -29,7 +29,7 @@ package edu.stanford.nlp.hcoref.data;
 import edu.stanford.nlp.hcoref.docreader.CoNLLDocumentReader;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.IntTuple;
@@ -116,9 +116,9 @@ public class Document implements Serializable {
    *  the key is the value of the variable 'speakers' */
   public Map<String, SpeakerInfo> speakerInfoMap = Generics.newHashMap();
   
-  public Counter<String> properNouns = new ClassicCounter<>();
-  public Counter<String> phraseCounter = new ClassicCounter<>();
-  public Counter<String> headwordCounter = new ClassicCounter<>();
+  public Counter<String> properNouns = new DefaultCounter<>();
+  public Counter<String> phraseCounter = new DefaultCounter<>();
+  public Counter<String> headwordCounter = new DefaultCounter<>();
 
   /** Additional information about the document. Can be used as features */
   public Map<String, String> docInfo;

@@ -40,7 +40,7 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.math.NumberMatchingRegex;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations.BasicDependenciesAnnotation;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.trees.TreeCoreAnnotations.TreeAnnotation;
@@ -205,8 +205,8 @@ public class CorefPrinter {
 //      sentStr.append("\n");
 //    }
     previousOffset = t.get(t.size()-1).get(CoreAnnotations.CharacterOffsetEndAnnotation.class);
-    Counter<Integer> startCounts = new ClassicCounter<>();
-    Counter<Integer> endCounts = new ClassicCounter<>();
+    Counter<Integer> startCounts = new DefaultCounter<>();
+    Counter<Integer> endCounts = new DefaultCounter<>();
     Map<Integer, Deque<Mention>> endMentions = Generics.newHashMap();
     for (Mention m : mentions) {
 //      if(!gold && (document.corefClusters.get(m.corefClusterID)==null || document.corefClusters.get(m.corefClusterID).getCorefMentions().size()<=1)) {
@@ -446,10 +446,10 @@ public class CorefPrinter {
     CorefSystem cs = new CorefSystem(props);
     cs.docMaker.resetDocs();
     
-    Counter<Integer> proper = new ClassicCounter<>();
-    Counter<Integer> common = new ClassicCounter<>();
-    Counter<Integer> pronoun = new ClassicCounter<>();
-    Counter<Integer> list = new ClassicCounter<>();
+    Counter<Integer> proper = new DefaultCounter<>();
+    Counter<Integer> common = new DefaultCounter<>();
+    Counter<Integer> pronoun = new DefaultCounter<>();
+    Counter<Integer> list = new DefaultCounter<>();
     
     
     while(true) {

@@ -5,7 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.Generics;
@@ -41,7 +41,7 @@ public class LabelDictionary implements Serializable {
    * Constructor.
    */
   public LabelDictionary() {
-    this.observationCounts = new ClassicCounter<>(DEFAULT_CAPACITY);
+    this.observationCounts = new DefaultCounter<>(DEFAULT_CAPACITY);
     this.observedLabels = Generics.newHashMap(DEFAULT_CAPACITY);
   }
 

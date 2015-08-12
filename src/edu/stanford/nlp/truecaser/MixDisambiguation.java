@@ -4,7 +4,7 @@ import java.util.Map;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.FileReader;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.Generics;
 
@@ -38,7 +38,7 @@ public class MixDisambiguation {
           String lctok = tok.toLowerCase();
           Counter<String> counter = map.get(lctok);
           if (counter == null) {
-            counter = new ClassicCounter<>();
+            counter = new DefaultCounter<>();
             map.put(lctok, counter);
           }
           counter.incrementCount(tok);

@@ -16,7 +16,7 @@ import edu.stanford.nlp.ie.machinereading.ResultsPrinter;
 import edu.stanford.nlp.ie.machinereading.structure.AnnotationUtils;
 import edu.stanford.nlp.ie.machinereading.structure.RelationMention;
 import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Pair;
@@ -59,16 +59,16 @@ public class RothResultsByRelation extends ResultsPrinter {
   		}
   	}
         
-  	final Counter<Pair<Pair<String, String>, String>> pathCounts = new ClassicCounter<>();
+  	final Counter<Pair<Pair<String, String>, String>> pathCounts = new DefaultCounter<>();
   
   	for (RelationMention rel : relations) {
   		pathCounts.incrementCount(new Pair<>(new Pair<>(
 				rel.getArg(0).getType(), rel.getArg(1).getType()), featureFactory.getFeature(rel, "dependency_path_lowlevel")));
   	}
   
-  	Counter<String> singletonCorrect = new ClassicCounter<>();
-  	Counter<String> singletonPredicted = new ClassicCounter<>();
-  	Counter<String> singletonActual = new ClassicCounter<>();
+  	Counter<String> singletonCorrect = new DefaultCounter<>();
+  	Counter<String> singletonPredicted = new DefaultCounter<>();
+  	Counter<String> singletonActual = new DefaultCounter<>();
   	for (RelationMention rel : relations) {
   		if (pathCounts.getCount(new Pair<>(new Pair<>(rel.getArg(0).getType(),
 				rel.getArg(1).getType()), featureFactory.getFeature(rel, "dependency_path_lowlevel"))) == 1.0) {

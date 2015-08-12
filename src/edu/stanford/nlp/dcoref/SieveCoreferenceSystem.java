@@ -67,7 +67,7 @@ import edu.stanford.nlp.io.StringOutputStream;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.CoreMap;
@@ -1289,8 +1289,8 @@ public class SieveCoreferenceSystem {
 
     StringBuilder golds = new StringBuilder();
     golds.append("Gold mentions in the sentence:\n");
-    Counter<Integer> mBegin = new ClassicCounter<>();
-    Counter<Integer> mEnd = new ClassicCounter<>();
+    Counter<Integer> mBegin = new DefaultCounter<>();
+    Counter<Integer> mEnd = new DefaultCounter<>();
 
     for(Mention m : goldOrderedMentionsBySentence.get(src.get(0))){
       mBegin.incrementCount(m.startIndex);
@@ -1340,8 +1340,8 @@ public class SieveCoreferenceSystem {
 
     golds = new StringBuilder();
     golds.append("Gold mentions in the sentence:\n");
-    mBegin = new ClassicCounter<>();
-    mEnd = new ClassicCounter<>();
+    mBegin = new DefaultCounter<>();
+    mEnd = new DefaultCounter<>();
 
     for(Mention m : goldOrderedMentionsBySentence.get(dst.get(0))){
       mBegin.incrementCount(m.startIndex);
@@ -1704,8 +1704,8 @@ public class SieveCoreferenceSystem {
         doc.append('\n');
       }
       previousOffset = t.get(t.size()-1).get(CoreAnnotations.CharacterOffsetEndAnnotation.class);
-      Counter<Integer> startCounts = new ClassicCounter<>();
-      Counter<Integer> endCounts = new ClassicCounter<>();
+      Counter<Integer> startCounts = new DefaultCounter<>();
+      Counter<Integer> endCounts = new DefaultCounter<>();
       Map<Integer, Set<Mention>> endMentions = Generics.newHashMap();
       for (Mention m : mentions) {
         startCounts.incrementCount(m.startIndex);

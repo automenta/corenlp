@@ -7,7 +7,7 @@ import java.util.*;
 import edu.stanford.nlp.ling.BasicDatum;
 import edu.stanford.nlp.ling.Datum;
 import edu.stanford.nlp.ling.RVFDatum;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.HashIndex;
@@ -566,7 +566,7 @@ public abstract class GeneralDataset<L, F>  implements Serializable, Iterable<RV
     for (int i = 0; i < size; i++) {
       RVFDatum<L, F> d = getRVFDatum(i);
       Counter<F> c = d.asFeaturesCounter();
-      ClassicCounter<Integer> printC = new ClassicCounter<>();
+      DefaultCounter<Integer> printC = new DefaultCounter<>();
       for (F f : c.keySet()) {
         printC.setCount(featureIndex.indexOf(f), c.getCount(f));
       }
@@ -614,9 +614,9 @@ public abstract class GeneralDataset<L, F>  implements Serializable, Iterable<RV
     };
   }
 
-  public ClassicCounter<L> numDatumsPerLabel(){
+  public DefaultCounter<L> numDatumsPerLabel(){
     labels = trimToSize(labels);
-    ClassicCounter<L> numDatums = new ClassicCounter<>();
+    DefaultCounter<L> numDatums = new DefaultCounter<>();
     for(int i : labels){
       numDatums.incrementCount(labelIndex.get(i));
     }

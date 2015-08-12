@@ -5,8 +5,8 @@ package edu.stanford.nlp.stats;
  * 
  * @author dramage
  */
-public class ClassicCounterTest extends CounterTestBase {
+public class ClassicCounterTest extends edu.stanford.nlp.stats.CounterTestBase {
   public ClassicCounterTest() {
-    super(new ClassicCounter<String>());
+    super(new DefaultCounter<String>());
   }
 }

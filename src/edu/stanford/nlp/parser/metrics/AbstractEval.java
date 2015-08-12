@@ -6,7 +6,7 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 
 import edu.stanford.nlp.parser.KBestViterbiParser;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.Generics;
@@ -228,8 +228,8 @@ public abstract class AbstractEval implements Eval {
 
     //private boolean verbose = false;
 
-    private ClassicCounter<String> over = new ClassicCounter<>();
-    private ClassicCounter<String> under = new ClassicCounter<>();
+    private DefaultCounter<String> over = new DefaultCounter<>();
+    private DefaultCounter<String> under = new DefaultCounter<>();
 
     protected static String localize(Tree tree) {
       if (tree.isLeaf()) {
@@ -270,7 +270,7 @@ public abstract class AbstractEval implements Eval {
       }
     }
 
-    private static <T> void display(ClassicCounter<T> c, int num, PrintWriter pw) {
+    private static <T> void display(DefaultCounter<T> c, int num, PrintWriter pw) {
       List<T> rules = new ArrayList<>(c.keySet());
       Collections.sort(rules, Counters.toComparatorDescending(c));
       int rSize = rules.size();
@@ -302,8 +302,8 @@ public abstract class AbstractEval implements Eval {
    */
   public static class CatErrorEval extends AbstractEval {
 
-    private ClassicCounter<String> over = new ClassicCounter<>();
-    private ClassicCounter<String> under = new ClassicCounter<>();
+    private DefaultCounter<String> over = new DefaultCounter<>();
+    private DefaultCounter<String> under = new DefaultCounter<>();
 
     /** Unused. Fake satisfying the abstract class. */
     @Override
@@ -338,7 +338,7 @@ public abstract class AbstractEval implements Eval {
       }
     }
 
-    private static <T> void display(ClassicCounter<T> c, PrintWriter pw) {
+    private static <T> void display(DefaultCounter<T> c, PrintWriter pw) {
       List<T> cats = new ArrayList<>(c.keySet());
       Collections.sort(cats, Counters.toComparatorDescending(c));
       for (T ob : cats) {

@@ -381,7 +381,7 @@ public class CleanXmlAnnotator implements Annotator{
     List<CoreLabel> docIdTokens = new ArrayList<>();
 
     // Local variables for additional per token annotations
-    CoreMap tokenAnnotations = (tokenAnnotationPatterns != null && !tokenAnnotationPatterns.isEmpty())? new ArrayCoreMap():null;
+    CoreMap tokenAnnotations = (tokenAnnotationPatterns != null && !tokenAnnotationPatterns.isEmpty())? new DefaultCoreMap():null;
     Map<Class, Stack<Pair<String, String>>> savedTokenAnnotations = new ArrayMap<>();
 
     // Local variable for annotating sections
@@ -531,7 +531,7 @@ public class CleanXmlAnnotator implements Annotator{
         } else if (!tag.isSingleTag) {
           // Prepare to mark first token with section information
           sectionStartTag = tag;
-          sectionAnnotations = new ArrayCoreMap();
+          sectionAnnotations = new DefaultCoreMap();
           sectionAnnotations.set(CoreAnnotations.SectionAnnotation.class, sectionStartTag.name);
         }
       }

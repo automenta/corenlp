@@ -1,6 +1,6 @@
 package edu.stanford.nlp.parser.lexparser;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.util.HashIndex;
 import edu.stanford.nlp.util.Index;
 import junit.framework.TestCase;
@@ -18,7 +18,7 @@ public class SpanishUnknownWordModelTest extends TestCase {
     Index<String> tagIndex = new HashIndex<String>();
 
     uwm = new SpanishUnknownWordModel(op, new BaseLexicon(op, wordIndex, tagIndex),
-                                      wordIndex, tagIndex, new ClassicCounter<IntTaggedWord>());
+                                      wordIndex, tagIndex, new DefaultCounter<IntTaggedWord>());
   }
 
   public void testGetSignature() throws Exception {

@@ -36,7 +36,7 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.StanfordCoreNLP;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Generics;
@@ -74,12 +74,12 @@ public class AceReader extends GenericDataSetReader {
   public AceReader(StanfordCoreNLP processor, boolean preprocess, String version) {
     super(processor, preprocess, false, true);
 
-    entityCounts = new ClassicCounter<>();
-    adjacentEntityMentions = new ClassicCounter<>();
-    nameRelationCounts = new ClassicCounter<>();
-    relationCounts = new ClassicCounter<>();
-    eventCounts = new ClassicCounter<>();
-    mentionTypeCounts = new ClassicCounter<>();
+    entityCounts = new DefaultCounter<>();
+    adjacentEntityMentions = new DefaultCounter<>();
+    nameRelationCounts = new DefaultCounter<>();
+    relationCounts = new DefaultCounter<>();
+    eventCounts = new DefaultCounter<>();
+    mentionTypeCounts = new DefaultCounter<>();
 
     logger = Logger.getLogger(AceReader.class.getName());
     // run quietly by default

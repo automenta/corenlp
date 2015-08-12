@@ -1,14 +1,12 @@
 package edu.stanford.nlp.patterns;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
 import edu.stanford.nlp.process.WordShapeClassifier;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
@@ -49,7 +47,7 @@ public abstract class PhraseScorer<E extends Pattern> {
     this.constVars = constvar;
   }
 
-  Counter<CandidatePhrase> learnedScores = new ClassicCounter<>();
+  Counter<CandidatePhrase> learnedScores = new DefaultCounter<>();
 
   abstract Counter<CandidatePhrase> scorePhrases(String label, TwoDimensionalCounter<CandidatePhrase, E> terms,
       TwoDimensionalCounter<CandidatePhrase, E> wordsPatExtracted,

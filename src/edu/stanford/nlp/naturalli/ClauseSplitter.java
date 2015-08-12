@@ -10,7 +10,7 @@ import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.*;
 
@@ -18,7 +18,6 @@ import java.io.*;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
 import java.util.zip.GZIPOutputStream;
@@ -202,7 +201,7 @@ public interface ClauseSplitter extends BiFunction<SemanticGraph, Boolean, Claus
           }
         }
         return true;
-      }, new LinearClassifier<>(new ClassicCounter<>()), Collections.<String, List<String>>emptyMap(), featurizer, 10000);
+      }, new LinearClassifier<>(new DefaultCounter<>()), Collections.<String, List<String>>emptyMap(), featurizer, 10000);
       // Debug info
       if (numExamplesProcessed.incrementAndGet() % 100 == 0) {
         log("processed " + numExamplesProcessed + " training sentences: " + dataset.size() + " datums");

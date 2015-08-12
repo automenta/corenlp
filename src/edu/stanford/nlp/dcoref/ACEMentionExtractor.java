@@ -47,7 +47,7 @@ import edu.stanford.nlp.io.RuntimeIOException;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.pipeline.Annotation;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.semgraph.SemanticGraphCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
@@ -214,7 +214,7 @@ public class ACEMentionExtractor extends MentionExtractor {
   private static void printRawDoc(List<CoreMap> sentences, List<List<Mention>> allMentions, String filename, boolean gold) throws FileNotFoundException {
     StringBuilder doc = new StringBuilder();
     int previousOffset = 0;
-    Counter<Integer> mentionCount = new ClassicCounter<>();
+    Counter<Integer> mentionCount = new DefaultCounter<>();
     for(List<Mention> l : allMentions) {
       for(Mention m : l) {
         mentionCount.incrementCount(m.goldCorefClusterID);
@@ -230,8 +230,8 @@ public class ACEMentionExtractor extends MentionExtractor {
       List<CoreLabel> t = sentence.get(CoreAnnotations.TokensAnnotation.class);
       if(previousOffset+2 < t.get(0).get(CoreAnnotations.CharacterOffsetBeginAnnotation.class)) sent += "\n";
       previousOffset = t.get(t.size()-1).get(CoreAnnotations.CharacterOffsetEndAnnotation.class);
-      Counter<Integer> startCounts = new ClassicCounter<>();
-      Counter<Integer> endCounts = new ClassicCounter<>();
+      Counter<Integer> startCounts = new DefaultCounter<>();
+      Counter<Integer> endCounts = new DefaultCounter<>();
       Map<Integer, Set<Integer>> endID = Generics.newHashMap();
       for (Mention m : mentions) {
         startCounts.incrementCount(m.startIndex);

@@ -14,7 +14,7 @@ import edu.stanford.nlp.international.morph.MorphoFeatureSpecification;
 import edu.stanford.nlp.international.morph.MorphoFeatureSpecification.MorphoFeatureType;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.Label;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.TwoDimensionalIntCounter;
@@ -43,15 +43,15 @@ public class FactoredLexicon extends BaseLexicon {
   private Index<String> morphIndex = new HashIndex<>();
 
   private TwoDimensionalIntCounter<Integer,Integer> wordTag = new TwoDimensionalIntCounter<>(40000);
-  private Counter<Integer> wordTagUnseen = new ClassicCounter<>(500);
+  private Counter<Integer> wordTagUnseen = new DefaultCounter<>(500);
 
   private TwoDimensionalIntCounter<Integer,Integer> lemmaTag = new TwoDimensionalIntCounter<>(40000);
-  private Counter<Integer> lemmaTagUnseen = new ClassicCounter<>(500);
+  private Counter<Integer> lemmaTagUnseen = new DefaultCounter<>(500);
 
   private TwoDimensionalIntCounter<Integer,Integer> morphTag = new TwoDimensionalIntCounter<>(500);
-  private Counter<Integer> morphTagUnseen = new ClassicCounter<>(500);
+  private Counter<Integer> morphTagUnseen = new DefaultCounter<>(500);
 
-  private Counter<Integer> tagCounter = new ClassicCounter<>(300);
+  private Counter<Integer> tagCounter = new DefaultCounter<>(300);
 
   public FactoredLexicon(MorphoFeatureSpecification morphoSpec, Index<String> wordIndex, Index<String> tagIndex) {
     super(wordIndex, tagIndex);
@@ -509,10 +509,10 @@ public class FactoredLexicon extends BaseLexicon {
     // Print the probabilities that we obtain
     // TODO(spenceg): Implement tagging accuracy with FactLex
     int nCorrect = 0;
-    Counter<String> errors = new ClassicCounter<>();
+    Counter<String> errors = new DefaultCounter<>();
     for (FactoredLexiconEvent event : tuningSet) {
       Iterator<IntTaggedWord> itr = lexicon.ruleIteratorByWord(event.word(), event.getLoc(), event.featureStr());
-      Counter<Integer> logScores = new ClassicCounter<>();
+      Counter<Integer> logScores = new DefaultCounter<>();
       boolean noRules = true;
       int goldTagId = -1;
       while (itr.hasNext()) {

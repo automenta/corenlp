@@ -11,7 +11,7 @@ import edu.stanford.nlp.ling.CategoryWordTag;
 import edu.stanford.nlp.ling.CategoryWordTagFactory;
 import edu.stanford.nlp.ling.StringLabelFactory;
 import edu.stanford.nlp.ling.Word;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.trees.*;
 import edu.stanford.nlp.util.Triple;
 
@@ -25,8 +25,8 @@ public class TreeAnnotatorAndBinarizer implements TreeTransformer {
   private final PostSplitter postSplitter;
   private final boolean forceCNF;
   private final TrainOptions trainOptions;
-  private final ClassicCounter<Tree> annotatedRuleCounts;
-  private final ClassicCounter<String> annotatedStateCounts;
+  private final DefaultCounter<Tree> annotatedRuleCounts;
+  private final DefaultCounter<String> annotatedStateCounts;
 
   public TreeAnnotatorAndBinarizer(TreebankLangParserParams tlpParams, boolean forceCNF, boolean insideFactor, boolean doSubcategorization, Options op) {
     this(tlpParams.headFinder(), tlpParams.headFinder(), tlpParams, forceCNF, insideFactor, doSubcategorization, op);
@@ -49,12 +49,12 @@ public class TreeAnnotatorAndBinarizer implements TreeTransformer {
     this.tlp = tlpParams.treebankLanguagePack();
     this.forceCNF = forceCNF;
     if (trainOptions.printAnnotatedRuleCounts) {
-      annotatedRuleCounts = new ClassicCounter<>();
+      annotatedRuleCounts = new DefaultCounter<>();
     } else {
       annotatedRuleCounts = null;
     }
     if (trainOptions.printAnnotatedStateCounts) {
-      annotatedStateCounts = new ClassicCounter<>();
+      annotatedStateCounts = new DefaultCounter<>();
     } else {
       annotatedStateCounts = null;
     }

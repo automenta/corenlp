@@ -17,7 +17,7 @@ import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.parser.lexparser.EnglishTreebankParserParams;
 import edu.stanford.nlp.parser.lexparser.Lexicon;
 import edu.stanford.nlp.parser.lexparser.TreebankLangParserParams;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeTransformer;
@@ -61,17 +61,17 @@ public class TaggingEval extends AbstractEval {
     this.lex = lex;
 
     if(doCatLevelEval) {
-      precisions = new ClassicCounter<>();
-      recalls = new ClassicCounter<>();
-      f1s = new ClassicCounter<>();
+      precisions = new DefaultCounter<>();
+      recalls = new DefaultCounter<>();
+      f1s = new DefaultCounter<>();
 
-      precisions2 = new ClassicCounter<>();
-      recalls2 = new ClassicCounter<>();
-      pnums2 = new ClassicCounter<>();
-      rnums2 = new ClassicCounter<>();
+      precisions2 = new DefaultCounter<>();
+      recalls2 = new DefaultCounter<>();
+      pnums2 = new DefaultCounter<>();
+      rnums2 = new DefaultCounter<>();
 
-      percentOOV = new ClassicCounter<>();
-      percentOOV2 = new ClassicCounter<>();
+      percentOOV = new DefaultCounter<>();
+      percentOOV2 = new DefaultCounter<>();
     }
   }
 

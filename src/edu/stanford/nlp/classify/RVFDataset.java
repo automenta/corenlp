@@ -21,7 +21,7 @@ import edu.stanford.nlp.io.RuntimeIOException;
 import edu.stanford.nlp.ling.Datum;
 import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.math.ArrayMath;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.Generics;
@@ -106,7 +106,7 @@ public class RVFDataset<L, F> extends GeneralDataset<L, F> { // implements Itera
     double[][] trainValues = new double[trainSize][];
     int[] trainLabels = new int[trainSize];
 
-    synchronized (System.class) {
+    /*synchronized (System.class)*/ {
       System.arraycopy(data, 0, devData, 0, devSize);
       System.arraycopy(values, 0, devValues, 0, devSize);
       System.arraycopy(labels, 0, devLabels, 0, devSize);
@@ -268,7 +268,7 @@ public class RVFDataset<L, F> extends GeneralDataset<L, F> { // implements Itera
     // scale this dataset before scaling the datum
     if (minValues == null || maxValues == null)
       scaleFeatures();
-    Counter<F> scaledFeatures = new ClassicCounter<>();
+    Counter<F> scaledFeatures = new DefaultCounter<>();
     for (F feature : datum.asFeatures()) {
       int fID = this.featureIndex.indexOf(feature);
       if (fID >= 0) {
@@ -297,7 +297,7 @@ public class RVFDataset<L, F> extends GeneralDataset<L, F> { // implements Itera
     // scale this dataset before scaling the datum
     if (means == null || stdevs == null)
       scaleFeaturesGaussian();
-    Counter<F> scaledFeatures = new ClassicCounter<>();
+    Counter<F> scaledFeatures = new DefaultCounter<>();
     for (F feature : datum.asFeatures()) {
       int fID = this.featureIndex.indexOf(feature);
       if (fID >= 0) {
@@ -409,7 +409,7 @@ public class RVFDataset<L, F> extends GeneralDataset<L, F> { // implements Itera
    */
   @Override
   public RVFDatum<L, F> getRVFDatum(int index) {
-    ClassicCounter<F> c = new ClassicCounter<>();
+    DefaultCounter<F> c = new DefaultCounter<>();
     for (int i = 0; i < data[index].length; i++) {
       c.incrementCount(featureIndex.get(data[index][i]), values[index][i]);
     }
@@ -764,7 +764,7 @@ public class RVFDataset<L, F> extends GeneralDataset<L, F> { // implements Itera
   public static RVFDatum<String, String> svmLightLineToRVFDatum(String l) {
     l = l.replaceFirst("#.*$", ""); // remove any trailing comments
     String[] line = l.split("\\s+");
-    ClassicCounter<String> features = new ClassicCounter<>();
+    DefaultCounter<String> features = new DefaultCounter<>();
     for (int i = 1; i < line.length; i++) {
       String[] f = line[i].split(":");
       if (f.length != 2) {
@@ -791,7 +791,7 @@ public class RVFDataset<L, F> extends GeneralDataset<L, F> { // implements Itera
       line = line.replaceAll("#.*", ""); // remove any trailing comments
       String[] items = line.split("\\s+");
       Integer label = Integer.parseInt(items[0]);
-      Counter<F> features = new ClassicCounter<>();
+      Counter<F> features = new DefaultCounter<>();
       for (int i = 1; i < items.length; i++) {
         String[] featureItems = items[i].split(":");
         int feature = Integer.parseInt(featureItems[0]);
@@ -893,17 +893,17 @@ public class RVFDataset<L, F> extends GeneralDataset<L, F> { // implements Itera
 
   public static void main(String[] args) {
     RVFDataset<String, String> data = new RVFDataset<>();
-    ClassicCounter<String> c1 = new ClassicCounter<>();
+    DefaultCounter<String> c1 = new DefaultCounter<>();
     c1.incrementCount("fever", 3.5);
     c1.incrementCount("cough", 1.1);
     c1.incrementCount("congestion", 4.2);
 
-    ClassicCounter<String> c2 = new ClassicCounter<>();
+    DefaultCounter<String> c2 = new DefaultCounter<>();
     c2.incrementCount("fever", 1.5);
     c2.incrementCount("cough", 2.1);
     c2.incrementCount("nausea", 3.2);
 
-    ClassicCounter<String> c3 = new ClassicCounter<>();
+    DefaultCounter<String> c3 = new DefaultCounter<>();
     c3.incrementCount("cough", 2.5);
     c3.incrementCount("congestion", 3.2);
 
@@ -917,7 +917,7 @@ public class RVFDataset<L, F> extends GeneralDataset<L, F> { // implements Itera
 
     LinearClassifier<String, String> c = factory.trainClassifier(data);
 
-    ClassicCounter<String> c4 = new ClassicCounter<>();
+    DefaultCounter<String> c4 = new DefaultCounter<>();
     c4.incrementCount("cough", 2.3);
     c4.incrementCount("fever", 1.3);
 

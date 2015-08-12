@@ -1,7 +1,7 @@
 package edu.stanford.nlp.trees;
 
 import edu.stanford.nlp.io.ExtensionFileFilter;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Sets;
@@ -313,10 +313,10 @@ public abstract class Treebank extends AbstractCollection<Tree> {
     int numTreesLE40 = 0;
     int numNonUnaryRoots = 0;
     Tree nonUnaryEg = null;
-    ClassicCounter<Tree> nonUnaries = new ClassicCounter<>();
-    ClassicCounter<String> roots = new ClassicCounter<>();
-    ClassicCounter<String> starts = new ClassicCounter<>();
-    ClassicCounter<String> puncts = new ClassicCounter<>();
+    DefaultCounter<Tree> nonUnaries = new DefaultCounter<>();
+    DefaultCounter<String> roots = new DefaultCounter<>();
+    DefaultCounter<String> starts = new DefaultCounter<>();
+    DefaultCounter<String> puncts = new DefaultCounter<>();
     int numUnenclosedLeaves = 0;
     int numLeaves = 0;
     int numNonPhrasal = 0;
@@ -327,8 +327,8 @@ public abstract class Treebank extends AbstractCollection<Tree> {
     int longestSentence = 0;
     int numNullLabel = 0;
     Set<String> words = Generics.newHashSet();
-    ClassicCounter<String> tags = new ClassicCounter<>();
-    ClassicCounter<String> cats = new ClassicCounter<>();
+    DefaultCounter<String> tags = new DefaultCounter<>();
+    DefaultCounter<String> cats = new DefaultCounter<>();
     Tree leafEg = null;
     Tree preTerminalMultipleChildrenEg = null;
     Tree nullLabelEg = null;

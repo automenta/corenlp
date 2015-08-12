@@ -6,7 +6,7 @@ import java.util.Set;
 import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.ling.Tag;
 import edu.stanford.nlp.ling.TaggedWord;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Index;
 
@@ -14,21 +14,21 @@ public class ChineseUnknownWordModelTrainer
   extends AbstractUnknownWordModelTrainer
 {
   // Records the number of times word/tag pair was seen in training data.
-  private ClassicCounter<IntTaggedWord> seenCounter;
-  private ClassicCounter<IntTaggedWord> unSeenCounter;
+  private DefaultCounter<IntTaggedWord> seenCounter;
+  private DefaultCounter<IntTaggedWord> unSeenCounter;
 
   // c has a map from tags as Label to a Counter from word
   // signatures to Strings; it is used to collect counts that will
   // initialize the probabilities in tagHash
-  private Map<Label,ClassicCounter<String>> c;
+  private Map<Label,DefaultCounter<String>> c;
 
   // tc record the marginal counts for each tag as an unknown.  It
   // should be the same as c's totalCount ??
-  private ClassicCounter<Label> tc;
+  private DefaultCounter<Label> tc;
 
   private boolean useFirst, useGT, useUnicodeType;
 
-  private Map<Label, ClassicCounter<String>> tagHash;
+  private Map<Label, DefaultCounter<String>> tagHash;
 
   private Set<String> seenFirst;
 
@@ -70,9 +70,9 @@ public class ChineseUnknownWordModelTrainer
     }
 
     this.c = Generics.newHashMap();
-    this.tc = new ClassicCounter<>();
-    this.unSeenCounter = new ClassicCounter<>();
-    this.seenCounter = new ClassicCounter<>();
+    this.tc = new DefaultCounter<>();
+    this.unSeenCounter = new DefaultCounter<>();
+    this.seenCounter = new DefaultCounter<>();
     this.seenFirst = Generics.newHashSet();
     this.tagHash = Generics.newHashMap();
 
@@ -116,7 +116,7 @@ public class ChineseUnknownWordModelTrainer
     String tag = tw.tag();
 
     if ( ! c.containsKey(tagL)) {
-      c.put(tagL, new ClassicCounter<>());
+      c.put(tagL, new DefaultCounter<>());
     }
     c.get(tagL).incrementCount(first, weight);
 
@@ -145,12 +145,12 @@ public class ChineseUnknownWordModelTrainer
       // unknownGT = unknownGTTrainer.unknownGT;
     }
 
-    for (Map.Entry<Label, ClassicCounter<String>> labelClassicCounterEntry : c.entrySet()) {
+    for (Map.Entry<Label, DefaultCounter<String>> labelClassicCounterEntry : c.entrySet()) {
       // outer iteration is over tags as Labels
-      ClassicCounter<String> wc = labelClassicCounterEntry.getValue(); // counts for words given a tag
+      DefaultCounter<String> wc = labelClassicCounterEntry.getValue(); // counts for words given a tag
 
       if ( ! tagHash.containsKey(labelClassicCounterEntry.getKey())) {
-        tagHash.put(labelClassicCounterEntry.getKey(), new ClassicCounter<>());
+        tagHash.put(labelClassicCounterEntry.getKey(), new DefaultCounter<>());
       }
 
       // the UNKNOWN first character is assumed to be seen once in

@@ -54,7 +54,7 @@ public class KNNClassifier<K,V> implements Classifier<K, V> {
    */
   public K classOf(Datum<K, V> example) {
     if (example instanceof RVFDatum<?,?>) {
-      ClassicCounter<K> scores = scoresOf(example);
+      DefaultCounter<K> scores = scoresOf(example);
       return Counters.toSortedList(scores).get(0);
     } else {
       return null; 
@@ -68,22 +68,22 @@ public class KNNClassifier<K,V> implements Classifier<K, V> {
    * 
    * NOTE: supports only RVFDatums
    */
-  public ClassicCounter<K> scoresOf(Datum<K, V> datum) {
+  public DefaultCounter<K> scoresOf(Datum<K, V> datum) {
     if (datum instanceof RVFDatum<?,?>) {
       RVFDatum<K, V> vec = (RVFDatum<K, V>) datum;
 
       if (l2Normalize) {
-        ClassicCounter<V> featVec = new ClassicCounter<>(vec.asFeaturesCounter());
+        DefaultCounter<V> featVec = new DefaultCounter<>(vec.asFeaturesCounter());
         Counters.normalize(featVec);
         vec = new RVFDatum<>(featVec);
       }
 
-      ClassicCounter<Counter<V>> scores = new ClassicCounter<>();
+      DefaultCounter<Counter<V>> scores = new DefaultCounter<>();
       for (Counter<V> instance : instances.allValues()) {
         scores.setCount(instance, Counters.cosine(vec.asFeaturesCounter(), instance)); // set entry, for given instance and score
       }
       List<Counter<V>> sorted = Counters.toSortedList(scores);
-      ClassicCounter<K> classScores = new ClassicCounter<>();
+      DefaultCounter<K> classScores = new DefaultCounter<>();
       for (int i=0;i<k && i<sorted.size(); i++) {
         K label = classLookup.get(sorted.get(i));
         double count= 1.0;
@@ -102,35 +102,35 @@ public class KNNClassifier<K,V> implements Classifier<K, V> {
   public static void main(String[] args) {
     Collection<RVFDatum<String, String>> trainingInstances = new ArrayList<>();
     {
-      ClassicCounter<String> f1 = new ClassicCounter<>();
+      DefaultCounter<String> f1 = new DefaultCounter<>();
       f1.setCount("humidity", 5.0);
       f1.setCount("temperature", 35.0);
       trainingInstances.add(new RVFDatum<>(f1, "rain"));
     }
 
     {
-      ClassicCounter<String> f1 = new ClassicCounter<>();
+      DefaultCounter<String> f1 = new DefaultCounter<>();
       f1.setCount("humidity", 4.0);
       f1.setCount("temperature", 32.0);
       trainingInstances.add(new RVFDatum<>(f1, "rain"));
     }
 
     {
-      ClassicCounter<String> f1 = new ClassicCounter<>();
+      DefaultCounter<String> f1 = new DefaultCounter<>();
       f1.setCount("humidity", 6.0);
       f1.setCount("temperature", 30.0);
       trainingInstances.add(new RVFDatum<>(f1, "rain"));
     }
 
     {
-      ClassicCounter<String> f1 = new ClassicCounter<>();
+      DefaultCounter<String> f1 = new DefaultCounter<>();
       f1.setCount("humidity", 2.0);
       f1.setCount("temperature", 33.0);
       trainingInstances.add(new RVFDatum<>(f1, "dry"));
     }
 
     {
-      ClassicCounter<String> f1 = new ClassicCounter<>();
+      DefaultCounter<String> f1 = new DefaultCounter<>();
       f1.setCount("humidity", 1.0);
       f1.setCount("temperature", 34.0);
       trainingInstances.add(new RVFDatum<>(f1, "dry"));
@@ -139,7 +139,7 @@ public class KNNClassifier<K,V> implements Classifier<K, V> {
     KNNClassifier<String, String> classifier = new KNNClassifierFactory<String, String>(3, false, true).train(trainingInstances);
 
     {
-      ClassicCounter<String> f1 = new ClassicCounter<>();
+      DefaultCounter<String> f1 = new DefaultCounter<>();
       f1.setCount("humidity", 2.0);
       f1.setCount("temperature", 33.0);
       RVFDatum<String, String> testVec = new RVFDatum<>(f1);

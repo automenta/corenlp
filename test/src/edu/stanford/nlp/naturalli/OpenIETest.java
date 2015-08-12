@@ -5,7 +5,7 @@ import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.semgraph.SemanticGraph;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.trees.GrammaticalRelation;
 import org.junit.Test;
 
@@ -83,9 +83,9 @@ public class OpenIETest {
           clauses.add(triple.third.get().toString());
           return true;
         },
-        new LinearClassifier<>(new ClassicCounter<>()),
+        new LinearClassifier<>(new DefaultCounter<>()),
         ClauseSplitterSearchProblem.HARD_SPLITS,
-        triple -> new ClassicCounter<String>(){{setCount("__undocumented_junit_no_classifier", 1.0);}},
+        triple -> new DefaultCounter<String>(){{setCount("__undocumented_junit_no_classifier", 1.0);}},
         100000);
     return clauses;
   }

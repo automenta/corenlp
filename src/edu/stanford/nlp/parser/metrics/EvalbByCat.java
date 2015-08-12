@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.trees.Constituent;
 import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.Generics;
 
@@ -41,14 +41,14 @@ public class EvalbByCat extends AbstractEval {
     super(str, runningAverages);
 
     evalb = new Evalb(str, false);
-    precisions = new ClassicCounter<>();
-    recalls = new ClassicCounter<>();
-    f1s = new ClassicCounter<>();
+    precisions = new DefaultCounter<>();
+    recalls = new DefaultCounter<>();
+    f1s = new DefaultCounter<>();
 
-    precisions2 = new ClassicCounter<>();
-    recalls2 = new ClassicCounter<>();
-    pnums2 = new ClassicCounter<>();
-    rnums2 = new ClassicCounter<>();
+    precisions2 = new DefaultCounter<>();
+    recalls2 = new DefaultCounter<>();
+    pnums2 = new DefaultCounter<>();
+    rnums2 = new DefaultCounter<>();
   }
   
   public EvalbByCat(String str, boolean runningAverages, String labelRegex) {

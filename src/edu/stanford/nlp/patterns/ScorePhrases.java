@@ -28,7 +28,7 @@ import edu.stanford.nlp.patterns.surface.*;
 import edu.stanford.nlp.patterns.GetPatternsFromDataMultiClass.WordScoring;
 import edu.stanford.nlp.patterns.PhraseScorer.Normalization;
 import edu.stanford.nlp.semgraph.semgrex.SemgrexPattern;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
@@ -64,7 +64,7 @@ public class ScorePhrases<E extends Pattern> {
                                                  Set<CandidatePhrase> ignoreWords, double thresholdWordExtract) {
 
     Iterator<CandidatePhrase> termIter = Counters.toPriorityQueue(newdt).iterator();
-    Counter<CandidatePhrase> finalwords = new ClassicCounter<>();
+    Counter<CandidatePhrase> finalwords = new DefaultCounter<>();
 
     while (termIter.hasNext()) {
 
@@ -160,7 +160,7 @@ public class ScorePhrases<E extends Pattern> {
     boolean computeProcDataFreq = false;
     if (Data.processedDataFreq == null) {
       computeProcDataFreq = true;
-      Data.processedDataFreq = new ClassicCounter<>();
+      Data.processedDataFreq = new DefaultCounter<>();
       assert Data.rawFreq != null;
     }
 
@@ -710,10 +710,10 @@ public class ScorePhrases<E extends Pattern> {
       return finalwords;
     } else if (constVars.wordScoring.equals(WordScoring.BPB)) {
       Counters.addInPlace(terms, wordsPatExtracted);
-      Counter<CandidatePhrase> maxPatWeightTerms = new ClassicCounter<>();
+      Counter<CandidatePhrase> maxPatWeightTerms = new DefaultCounter<>();
       Map<CandidatePhrase, E> wordMaxPat = new HashMap<>();
-      for (Entry<CandidatePhrase, ClassicCounter<E>> en : terms.entrySet()) {
-        Counter<E> weights = new ClassicCounter<>();
+      for (Entry<CandidatePhrase, DefaultCounter<E>> en : terms.entrySet()) {
+        Counter<E> weights = new DefaultCounter<>();
         for (E k : en.getValue().keySet())
           weights.setCount(k, patternsLearnedThisIter.getCount(k));
         maxPatWeightTerms.setCount(en.getKey(), Counters.max(weights));
@@ -735,7 +735,7 @@ public class ScorePhrases<E extends Pattern> {
       } else if (words.size() == 1)
         bestw = words.iterator().next();
       else
-        return new ClassicCounter<>();
+        return new DefaultCounter<>();
 
       Redwood.log(ConstantsAndVariables.minimaldebug, "Selected Words: " + bestw);
 

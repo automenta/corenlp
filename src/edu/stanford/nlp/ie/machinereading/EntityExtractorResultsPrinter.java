@@ -12,7 +12,7 @@ import edu.stanford.nlp.ie.machinereading.structure.EntityMention;
 import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.StringUtils;
@@ -51,9 +51,9 @@ public class EntityExtractorResultsPrinter extends ResultsPrinter {
 	    List<CoreMap> extractorOutput) {
 		ResultsPrinter.align(goldStandard, extractorOutput);
 
-		Counter<String> correct = new ClassicCounter<>();
-		Counter<String> predicted = new ClassicCounter<>();
-		Counter<String> gold = new ClassicCounter<>();
+		Counter<String> correct = new DefaultCounter<>();
+		Counter<String> predicted = new DefaultCounter<>();
+		Counter<String> gold = new DefaultCounter<>();
 
 		for (int i = 0; i < goldStandard.size(); i++) {
 			CoreMap goldSent = goldStandard.get(i);

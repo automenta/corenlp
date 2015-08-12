@@ -28,7 +28,7 @@ import edu.stanford.nlp.ling.CoreAnnotations.TextAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.DefaultPaths;
 import edu.stanford.nlp.sequences.SeqClassifierFlags;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.ErasureUtils;
@@ -344,7 +344,7 @@ public class BasicEntityExtractor implements Extractor {
       subtype = null; // TODO: add support for subtypes! (needed at least in ACE)
     }
     EntityMention entity = EntityMentionFactory.constructEntityMention(identifier, sentence, span, span, type, subtype, null);
-    Counter<String> probs = new ClassicCounter<>();
+    Counter<String> probs = new DefaultCounter<>();
     probs.setCount(entity.getType(), 1.0);
     entity.setTypeProbabilities(probs);
     return entity;
@@ -358,11 +358,11 @@ public class BasicEntityExtractor implements Extractor {
    * This will return precision,recall and F1 measure
    */
   public void runTestSet(List<List<CoreLabel>> testSet) {
-    Counter<String> tp = new ClassicCounter<>();
-    Counter<String> fp = new ClassicCounter<>();
-    Counter<String> fn = new ClassicCounter<>();
+    Counter<String> tp = new DefaultCounter<>();
+    Counter<String> fp = new DefaultCounter<>();
+    Counter<String> fn = new DefaultCounter<>();
 
-    Counter<String> actual = new ClassicCounter<>();
+    Counter<String> actual = new DefaultCounter<>();
 
     for (List<CoreLabel> labels : testSet) {
       List<CoreLabel> unannotatedLabels = new ArrayList<>();

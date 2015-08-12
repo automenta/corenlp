@@ -1,6 +1,6 @@
 package edu.stanford.nlp.ie.pascal;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 
 import java.util.HashMap;
 import java.util.ArrayList;
@@ -22,9 +22,9 @@ public class CliqueTemplates {
 
   public ArrayList<String> urls = null;
 
-  public ClassicCounter dateCliqueCounter = new ClassicCounter();
-  public ClassicCounter locationCliqueCounter = new ClassicCounter();
-  public ClassicCounter workshopInfoCliqueCounter = new ClassicCounter();
+  public DefaultCounter dateCliqueCounter = new DefaultCounter();
+  public DefaultCounter locationCliqueCounter = new DefaultCounter();
+  public DefaultCounter workshopInfoCliqueCounter = new DefaultCounter();
 
 
 }

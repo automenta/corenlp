@@ -5,7 +5,7 @@ import edu.stanford.nlp.ie.regexp.NumberSequenceClassifier;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.sequences.SeqClassifierFlags;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.time.TimeAnnotations;
 import edu.stanford.nlp.time.Timex;
 import edu.stanford.nlp.util.CoreMap;
@@ -58,8 +58,8 @@ public class QuantifiableEntityNormalizer {
   private static final Map<String, Double> moneyMultipliers;
   private static final Map<String, Integer> moneyMultipliers2;
   private static final Map<String, Character> currencyWords;
-  public static final ClassicCounter<String> wordsToValues;
-  public static final ClassicCounter<String> ordinalsToValues;
+  public static final DefaultCounter<String> wordsToValues;
+  public static final DefaultCounter<String> ordinalsToValues;
 
   static {
 
@@ -126,7 +126,7 @@ public class QuantifiableEntityNormalizer {
     moneyMultipliers2.put("[0-9](m)(?:[^a-zA-Z]|$)", 1000000);
     moneyMultipliers2.put("[0-9](b)(?:[^a-zA-Z]|$)", 1000000000);
 
-    wordsToValues = new ClassicCounter<>();
+    wordsToValues = new DefaultCounter<>();
     wordsToValues.setCount("zero", 0.0);
     wordsToValues.setCount("one", 1.0);
     wordsToValues.setCount("two", 2.0);
@@ -163,7 +163,7 @@ public class QuantifiableEntityNormalizer {
     wordsToValues.setCount("trillion", 1000000000000.0);
     wordsToValues.setCount("dozen", 12.0);
 
-    ordinalsToValues = new ClassicCounter<>();
+    ordinalsToValues = new DefaultCounter<>();
     ordinalsToValues.setCount("zeroth", 0.0);
     ordinalsToValues.setCount("first", 1.0);
     ordinalsToValues.setCount("second", 2.0);

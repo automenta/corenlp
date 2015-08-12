@@ -30,7 +30,7 @@ package edu.stanford.nlp.classify;
 
 import edu.stanford.nlp.ling.Datum;
 import edu.stanford.nlp.ling.RVFDatum;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.Pair;
@@ -69,8 +69,8 @@ public class NaiveBayesClassifier<L, F> implements Classifier<L, F>, RVFClassifi
     return Counters.argmax(scores);
   }
 
-  public ClassicCounter<L> scoresOf(RVFDatum<L, F> example) {
-    ClassicCounter<L> scores = new ClassicCounter<>();
+  public DefaultCounter<L> scoresOf(RVFDatum<L, F> example) {
+    DefaultCounter<L> scores = new DefaultCounter<>();
     Counters.addInPlace(scores, priors);
     if (addZeroValued) {
       Counters.addInPlace(scores, priorZero);
@@ -96,7 +96,7 @@ public class NaiveBayesClassifier<L, F> implements Classifier<L, F>, RVFClassifi
     return classOf(rvf);
   }
 
-  public ClassicCounter<L> scoresOf(Datum<L, F> example) {
+  public DefaultCounter<L> scoresOf(Datum<L, F> example) {
     RVFDatum<L, F> rvf = new RVFDatum<>(example);
     return scoresOf(rvf);
   }
@@ -155,7 +155,7 @@ public class NaiveBayesClassifier<L, F> implements Classifier<L, F>, RVFClassifi
    * priorZero(l)=sum_{features} wt(l,feat=0)
    */
   private void initZeros() {
-    priorZero = new ClassicCounter<>();
+    priorZero = new DefaultCounter<>();
     for (L label : labels) {
       double score = 0;
       for (F feature : features) {

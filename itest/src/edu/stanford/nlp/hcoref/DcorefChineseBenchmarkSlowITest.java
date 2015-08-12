@@ -10,10 +10,9 @@ import java.util.regex.Pattern;
 import junit.framework.TestCase;
 import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.io.RuntimeIOException;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.StringUtils;
-import edu.stanford.nlp.util.logging.Redwood;
 
 /**
  * Run the dcoref system using the exact properties we distribute as
@@ -93,9 +92,9 @@ public class DcorefChineseBenchmarkSlowITest extends TestCase {
   }
   
   public void testChineseDcoref() throws Exception {
-    Counter<String> lowResults = new ClassicCounter<String>();
-    Counter<String> highResults = new ClassicCounter<String>();
-    Counter<String> expectedResults = new ClassicCounter<String>();
+    Counter<String> lowResults = new DefaultCounter<String>();
+    Counter<String> highResults = new DefaultCounter<String>();
+    Counter<String> expectedResults = new DefaultCounter<String>();
 
     
     setAll(lowResults,highResults,expectedResults,MENTION_TP,12370);
@@ -118,7 +117,7 @@ public class DcorefChineseBenchmarkSlowITest extends TestCase {
     setAll(lowResults,highResults,expectedResults,CONLL_SCORE,53.23);
 
 
-    Counter<String> results = new ClassicCounter<String>();
+    Counter<String> results = new DefaultCounter<String>();
     BufferedReader r = new BufferedReader(new StringReader(runCorefTest(true)));
     for (String line; (line = r.readLine()) != null; ) {
       Matcher m1 = MENTION_PATTERN.matcher(line);

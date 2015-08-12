@@ -114,11 +114,11 @@ public class IntervalTreeTest extends TestCase {
     IntervalTree<Integer, AbstractInterval<Integer>> tree = new IntervalTree<Integer, AbstractInterval<Integer>>();
 
     Random rand = new Random();
-    List<Interval<Integer>> list = new ArrayList<>(n+1);
+    List<IntInterval> list = new ArrayList<>(n+1);
     for (int i = 0; i < n; i++) {
       int x = rand.nextInt();
       int y = rand.nextInt();
-      Interval<Integer> interval = AbstractInterval.toValidInterval(x,y);
+      IntInterval interval = AbstractInterval.toValidInterval(x,y);
       tree.add(interval);
       list.add(interval);
     }
@@ -140,11 +140,11 @@ public class IntervalTreeTest extends TestCase {
     int n = 1000;
     IntervalTree<Integer, AbstractInterval<Integer>> tree = new IntervalTree<Integer, AbstractInterval<Integer>>();
 
-    List<Interval<Integer>> list = new ArrayList<>(n+1);
+    List<IntInterval> list = new ArrayList<>(n+1);
     for (int i = 0; i < n; i++) {
       int x = i;
       int y = i+1;
-      Interval<Integer> interval = AbstractInterval.toValidInterval(x,y);
+      IntInterval interval = AbstractInterval.toValidInterval(x,y);
       tree.add(interval);
       list.add(interval);
     }

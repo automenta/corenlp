@@ -6,7 +6,7 @@ import java.util.Set;
 import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.ling.Tag;
 import edu.stanford.nlp.ling.TaggedWord;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Index;
 
@@ -14,16 +14,16 @@ public class BaseUnknownWordModelTrainer
   extends AbstractUnknownWordModelTrainer
 {
   // Records the number of times word/tag pair was seen in training data.
-  ClassicCounter<IntTaggedWord> seenCounter;
+  DefaultCounter<IntTaggedWord> seenCounter;
   // Counts of each tag (stored as a Label) on unknown words.
-  ClassicCounter<Label> tc;
+  DefaultCounter<Label> tc;
 
   // tag (Label) --> signature --> count
-  Map<Label,ClassicCounter<String>> c;
+  Map<Label,DefaultCounter<String>> c;
 
-  ClassicCounter<IntTaggedWord> unSeenCounter;
+  DefaultCounter<IntTaggedWord> unSeenCounter;
 
-  Map<Label,ClassicCounter<String>> tagHash;
+  Map<Label,DefaultCounter<String>> tagHash;
 
   Set<String> seenEnd;
 
@@ -41,10 +41,10 @@ public class BaseUnknownWordModelTrainer
                                  Index<String> tagIndex, double totalTrees) {
     super.initializeTraining(op, lex, wordIndex, tagIndex, totalTrees);
 
-    seenCounter = new ClassicCounter<>();
-    unSeenCounter = new ClassicCounter<>();
+    seenCounter = new DefaultCounter<>();
+    unSeenCounter = new DefaultCounter<>();
     tagHash = Generics.newHashMap();
-    tc = new ClassicCounter<>();
+    tc = new DefaultCounter<>();
     c = Generics.newHashMap();
     seenEnd = Generics.newHashSet();
 
@@ -86,7 +86,7 @@ public class BaseUnknownWordModelTrainer
 
     Label tag = new Tag(tw.tag());
     if ( ! c.containsKey(tag)) {
-      c.put(tag, new ClassicCounter<>());
+      c.put(tag, new DefaultCounter<>());
     }
     c.get(tag).incrementCount(subString, weight);
 
@@ -113,12 +113,12 @@ public class BaseUnknownWordModelTrainer
       unknownGTTrainer.finishTraining();
     }
 
-    for (Map.Entry<Label, ClassicCounter<String>> labelClassicCounterEntry : c.entrySet()) {
+    for (Map.Entry<Label, DefaultCounter<String>> labelClassicCounterEntry : c.entrySet()) {
       /* outer iteration is over tags */
-      ClassicCounter<String> wc = labelClassicCounterEntry.getValue(); // counts for words given a tag
+      DefaultCounter<String> wc = labelClassicCounterEntry.getValue(); // counts for words given a tag
 
       if (!tagHash.containsKey(labelClassicCounterEntry.getKey())) {
-        tagHash.put(labelClassicCounterEntry.getKey(), new ClassicCounter<>());
+        tagHash.put(labelClassicCounterEntry.getKey(), new DefaultCounter<>());
       }
 
       /* the UNKNOWN sequence is assumed to be seen once in each tag */

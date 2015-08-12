@@ -2,7 +2,7 @@ package edu.stanford.nlp.parser.lexparser;
 
 import edu.stanford.nlp.ling.HasTag;
 import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.StringUtils;
 import edu.stanford.nlp.util.HashIndex;
@@ -33,8 +33,8 @@ public class MLEDependencyGrammar extends AbstractDependencyGrammar {
   /** Stores all the counts for dependencies (with and without the word
    *  being a wildcard) in the reduced tag space.
    */
-  protected ClassicCounter<IntDependency> argCounter;
-  protected ClassicCounter<IntDependency> stopCounter;  // reduced tag space
+  protected DefaultCounter<IntDependency> argCounter;
+  protected DefaultCounter<IntDependency> stopCounter;  // reduced tag space
 
   /** Bayesian m-estimate prior for aT given hTWd against base distribution
    *  of aT given hTd.
@@ -69,8 +69,8 @@ public class MLEDependencyGrammar extends AbstractDependencyGrammar {
     super(tlpParams.treebankLanguagePack(), tagProjection, directional, useDistance, useCoarseDistance, op, wordIndex, tagIndex);
     useSmoothTagProjection = op.useSmoothTagProjection;
     useUnigramWordSmoothing = op.useUnigramWordSmoothing;
-    argCounter = new ClassicCounter<>();
-    stopCounter = new ClassicCounter<>();
+    argCounter = new DefaultCounter<>();
+    stopCounter = new DefaultCounter<>();
     double[] smoothParams = tlpParams.MLEDependencyGrammarSmoothingParams();
     smooth_aT_hTWd = smoothParams[0];
     smooth_aTW_hTWd = smoothParams[1];
@@ -748,10 +748,10 @@ public class MLEDependencyGrammar extends AbstractDependencyGrammar {
 //    System.err.println("arg size: " + argCounter.size() + "  total: " + argCounter.totalCount());
 //    System.err.println("stop size: " + stopCounter.size() + "  total: " + stopCounter.totalCount());
 
-    ClassicCounter<IntDependency> compressedArgC = argCounter;
-    argCounter = new ClassicCounter<>();
-    ClassicCounter<IntDependency> compressedStopC = stopCounter;
-    stopCounter = new ClassicCounter<>();
+    DefaultCounter<IntDependency> compressedArgC = argCounter;
+    argCounter = new DefaultCounter<>();
+    DefaultCounter<IntDependency> compressedStopC = stopCounter;
+    stopCounter = new DefaultCounter<>();
     for (IntDependency d : compressedArgC.keySet()) {
       double count = compressedArgC.getCount(d);
       expandArg(d, d.distance, count);
@@ -774,8 +774,8 @@ public class MLEDependencyGrammar extends AbstractDependencyGrammar {
 //    System.err.println("arg size: " + argCounter.size() + "  total: " + argCounter.totalCount());
 //    System.err.println("stop size: " + stopCounter.size() + "  total: " + stopCounter.totalCount());
 
-    ClassicCounter<IntDependency> fullArgCounter = argCounter;
-    argCounter = new ClassicCounter<>();
+    DefaultCounter<IntDependency> fullArgCounter = argCounter;
+    argCounter = new DefaultCounter<>();
     for (IntDependency dependency : fullArgCounter.keySet()) {
       if (dependency.head != wildTW && dependency.arg != wildTW &&
               dependency.head.word != -1 && dependency.arg.word != -1) {
@@ -783,8 +783,8 @@ public class MLEDependencyGrammar extends AbstractDependencyGrammar {
       }
     }
 
-    ClassicCounter<IntDependency> fullStopCounter = stopCounter;
-    stopCounter = new ClassicCounter<>();
+    DefaultCounter<IntDependency> fullStopCounter = stopCounter;
+    stopCounter = new DefaultCounter<>();
     for (IntDependency dependency : fullStopCounter.keySet()) {
       if (dependency.head.word != -1) {
         stopCounter.incrementCount(dependency, fullStopCounter.getCount(dependency));

@@ -14,7 +14,7 @@ import edu.stanford.nlp.international.morph.MorphoFeatureSpecification.MorphoFea
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.parser.lexparser.TreebankLangParserParams;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.TwoDimensionalIntCounter;
 import edu.stanford.nlp.trees.Tree;
@@ -69,21 +69,21 @@ public class TreebankFactoredLexiconStats {
     }
 
     // Counters
-    Counter<String> wordTagCounter = new ClassicCounter<>(30000);
-    Counter<String> morphTagCounter = new ClassicCounter<>(500);
+    Counter<String> wordTagCounter = new DefaultCounter<>(30000);
+    Counter<String> morphTagCounter = new DefaultCounter<>(500);
 //    Counter<String> signatureTagCounter = new ClassicCounter<String>();
-    Counter<String> morphCounter = new ClassicCounter<>(500);
-    Counter<String> wordCounter = new ClassicCounter<>(30000);
-    Counter<String> tagCounter = new ClassicCounter<>(300);
+    Counter<String> morphCounter = new DefaultCounter<>(500);
+    Counter<String> wordCounter = new DefaultCounter<>(30000);
+    Counter<String> tagCounter = new DefaultCounter<>(300);
 
-    Counter<String> lemmaCounter = new ClassicCounter<>(25000);
-    Counter<String> lemmaTagCounter = new ClassicCounter<>(25000);
+    Counter<String> lemmaCounter = new DefaultCounter<>(25000);
+    Counter<String> lemmaTagCounter = new DefaultCounter<>(25000);
 
-    Counter<String> richTagCounter = new ClassicCounter<>(1000);
+    Counter<String> richTagCounter = new DefaultCounter<>(1000);
 
-    Counter<String> reducedTagCounter = new ClassicCounter<>(500);
+    Counter<String> reducedTagCounter = new DefaultCounter<>(500);
 
-    Counter<String> reducedTagLemmaCounter = new ClassicCounter<>(500);
+    Counter<String> reducedTagLemmaCounter = new DefaultCounter<>(500);
 
     Map<String,Set<String>> wordLemmaMap = Generics.newHashMap();
 

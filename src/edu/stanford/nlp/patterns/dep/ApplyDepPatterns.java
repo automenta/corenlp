@@ -6,7 +6,7 @@ import edu.stanford.nlp.ling.IndexedWord;
 import edu.stanford.nlp.patterns.*;
 import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.semgrex.SemgrexPattern;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
 import edu.stanford.nlp.trees.GrammaticalRelation;
@@ -192,7 +192,7 @@ public class ApplyDepPatterns <E extends Pattern>  implements Callable<Pair<TwoD
       @Override
       public Counter<String> apply(Pair<IndexedWord, SemanticGraph> indexedWordSemanticGraphPair) {
         //TODO: make features;
-        Counter<String> feat = new ClassicCounter<>();
+        Counter<String> feat = new DefaultCounter<>();
         IndexedWord vertex = indexedWordSemanticGraphPair.first();
         SemanticGraph graph = indexedWordSemanticGraphPair.second();
         List<Pair<GrammaticalRelation, IndexedWord>> pt = graph.parentPairs(vertex);

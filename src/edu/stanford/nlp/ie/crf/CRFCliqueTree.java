@@ -2,7 +2,7 @@ package edu.stanford.nlp.ie.crf;
 
 import edu.stanford.nlp.math.ArrayMath;
 import edu.stanford.nlp.sequences.ListeningSequenceModel;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.GeneralizedCounter;
 import edu.stanford.nlp.util.Index;
@@ -272,7 +272,7 @@ public class CRFCliqueTree<E> implements ListeningSequenceModel {
   }
 
   public Counter<E> probs(int position) {
-    Counter<E> c = new ClassicCounter<>();
+    Counter<E> c = new DefaultCounter<>();
     for (int i = 0, sz = classIndex.size(); i < sz; i++) {
       E label = classIndex.get(i);
       c.incrementCount(label, prob(position, i));
@@ -281,7 +281,7 @@ public class CRFCliqueTree<E> implements ListeningSequenceModel {
   }
 
   public Counter<E> logProbs(int position) {
-    Counter<E> c = new ClassicCounter<>();
+    Counter<E> c = new DefaultCounter<>();
     for (int i = 0, sz = classIndex.size(); i < sz; i++) {
       E label = classIndex.get(i);
       c.incrementCount(label, logProb(position, i));
@@ -461,7 +461,7 @@ public class CRFCliqueTree<E> implements ListeningSequenceModel {
   }
 
   public Counter<E> condLogProbsGivenPrevious(int position, int[] prevlabels) {
-    Counter<E> c = new ClassicCounter<>();
+    Counter<E> c = new DefaultCounter<>();
     for (int i = 0, sz = classIndex.size(); i < sz; i++) {
       E label = classIndex.get(i);
       c.incrementCount(label, condLogProbGivenPrevious(position, i, prevlabels));
@@ -470,7 +470,7 @@ public class CRFCliqueTree<E> implements ListeningSequenceModel {
   }
 
   public Counter<E> condLogProbsGivenPrevious(int position, E[] prevlabels) {
-    Counter<E> c = new ClassicCounter<>();
+    Counter<E> c = new DefaultCounter<>();
     for (int i = 0, sz = classIndex.size(); i < sz; i++) {
       E label = classIndex.get(i);
       c.incrementCount(label, condLogProbGivenPrevious(position, label, prevlabels));
@@ -512,7 +512,7 @@ public class CRFCliqueTree<E> implements ListeningSequenceModel {
   }
 
   public Counter<E> condLogProbsGivenNext(int position, int[] nextlabels) {
-    Counter<E> c = new ClassicCounter<>();
+    Counter<E> c = new DefaultCounter<>();
     for (int i = 0, sz = classIndex.size(); i < sz; i++) {
       E label = classIndex.get(i);
       c.incrementCount(label, condLogProbGivenNext(position, i, nextlabels));
@@ -521,7 +521,7 @@ public class CRFCliqueTree<E> implements ListeningSequenceModel {
   }
 
   public Counter<E> condLogProbsGivenNext(int position, E[] nextlabels) {
-    Counter<E> c = new ClassicCounter<>();
+    Counter<E> c = new DefaultCounter<>();
     for (int i = 0, sz = classIndex.size(); i < sz; i++) {
       E label = classIndex.get(i);
       c.incrementCount(label, condLogProbGivenNext(position, label, nextlabels));

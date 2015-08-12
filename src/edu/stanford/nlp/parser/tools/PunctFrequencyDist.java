@@ -9,7 +9,7 @@ import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.parser.lexparser.EnglishTreebankParserParams;
 import edu.stanford.nlp.parser.lexparser.TreebankLangParserParams;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.trees.DiskTreebank;
@@ -77,7 +77,7 @@ public final class PunctFrequencyDist {
       }
     }
 
-    Counter<String> puncTypes = new ClassicCounter<>();
+    Counter<String> puncTypes = new DefaultCounter<>();
     for(Tree t : tb) {
       List<CoreLabel> yield = t.taggedLabeledYield();
       for(CoreLabel word : yield)

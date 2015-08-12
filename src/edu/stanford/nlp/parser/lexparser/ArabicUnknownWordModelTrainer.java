@@ -2,16 +2,16 @@ package edu.stanford.nlp.parser.lexparser;
 
 import edu.stanford.nlp.io.EncodingPrintWriter;
 import edu.stanford.nlp.ling.TaggedWord;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.util.Index;
 
 public class ArabicUnknownWordModelTrainer
   extends AbstractUnknownWordModelTrainer
 {
   // Records the number of times word/tag pair was seen in training data.
-  ClassicCounter<IntTaggedWord> seenCounter;
+  DefaultCounter<IntTaggedWord> seenCounter;
 
-  ClassicCounter<IntTaggedWord> unSeenCounter;
+  DefaultCounter<IntTaggedWord> unSeenCounter;
 
   double indexToStartUnkCounting;
 
@@ -32,8 +32,8 @@ public class ArabicUnknownWordModelTrainer
     this.totalTrees = totalTrees;
     indexToStartUnkCounting = (totalTrees * op.trainOptions.fractionBeforeUnseenCounting);
 
-    seenCounter = new ClassicCounter<>(20000);
-    unSeenCounter = new ClassicCounter<>(20000);
+    seenCounter = new DefaultCounter<>(20000);
+    unSeenCounter = new DefaultCounter<>(20000);
 
     model = new ArabicUnknownWordModel(op, lex, wordIndex, tagIndex,
                                        unSeenCounter);

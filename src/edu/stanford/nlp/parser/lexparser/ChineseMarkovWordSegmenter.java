@@ -4,7 +4,7 @@ import java.util.*;
 
 import edu.stanford.nlp.ling.*;
 import edu.stanford.nlp.math.ArrayMath;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Distribution;
 import edu.stanford.nlp.stats.GeneralizedCounter;
 import edu.stanford.nlp.trees.Tree;
@@ -48,14 +48,14 @@ public class ChineseMarkovWordSegmenter implements WordSegmenter {
   }
 
   // Only used at training time
-  private transient ClassicCounter<String> initial;
+  private transient DefaultCounter<String> initial;
   private transient GeneralizedCounter ruleCounter;
 
   @Override
   public void initializeTraining(double numTrees) {
     lex.initializeTraining(numTrees);
 
-    this.initial = new ClassicCounter<>();
+    this.initial = new DefaultCounter<>();
     this.ruleCounter = new GeneralizedCounter(2);
   }
 
@@ -100,7 +100,7 @@ public class ChineseMarkovWordSegmenter implements WordSegmenter {
     for (Iterator iter = entries.iterator(); iter.hasNext();) {
       Map.Entry entry = (Map.Entry) iter.next();
       //      Map.Entry<List<String>, Counter> entry = (Map.Entry<List<String>, Counter>) iter.next();
-      Distribution d = Distribution.laplaceSmoothedDistribution((ClassicCounter) entry.getValue(), numTags, 0.5);
+      Distribution d = Distribution.laplaceSmoothedDistribution((DefaultCounter) entry.getValue(), numTags, 0.5);
       markovPOSDists.put(((List<String>) entry.getKey()).get(0), d);
     }
   }
@@ -285,7 +285,7 @@ public class ChineseMarkovWordSegmenter implements WordSegmenter {
 
   private Distribution<Integer> getSegmentedWordLengthDistribution(Treebank tb) {
     // CharacterLevelTagExtender ext = new CharacterLevelTagExtender();
-    ClassicCounter<Integer> c = new ClassicCounter<>();
+    DefaultCounter<Integer> c = new DefaultCounter<>();
     for (Iterator iterator = tb.iterator(); iterator.hasNext();) {
       Tree gold = (Tree) iterator.next();
       StringBuilder goldChars = new StringBuilder();

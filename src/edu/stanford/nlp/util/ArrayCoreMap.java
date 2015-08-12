@@ -36,7 +36,7 @@ import edu.stanford.nlp.util.logging.Redwood.RedwoodChannels;
  * @author dramage
  * @author rafferty
  */
-public class ArrayCoreMap implements CoreMap /*, Serializable */ {
+@Deprecated public class ArrayCoreMap implements CoreMap /*, Serializable */ {
 
   /** Initial capacity of the array */
   private static final int INITIAL_CAPACITY = 4;
@@ -402,6 +402,7 @@ public class ArrayCoreMap implements CoreMap /*, Serializable */ {
    *     character. If the string contains spaces, it is wrapped in "{...}".
    */
   public String toShortString(String... what) {
+
     return toShortString('/', what);
   }
 

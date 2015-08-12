@@ -1,11 +1,10 @@
 package edu.stanford.nlp.semgraph;
 
 import edu.stanford.nlp.graph.DirectedMultiGraph;
-import edu.stanford.nlp.ie.machinereading.structure.*;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
 import edu.stanford.nlp.trees.*;
@@ -841,7 +840,7 @@ public class SemanticGraph implements Serializable {
 
     // K.I.S.S. alg: just sum up and see who's on top, values don't have much
     // meaning outside of determining dominance.
-    ClassicCounter<IndexedWord> dominatedEdgeCount = ClassicCounter.identityHashMapCounter();
+    DefaultCounter<IndexedWord> dominatedEdgeCount = new DefaultCounter();
     for (IndexedWord outer : vertexSet()) {
       for (IndexedWord inner : vertexSet()) {
         dominatedEdgeCount.incrementCount(outer, nodeDists.getCount(outer, inner));

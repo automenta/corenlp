@@ -5,7 +5,7 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.*;
 
@@ -184,9 +184,9 @@ public class PhraseTable implements Serializable
       String[] columns = fieldDelimiterPattern.split(line);
       String phrase = columns[0];
       // Pick map factory to use depending on number of tags we have
-      MapFactory<String,MutableDouble> mapFactory = (columns.length < 20)?
-              MapFactory.<String,MutableDouble>arrayMapFactory(): MapFactory.<String,MutableDouble>linkedHashMapFactory();
-      Counter<String> counts = new ClassicCounter<>(mapFactory);
+      /*MapFactory<String,MutableDouble> mapFactory = (columns.length < 20)?
+              MapFactory.<String,MutableDouble>arrayMapFactory(): MapFactory.<String,MutableDouble>linkedHashMapFactory();*/
+      Counter<String> counts = new DefaultCounter();
       for (int i = 1; i < columns.length; i++) {
         String[] tagCount = countDelimiterPattern.split(columns[i], 2);
         if (tagCount.length == 2) {

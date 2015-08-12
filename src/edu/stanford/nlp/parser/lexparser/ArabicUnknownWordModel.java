@@ -1,6 +1,6 @@
 package edu.stanford.nlp.parser.lexparser;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.util.Index;
 
 /**
@@ -30,7 +30,7 @@ public class ArabicUnknownWordModel extends BaseUnknownWordModel {
   public ArabicUnknownWordModel(Options op, Lexicon lex,
                                 Index<String> wordIndex,
                                 Index<String> tagIndex,
-                                ClassicCounter<IntTaggedWord> unSeenCounter) {
+                                DefaultCounter<IntTaggedWord> unSeenCounter) {
     super(op, lex, wordIndex, tagIndex, unSeenCounter, null, null, null);
     if (unknownLevel < MIN_UNKNOWN || unknownLevel > MAX_UNKNOWN) {
       throw new IllegalArgumentException("Invalid value for useUnknownWordSignatures: " + unknownLevel);
@@ -48,7 +48,7 @@ public class ArabicUnknownWordModel extends BaseUnknownWordModel {
   public ArabicUnknownWordModel(Options op, Lexicon lex,
                                 Index<String> wordIndex,
                                 Index<String> tagIndex) {
-    this(op, lex, wordIndex, tagIndex, new ClassicCounter<>());
+    this(op, lex, wordIndex, tagIndex, new DefaultCounter<>());
   }
 
   @Override

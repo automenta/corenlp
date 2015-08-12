@@ -1,6 +1,6 @@
 package edu.stanford.nlp.util.concurrent;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.CounterTestBase;
 
 /**
@@ -10,7 +10,7 @@ import edu.stanford.nlp.stats.CounterTestBase;
  */
 public class ConcurrentHashCounterTest extends CounterTestBase {
   public ConcurrentHashCounterTest() {
-    super(new ClassicCounter<String>());
+    super(new DefaultCounter<String>());
     // TODO(spenceg): Fix concurrenthashcounter and reactivate
 //    super(new ConcurrentHashCounter<String>());
   }

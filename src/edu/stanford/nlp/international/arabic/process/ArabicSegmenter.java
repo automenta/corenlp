@@ -26,7 +26,7 @@ import edu.stanford.nlp.process.TokenizerFactory;
 import edu.stanford.nlp.process.WordSegmenter;
 import edu.stanford.nlp.sequences.DocumentReaderAndWriter;
 import edu.stanford.nlp.sequences.SeqClassifierFlags;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.Generics;
@@ -325,8 +325,8 @@ public class ArabicSegmenter implements WordSegmenter, ThreadsafeProcessor<Strin
       }
     }
 
-    Counter<String> labelTotal = new ClassicCounter<>();
-    Counter<String> labelCorrect = new ClassicCounter<>();
+    Counter<String> labelTotal = new DefaultCounter<>();
+    Counter<String> labelCorrect = new DefaultCounter<>();
     int total = 0;
     int correct = 0;
     for (List<CoreLabel> line : lines) {

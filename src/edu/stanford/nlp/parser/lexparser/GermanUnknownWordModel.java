@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.stanford.nlp.ling.Label;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Index;
 
@@ -26,8 +26,8 @@ public class GermanUnknownWordModel extends BaseUnknownWordModel {
   public GermanUnknownWordModel(Options op, Lexicon lex,
                                 Index<String> wordIndex,
                                 Index<String> tagIndex,
-                                ClassicCounter<IntTaggedWord> unSeenCounter,
-                                Map<Label,ClassicCounter<String>> tagHash,
+                                DefaultCounter<IntTaggedWord> unSeenCounter,
+                                Map<Label,DefaultCounter<String>> tagHash,
                                 Map<String,Float> unknownGT,
                                 Set<String> seenEnd) {
     super(op, lex, wordIndex, tagIndex,
@@ -44,8 +44,8 @@ public class GermanUnknownWordModel extends BaseUnknownWordModel {
                                 Index<String> wordIndex,
                                 Index<String> tagIndex) {
     this(op, lex, wordIndex, tagIndex,
-            new ClassicCounter<>(),
-         Generics.<Label,ClassicCounter<String>>newHashMap(),
+            new DefaultCounter<>(),
+         Generics.<Label,DefaultCounter<String>>newHashMap(),
          Generics.<String,Float>newHashMap(),
          Generics.<String>newHashSet());
   }

@@ -37,11 +37,10 @@ import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.objectbank.ObjectBank;
 import edu.stanford.nlp.objectbank.ResettableReaderIteratorFactory;
-import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.process.CoreLabelTokenFactory;
 import edu.stanford.nlp.process.CoreTokenFactory;
 import edu.stanford.nlp.sequences.*;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.Sampler;
@@ -364,7 +363,7 @@ public abstract class AbstractSequenceClassifier<IN extends CoreMap> implements 
   public Counter<List<IN>> classifyKBest(List<IN> doc, Class<? extends CoreAnnotation<String>> answerField, int k) {
 
     if (doc.isEmpty()) {
-      return new ClassicCounter<>();
+      return new DefaultCounter<>();
     }
 
     // TODO get rid of ObjectBankWrapper
@@ -377,7 +376,7 @@ public abstract class AbstractSequenceClassifier<IN extends CoreMap> implements 
     KBestSequenceFinder tagInference = new KBestSequenceFinder();
     Counter<int[]> bestSequences = tagInference.kBestSequences(model, k);
 
-    Counter<List<IN>> kBest = new ClassicCounter<>();
+    Counter<List<IN>> kBest = new DefaultCounter<>();
 
     for (int[] seq : bestSequences.keySet()) {
       List<IN> kth = new ArrayList<>();
@@ -968,8 +967,8 @@ public abstract class AbstractSequenceClassifier<IN extends CoreMap> implements 
    *          {@link CoreMap}.
    */
   public void printProbsDocuments(ObjectBank<List<IN>> documents) {
-    Counter<Integer> calibration = new ClassicCounter<>();
-    Counter<Integer> correctByBin = new ClassicCounter<>();
+    Counter<Integer> calibration = new DefaultCounter<>();
+    Counter<Integer> correctByBin = new DefaultCounter<>();
     TwoDimensionalCounter<Integer,String> calibratedTokens = new TwoDimensionalCounter<>();
 
     for (List<IN> doc : documents) {
@@ -1128,9 +1127,9 @@ public abstract class AbstractSequenceClassifier<IN extends CoreMap> implements 
 
     Timing timer = new Timing();
 
-    Counter<String> entityTP = new ClassicCounter<>();
-    Counter<String> entityFP = new ClassicCounter<>();
-    Counter<String> entityFN = new ClassicCounter<>();
+    Counter<String> entityTP = new DefaultCounter<>();
+    Counter<String> entityFP = new DefaultCounter<>();
+    Counter<String> entityFN = new DefaultCounter<>();
     boolean resultsCounted = outputScores;
     int numWords = 0;
     int numDocs = 0;

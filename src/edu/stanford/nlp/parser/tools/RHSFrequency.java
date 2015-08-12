@@ -8,7 +8,7 @@ import java.util.List;
 import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.parser.lexparser.EnglishTreebankParserParams;
 import edu.stanford.nlp.parser.lexparser.TreebankLangParserParams;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.trees.DiskTreebank;
@@ -78,7 +78,7 @@ public class RHSFrequency {
       }
     }
 
-    Counter<String> rhsCounter = new ClassicCounter<>();
+    Counter<String> rhsCounter = new DefaultCounter<>();
     for(Tree t : tb) {
       TregexMatcher m = rootMatch.matcher(t);
       while(m.findNextMatchingNode()) {

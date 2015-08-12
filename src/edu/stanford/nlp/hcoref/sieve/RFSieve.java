@@ -29,7 +29,7 @@ import edu.stanford.nlp.ling.CoreAnnotations.SpeakerAnnotation;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.RVFDatum;
 import edu.stanford.nlp.math.ArrayMath;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.trees.Tree;
@@ -56,7 +56,7 @@ public class RFSieve extends Sieve {
   public void findCoreferentAntecedent(Mention m, int mIdx, Document document, Dictionaries dict, Properties props, StringBuilder sbLog) throws Exception {
     int sentIdx = m.sentNum;
 
-    Counter<Integer> probs = new ClassicCounter<>();
+    Counter<Integer> probs = new DefaultCounter<>();
     
     int mentionDist = 0;
     for(int sentDist=0 ; sentDist <= Math.min(this.maxSentDist, sentIdx) ; sentDist++) {
@@ -102,7 +102,7 @@ public class RFSieve extends Sieve {
     try {
       
       boolean label = (document.goldMentions==null)? false : document.isCoref(m, candidate);
-      Counter<String> features = new ClassicCounter<>();
+      Counter<String> features = new DefaultCounter<>();
       CorefCluster mC = document.corefClusters.get(m.corefClusterID);
       CorefCluster aC = document.corefClusters.get(candidate.corefClusterID);
       

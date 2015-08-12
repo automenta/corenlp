@@ -46,7 +46,7 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
     super(constvar);
     if(constvar.useWordVectorsToComputeSim && (constvar.subsampleUnkAsNegUsingSim|| constvar.expandPositivesWhenSampling || constvar.expandNegativesWhenSampling || constVars.usePhraseEvalWordVector) && wordVectors == null) {
       if(Data.rawFreq == null){
-          Data.rawFreq = new ClassicCounter<>();
+          Data.rawFreq = new DefaultCounter<>();
           Data.computeRawFreqIfNull(PatternFactory.numWordsCompoundMax, constvar.batchProcessSents);
       }
       Redwood.log(Redwood.DBG, "Reading word vectors");
@@ -92,7 +92,7 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
 
     boolean computeRawFreq = false;
     if (Data.rawFreq == null) {
-      Data.rawFreq = new ClassicCounter<>();
+      Data.rawFreq = new DefaultCounter<>();
       computeRawFreq = true;
     }
 
@@ -176,9 +176,9 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
       TwoDimensionalCounter<CandidatePhrase, E> wordsPatExtracted, Counter<E> allSelectedPatterns,
       Set<CandidatePhrase> alreadyIdentifiedWords, boolean forLearningPatterns) throws IOException, ClassNotFoundException {
     getAllLabeledWordsCluster();
-    Counter<CandidatePhrase> scores = new ClassicCounter<>();
+    Counter<CandidatePhrase> scores = new DefaultCounter<>();
     edu.stanford.nlp.classify.Classifier classifier = learnClassifier(label, forLearningPatterns, wordsPatExtracted, allSelectedPatterns);
-    for (Entry<CandidatePhrase, ClassicCounter<E>> en : terms.entrySet()) {
+    for (Entry<CandidatePhrase, DefaultCounter<E>> en : terms.entrySet()) {
       Double score = this.scoreUsingClassifer(classifier, en.getKey(), label, forLearningPatterns, en.getValue(), allSelectedPatterns);
       if(!score.isNaN() && !score.isInfinite()){
         scores.setCount(en.getKey(), score);
@@ -191,7 +191,7 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
   @Override
   public Counter<CandidatePhrase> scorePhrases(String label, Set<CandidatePhrase> terms, boolean forLearningPatterns) throws IOException, ClassNotFoundException {
     getAllLabeledWordsCluster();
-    Counter<CandidatePhrase> scores = new ClassicCounter<>();
+    Counter<CandidatePhrase> scores = new DefaultCounter<>();
     edu.stanford.nlp.classify.Classifier classifier = learnClassifier(label, forLearningPatterns, null, null);
     for (CandidatePhrase en : terms) {
       double score = this.scoreUsingClassifer(classifier, en, label, forLearningPatterns,null, null);
@@ -213,7 +213,7 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
 
 
   Counter<Integer> wordClass(String phrase, String phraseLemma){
-    Counter<Integer> cl = new ClassicCounter<>();
+    Counter<Integer> cl = new DefaultCounter<>();
     String[] phl = null;
     if(phraseLemma!=null)
       phl = phraseLemma.split("\\s+");
@@ -252,7 +252,7 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
   }
 
   private Counter<CandidatePhrase> computeSimWithWordVectors(Collection<CandidatePhrase> candidatePhrases, Collection<CandidatePhrase> otherPhrases, boolean ignoreWordRegex, String label){
-    Counter<CandidatePhrase> sims = new ClassicCounter<>(candidatePhrases.size());
+    Counter<CandidatePhrase> sims = new DefaultCounter<>(candidatePhrases.size());
     for(CandidatePhrase p : candidatePhrases) {
 
       Map<String, double[]> simsAvgMaxAllLabels = similaritiesWithLabeledPhrases.get(p.getPhrase());
@@ -349,7 +349,7 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
                                                                                              Map<String, Collection<CandidatePhrase>> allPossibleNegativePhrases, String label) {
     assert wordVectors != null : "Why are word vectors null?";
     Counter<CandidatePhrase> posSims = computeSimWithWordVectors(candidatePhrases, positivePhrases, true, label);
-    Counter<CandidatePhrase> negSims = new ClassicCounter<>();
+    Counter<CandidatePhrase> negSims = new DefaultCounter<>();
 
     for(Map.Entry<String, Collection<CandidatePhrase>> en: allPossibleNegativePhrases.entrySet())
       negSims.addAll(computeSimWithWordVectors(candidatePhrases, en.getValue(), true, en.getKey()));
@@ -366,7 +366,7 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
 
   Pair<Counter<CandidatePhrase>, Counter<CandidatePhrase>> computeSimWithWordCluster(Collection<CandidatePhrase> candidatePhrases, Collection<CandidatePhrase> positivePhrases, AtomicDouble allMaxSim){
 
-    Counter<CandidatePhrase> sims = new ClassicCounter<>(candidatePhrases.size());
+    Counter<CandidatePhrase> sims = new DefaultCounter<>(candidatePhrases.size());
 
     for(CandidatePhrase p : candidatePhrases) {
       Counter<Integer> feat = wordClassClustersForPhrase.get(p);
@@ -448,7 +448,7 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
 
     List<List<CandidatePhrase>> threadedCandidates = GetPatternsFromDataMultiClass.getThreadBatches(CollectionUtils.toList(candidatePhrases), constVars.numThreads);
 
-    Counter<CandidatePhrase> sims = new ClassicCounter<>();
+    Counter<CandidatePhrase> sims = new DefaultCounter<>();
 
     AtomicDouble allMaxSim = new AtomicDouble(Double.MIN_VALUE);
 
@@ -584,7 +584,7 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
   }
 
   Counter<String> numLabeledTokens(){
-    Counter<String> counter = new ClassicCounter<>();
+    Counter<String> counter = new DefaultCounter<>();
     ConstantsAndVariables.DataSentsIterator data = new ConstantsAndVariables.DataSentsIterator(constVars.batchProcessSents);
     while(data.hasNext()){
       Map<String, DataInstance> sentsf = data.next().first();
@@ -639,8 +639,8 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
       Set<CandidatePhrase> allPositivePhrases = new HashSet<>();
       Set<CandidatePhrase> allNegativePhrases = new HashSet<>();
       Set<CandidatePhrase> allUnknownPhrases = new HashSet<>();
-      Counter<CandidatePhrase> allCloseToPositivePhrases = new ClassicCounter<>();
-      Counter<CandidatePhrase> allCloseToNegativePhrases = new ClassicCounter<>();
+      Counter<CandidatePhrase> allCloseToPositivePhrases = new DefaultCounter<>();
+      Counter<CandidatePhrase> allCloseToNegativePhrases = new DefaultCounter<>();
 
 
       Set<CandidatePhrase> knownPositivePhrases = CollectionUtils.unionAsSet(constVars.getLearnedWords().get(answerLabel).keySet(), constVars.getSeedLabelDictionary().get(answerLabel));
@@ -847,20 +847,20 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
 
     boolean expandNeg = false;
     if(closeToNegativesFirstIter == null){
-      closeToNegativesFirstIter = new ClassicCounter<>();
+      closeToNegativesFirstIter = new DefaultCounter<>();
       if(constVars.expandNegativesWhenSampling)
         expandNeg = true;
     }
 
     boolean expandPos = false;
     if(closeToPositivesFirstIter == null) {
-      closeToPositivesFirstIter = new ClassicCounter<>();
+      closeToPositivesFirstIter = new DefaultCounter<>();
       if(constVars.expandPositivesWhenSampling)
         expandPos = true;
     }
 
 
-    Counter<Integer> distSimClustersOfPositive = new ClassicCounter<>();
+    Counter<Integer> distSimClustersOfPositive = new DefaultCounter<>();
     if((expandPos || expandNeg) && !constVars.useWordVectorsToComputeSim){
       for(CandidatePhrase s: CollectionUtils.union(constVars.getLearnedWords(answerLabel).keySet(), constVars.getSeedLabelDictionary().get(answerLabel))){
         String[] toks = s.getPhrase().split("\\s+");
@@ -1089,7 +1089,7 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
     if (phraseScoresRaw.containsFirstKey(word))
       return phraseScoresRaw.getCounter(word);
 
-    Counter<ScorePhraseMeasures> scoreslist = new ClassicCounter<>();
+    Counter<ScorePhraseMeasures> scoreslist = new DefaultCounter<>();
 
     //Add features on the word, if any!
     if(word.getFeatures()!= null){
@@ -1297,7 +1297,7 @@ public class ScorePhrasesLearnFeatWt<E extends Pattern> extends PhraseScorer<E> 
     if (phraseScoresRaw.containsFirstKey(word))
       return phraseScoresRaw.getCounter(word);
 
-    Counter<ScorePhraseMeasures> scoreslist = new ClassicCounter<>();
+    Counter<ScorePhraseMeasures> scoreslist = new DefaultCounter<>();
 
     //Add features on the word, if any!
     if(word.getFeatures()!= null){

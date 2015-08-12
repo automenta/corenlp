@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import edu.stanford.nlp.ling.BasicDatum;
 import edu.stanford.nlp.ling.Datum;
 import edu.stanford.nlp.ling.RVFDatum;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
 import edu.stanford.nlp.objectbank.ObjectBank;
@@ -233,7 +233,7 @@ public class Dataset<L, F> extends GeneralDataset<L, F> {
    */
   public Counter<F> getFeatureCounter()
   {
-    Counter<F> featureCounts = new ClassicCounter<>();
+    Counter<F> featureCounts = new DefaultCounter<>();
     for (int i=0; i < this.size(); i++)
     {
       BasicDatum<L, F> datum = (BasicDatum<L, F>) getDatum(i);
@@ -252,7 +252,7 @@ public class Dataset<L, F> extends GeneralDataset<L, F> {
    * @return RVFDatum with l1-normalized tf-idf features.
    */
   public RVFDatum<L,F> getL1NormalizedTFIDFDatum(Datum<L,F> datum,Counter<F> featureDocCounts){
-      Counter<F> tfidfFeatures = new ClassicCounter<>();
+      Counter<F> tfidfFeatures = new DefaultCounter<>();
       for(F feature : datum.asFeatures()){
         if(featureDocCounts.containsKey(feature))
           tfidfFeatures.incrementCount(feature,1.0);
@@ -385,7 +385,7 @@ public class Dataset<L, F> extends GeneralDataset<L, F> {
    */
   @Override
   public RVFDatum<L, F> getRVFDatum(int index) {
-     ClassicCounter<F> c = new ClassicCounter<>();
+     DefaultCounter<F> c = new DefaultCounter<>();
     for (F key : featureIndex.objects(data[index])) {
       c.incrementCount(key);
     }
@@ -623,10 +623,10 @@ public class Dataset<L, F> extends GeneralDataset<L, F> {
     labels = trimToSize(labels);
 
     // counts the number of times word X is present
-    ClassicCounter<F> featureCounter = new ClassicCounter<>();
+    DefaultCounter<F> featureCounter = new DefaultCounter<>();
 
     // counts the number of time a document has label Y
-    ClassicCounter<L> labelCounter = new ClassicCounter<>();
+    DefaultCounter<L> labelCounter = new DefaultCounter<>();
 
     // counts the number of times the document has label Y given word X is present
     TwoDimensionalCounter<F,L> condCounter = new TwoDimensionalCounter<>();
@@ -736,7 +736,7 @@ public class Dataset<L, F> extends GeneralDataset<L, F> {
    * Need to sort the counter by feature keys and dump it
    *
    */
-  public static void printSVMLightFormat(PrintWriter pw, ClassicCounter<Integer> c, int classNo) {
+  public static void printSVMLightFormat(PrintWriter pw, DefaultCounter<Integer> c, int classNo) {
     Integer[] features = c.keySet().toArray(new Integer[c.keySet().size()]);
     Arrays.sort(features);
     StringBuilder sb = new StringBuilder();

@@ -10,7 +10,7 @@ import edu.stanford.nlp.semgraph.SemanticGraph;
 import edu.stanford.nlp.semgraph.SemanticGraphEdge;
 import edu.stanford.nlp.semgraph.semgrex.SemgrexMatcher;
 import edu.stanford.nlp.semgraph.semgrex.SemgrexPattern;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.*;
 import edu.stanford.nlp.util.PriorityQueue;
@@ -332,7 +332,7 @@ public class RelationTripleSegmenter {
    * A counter keeping track of how many times a given pattern has matched. This allows us to learn to iterate
    * over patterns in the optimal order; this is just an efficiency tweak (but an effective one!).
    */
-  private final Counter<SemgrexPattern> VERB_PATTERN_HITS = new ClassicCounter<>();
+  private final Counter<SemgrexPattern> VERB_PATTERN_HITS = new DefaultCounter<>();
 
   /** A set of valid arcs denoting a subject entity we are interested in */
   private final Set<String> VALID_SUBJECT_ARCS = Collections.unmodifiableSet(new HashSet<String>(){{

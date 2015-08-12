@@ -1,6 +1,6 @@
 package edu.stanford.nlp.parser.lexparser;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Pair;
@@ -62,12 +62,12 @@ class RandomWalk implements Serializable {
       Object seen = p.first();
       Object hidden = p.second();
       if (!hiddenToSeen.keySet().contains(hidden)) {
-        hiddenToSeen.put(hidden, new ClassicCounter());
+        hiddenToSeen.put(hidden, new DefaultCounter());
       }
       hiddenToSeen.get(hidden).incrementCount(seen);
 
       if (!seenToHidden.keySet().contains(seen)) {
-        seenToHidden.put(seen, new ClassicCounter());
+        seenToHidden.put(seen, new DefaultCounter());
       }
       seenToHidden.get(seen).incrementCount(hidden);
     }
@@ -83,7 +83,7 @@ class RandomWalk implements Serializable {
     for (Iterator i = seenToHidden.keySet().iterator(); i.hasNext();) {
       Object seen = i.next();
       if (!model.containsKey(seen)) {
-        model.put(seen, new ClassicCounter());
+        model.put(seen, new DefaultCounter());
       }
       for (Iterator j = hiddenToSeen.keySet().iterator(); j.hasNext();) {
         Object hidden = j.next();

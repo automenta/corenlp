@@ -7,7 +7,7 @@ import java.io.*;
 import edu.stanford.nlp.ie.machinereading.structure.AnnotationUtils;
 import edu.stanford.nlp.ie.machinereading.structure.RelationMention;
 import edu.stanford.nlp.ie.machinereading.structure.RelationMentionFactory;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Pair;
@@ -48,8 +48,8 @@ public class RelationExtractorResultsPrinter extends ResultsPrinter {
     assert relationMentionFactory != null: "ERROR: RelationExtractorResultsPrinter.relationMentionFactory cannot be null in printResults!";
     
     // Count predicted-actual relation type pairs
-    Counter<Pair<String, String>> results = new ClassicCounter<>();
-    ClassicCounter<String> labelCount = new ClassicCounter<>();
+    Counter<Pair<String, String>> results = new DefaultCounter<>();
+    DefaultCounter<String> labelCount = new DefaultCounter<>();
     
     // TODO: assumes binary relations
     for (int goldSentenceIndex = 0; goldSentenceIndex < goldStandard.size(); goldSentenceIndex++) {
@@ -66,12 +66,12 @@ public class RelationExtractorResultsPrinter extends ResultsPrinter {
     printResultsInternal(pw, results, labelCount);
   }
   
-  private static void printResultsInternal(PrintWriter pw, Counter<Pair<String, String>> results, ClassicCounter<String> labelCount) {
-    ClassicCounter<String> correct = new ClassicCounter<>();
-    ClassicCounter<String> predictionCount = new ClassicCounter<>();
+  private static void printResultsInternal(PrintWriter pw, Counter<Pair<String, String>> results, DefaultCounter<String> labelCount) {
+    DefaultCounter<String> correct = new DefaultCounter<>();
+    DefaultCounter<String> predictionCount = new DefaultCounter<>();
     boolean countGoldLabels = false;
     if (labelCount == null) {
-      labelCount = new ClassicCounter<>();
+      labelCount = new DefaultCounter<>();
       countGoldLabels = true;
     }
 
@@ -125,7 +125,7 @@ public class RelationExtractorResultsPrinter extends ResultsPrinter {
       List<String> extractorOutput) {
     
     // Count predicted-actual relation type pairs
-    Counter<Pair<String, String>> results = new ClassicCounter<>();
+    Counter<Pair<String, String>> results = new DefaultCounter<>();
     assert(goldStandard.size() == extractorOutput.size());
     for(int i = 0; i < goldStandard.size(); i ++) 
       results.incrementCount(new Pair<>(extractorOutput.get(i), goldStandard.get(i)));

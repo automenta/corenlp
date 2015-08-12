@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.trees.TreebankLanguagePack;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Maps;
@@ -785,14 +785,14 @@ public class TransducerGraph implements Cloneable {
    * If markovOrder is negative, we assume that it is infinite
    */
   public static TransducerGraph createGraphFromPaths(List paths, int markovOrder) {
-    ClassicCounter pathCounter = new ClassicCounter();
+    DefaultCounter pathCounter = new DefaultCounter();
     for (Object o : paths) {
       pathCounter.incrementCount(o);
     }
     return createGraphFromPaths(pathCounter, markovOrder);
   }
 
-  public static <T> TransducerGraph createGraphFromPaths(ClassicCounter<List<T>> pathCounter, int markovOrder) {
+  public static <T> TransducerGraph createGraphFromPaths(DefaultCounter<List<T>> pathCounter, int markovOrder) {
     TransducerGraph graph = new TransducerGraph(); // empty
     for (List<T> path : pathCounter.keySet()) {
       double count = pathCounter.getCount(path);

@@ -281,12 +281,12 @@ public interface AbstractInterval<E extends Comparable<E>> extends IPair<E,E>, H
     return toValidInterval(a,b,0);
   }
 
-  static Interval<Integer> toValidInterval(final int a, final int b) {
+  static IntInterval toValidInterval(final int a, final int b) {
     if (Integer.compare(a, b) <= 0) {
-        return new Interval<>(a, b, 0);
+        return new IntInterval(a, b, 0);
     }
     else {
-        return new Interval<>(b, a, 0);
+        return new IntInterval(b, a, 0);
     }
   }
 

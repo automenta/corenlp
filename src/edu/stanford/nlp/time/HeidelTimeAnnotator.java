@@ -6,11 +6,7 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.Annotator;
-import edu.stanford.nlp.util.ArrayCoreMap;
-import edu.stanford.nlp.util.CoreMap;
-import edu.stanford.nlp.util.DataFilePaths;
-import edu.stanford.nlp.util.Generics;
-import edu.stanford.nlp.util.SystemUtils;
+import edu.stanford.nlp.util.*;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -213,7 +209,7 @@ public class HeidelTimeAnnotator implements Annotator {
             throw new RuntimeException("TIMEX3 should only contain text " + child);
           }
           String timexText = child.getTextContent();
-          CoreMap timexMap = new ArrayCoreMap();
+          CoreMap timexMap = new DefaultCoreMap();
           timexMap.set(TimeAnnotations.TimexAnnotation.class, timex);
           timexMap.set(CoreAnnotations.TextAnnotation.class, timexText);
           int charBegin = offset;

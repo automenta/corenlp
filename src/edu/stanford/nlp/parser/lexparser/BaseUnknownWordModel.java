@@ -5,7 +5,7 @@ import java.util.Set;
 
 import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.ling.Tag;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Index;
@@ -55,14 +55,14 @@ public class BaseUnknownWordModel implements UnknownWordModel {
    * for (tag,sig), (tag,null), (null,sig), (null,null). (None for basic UNK if
    * there are signatures.)
    */
-  protected final ClassicCounter<IntTaggedWord> unSeenCounter;
+  protected final DefaultCounter<IntTaggedWord> unSeenCounter;
 
   /** This maps from a tag (as a label) to a Counter from word signatures to
    *  their P(sig|tag), as estimated in the model. For Chinese, the word
    *  signature is just the first character or its unicode type for things
    *  that aren't Chinese characters.
    */
-  protected final Map<Label,ClassicCounter<String>> tagHash;
+  protected final Map<Label,DefaultCounter<String>> tagHash;
 
   /** This is the set of all signatures that we have seen. */
   final private Set<String> seenEnd;
@@ -76,8 +76,8 @@ public class BaseUnknownWordModel implements UnknownWordModel {
   public BaseUnknownWordModel(Options op, Lexicon lex,
                               Index<String> wordIndex,
                               Index<String> tagIndex,
-                              ClassicCounter<IntTaggedWord> unSeenCounter,
-                              Map<Label,ClassicCounter<String>> tagHash,
+                              DefaultCounter<IntTaggedWord> unSeenCounter,
+                              Map<Label,DefaultCounter<String>> tagHash,
                               Map<String,Float> unknownGT,
                               Set<String> seenEnd) {
     endLength = op.lexOptions.unknownSuffixSize;
@@ -108,8 +108,8 @@ public class BaseUnknownWordModel implements UnknownWordModel {
                               Index<String> wordIndex,
                               Index<String> tagIndex) {
     this(op, lex, wordIndex, tagIndex,
-            new ClassicCounter<>(),
-         Generics.<Label,ClassicCounter<String>>newHashMap(),
+            new DefaultCounter<>(),
+         Generics.<Label,DefaultCounter<String>>newHashMap(),
          Generics.<String,Float>newHashMap(),
          Generics.<String>newHashSet());
   }
@@ -148,7 +148,7 @@ public class BaseUnknownWordModel implements UnknownWordModel {
         //System.out.println("using end-character model for for unknown word "+  word + " for tag " + tag);
 
         /* get the Counter of terminal rewrites for the relevant tag */
-        ClassicCounter<String> wordProbs = tagHash.get(tag);
+        DefaultCounter<String> wordProbs = tagHash.get(tag);
         /* if the proposed tag has never been seen before, issue a
          * warning and return probability 0
          */

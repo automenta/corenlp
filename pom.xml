@@ -73,6 +73,18 @@
       </dependency>
   </dependencies>
   <build>
+
+    <resources>
+        <resource>
+            <directory>${basedir}/src/</directory>
+            <includes>
+                <include>**/*.properties</include>
+                <include>**/*.tagger</include>
+            </includes>
+            <filtering>false</filtering>
+        </resource>
+    </resources>
+
     <sourceDirectory>src</sourceDirectory>
     <plugins>
       <plugin>

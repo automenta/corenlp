@@ -3,7 +3,7 @@ package edu.stanford.nlp.parser.lexparser;
 import java.util.Arrays;
 import java.util.Set;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import java.util.function.Function;
 import edu.stanford.nlp.util.Generics;
@@ -48,8 +48,8 @@ public class LinearGrammarSmoother implements Function<Pair<UnaryGrammar,BinaryG
   public Pair<UnaryGrammar,BinaryGrammar> apply(Pair<UnaryGrammar,BinaryGrammar> bgug) {
     
     ALPHA = trainOptions.ruleSmoothingAlpha;
-    Counter<String> symWeights = new ClassicCounter<>();
-    Counter<String> symCounts = new ClassicCounter<>();
+    Counter<String> symWeights = new DefaultCounter<>();
+    Counter<String> symCounts = new DefaultCounter<>();
 
     //Tally unary rules
     for (UnaryRule rule : bgug.first()) {

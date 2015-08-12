@@ -26,7 +26,7 @@ public class CoreMaps {
    */
   public static CoreMap merge(CoreMap base, CoreMap toBeMerged){
     //(variables)
-    CoreMap rtn = new ArrayCoreMap(base.size());
+    CoreMap rtn = new DefaultCoreMap(base.size());
     //(copy base)
     for(Class key : base.keySet()){
       rtn.set(key, base.get(key));

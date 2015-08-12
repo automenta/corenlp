@@ -5,7 +5,7 @@ import java.util.Map;
 import java.util.Set;
 
 import edu.stanford.nlp.ling.TaggedWord;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Pair;
@@ -24,10 +24,10 @@ import edu.stanford.nlp.util.Pair;
  * @author John Bauer (refactored into a separate training class)
  */
 public class UnknownGTTrainer {
-  ClassicCounter<Pair<String,String>> wtCount = new ClassicCounter<>();
-  ClassicCounter<String> tagCount = new ClassicCounter<>();
-  ClassicCounter<String> r1 = new ClassicCounter<>(); // for each tag, # of words seen once
-  ClassicCounter<String> r0 = new ClassicCounter<>(); // for each tag, # of words not seen
+  DefaultCounter<Pair<String,String>> wtCount = new DefaultCounter<>();
+  DefaultCounter<String> tagCount = new DefaultCounter<>();
+  DefaultCounter<String> r1 = new DefaultCounter<>(); // for each tag, # of words seen once
+  DefaultCounter<String> r0 = new DefaultCounter<>(); // for each tag, # of words not seen
   Set<String> seenWords = Generics.newHashSet();
 
   double tokens = 0;

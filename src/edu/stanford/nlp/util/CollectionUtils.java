@@ -10,7 +10,7 @@ import java.util.*;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 
@@ -800,7 +800,7 @@ public class CollectionUtils {
    * highest frequency, all of them will be returned.)
    */
   public static <T> Set<T> modes(Collection<T> values) {
-    Counter<T> counter = new ClassicCounter<>(values);
+    Counter<T> counter = new DefaultCounter<>(values);
     List<Double> sortedCounts = CollectionUtils.sorted(counter.values());
     Double highestCount = sortedCounts.get(sortedCounts.size() - 1);
     Counters.retainAbove(counter, highestCount);

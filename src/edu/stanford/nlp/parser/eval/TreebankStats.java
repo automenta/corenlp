@@ -9,7 +9,7 @@ import java.util.*;
 import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.parser.lexparser.TreebankLangParserParams;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.trees.DiskTreebank;
@@ -223,10 +223,10 @@ public class TreebankStats {
 
     public ObservedCorpusStats(String name) {
       corpusName = name;
-      words = new ClassicCounter<>();
-      posTags = new ClassicCounter<>();
-      phrasalBranching2 = new ClassicCounter<>();
-      phrasalBranchingNum2 = new ClassicCounter<>();
+      words = new DefaultCounter<>();
+      posTags = new DefaultCounter<>();
+      phrasalBranching2 = new DefaultCounter<>();
+      phrasalBranchingNum2 = new DefaultCounter<>();
       lengths = new ArrayList<>();
       depths = new ArrayList<>();
       breadths = new ArrayList<>();
@@ -344,7 +344,7 @@ public class TreebankStats {
         stddevBreadth += Math.pow(b - meanBreadth, 2);
       stddevBreadth = Math.sqrt(stddevBreadth / denom);
 
-      meanBranchingByLabel = new ClassicCounter<>();
+      meanBranchingByLabel = new DefaultCounter<>();
       for(String label : phrasalBranching2.keySet()) {
         double mean = phrasalBranching2.getCount(label) / phrasalBranchingNum2.getCount(label);
         meanBranchingByLabel.incrementCount(label, mean);

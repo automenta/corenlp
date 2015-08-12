@@ -115,7 +115,7 @@ public class SVMLightClassifierFactory<L, F> implements ClassifierFactory<L, F, 
    * because it affects the number of header lines.  Maybe there is another way to tell and we
    * can remove this flag?
    */
-  private static Pair<Double, ClassicCounter<Integer>> readModel(File modelFile, boolean multiclass) {
+  private static Pair<Double, DefaultCounter<Integer>> readModel(File modelFile, boolean multiclass) {
     int modelLineCount = 0;
     try {
 
@@ -129,7 +129,7 @@ public class SVMLightClassifierFactory<L, F> implements ClassifierFactory<L, F, 
         modelLineCount ++;
       }
 
-      List<Pair<Double, ClassicCounter<Integer>>> supportVectors = new ArrayList<>();
+      List<Pair<Double, DefaultCounter<Integer>>> supportVectors = new ArrayList<>();
       // Read Threshold
       String thresholdLine = in.readLine();
       modelLineCount ++;
@@ -142,7 +142,7 @@ public class SVMLightClassifierFactory<L, F> implements ClassifierFactory<L, F, 
         pieces = svLine.split("\\s+");
         // First Element is the alpha_i * y_i
         double  alpha = Double.parseDouble(pieces[0]);
-        ClassicCounter<Integer> supportVector  = new ClassicCounter<>();
+        DefaultCounter<Integer> supportVector  = new DefaultCounter<>();
         for (int i=1; i < pieces.length; ++i) {
           String piece = pieces[i];
           if (piece.equals(stopToken)) break;
@@ -174,10 +174,10 @@ public class SVMLightClassifierFactory<L, F> implements ClassifierFactory<L, F, 
    * we are using a linear kernel.  The Counter is over the feature indices (+1 cos for
    * some reason svm_light is 1-indexed), not features.
    */
-  private static ClassicCounter<Integer> getWeights(List<Pair<Double, ClassicCounter<Integer>>> supportVectors) {
-    ClassicCounter<Integer> weights = new ClassicCounter<>();
-    for (Pair<Double, ClassicCounter<Integer>> sv : supportVectors) {
-      ClassicCounter<Integer> c = new ClassicCounter<>(sv.second());
+  private static DefaultCounter<Integer> getWeights(List<Pair<Double, DefaultCounter<Integer>>> supportVectors) {
+    DefaultCounter<Integer> weights = new DefaultCounter<>();
+    for (Pair<Double, DefaultCounter<Integer>> sv : supportVectors) {
+      DefaultCounter<Integer> c = new DefaultCounter<>(sv.second());
       Counters.multiplyInPlace(c, sv.first());
       Counters.addInPlace(weights, c);
     }
@@ -188,7 +188,7 @@ public class SVMLightClassifierFactory<L, F> implements ClassifierFactory<L, F, 
    * Converts the weight Counter to be from indexed, svm_light format, to a format
    * we can use in our LinearClassifier.
    */
-  private ClassicCounter<Pair<F, L>> convertWeights(ClassicCounter<Integer> weights, Index<F> featureIndex, Index<L> labelIndex, boolean multiclass) {
+  private DefaultCounter<Pair<F, L>> convertWeights(DefaultCounter<Integer> weights, Index<F> featureIndex, Index<L> labelIndex, boolean multiclass) {
     return multiclass ? convertSVMStructWeights(weights, featureIndex, labelIndex) : convertSVMLightWeights(weights, featureIndex, labelIndex);
   }
 
@@ -198,8 +198,8 @@ public class SVMLightClassifierFactory<L, F> implements ClassifierFactory<L, F, 
    * weights for the +1 class (which correspond to labelIndex.get(0)) and the -1 class
    * (which correspond to labelIndex.get(1)) are just the negation of one another.
    */
-  private ClassicCounter<Pair<F, L>> convertSVMLightWeights(ClassicCounter<Integer> weights, Index<F> featureIndex, Index<L> labelIndex) {
-    ClassicCounter<Pair<F, L>> newWeights = new ClassicCounter<>();
+  private DefaultCounter<Pair<F, L>> convertSVMLightWeights(DefaultCounter<Integer> weights, Index<F> featureIndex, Index<L> labelIndex) {
+    DefaultCounter<Pair<F, L>> newWeights = new DefaultCounter<>();
     for (int i : weights.keySet()) {
       F f = featureIndex.get(i-1);
       double w = weights.getCount(i);
@@ -216,10 +216,10 @@ public class SVMLightClassifierFactory<L, F> implements ClassifierFactory<L, F, 
    * correspondes to ((labelIndex * numFeatures)+(featureIndex+1))) into a weight Counter
    * using the actual features and labels.
    */
-  private ClassicCounter<Pair<F, L>> convertSVMStructWeights(ClassicCounter<Integer> weights, Index<F> featureIndex, Index<L> labelIndex) {
+  private DefaultCounter<Pair<F, L>> convertSVMStructWeights(DefaultCounter<Integer> weights, Index<F> featureIndex, Index<L> labelIndex) {
     // int numLabels = labelIndex.size();
     int numFeatures = featureIndex.size();
-    ClassicCounter<Pair<F, L>> newWeights = new ClassicCounter<>();
+    DefaultCounter<Pair<F, L>> newWeights = new DefaultCounter<>();
     for (int i : weights.keySet()) {
       L l = labelIndex.get((i-1) / numFeatures); // integer division on purpose
       F f = featureIndex.get((i-1) % numFeatures);
@@ -468,10 +468,10 @@ public class SVMLightClassifierFactory<L, F> implements ClassifierFactory<L, F, 
                 new PrintWriter(System.err), new PrintWriter(System.err));
       }
       // read in the model file
-      Pair<Double, ClassicCounter<Integer>> weightsAndThresh = readModel(modelFile, multiclass);
+      Pair<Double, DefaultCounter<Integer>> weightsAndThresh = readModel(modelFile, multiclass);
       double threshold = weightsAndThresh.first();
-      ClassicCounter<Pair<F, L>> weights = convertWeights(weightsAndThresh.second(), featureIndex, labelIndex, multiclass);
-      ClassicCounter<L> thresholds = new ClassicCounter<>();
+      DefaultCounter<Pair<F, L>> weights = convertWeights(weightsAndThresh.second(), featureIndex, labelIndex, multiclass);
+      DefaultCounter<L> thresholds = new DefaultCounter<>();
       if (!multiclass) {
         thresholds.setCount(labelIndex.get(0), -threshold);
         thresholds.setCount(labelIndex.get(1), threshold);

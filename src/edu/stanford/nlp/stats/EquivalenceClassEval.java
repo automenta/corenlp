@@ -127,19 +127,19 @@ public class EquivalenceClassEval<IN, OUT> {
     this.summaryName = summaryName;
   }
 
-  ClassicCounter<OUT> guessed = new ClassicCounter<>();
-  ClassicCounter<OUT> guessedCorrect = new ClassicCounter<>();
-  ClassicCounter<OUT> gold = new ClassicCounter<>();
-  ClassicCounter<OUT> goldCorrect = new ClassicCounter<>();
+  DefaultCounter<OUT> guessed = new DefaultCounter<>();
+  DefaultCounter<OUT> guessedCorrect = new DefaultCounter<>();
+  DefaultCounter<OUT> gold = new DefaultCounter<>();
+  DefaultCounter<OUT> goldCorrect = new DefaultCounter<>();
 
-  private ClassicCounter<OUT> lastPrecision = new ClassicCounter<>();
-  private ClassicCounter<OUT> lastRecall = new ClassicCounter<>();
-  private ClassicCounter<OUT> lastF1 = new ClassicCounter<>();
+  private DefaultCounter<OUT> lastPrecision = new DefaultCounter<>();
+  private DefaultCounter<OUT> lastRecall = new DefaultCounter<>();
+  private DefaultCounter<OUT> lastF1 = new DefaultCounter<>();
 
-  private ClassicCounter<OUT> previousGuessed;
-  private ClassicCounter<OUT> previousGuessedCorrect;
-  private ClassicCounter<OUT> previousGold;
-  private ClassicCounter<OUT> previousGoldCorrect;
+  private DefaultCounter<OUT> previousGuessed;
+  private DefaultCounter<OUT> previousGuessedCorrect;
+  private DefaultCounter<OUT> previousGold;
+  private DefaultCounter<OUT> previousGoldCorrect;
 
 
   //Eval eval = new Eval();
@@ -162,7 +162,7 @@ public class EquivalenceClassEval<IN, OUT> {
     if (verbose) {
       System.out.println("evaluating precision...");
     }
-    Pair<ClassicCounter<OUT>, ClassicCounter<OUT>> precision = evalPrecision(guesses, golds);
+    Pair<DefaultCounter<OUT>, DefaultCounter<OUT>> precision = evalPrecision(guesses, golds);
     previousGuessed = precision.first();
     Counters.addInPlace(guessed, previousGuessed);
     previousGuessedCorrect = precision.second();
@@ -171,7 +171,7 @@ public class EquivalenceClassEval<IN, OUT> {
     if (verbose) {
       System.out.println("evaluating recall...");
     }
-    Pair<ClassicCounter<OUT>, ClassicCounter<OUT>> recall = evalPrecision(golds, guesses);
+    Pair<DefaultCounter<OUT>, DefaultCounter<OUT>> recall = evalPrecision(golds, guesses);
     previousGold = recall.first();
     Counters.addInPlace(gold, previousGold);
     previousGoldCorrect = recall.second();
@@ -179,7 +179,7 @@ public class EquivalenceClassEval<IN, OUT> {
   }
 
   /* returns a Pair of each */
-  Pair<ClassicCounter<OUT>, ClassicCounter<OUT>> evalPrecision(Collection<IN> guesses, Collection<IN> golds) {
+  Pair<DefaultCounter<OUT>, DefaultCounter<OUT>> evalPrecision(Collection<IN> guesses, Collection<IN> golds) {
     Collection<IN> internalGuesses = null;
     Collection<IN> internalGolds = null;
     if(bagEval) {
@@ -192,8 +192,8 @@ public class EquivalenceClassEval<IN, OUT> {
     }
     internalGuesses.addAll(guesses);
     internalGolds.addAll(golds);
-    ClassicCounter<OUT> thisGuessed = new ClassicCounter<>();
-    ClassicCounter<OUT> thisCorrect = new ClassicCounter<>();
+    DefaultCounter<OUT> thisGuessed = new DefaultCounter<>();
+    DefaultCounter<OUT> thisCorrect = new DefaultCounter<>();
     for (IN o : internalGuesses) {
       OUT equivalenceClass = eq.equivalenceClass(o);
       thisGuessed.incrementCount(equivalenceClass);
@@ -269,8 +269,8 @@ public class EquivalenceClassEval<IN, OUT> {
     return percentage(key, previousGuessed, previousGuessedCorrect);
   }
 
-  public ClassicCounter<OUT> lastPrecision() {
-    ClassicCounter<OUT> result = new ClassicCounter<>();
+  public DefaultCounter<OUT> lastPrecision() {
+    DefaultCounter<OUT> result = new DefaultCounter<>();
     Counters.addInPlace(result, previousGuessedCorrect);
     Counters.divideInPlace(result, previousGuessed);
     return result;
@@ -280,8 +280,8 @@ public class EquivalenceClassEval<IN, OUT> {
     return percentage(key, previousGold, previousGoldCorrect);
   }
 
-  public ClassicCounter<OUT> lastRecall() {
-    ClassicCounter<OUT> result = new ClassicCounter<>();
+  public DefaultCounter<OUT> lastRecall() {
+    DefaultCounter<OUT> result = new DefaultCounter<>();
     Counters.addInPlace(result, previousGoldCorrect);
     Counters.divideInPlace(result, previousGold);
     return result;
@@ -291,11 +291,11 @@ public class EquivalenceClassEval<IN, OUT> {
     return previousGuessed.getCount(key);
   }
 
-  public ClassicCounter<OUT> lastNumGuessed() {
+  public DefaultCounter<OUT> lastNumGuessed() {
     return previousGuessed;
   }
 
-  public ClassicCounter<OUT> lastNumGuessedCorrect() {
+  public DefaultCounter<OUT> lastNumGuessedCorrect() {
     return previousGuessedCorrect;
   }
 
@@ -303,11 +303,11 @@ public class EquivalenceClassEval<IN, OUT> {
     return previousGold.getCount(key);
   }
 
-  public ClassicCounter<OUT> lastNumGolds() {
+  public DefaultCounter<OUT> lastNumGolds() {
     return previousGold;
   }
 
-  public ClassicCounter<OUT> lastNumGoldsCorrect() {
+  public DefaultCounter<OUT> lastNumGoldsCorrect() {
     return previousGoldCorrect;
   }
 
@@ -320,8 +320,8 @@ public class EquivalenceClassEval<IN, OUT> {
     return f1(lastPrecision(key), lastRecall(key));
   }
 
-  public ClassicCounter<OUT> lastF1() {
-    ClassicCounter<OUT> result = new ClassicCounter<>();
+  public DefaultCounter<OUT> lastF1() {
+    DefaultCounter<OUT> result = new DefaultCounter<>();
     Set<OUT> keys = Sets.union(previousGuessed.keySet(),previousGold.keySet());
     for(OUT key : keys) {
       result.setCount(key,lastF1(key));
@@ -341,13 +341,13 @@ public class EquivalenceClassEval<IN, OUT> {
     return result;
   }
 
-  private double percentage(OUT key, ClassicCounter<OUT> guessed, ClassicCounter<OUT> guessedCorrect) {
+  private double percentage(OUT key, DefaultCounter<OUT> guessed, DefaultCounter<OUT> guessedCorrect) {
     double thisGuessed = guessed.getCount(key);
     double thisGuessedCorrect = guessedCorrect.getCount(key);
     return (thisGuessed == 0.0) ? 0.0 : thisGuessedCorrect / thisGuessed;
   }
 
-  private void displayHelper(Set<OUT> keys, PrintWriter pw, ClassicCounter<OUT> guessed, ClassicCounter<OUT> guessedCorrect, ClassicCounter<OUT> gold, ClassicCounter<OUT> goldCorrect) {
+  private void displayHelper(Set<OUT> keys, PrintWriter pw, DefaultCounter<OUT> guessed, DefaultCounter<OUT> guessedCorrect, DefaultCounter<OUT> gold, DefaultCounter<OUT> goldCorrect) {
     Map<OUT, String> pads = getPads(keys);
     for (OUT key : keys) {
       double thisGuessed = guessed.getCount(key);

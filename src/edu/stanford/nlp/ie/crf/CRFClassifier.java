@@ -37,7 +37,7 @@ import edu.stanford.nlp.objectbank.ObjectBank;
 import edu.stanford.nlp.optimization.*;
 import edu.stanford.nlp.optimization.Function;
 import edu.stanford.nlp.sequences.*;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
 import edu.stanford.nlp.util.*;
@@ -1156,9 +1156,9 @@ public class CRFClassifier<IN extends CoreMap> extends AbstractSequenceClassifie
                                       DocumentReaderAndWriter<IN> readerAndWriter) throws IOException {
     Timing timer = new Timing();
 
-    Counter<String> entityTP = new ClassicCounter<>();
-    Counter<String> entityFP = new ClassicCounter<>();
-    Counter<String> entityFN = new ClassicCounter<>();
+    Counter<String> entityTP = new DefaultCounter<>();
+    Counter<String> entityFP = new DefaultCounter<>();
+    Counter<String> entityFN = new DefaultCounter<>();
     boolean resultsCounted = true;
 
     int numWords = 0;
@@ -1352,8 +1352,8 @@ public class CRFClassifier<IN extends CoreMap> extends AbstractSequenceClassifie
     Triple<int[][][], int[], double[][][]> p = documentToDataAndLabels(document);
     CRFCliqueTree<String> cliqueTree = getCliqueTree(p);
 
-    Counter<Integer> calibration = new ClassicCounter<>();
-    Counter<Integer> correctByBin = new ClassicCounter<>();
+    Counter<Integer> calibration = new DefaultCounter<>();
+    Counter<Integer> correctByBin = new DefaultCounter<>();
     TwoDimensionalCounter<Integer,String> calibratedTokens = new TwoDimensionalCounter<>();
 
     // for (int i = 0; i < factorTables.length; i++) {
@@ -2788,7 +2788,7 @@ public class CRFClassifier<IN extends CoreMap> extends AbstractSequenceClassifie
       Index<CRFLabel> l = this.labelIndices.get(0);
       for (CRFLabel label : l) {
         if(!w.containsKey(label.toString(classIndex)))
-          w.put(label.toString(classIndex), new ClassicCounter<>());
+          w.put(label.toString(classIndex), new DefaultCounter<>());
         w.get(label.toString(classIndex)).setCount(feature, v[l.indexOf(label)]);
       }
     }

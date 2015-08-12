@@ -5,7 +5,7 @@ import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.io.RuntimeIOException;
 import edu.stanford.nlp.objectbank.ObjectBank;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.AbstractIterator;
@@ -243,7 +243,7 @@ public class CoNLLDocumentReaderAndWriter implements DocumentReaderAndWriter<Cor
     int numTokens = 0;
     int numEntities = 0;
     String lastAnsBase = "";
-    Counter<String> miscCounter = new ClassicCounter<>();
+    Counter<String> miscCounter = new DefaultCounter<>();
     StringBuilder inProgressMisc = new StringBuilder();
     for (Iterator<List<CoreLabel>> it = rw.getIterator(IOUtils.readerFromString(args[0])); it.hasNext(); ) {
       List<CoreLabel> doc = it.next();

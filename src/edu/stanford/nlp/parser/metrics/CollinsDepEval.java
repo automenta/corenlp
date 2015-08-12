@@ -13,7 +13,7 @@ import java.util.TreeMap;
 
 import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.parser.lexparser.TreebankLangParserParams;
-import edu.stanford.nlp.stats.ClassicCounter;
+import edu.stanford.nlp.stats.DefaultCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.trees.CollinsDependency;
 import edu.stanford.nlp.trees.CollinsRelation;
@@ -53,14 +53,14 @@ public class CollinsDepEval extends AbstractEval {
     this.hf = hf;
     this.startSymbol = startSymbol;
 
-    precisions = new ClassicCounter<>();
-    recalls = new ClassicCounter<>();
-    f1s = new ClassicCounter<>();
+    precisions = new DefaultCounter<>();
+    recalls = new DefaultCounter<>();
+    f1s = new DefaultCounter<>();
 
-    precisions2 = new ClassicCounter<>();
-    recalls2 = new ClassicCounter<>();
-    pnums2 = new ClassicCounter<>();
-    rnums2 = new ClassicCounter<>();
+    precisions2 = new DefaultCounter<>();
+    recalls2 = new DefaultCounter<>();
+    pnums2 = new DefaultCounter<>();
+    rnums2 = new DefaultCounter<>();
   }
 
   @Override
