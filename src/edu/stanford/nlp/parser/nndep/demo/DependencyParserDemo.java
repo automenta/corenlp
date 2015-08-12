@@ -3,6 +3,7 @@ package edu.stanford.nlp.parser.nndep.demo;
 import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.TaggedWord;
+import edu.stanford.nlp.parser.nndep.Configuration;
 import edu.stanford.nlp.parser.nndep.DependencyParser;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
@@ -53,9 +54,11 @@ public class DependencyParserDemo {
     DocumentPreprocessor tokenizer = new DocumentPreprocessor(new StringReader(text));
     for (List<HasWord> sentence : tokenizer) {
       List<TaggedWord> tagged = tagger.tagSentence(sentence);
-      GrammaticalStructure gs = parser.predict(tagged);
 
-      // Print typed dependencies
+      System.out.println(tagged);
+
+      GrammaticalStructure gs = parser.predict(tagged); //typed dependencies
+
       System.err.println(gs);
     }
   }

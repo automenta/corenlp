@@ -9,6 +9,7 @@ import edu.stanford.nlp.util.Pair;
 import edu.stanford.nlp.util.concurrent.MulticoreWrapper;
 import edu.stanford.nlp.util.concurrent.ThreadsafeProcessor;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -683,6 +684,8 @@ public class Classifier {
 
         double[][] saved = this.saved;
         double[][] W1 = this.W1;
+
+        Arrays.fill(scores, 0);
 
         for (int j = 0; j < feature.length; ++j) {
             int tok = feature[j];

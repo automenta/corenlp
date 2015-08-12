@@ -1,14 +1,14 @@
 package edu.stanford.nlp.pipeline;
 
+import com.gs.collections.impl.list.mutable.FastList;
+import edu.stanford.nlp.ling.CoreAnnotations;
+import edu.stanford.nlp.ling.CoreLabel;
+import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.DefaultCoreMap;
 import junit.framework.TestCase;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.util.ArrayCoreMap;
-import edu.stanford.nlp.util.CoreMap;
 
 /**
  * Tests a short pipeline starting from raw text and finishing with

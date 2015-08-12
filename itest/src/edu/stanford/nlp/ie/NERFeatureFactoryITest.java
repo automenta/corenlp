@@ -36,7 +36,7 @@ public class NERFeatureFactoryITest extends TestCase {
     Properties props = new Properties();
     props.setProperty("useGazettes", "true");
     props.setProperty("sloppyGazette", "true");
-    props.setProperty("gazette", "projects/core/data/edu/stanford/nlp/ie/test_gazette.txt");
+    props.setProperty("gazette", "data/edu/stanford/nlp/ie/test_gazette.txt");
     SeqClassifierFlags flags = new SeqClassifierFlags(props);
     NERFeatureFactory<CoreLabel> factory = new NERFeatureFactory<CoreLabel>();
     factory.init(flags);

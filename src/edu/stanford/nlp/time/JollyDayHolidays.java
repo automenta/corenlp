@@ -1,20 +1,26 @@
 package edu.stanford.nlp.time;
 
 import de.jollyday.HolidayManager;
+import de.jollyday.ManagerParameters;
 import de.jollyday.config.Configuration;
 import de.jollyday.config.Holidays;
-// import de.jollyday.configuration.ConfigurationProvider;
-import de.jollyday.impl.XMLManager;
+import de.jollyday.parameter.CalendarPartManagerParameter;
+import de.jollyday.parameter.UrlManagerParameter;
 import edu.stanford.nlp.ling.tokensregex.Env;
 import edu.stanford.nlp.util.CollectionValuedMap;
 import edu.stanford.nlp.util.Generics;
 import org.joda.time.DateTimeFieldType;
+import org.joda.time.LocalDateTime;
 import org.joda.time.Partial;
 
 import java.lang.reflect.Method;
-// import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+
+// import java.net.MalformedURLException;
 
 /**
  * Wrapper around jollyday library so we can hook in holiday
@@ -37,8 +43,9 @@ public class JollyDayHolidays implements Env.Binder {
     System.err.printf("Initializing JollyDayHoliday for SUTime from %s: %s as %s%n", xmlPathType, xmlPath, prefix);
     Properties managerProps = new Properties();
     managerProps.setProperty("manager.impl", "edu.stanford.nlp.time.JollyDayHolidays$MyXMLManager");
+    URL holidayXmlUrl;
     try {
-      URL holidayXmlUrl;
+
       if (xmlPathType.equalsIgnoreCase("classpath")) {
         holidayXmlUrl = getClass().getClassLoader().getResource(xmlPath);
       } else if (xmlPathType.equalsIgnoreCase("file")) {
@@ -48,14 +55,17 @@ public class JollyDayHolidays implements Env.Binder {
       } else {
         throw new IllegalArgumentException("Unsupported " + prefix + "pathtype = " + xmlPathType);
       }
-      holidayManager = HolidayManager.getInstance(holidayXmlUrl, managerProps);
+      holidayManager =
+              HolidayManager.getInstance(
+                ManagerParameters.create(holidayXmlUrl, managerProps) );
     } catch (java.net.MalformedURLException e) {
       throw new RuntimeException(e);
     }
-    if (!(holidayManager instanceof MyXMLManager)) {
+    /*if (!(holidayManager instanceof MyXMLManager)) {
       throw new AssertionError("Did not get back JollyDayHolidays$MyXMLManager");
-    }
-    Configuration config = ((MyXMLManager) holidayManager).getConfiguration();
+    }*/
+    Configuration config = holidayManager.getConfigurationDataSource()
+            .getConfiguration(new UrlManagerParameter(holidayXmlUrl, managerProps));
     holidays = getAllHolidaysMap(config);
   }
 
@@ -146,11 +156,11 @@ public class JollyDayHolidays implements Env.Binder {
             && !void.class.equals(method.getReturnType());
   }
 
-  public static class MyXMLManager extends XMLManager {
-    public Configuration getConfiguration() {
-      return configuration;
-    }
-  }
+//  public static class MyXMLManager extends XMLManager {
+//    public Configuration getConfiguration() {
+//      return configuration;
+//    }
+//  }
 
   public static class JollyHoliday extends SUTime.Time {
 
@@ -214,7 +224,8 @@ public class JollyDayHolidays implements Env.Binder {
           // Try to find this holiday
           for (de.jollyday.Holiday h:holidays) {
             if (h.getPropertiesKey().equals(base.getDescriptionPropertiesKey())) {
-              return new SUTime.PartialTime(this, new Partial(h.getDate()));
+              return new SUTime.PartialTime(this,
+                      new Partial(new LocalDateTime( h.getDate())) );
             }
           }
         }

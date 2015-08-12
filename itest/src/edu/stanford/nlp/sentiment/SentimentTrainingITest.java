@@ -9,7 +9,7 @@ import edu.stanford.nlp.trees.Tree;
  * Tests that the gradient check for the sentiment tool passes.
  */
 public class SentimentTrainingITest extends TestCase {
-  static final String TRAIN_PATH = "projects/core/data/edu/stanford/nlp/sentiment/onesent.txt";
+  static final String TRAIN_PATH = "data/edu/stanford/nlp/sentiment/onesent.txt";
 
   public void testGradientCheck() {
     List<Tree> trainingTrees = SentimentUtils.readTreesWithGoldLabels(TRAIN_PATH);

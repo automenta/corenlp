@@ -979,18 +979,28 @@ public class StringUtils {
   public static Properties propFileToProperties(String filename) {
     Properties result = new Properties();
     try {
-      InputStream is = new BufferedInputStream(new FileInputStream(filename));
-      result.load(is);
-      // trim all values
-      for (String propKey : result.stringPropertyNames()){
-        String newVal = result.getProperty(propKey);
-        result.setProperty(propKey,newVal.trim());
+      InputStream is;
+      try {
+        is = new FileInputStream(filename);
       }
-      is.close();
+      catch (IOException e) {
+        is = StringUtils.class.getClassLoader().getResourceAsStream(filename);
+      }
+      loadProperties(result, new BufferedInputStream(is));
       return result;
     } catch (IOException e) {
       throw new RuntimeIOException("propFileToProperties could not read properties file: " + filename, e);
     }
+  }
+
+  private static void loadProperties(Properties result, InputStream is) throws IOException {
+    result.load(is);
+    // trim all values
+    for (String propKey : result.stringPropertyNames()){
+      String newVal = result.getProperty(propKey);
+      result.setProperty(propKey,newVal.trim());
+    }
+    is.close();
   }
 
   /**

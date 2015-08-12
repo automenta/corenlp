@@ -31,7 +31,7 @@ import junit.framework.TestCase;
  * the expected output is
  * <br>
  * <code>
- * java edu.stanford.nlp.dcoref.DcorefExactOutputITest projects/core/data/edu/stanford/nlp/dcoref/STILLALONEWOLF_20050102.1100.eng.LDC2005E83.sgm projects/core/data/edu/stanford/nlp/dcoref/STILLALONEWOLF_20050102.1100.eng.LDC2005E83.expectedcoref
+ * java edu.stanford.nlp.dcoref.DcorefExactOutputITest data/edu/stanford/nlp/dcoref/STILLALONEWOLF_20050102.1100.eng.LDC2005E83.sgm data/edu/stanford/nlp/dcoref/STILLALONEWOLF_20050102.1100.eng.LDC2005E83.expectedcoref
  * </code>
  *
  * @author John Bauer

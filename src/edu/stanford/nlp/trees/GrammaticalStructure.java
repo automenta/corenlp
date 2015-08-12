@@ -1,5 +1,6 @@
 package edu.stanford.nlp.trees;
 
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import edu.stanford.nlp.graph.DirectedMultiGraph;
 import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.io.IOUtils;
@@ -143,7 +144,7 @@ public abstract class GrammaticalStructure implements Serializable {
     /**
      * A map from arbitrary integer indices to nodes.
      */
-    private final Map<Integer, TreeGraphNode> indexMap = Generics.newHashMap();
+    private final IntObjectHashMap<TreeGraphNode> indexMap = new IntObjectHashMap();
 
     /**
      * Create a new GrammaticalStructure, analyzing the parse tree and
@@ -246,7 +247,7 @@ public abstract class GrammaticalStructure implements Serializable {
             } else {
                 tree.setIndex(startIndex);
             }
-            addNodeToIndexMap(startIndex, tree);
+            indexMap.put(startIndex, tree);
             startIndex++;
         } else {
             for (TreeGraphNode child : tree.children) {
@@ -269,7 +270,7 @@ public abstract class GrammaticalStructure implements Serializable {
      */
     private int indexNodes(TreeGraphNode tree, int startIndex) {
         if (tree.index() < 0) {        // if this node has no index
-            addNodeToIndexMap(startIndex, tree);
+            indexMap.put(startIndex, tree);
             tree.setIndex(startIndex++);
         }
         if (!tree.isLeaf()) {
@@ -278,19 +279,6 @@ public abstract class GrammaticalStructure implements Serializable {
             }
         }
         return startIndex;
-    }
-
-    /**
-     * Store a mapping from an arbitrary integer index to a node in
-     * this treegraph.  Normally a client shouldn't need to use this,
-     * as the nodes are automatically indexed by the
-     * <code>TreeGraph</code> constructor.
-     *
-     * @param index the arbitrary integer index
-     * @param node  the <code>TreeGraphNode</code> to be indexed
-     */
-    private void addNodeToIndexMap(int index, TreeGraphNode node) {
-        indexMap.put(Integer.valueOf(index), node);
     }
 
 

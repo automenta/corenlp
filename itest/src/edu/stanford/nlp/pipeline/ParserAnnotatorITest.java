@@ -91,7 +91,7 @@ public class ParserAnnotatorITest extends TestCase {
     Tree parse = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
     assertEquals("(ROOT (S (NP (NNP John) (NNP Bauer)) (VP (VBZ works) (PP (IN at) (NP (NNP Stanford)))) (. .)))", parse.toString());
     List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
-    List<Label> leaves = parse.yield();
+    List<? extends Label> leaves = parse.yield();
     assertEquals(6, tokens.size());
     assertEquals(6, leaves.size());
     String[] expectedTags = {"NNP", "NNP", "VBZ", "IN", "NNP", "."};
@@ -214,7 +214,7 @@ public class ParserAnnotatorITest extends TestCase {
     Tree parse = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
     assertEquals("(ROOT (S (NP (NNP John) (NNP Bauer)) (VP (VBZ works) (PP (IN at) (NP (NNP Stanford)))) (. .)))", parse.toString());
     List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
-    List<Label> leaves = parse.yield();
+    List<? extends Label> leaves = parse.yield();
     assertEquals(6, tokens.size());
     assertEquals(6, leaves.size());
     String[] expectedTags = {"NNP", "NNP", "VBZ", "IN", "NNP", "."};

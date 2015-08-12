@@ -60,6 +60,8 @@ import static java.util.stream.Collectors.toList;
 public class DependencyParser {
   public static final String DEFAULT_MODEL = "edu/stanford/nlp/models/parser/nndep/english_UD.gz";
 
+
+
   /**
    * Words, parts of speech, and dependency relation labels which were
    * observed in our corpus / stored in the model
@@ -92,6 +94,7 @@ public class DependencyParser {
    * {@link edu.stanford.nlp.trees.GrammaticalRelation} instances.
    */
   private final Language language;
+  private int UNKNOWN_POS, UNKNOWN_WORD;
 
   DependencyParser() {
     this(new Properties());
@@ -115,14 +118,14 @@ public class DependencyParser {
   public int getWordID(String s) {
     int wid = wordIDs.getIfAbsent(s, -1);
     if (wid == -1)
-      wid = wordIDs.get(Config.UNKNOWN);
+      wid = UNKNOWN_WORD;
     return wid;
   }
 
   public int getPosID(String s) {
       int pid = posIDs.getIfAbsent(s, -1);
       if (pid == -1)
-        pid = posIDs.get(Config.UNKNOWN);
+        pid = UNKNOWN_POS;
       return pid;
   }
 
@@ -192,6 +195,8 @@ public class DependencyParser {
 
   private int[] getFeatureArray(Configuration c, int[] feature) {
 
+    Arrays.fill(feature, 0);
+
     for (int j = 2; j >= 0; --j) {
       int index = c.getStack(j);
       feature[2-j] = getWordID(c.getWord(index));
@@ -259,7 +264,7 @@ public class DependencyParser {
       }
 
       if (trees.get(i).isProjective()) {
-        Configuration c = system.initialConfiguration(sents.get(i));
+        Configuration c = getConfiguration(sents.get(i));
 
         while (!system.isTerminal(c)) {
           String oracle = system.getOracle(c, trees.get(i));
@@ -292,6 +297,10 @@ public class DependencyParser {
     return ret;
   }
 
+  public Configuration getConfiguration(CoreMap sentence) {
+      return system.initialConfiguration(sentence);
+  }
+
   /**
    * Generate unique integer IDs for all known words / part-of-speech
    * tags / dependency relation labels.
@@ -312,6 +321,9 @@ public class DependencyParser {
       posIDs.put(pos, (index++));
     for (String label : knownLabels)
       labelIDs.put(label, (index++));
+
+    this.UNKNOWN_WORD = wordIDs.get(Config.UNKNOWN);
+    this.UNKNOWN_POS = posIDs.get(Config.UNKNOWN);
   }
 
   /**
