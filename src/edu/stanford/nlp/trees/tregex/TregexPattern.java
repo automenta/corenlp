@@ -30,19 +30,16 @@
 
 package edu.stanford.nlp.trees.tregex;
 
+import com.gs.collections.impl.list.mutable.FastList;
+import edu.stanford.nlp.io.IOUtils;
+import edu.stanford.nlp.ling.StringLabelFactory;
+import edu.stanford.nlp.trees.*;
+import edu.stanford.nlp.util.*;
+
 import java.io.*;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import edu.stanford.nlp.io.IOUtils;
-import edu.stanford.nlp.ling.StringLabelFactory;
-import edu.stanford.nlp.trees.*;
-import edu.stanford.nlp.util.ArrayMap;
-import edu.stanford.nlp.util.Generics;
-import edu.stanford.nlp.util.Pair;
-import edu.stanford.nlp.util.StringUtils;
-import edu.stanford.nlp.util.Timing;
 
 
 /**
@@ -504,20 +501,20 @@ public abstract class TregexPattern implements Serializable {
   private static final Pattern codePattern = Pattern.compile("([0-9]+):([0-9]+)");
 
   private static void extractSubtrees(List<String> codeStrings, String treeFile) {
-    List<Pair<Integer,Integer>> codes = new ArrayList<>();
+    List<Int2/*Pair<Integer,Integer>*/> codes = new FastList();
     for(String s : codeStrings) {
       Matcher m = codePattern.matcher(s);
       if(m.matches())
-        codes.add(new Pair<>(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))));
+        codes.add(new Int2(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))));
       else
         throw new RuntimeException("Error: illegal node code " + s);
     }
     TreeReaderFactory trf = new TRegexTreeReaderFactory();
     MemoryTreebank treebank = new MemoryTreebank(trf);
     treebank.loadPath(treeFile,null, true);
-    for (Pair<Integer,Integer> code : codes) {
-      Tree t = treebank.get(code.first()-1);
-      t.getNodeNumber(code.second()).pennPrint();
+    for (Int2 code : codes) {
+      Tree t = treebank.get(code.a-1);
+      t.getNodeNumber(code.b).pennPrint();
     }
   }
 

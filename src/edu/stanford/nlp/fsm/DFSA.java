@@ -1,5 +1,6 @@
 package edu.stanford.nlp.fsm;
 
+import com.gs.collections.impl.list.mutable.FastList;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.Scored;
 
@@ -51,7 +52,7 @@ public final class DFSA<T,S> implements Scored {
 
   public Set<DFSAState<T, S>> states() {
     Set<DFSAState<T, S>> visited = Generics.newHashSet();
-    List<DFSAState<T,S>> toVisit = new ArrayList<>();
+    List<DFSAState<T,S>> toVisit = new FastList<>();
     toVisit.add(initialState());
     exploreStates(toVisit, visited);
     return visited;

@@ -491,7 +491,7 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
                                                  double threshold, boolean useMagnitude, int numFeatures,
                                                  boolean descending)
   {
-    edu.stanford.nlp.util.PriorityQueue<Pair<Integer,Integer>> biggestKeys =
+    edu.stanford.nlp.util.PriorityQueue<Int2/*Pair<Integer,Integer>*/> biggestKeys =
             new FixedPrioritiesPriorityQueue<>();
 
     // locate biggest keys
@@ -516,11 +516,11 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
             if (thisWeight < lowest) {
               // remove smallest
               biggestKeys.removeFirst();
-              biggestKeys.add(new Pair<>(feat, lab), thisWeight);
+              biggestKeys.add(new Int2(feat, lab), thisWeight);
             }
           } else {
             // always add it if don't have enough features yet
-            biggestKeys.add(new Pair<>(feat, lab), thisWeight);
+            biggestKeys.add(new Int2(feat, lab), thisWeight);
           }
         }
       }
@@ -528,7 +528,7 @@ public class LinearClassifier<L, F> implements ProbabilisticClassifier<L, F>, RV
 
     List<Triple<F,L,Double>> topFeatures = new ArrayList<>(biggestKeys.size());
     while (!biggestKeys.isEmpty()) {
-      Pair<Integer,Integer> p = biggestKeys.removeFirst();
+      Int2 p = biggestKeys.removeFirst();
       double weight = weights[p.first()][p.second()];
       F feat = featureIndex.get(p.first());
       L label = labelIndex.get(p.second());

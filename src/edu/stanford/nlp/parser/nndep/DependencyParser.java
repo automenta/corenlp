@@ -1,28 +1,17 @@
 package edu.stanford.nlp.parser.nndep;
 
+import com.gs.collections.impl.list.mutable.primitive.IntArrayList;
+import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
 import edu.stanford.nlp.international.Language;
 import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.io.RuntimeIOException;
-import edu.stanford.nlp.ling.CoreAnnotations;
-import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.HasTag;
-import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.ling.TaggedWord;
-import edu.stanford.nlp.ling.Word;
+import edu.stanford.nlp.ling.*;
 import edu.stanford.nlp.process.DocumentPreprocessor;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.IntCounter;
 import edu.stanford.nlp.tagger.maxent.MaxentTagger;
-import edu.stanford.nlp.trees.EnglishGrammaticalRelations;
-import edu.stanford.nlp.trees.EnglishGrammaticalStructure;
-import edu.stanford.nlp.trees.GrammaticalRelation;
-import edu.stanford.nlp.trees.GrammaticalStructure;
-import edu.stanford.nlp.trees.TreeGraphNode;
-import edu.stanford.nlp.trees.TypedDependency;
-import edu.stanford.nlp.trees.UniversalEnglishGrammaticalRelations;
-import edu.stanford.nlp.trees.UniversalEnglishGrammaticalStructure;
+import edu.stanford.nlp.trees.*;
 import edu.stanford.nlp.trees.international.pennchinese.ChineseGrammaticalRelations;
 import edu.stanford.nlp.trees.international.pennchinese.ChineseGrammaticalStructure;
 import edu.stanford.nlp.util.CoreMap;
@@ -33,13 +22,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Writer;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.Random;
+import java.util.*;
 
 import static java.util.stream.Collectors.toList;
 
@@ -88,9 +71,9 @@ public class DependencyParser {
   /**
    * Mapping from word / POS / dependency relation label to integer ID
    */
-  private Map<String, Integer> wordIDs, posIDs, labelIDs;
+  private ObjectIntHashMap<String> wordIDs, posIDs, labelIDs;
 
-  private List<Integer> preComputed;
+  private IntArrayList preComputed;
 
   /**
    * Given a particular parser configuration, this classifier will
@@ -130,11 +113,17 @@ public class DependencyParser {
    *         "unknown" word if the word is unknown
    */
   public int getWordID(String s) {
-      return wordIDs.containsKey(s) ? wordIDs.get(s) : wordIDs.get(Config.UNKNOWN);
+    int wid = wordIDs.getIfAbsent(s, -1);
+    if (wid == -1)
+      wid = wordIDs.get(Config.UNKNOWN);
+    return wid;
   }
 
   public int getPosID(String s) {
-      return posIDs.containsKey(s) ? posIDs.get(s) : posIDs.get(Config.UNKNOWN);
+      int pid = posIDs.getIfAbsent(s, -1);
+      if (pid == -1)
+        pid = posIDs.get(Config.UNKNOWN);
+      return pid;
   }
 
   public int getLabelID(String s) {
@@ -201,8 +190,7 @@ public class DependencyParser {
   private static final int STACK_OFFSET = 6;
   private static final int STACK_NUMBER = 6;
 
-  private int[] getFeatureArray(Configuration c) {
-    int[] feature = new int[config.numTokens];  // positions 0-17 hold fWord, 18-35 hold fPos, 36-47 hold fLabel
+  private int[] getFeatureArray(Configuration c, int[] feature) {
 
     for (int j = 2; j >= 0; --j) {
       int index = c.getStack(j);
@@ -294,7 +282,12 @@ public class DependencyParser {
     System.err.println("#Train Examples: " + ret.n);
 
     List<Integer> sortedTokens = Counters.toSortedList(tokPosCount, false);
-    preComputed = new ArrayList<>(sortedTokens.subList(0, Math.min(config.numPreComputed, sortedTokens.size())));
+    //sortedTokens.subList(0, Math.min(config.numPreComputed, sortedTokens.size())))
+
+    preComputed.clear();
+    for (int i = 0; i < Math.min(config.numPreComputed, sortedTokens.size()); i++)
+        preComputed.add(i);
+
 
     return ret;
   }
@@ -308,9 +301,9 @@ public class DependencyParser {
    * all IDs n_w <= ID < n_w + n_pos are POS tag IDs, and so on.
    */
   private void generateIDs() {
-    wordIDs = new HashMap<>();
-    posIDs = new HashMap<>();
-    labelIDs = new HashMap<>();
+    wordIDs = new ObjectIntHashMap();
+    posIDs = new ObjectIntHashMap();
+    labelIDs = new ObjectIntHashMap();
 
     int index = 0;
     for (String word : knownWords)
@@ -571,7 +564,7 @@ public class DependencyParser {
           W2[i][j] = Double.parseDouble(splits[i]);
       }
 
-      preComputed = new ArrayList<>();
+      preComputed = new IntArrayList();
       while (preComputed.size() < nPreComputed) {
         s = input.readLine();
         splits = s.split(" ");
@@ -593,7 +586,7 @@ public class DependencyParser {
   // TODO this should be a function which returns the embeddings array + embedID
   // otherwise the class needlessly carries around the extra baggage of `embeddings`
   // (never again used) for the entire training process
-  private double[][] readEmbedFile(String embedFile, Map<String, Integer> embedID) {
+  private double[][] readEmbedFile(String embedFile, ObjectIntHashMap<String> embedID) {
 
     double[][] embeddings = null;
     if (embedFile != null) {
@@ -778,7 +771,7 @@ public class DependencyParser {
         W2[i][j] = random.nextDouble() * 2 * config.initRange - config.initRange;
 
     // Read embeddings into `embedID`, `embeddings`
-     Map<String, Integer> embedID = new HashMap<>();
+    ObjectIntHashMap<String> embedID = new ObjectIntHashMap();
      double[][] embeddings = readEmbedFile(embedFile, embedID);
 
     // Try to match loaded embeddings with words in dictionary
@@ -788,8 +781,10 @@ public class DependencyParser {
       if (i < knownWords.size()) {
         String str = knownWords.get(i);
         //NOTE: exact match first, and then try lower case..
-        if (embedID.containsKey(str)) index = embedID.get(str);
-        else if (embedID.containsKey(str.toLowerCase())) index = embedID.get(str.toLowerCase());
+        index = embedID.getIfAbsent(str, -1);
+        if (index == -1) {
+            index = embedID.getIfAbsent(str.toLowerCase(), -1);
+        }
       }
       if (index >= 0) {
         ++foundEmbed;
@@ -901,21 +896,30 @@ public class DependencyParser {
    * This "inner" method returns a structure unique to this package; use {@link #predict(edu.stanford.nlp.util.CoreMap)}
    * for general parsing purposes.
    */
-  private DependencyTree predictInner(CoreMap sentence) {
-    int numTrans = system.numTransitions();
+  private DependencyTree predictInner(final CoreMap sentence) {
 
-    Configuration c = system.initialConfiguration(sentence);
+    final ParsingSystem system = this.system;
+    final int numTrans = system.numTransitions();
+
+    final Configuration c = system.initialConfiguration(sentence);
+
+    final double[] scores = new double[classifier.numLabels];
+    final int[] feature = new int[config.numTokens];  // positions 0-17 hold fWord, 18-35 hold fPos, 36-47 hold fLabel
+
     while (!system.isTerminal(c)) {
-      double[] scores = classifier.computeScores(getFeatureArray(c));
+      classifier.computeScores(getFeatureArray(c, feature), scores);
 
       double optScore = Double.NEGATIVE_INFINITY;
       String optTrans = null;
 
       for (int j = 0; j < numTrans; ++j) {
-        if (scores[j] > optScore && system.canApply(c, system.transitions.get(j))) {
+        String transitionJ = system.transitions.get(j);
+
+        if (scores[j] > optScore && system.canApply(c, transitionJ)) {
           optScore = scores[j];
-          optTrans = system.transitions.get(j);
+          optTrans = transitionJ;
         }
+
       }
       system.apply(c, optTrans);
     }

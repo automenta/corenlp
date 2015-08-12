@@ -65,7 +65,12 @@ public class AnnotationPipeline implements Annotator {
       if (TIME) {
         t.start();
       }
-      annotator.annotate(annotation);
+      try {
+        annotator.annotate(annotation);
+      }
+      catch (Exception e) {
+        e.printStackTrace();
+      }
       if (TIME) {
         long elapsed = t.stop();
         MutableLong m = it.next();

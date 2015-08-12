@@ -1,23 +1,20 @@
 package edu.stanford.nlp.parser.eval;
 
+import edu.stanford.nlp.international.Language;
+import edu.stanford.nlp.io.IOUtils;
+import edu.stanford.nlp.parser.lexparser.TreebankLangParserParams;
+import edu.stanford.nlp.stats.Counter;
+import edu.stanford.nlp.stats.Counters;
+import edu.stanford.nlp.stats.DefaultCounter;
+import edu.stanford.nlp.trees.DiskTreebank;
+import edu.stanford.nlp.trees.Tree;
+import edu.stanford.nlp.util.*;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
-
-import edu.stanford.nlp.international.Language;
-import edu.stanford.nlp.io.IOUtils;
-import edu.stanford.nlp.parser.lexparser.TreebankLangParserParams;
-import edu.stanford.nlp.stats.DefaultCounter;
-import edu.stanford.nlp.stats.Counter;
-import edu.stanford.nlp.stats.Counters;
-import edu.stanford.nlp.trees.DiskTreebank;
-import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.util.Generics;
-import edu.stanford.nlp.util.Pair;
-import edu.stanford.nlp.util.PropertiesUtils;
-import edu.stanford.nlp.util.StringUtils;
 
 /**
  * Utility class for extracting a variety of statistics from multi-lingual treebanks.
@@ -73,8 +70,8 @@ public class TreebankStats {
 
     System.out.println("Reading treebank:");
     for(Tree t : tb) {
-      Pair<Integer,Integer> treeFacts = dissectTree(t, ocs, makeVocab);
-      ocs.addStatsForTree(t.yield().size(), treeFacts.first(), treeFacts.second());
+      Int2 treeFacts = dissectTree(t, ocs, makeVocab);
+      ocs.addStatsForTree(t.yield().size(), treeFacts.a, treeFacts.b);
       if(ocs.numTrees % 100 == 0) System.out.print(".");
       else if(ocs.numTrees % 8001 == 0) System.out.println();
     }
@@ -90,7 +87,7 @@ public class TreebankStats {
    * @param ocs
    * @param addToVocab
    */
-  private static Pair<Integer,Integer> dissectTree(Tree t, ObservedCorpusStats ocs, boolean addToVocab) {
+  private static Int2 dissectTree(Tree t, ObservedCorpusStats ocs, boolean addToVocab) {
     final Stack<Pair<Integer,Tree>> stack = new Stack<>();
     stack.push(new Pair<>(0, t));
 
@@ -124,7 +121,7 @@ public class TreebankStats {
       }
     }
 
-    return new Pair<>(maxDepth, maxBreadth);
+    return new Int2(maxDepth, maxBreadth);
   }
 
   private static void display(ObservedCorpusStats corpStats, boolean displayWords, boolean displayOOV) {

@@ -1,9 +1,9 @@
 package edu.stanford.nlp.graph;
 
 public class DirectedEdge<V, E> {
-  E data;
-  V head;
-  V tail;
+  final E data;
+  final V head;
+  final V tail;
 
   public DirectedEdge(E data, V head, V tail) {
     this.data = data;

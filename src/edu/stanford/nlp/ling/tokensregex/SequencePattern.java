@@ -1664,7 +1664,7 @@ public class SequencePattern<T> implements Serializable {
      *    be satisfied (and their corresponding node index
      *     when the expression is satisfied)
      */
-    private final Set<Pair<Integer,Integer>>[] reachableChildBids;
+    private final Set<Int2>[] reachableChildBids;
 
     private ConjMatchStateInfo(int startBid, int childCount, int startPos)
     {
@@ -1679,12 +1679,12 @@ public class SequencePattern<T> implements Serializable {
       if (reachableChildBids[i] == null) {
         reachableChildBids[i] = new ArraySet<>();
       }
-      reachableChildBids[i].add(new Pair<>(bid, pos) );
+      reachableChildBids[i].add(new Int2(bid, pos) );
     }
 
     private boolean isAllChildMatched()
     {
-      for (Set<Pair<Integer,Integer>> v:reachableChildBids) {
+      for (Set<Int2> v:reachableChildBids) {
         if (v == null || v.isEmpty()) return false;
       }
       return true;
@@ -1707,12 +1707,12 @@ public class SequencePattern<T> implements Serializable {
     private boolean isAllChildMatched(int index, int bid, int pos)
     {
       for (int i = 0; i < reachableChildBids.length; i++) {
-        Set<Pair<Integer,Integer>> v = reachableChildBids[i];
+        Set<Int2> v = reachableChildBids[i];
         if (v == null || v.isEmpty()) return false;
         if (i != index) {
           boolean ok = false;
-          for (Pair<Integer,Integer> p:v) {
-            if (p.second() == pos) {
+          for (Int2 p:v) {
+            if (p.b == pos) {
               ok = true;
               break;
             }
@@ -1741,14 +1741,14 @@ public class SequencePattern<T> implements Serializable {
     {
       int[] matchedBids = new int[reachableChildBids.length];
       for (int i = 0; i < reachableChildBids.length; i++) {
-        Set<Pair<Integer,Integer>> v = reachableChildBids[i];
+        Set<Int2> v = reachableChildBids[i];
         if (v == null || v.isEmpty()) return null;
         if (i != index) {
           boolean ok = false;
-          for (Pair<Integer,Integer> p:v) {
+          for (Int2 p:v) {
             if (p.second() == pos) {
               ok = true;
-              matchedBids[i] = p.first();
+              matchedBids[i] = p.a;
               break;
             }
           }
@@ -1762,10 +1762,10 @@ public class SequencePattern<T> implements Serializable {
 
     protected void updateKeepBids(BitSet bids) {
       // TODO: Is there a point when we don't need to keep these bids anymore?
-      for (Set<Pair<Integer, Integer>> v : reachableChildBids) {
+      for (Set<Int2> v : reachableChildBids) {
         if (v != null) {
-          for (Pair<Integer, Integer> p : v) {
-            bids.set(p.first());
+          for (Int2 p : v) {
+            bids.set(p.a);
           }
         }
       }

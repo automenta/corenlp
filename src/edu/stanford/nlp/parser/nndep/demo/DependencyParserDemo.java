@@ -1,5 +1,6 @@
 package edu.stanford.nlp.parser.nndep.demo;
 
+import edu.stanford.nlp.io.IOUtils;
 import edu.stanford.nlp.ling.HasWord;
 import edu.stanford.nlp.ling.TaggedWord;
 import edu.stanford.nlp.parser.nndep.DependencyParser;
@@ -36,11 +37,19 @@ public class DependencyParserDemo {
       }
     }
 
-    String text = "I can almost always tell when movies use fake dinosaurs.";
-
     MaxentTagger tagger = new MaxentTagger(taggerPath);
     DependencyParser parser = DependencyParser.loadFromModelFile(modelPath);
 
+
+    //String text = "I can almost always tell when movies use fake dinosaurs.";
+    String text = IOUtils.stringFromFile("/home/me/meta.txt");
+    text = text + text + text + text;
+
+    process(text, tagger, parser);
+
+  }
+
+  private static void process(String text, MaxentTagger tagger, DependencyParser parser) {
     DocumentPreprocessor tokenizer = new DocumentPreprocessor(new StringReader(text));
     for (List<HasWord> sentence : tokenizer) {
       List<TaggedWord> tagged = tagger.tagSentence(sentence);

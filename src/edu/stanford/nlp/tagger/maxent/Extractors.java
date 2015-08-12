@@ -8,13 +8,14 @@
 
 package edu.stanford.nlp.tagger.maxent;
 
+import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
+import com.gs.collections.impl.set.mutable.primitive.IntHashSet;
+import edu.stanford.nlp.util.Pair;
+
 import java.io.FileInputStream;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.List;
-
-import edu.stanford.nlp.util.Pair;
 
 /** Maintains a set of feature extractors and applies them.
  *
@@ -27,11 +28,13 @@ public class Extractors implements Serializable {
 
   private static final boolean DEBUG = false;
 
-  transient List<Pair<Integer,Extractor>>
-    local, // extractors only looking at current word
-    localContext, // extractors only looking at words, except those in "local"
-    dynamic; // extractors depending on class labels
+//  transient List<Pair<Integer,Extractor>>
+//    local, // extractors only looking at current word
+//    localContext, // extractors only looking at words, except those in "local"
+//    dynamic; // extractors depending on class labels
 
+
+  IntObjectHashMap<Extractor> local, localContext, dynamic;
 
   /**
    * Set the extractors from an array.
@@ -50,21 +53,21 @@ public class Extractors implements Serializable {
    */
   void initTypes() {
 
-    local = new ArrayList<>();
-    localContext = new ArrayList<>();
-    dynamic = new ArrayList<>();
+    local = new IntObjectHashMap();
+    localContext = new IntObjectHashMap();
+    dynamic = new IntObjectHashMap();
 
     for(int i=0; i<v.length; ++i) {
       Extractor e = v[i];
       if(e.isLocal() && e.isDynamic())
         throw new RuntimeException("Extractors can't both be local and dynamic!");
       if(e.isLocal()) {
-        local.add(Pair.makePair(i,e));
+        local.put(i,e);
         //localContext.put(i,e);
       } else if(e.isDynamic()) {
-        dynamic.add(Pair.makePair(i,e));
+        dynamic.put(i,e);
       } else {
-        localContext.add(Pair.makePair(i,e));
+        localContext.put(i,e);
       }
     }
     if(DEBUG) {
