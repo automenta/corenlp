@@ -32,9 +32,9 @@ public class Dictionary {
   }
 
   void fillWordTagCounts(Map<String, IntCounter<String>> wordTagCounts) {
-    for (String word : wordTagCounts.keySet()) {
-      TagCount count = new TagCount(wordTagCounts.get(word));
-      dict.put(word, count);
+    for (Map.Entry<String, IntCounter<String>> stringIntCounterEntry : wordTagCounts.entrySet()) {
+      TagCount count = new TagCount(stringIntCounterEntry.getValue());
+      dict.put(stringIntCounterEntry.getKey(), count);
     }
   }
 

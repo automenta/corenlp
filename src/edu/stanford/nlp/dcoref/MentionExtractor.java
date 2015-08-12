@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
 
 import edu.stanford.nlp.classify.LogisticClassifier;
 import edu.stanford.nlp.ling.CoreLabel;
@@ -159,7 +160,7 @@ public class MentionExtractor {
       List<List<Mention>> unorderedMentions,
       boolean doMergeLabels) throws Exception {
 
-    List<List<Mention>> orderedMentionsBySentence = new ArrayList<List<Mention>>();
+    List<List<Mention>> orderedMentionsBySentence = new ArrayList<>();
 
     //
     // traverse all sentences and process each individual one
@@ -180,7 +181,7 @@ public class MentionExtractor {
       for (Mention mention: mentions) {
         mention.contextParseTree = tree;
         mention.sentenceWords = sentence;
-        mention.originalSpan = new ArrayList<CoreLabel>(mention.sentenceWords.subList(mention.startIndex, mention.endIndex));
+        mention.originalSpan = new ArrayList<>(mention.sentenceWords.subList(mention.startIndex, mention.endIndex));
         if(!((CoreLabel)tree.label()).has(CoreAnnotations.BeginIndexAnnotation.class)) tree.indexSpans(0);
         if(mention.headWord==null) {
           Tree headTree = ((RuleBasedCorefMentionFinder) mentionFinder).findSyntacticHead(mention, tree, sentence);
@@ -206,7 +207,7 @@ public class MentionExtractor {
 
         List<Mention> mentionsForTree = mentionsToTrees.get(treeToKey(mention.mentionSubTree));
         if(mentionsForTree == null){
-          mentionsForTree = new ArrayList<Mention>();
+          mentionsForTree = new ArrayList<>();
           mentionsToTrees.put(treeToKey(mention.mentionSubTree), mentionsForTree);
         }
         mentionsForTree.add(mention);
@@ -218,7 +219,7 @@ public class MentionExtractor {
       //
       // Order all mentions in tree-traversal order
       //
-      List<Mention> orderedMentions = new ArrayList<Mention>();
+      List<Mention> orderedMentions = new ArrayList<>();
       orderedMentionsBySentence.add(orderedMentions);
 
       // extract all mentions in tree traversal order (alternative: tree.postOrderNodeList())
@@ -314,7 +315,7 @@ public class MentionExtractor {
     Tree head2 = np2.headTerminal(headFinder);
     int h1 = ((CoreMap) head1.label()).get(CoreAnnotations.IndexAnnotation.class) - 1;
     int h2 = ((CoreMap) head2.label()).get(CoreAnnotations.IndexAnnotation.class) - 1;
-    Pair<Integer, Integer> p = new Pair<Integer, Integer>(h1, h2);
+    Pair<Integer, Integer> p = new Pair<>(h1, h2);
     foundPairs.add(p);
   }
 
@@ -362,7 +363,9 @@ public class MentionExtractor {
       for(Mention m2 : orderedMentions){
         // Ignore if m2 and m1 are in list relationship
         if (m1.isListMemberOf(m2) || m2.isListMemberOf(m1) || m1.isMemberOfSameList(m2)) {
-          SieveCoreferenceSystem.logger.finest("Not checking '" + m1 + "' and '" + m2 + "' for " + flag + ": in list relationship");
+          if (SieveCoreferenceSystem.logger.isLoggable(Level.FINEST)) {
+            SieveCoreferenceSystem.logger.finest("Not checking '" + m1 + "' and '" + m2 + "' for " + flag + ": in list relationship");
+          }
           continue;
         }
         for(Pair<Integer, Integer> foundPair: foundPairs){

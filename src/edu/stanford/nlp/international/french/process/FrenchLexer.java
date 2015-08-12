@@ -12072,20 +12072,27 @@ class FrenchLexer {
           escapeForwardSlashAsterisk = val;
           break;
         case "untokenizable":
-          if (value.equals("noneDelete")) {
-            untokenizable = UntokenizableOptions.NONE_DELETE;
-          } else if (value.equals("firstDelete")) {
-            untokenizable = UntokenizableOptions.FIRST_DELETE;
-          } else if (value.equals("allDelete")) {
-            untokenizable = UntokenizableOptions.ALL_DELETE;
-          } else if (value.equals("noneKeep")) {
-            untokenizable = UntokenizableOptions.NONE_KEEP;
-          } else if (value.equals("firstKeep")) {
-            untokenizable = UntokenizableOptions.FIRST_KEEP;
-          } else if (value.equals("allKeep")) {
-            untokenizable = UntokenizableOptions.ALL_KEEP;
-          } else {
-            throw new IllegalArgumentException("FrenchLexer: Invalid option value in constructor: " + key + ": " + value);
+          switch (value) {
+            case "noneDelete":
+              untokenizable = UntokenizableOptions.NONE_DELETE;
+              break;
+            case "firstDelete":
+              untokenizable = UntokenizableOptions.FIRST_DELETE;
+              break;
+            case "allDelete":
+              untokenizable = UntokenizableOptions.ALL_DELETE;
+              break;
+            case "noneKeep":
+              untokenizable = UntokenizableOptions.NONE_KEEP;
+              break;
+            case "firstKeep":
+              untokenizable = UntokenizableOptions.FIRST_KEEP;
+              break;
+            case "allKeep":
+              untokenizable = UntokenizableOptions.ALL_KEEP;
+              break;
+            default:
+              throw new IllegalArgumentException("FrenchLexer: Invalid option value in constructor: " + key + ": " + value);
           }
           break;
         case "strictTreebank3":
@@ -12463,7 +12470,7 @@ class FrenchLexer {
    *
    * @param   errorCode  the code of the errormessage to display
    */
-  private void zzScanError(int errorCode) {
+  private static void zzScanError(int errorCode) {
     String message;
     try {
       message = ZZ_ERROR_MSG[errorCode];

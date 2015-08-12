@@ -59,7 +59,7 @@ public class StochasticDiffFunctionTester {
 
 
 
-  private void sayln(String s) {
+  private static void sayln(String s) {
     if (!quiet) {
       System.err.println(s);
     }
@@ -412,7 +412,7 @@ public class StochasticDiffFunctionTester {
     double[] fullHx = new double[thisFunc.domainDimension()];
     double[] thisHx = new double[x.length];
     double[] thisGrad = new double[x.length];
-    List<double[]> HxList = new ArrayList<double[]>();
+    List<double[]> HxList = new ArrayList<>();
 
     /*
     PrintWriter file = null;
@@ -499,8 +499,8 @@ public class StochasticDiffFunctionTester {
     for(int bSize:batchSizes){
 
       varResult = getVariance(x,bSize);
-      file.println(bSize + "," + nf.format(varResult[0]) + "," + nf.format(varResult[1]) + "," + nf.format(varResult[2]) + "," + nf.format(varResult[3]));
-      System.err.println("Batch size of: " + bSize + "   " + varResult[0] + "," + nf.format(varResult[1]) + "," + nf.format(varResult[2]) + "," + nf.format(varResult[3]));
+      file.println(bSize + "," + nf.format(varResult[0]) + ',' + nf.format(varResult[1]) + ',' + nf.format(varResult[2]) + ',' + nf.format(varResult[3]));
+      System.err.println("Batch size of: " + bSize + "   " + varResult[0] + ',' + nf.format(varResult[1]) + ',' + nf.format(varResult[2]) + ',' + nf.format(varResult[3]));
     }
 
 
@@ -557,7 +557,7 @@ public class StochasticDiffFunctionTester {
   }
   */
 
-  public void listToFile(List<double[]> thisList,String fileName){
+  public static void listToFile(List<double[]> thisList, String fileName){
     PrintWriter file = null;
     NumberFormat nf = new DecimalFormat("0.000E0");
 
@@ -580,7 +580,7 @@ public class StochasticDiffFunctionTester {
 
   }
 
-  public void arrayToFile(double[] thisArray,String fileName){
+  public static void arrayToFile(double[] thisArray, String fileName){
     PrintWriter file = null;
     NumberFormat nf = new DecimalFormat("0.000E0");
 

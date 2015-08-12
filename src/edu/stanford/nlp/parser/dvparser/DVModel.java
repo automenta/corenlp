@@ -12,6 +12,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.ejml.simple.SimpleBase;
 import org.ejml.simple.SimpleMatrix;
 import org.ejml.data.DenseMatrix64F;
 
@@ -71,9 +72,9 @@ public class DVModel implements Serializable {
   static final String START_WORD = "*START*";
   static final String END_WORD = "*END*";
 
-  private static final Function<SimpleMatrix, DenseMatrix64F> convertSimpleMatrix = matrix -> matrix.getMatrix();
+  private static final Function<SimpleMatrix, DenseMatrix64F> convertSimpleMatrix = SimpleBase::getMatrix;
 
-  private static final Function<DenseMatrix64F, SimpleMatrix> convertDenseMatrix = matrix -> SimpleMatrix.wrap(matrix);
+  private static final Function<DenseMatrix64F, SimpleMatrix> convertDenseMatrix = SimpleMatrix::wrap;
 
   private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
     in.defaultReadObject();
@@ -279,8 +280,8 @@ public class DVModel implements Serializable {
 
   public void setRulesForTrainingSet(List<Tree> sentences, Map<Tree, byte[]> compressedTrees) {
     TwoDimensionalSet<String, String> binaryRules = TwoDimensionalSet.treeSet();
-    Set<String> unaryRules = new HashSet<String>();
-    Set<String> words = new HashSet<String>();
+    Set<String> unaryRules = new HashSet<>();
+    Set<String> words = new HashSet<>();
     for (Tree sentence : sentences) {
       searchRulesForBatch(binaryRules, unaryRules, words, sentence);
 
@@ -305,8 +306,8 @@ public class DVModel implements Serializable {
    */
   public void filterRulesForBatch(Collection<Tree> trees) {
     TwoDimensionalSet<String, String> binaryRules = TwoDimensionalSet.treeSet();
-    Set<String> unaryRules = new HashSet<String>();
-    Set<String> words = new HashSet<String>();
+    Set<String> unaryRules = new HashSet<>();
+    Set<String> words = new HashSet<>();
     for (Tree tree : trees) {
       searchRulesForBatch(binaryRules, unaryRules, words, tree);
     }
@@ -316,8 +317,8 @@ public class DVModel implements Serializable {
 
   public void filterRulesForBatch(Map<Tree, byte[]> compressedTrees) {
     TwoDimensionalSet<String, String> binaryRules = TwoDimensionalSet.treeSet();
-    Set<String> unaryRules = new HashSet<String>();
-    Set<String> words = new HashSet<String>();
+    Set<String> unaryRules = new HashSet<>();
+    Set<String> words = new HashSet<>();
     for (Map.Entry<Tree, byte[]> entry : compressedTrees.entrySet()) {
       searchRulesForBatch(binaryRules, unaryRules, words, entry.getKey());
 
@@ -724,7 +725,7 @@ public class DVModel implements Serializable {
   public void printMatrixNames(PrintStream out) {
     out.println("Binary matrices:");
     for (TwoDimensionalMap.Entry<String, String, SimpleMatrix> binary : binaryTransform) {
-      out.println("  " + binary.getFirstKey() + ":" + binary.getSecondKey());
+      out.println("  " + binary.getFirstKey() + ':' + binary.getSecondKey());
     }
     out.println("Unary matrices:");
     for (String unary : unaryTransform.keySet()) {
@@ -735,7 +736,7 @@ public class DVModel implements Serializable {
   public void printMatrixStats(PrintStream out) {
     System.err.println("Model loaded with " + numUnaryMatrices + " unary and " + numBinaryMatrices + " binary");
     for (TwoDimensionalMap.Entry<String, String, SimpleMatrix> binary : binaryTransform) {
-      out.println("Binary transform " + binary.getFirstKey() + ":" + binary.getSecondKey());
+      out.println("Binary transform " + binary.getFirstKey() + ':' + binary.getSecondKey());
       double normf = binary.getValue().normF();
       out.println("  Total norm " + (normf * normf));
       normf = binary.getValue().extractMatrix(0, op.lexOptions.numHid, 0, op.lexOptions.numHid).normF();
@@ -748,11 +749,11 @@ public class DVModel implements Serializable {
 
   public void printAllMatrices(PrintStream out) {
     for (TwoDimensionalMap.Entry<String, String, SimpleMatrix> binary : binaryTransform) {
-      out.println("Binary transform " + binary.getFirstKey() + ":" + binary.getSecondKey());
+      out.println("Binary transform " + binary.getFirstKey() + ':' + binary.getSecondKey());
       out.println(binary.getValue());
     }
     for (TwoDimensionalMap.Entry<String, String, SimpleMatrix> binary : binaryScore) {
-      out.println("Binary score " + binary.getFirstKey() + ":" + binary.getSecondKey());
+      out.println("Binary score " + binary.getFirstKey() + ':' + binary.getSecondKey());
       out.println(binary.getValue());
     }
     for (Map.Entry<String, SimpleMatrix> unary : unaryTransform.entrySet()) {
@@ -876,7 +877,7 @@ public class DVModel implements Serializable {
     Pair<String, String> binary = indexToBinaryTransform(pos);
     if (binary != null) {
       pos = pos % binaryTransformSize;
-      out.println("Entry " + originalPos + " is entry " + pos + " of binary transform " + binary.first() + ":" + binary.second());
+      out.println("Entry " + originalPos + " is entry " + pos + " of binary transform " + binary.first() + ':' + binary.second());
       return;
     }
 
@@ -890,7 +891,7 @@ public class DVModel implements Serializable {
     binary = indexToBinaryScore(pos);
     if (binary != null) {
       pos = (pos - numBinaryMatrices * binaryTransformSize - numUnaryMatrices * unaryTransformSize) % binaryScoreSize;
-      out.println("Entry " + originalPos + " is entry " + pos + " of binary score " + binary.first() + ":" + binary.second());
+      out.println("Entry " + originalPos + " is entry " + pos + " of binary score " + binary.first() + ':' + binary.second());
       return;
     }
 

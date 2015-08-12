@@ -331,7 +331,7 @@ public class ArrayCoreMap implements CoreMap /*, Serializable */ {
   }
 
   // support caching of String form of keys for speedier printing
-  private static final ConcurrentHashMap<Class, String> shortNames =
+  public static final ConcurrentHashMap<Class, String> shortNames =
           new ConcurrentHashMap<>(12, 0.75f, 1);
 
   private static final int SHORTER_STRING_CHARSTRING_START_SIZE = 64;
@@ -463,7 +463,7 @@ public class ArrayCoreMap implements CoreMap /*, Serializable */ {
    * return, this is reset to null for that particular thread.
    */
   private static final ThreadLocal<TwoDimensionalMap<CoreMap, CoreMap, Boolean>> equalsCalled =
-          new ThreadLocal<TwoDimensionalMap<CoreMap, CoreMap, Boolean>>();
+          new ThreadLocal<>();
 
 
   /**
@@ -476,10 +476,10 @@ public class ArrayCoreMap implements CoreMap /*, Serializable */ {
       return false;
     }
 
-    if (obj instanceof HashableCoreMap) {
-      // overridden behavior for HashableCoreMap
-      return obj.equals(this);
-    }
+//    if (obj instanceof HashableCoreMap) {
+//      // overridden behavior for HashableCoreMap
+//      return obj.equals(this);
+//    }
 
     if (obj instanceof ArrayCoreMap) {
       // specialized equals for ArrayCoreMap
@@ -584,7 +584,7 @@ public class ArrayCoreMap implements CoreMap /*, Serializable */ {
    * to null for that particular thread.
    */
   private static final ThreadLocal<IdentityHashSet<CoreMap>> hashCodeCalled =
-          new ThreadLocal<IdentityHashSet<CoreMap>>();
+          new ThreadLocal<>();
 
 
   /**
@@ -597,7 +597,7 @@ public class ArrayCoreMap implements CoreMap /*, Serializable */ {
     IdentityHashSet<CoreMap> calledSet = hashCodeCalled.get();
     boolean createdCalledSet = (calledSet == null);
     if (createdCalledSet) {
-      calledSet = new IdentityHashSet<CoreMap>();
+      calledSet = new IdentityHashSet<>();
       hashCodeCalled.set(calledSet);
     }
 
@@ -656,7 +656,7 @@ public class ArrayCoreMap implements CoreMap /*, Serializable */ {
     Redwood.startTrack(description);
 
     // sort keys by class name
-    List<Class> sortedKeys = new ArrayList<Class>(this.keySet());
+    List<Class> sortedKeys = new ArrayList<>(this.keySet());
     Collections.sort(sortedKeys,
         (a, b) -> a.getCanonicalName().compareTo(b.getCanonicalName()));
 

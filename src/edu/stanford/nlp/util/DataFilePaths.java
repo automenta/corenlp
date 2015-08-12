@@ -21,14 +21,14 @@ public class DataFilePaths {
   private DataFilePaths() {}
 
   static final String NLP_DATA_VARIABLE = "NLP_DATA_HOME";
-  static final String NLP_DATA_VARIABLE_PREFIX = "$" + NLP_DATA_VARIABLE;
+  static final String NLP_DATA_VARIABLE_PREFIX = '$' + NLP_DATA_VARIABLE;
 
   static final String NLP_DATA_HOME = 
     ((System.getenv(NLP_DATA_VARIABLE) != null) ?
      System.getenv(NLP_DATA_VARIABLE) : "/u/nlp");
 
   static final String JAVANLP_VARIABLE = "JAVANLP_HOME";
-  static final String JAVANLP_VARIABLE_PREFIX = "$" + JAVANLP_VARIABLE;
+  static final String JAVANLP_VARIABLE_PREFIX = '$' + JAVANLP_VARIABLE;
 
   static final String JAVANLP_HOME = 
     ((System.getenv(JAVANLP_VARIABLE) != null) ?

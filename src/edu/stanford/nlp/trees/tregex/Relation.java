@@ -89,7 +89,7 @@ abstract class Relation implements Serializable {
   static Relation getRelation(String s,
                               Function<String, String> basicCatFunction,
                               HeadFinder headFinder)
-    throws ParseException
+          throws ParseException
   {
     if (SIMPLE_RELATIONS_MAP.containsKey(s))
       return SIMPLE_RELATIONS_MAP.get(s);
@@ -142,7 +142,7 @@ abstract class Relation implements Serializable {
   static Relation getRelation(String s, String arg,
                               Function<String,String> basicCatFunction,
                               HeadFinder headFinder)
-    throws ParseException
+          throws ParseException
   {
     if (arg == null) {
       return getRelation(s, basicCatFunction, headFinder);
@@ -169,7 +169,7 @@ abstract class Relation implements Serializable {
         break;
       default:
         throw new ParseException("Unrecognized compound relation " + s + ' '
-            + arg);
+                + arg);
     }
     return Interner.globalIntern(r);
   }
@@ -184,7 +184,7 @@ abstract class Relation implements Serializable {
     if (s.equals("<...")) {
       List<TregexPattern> newChildren = Generics.newArrayList();
       for (int i = 0; i < children.size(); ++i) {
-        Relation rel = getRelation("<", Integer.toString(i + 1), basicCatFunction, headFinder); 
+        Relation rel = getRelation("<", Integer.toString(i + 1), basicCatFunction, headFinder);
         DescriptionPattern oldChild = children.get(i);
         TregexPattern newChild = new DescriptionPattern(rel, oldChild);
         newChildren.add(newChild);
@@ -257,7 +257,7 @@ abstract class Relation implements Serializable {
     @Override
     public void remove() {
       throw new UnsupportedOperationException(
-          "SearchNodeIterator does not support remove().");
+              "SearchNodeIterator does not support remove().");
     }
   }
 
@@ -402,7 +402,7 @@ abstract class Relation implements Serializable {
     Iterator<Tree> searchNodeIterator(final Tree t,
                                       final TregexMatcher matcher) {
       return new SearchNodeIterator() {
-        // subtle bug warning here: if we use 
+        // subtle bug warning here: if we use
         //   int nextNum=0;
         // instead, we get the first daughter twice because the
         // assignment occurs after advance() has already been called
@@ -1082,7 +1082,7 @@ abstract class Relation implements Serializable {
           searchStack = new Stack<Tree>();
           Tree parent = matcher.getParent(t);
           if (parent != null && !parent.isLeaf() &&
-              parent.children().length == 1)
+                  parent.children().length == 1)
             searchStack.push(parent);
           if (!searchStack.isEmpty()) {
             advance();
@@ -1097,7 +1097,7 @@ abstract class Relation implements Serializable {
             next = searchStack.pop();
             Tree parent = matcher.getParent(next);
             if (parent != null && !parent.isLeaf() &&
-                parent.children().length == 1)
+                    parent.children().length == 1)
               searchStack.push(parent);
           }
         }
@@ -1142,14 +1142,14 @@ abstract class Relation implements Serializable {
   };
 
   private static final Relation[] SIMPLE_RELATIONS = {
-      DOMINATES, DOMINATED_BY, PARENT_OF, CHILD_OF, PRECEDES,
-      IMMEDIATELY_PRECEDES, FOLLOWS, IMMEDIATELY_FOLLOWS,
+          DOMINATES, DOMINATED_BY, PARENT_OF, CHILD_OF, PRECEDES,
+          IMMEDIATELY_PRECEDES, FOLLOWS, IMMEDIATELY_FOLLOWS,
           HAS_LEFTMOST_DESCENDANT, HAS_RIGHTMOST_DESCENDANT,
           LEFTMOST_DESCENDANT_OF, RIGHTMOST_DESCENDANT_OF, SISTER_OF,
-      LEFT_SISTER_OF, RIGHT_SISTER_OF, IMMEDIATE_LEFT_SISTER_OF,
-      IMMEDIATE_RIGHT_SISTER_OF, ONLY_CHILD_OF, HAS_ONLY_CHILD, EQUALS,
-      PATTERN_SPLITTER,UNARY_PATH_ANCESTOR_OF, UNARY_PATH_DESCENDANT_OF,
-      PARENT_EQUALS };
+          LEFT_SISTER_OF, RIGHT_SISTER_OF, IMMEDIATE_LEFT_SISTER_OF,
+          IMMEDIATE_RIGHT_SISTER_OF, ONLY_CHILD_OF, HAS_ONLY_CHILD, EQUALS,
+          PATTERN_SPLITTER,UNARY_PATH_ANCESTOR_OF, UNARY_PATH_DESCENDANT_OF,
+          PARENT_EQUALS };
 
   private static final Map<String, Relation> SIMPLE_RELATIONS_MAP = Generics.newHashMap();
 
@@ -1326,7 +1326,7 @@ abstract class Relation implements Serializable {
       final HeadedBy headedBy = (HeadedBy) o;
 
       if (heads != null ? !heads.equals(headedBy.heads)
-          : headedBy.heads != null) {
+              : headedBy.heads != null) {
         return false;
       }
 
@@ -1419,7 +1419,7 @@ abstract class Relation implements Serializable {
     ImmediatelyHeadedBy(HeadFinder hf) {
       super("<#");
       this.immediatelyHeads = Interner
-          .globalIntern(new ImmediatelyHeads(hf));
+              .globalIntern(new ImmediatelyHeads(hf));
     }
 
     @Override
@@ -1459,8 +1459,8 @@ abstract class Relation implements Serializable {
       final ImmediatelyHeadedBy immediatelyHeadedBy = (ImmediatelyHeadedBy) o;
 
       if (immediatelyHeads != null ? !immediatelyHeads
-          .equals(immediatelyHeadedBy.immediatelyHeads)
-          : immediatelyHeadedBy.immediatelyHeads != null) {
+              .equals(immediatelyHeadedBy.immediatelyHeads)
+              : immediatelyHeadedBy.immediatelyHeads != null) {
         return false;
       }
 
@@ -1471,7 +1471,7 @@ abstract class Relation implements Serializable {
     public int hashCode() {
       int result = super.hashCode();
       result = 29 * result
-          + (immediatelyHeads != null ? immediatelyHeads.hashCode() : 0);
+              + (immediatelyHeads != null ? immediatelyHeads.hashCode() : 0);
       return result;
     }
   }
@@ -1487,7 +1487,7 @@ abstract class Relation implements Serializable {
       super('>' + String.valueOf(i));
       if (i == 0) {
         throw new IllegalArgumentException(
-            "Error -- no such thing as zeroth child!");
+                "Error -- no such thing as zeroth child!");
       } else {
         childNum = i;
       }
@@ -1517,10 +1517,10 @@ abstract class Relation implements Serializable {
           if (t != matcher.getRoot()) {
             next = matcher.getParent(t);
             if (childNum > 0
-                && (next.numChildren() < childNum || next
+                    && (next.numChildren() < childNum || next
                     .getChild(childNum - 1) != t)
-                || childNum < 0
-                && (next.numChildren() < -childNum || next.getChild(next
+                    || childNum < 0
+                    && (next.numChildren() < -childNum || next.getChild(next
                     .numChildren()
                     + childNum) != t)) {
               next = null;
@@ -1605,7 +1605,7 @@ abstract class Relation implements Serializable {
       final HasIthChild hasIthChild = (HasIthChild) o;
 
       if (ithChildOf != null ? !ithChildOf.equals(hasIthChild.ithChildOf)
-          : hasIthChild.ithChildOf != null) {
+              : hasIthChild.ithChildOf != null) {
         return false;
       }
 
@@ -1769,7 +1769,7 @@ abstract class Relation implements Serializable {
                                   Function<String, String> basicCatFunction) {
       super(">+(" + arg + ')');
       unbrokenCategoryDominates = Interner
-        .globalIntern((new UnbrokenCategoryDominates(arg, basicCatFunction)));
+              .globalIntern((new UnbrokenCategoryDominates(arg, basicCatFunction)));
     }
 
     /** {@inheritDoc} */

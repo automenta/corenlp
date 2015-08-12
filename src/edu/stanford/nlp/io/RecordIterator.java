@@ -243,11 +243,11 @@ public class RecordIterator implements Iterator<List<String>> {
 
       if (filter && 
           (tokens.length != fields ||   // wrong number of fields
-           (tokens.length == 1 && tokens[0].equals("")))) // it's a blank line
+           (tokens.length == 1 && tokens[0].isEmpty()))) // it's a blank line
         continue;                       // skip this line
       
-      nextResult = new ArrayList<String>();
-      for (String token : tokens) nextResult.add(token);
+      nextResult = new ArrayList<>();
+      Collections.addAll(nextResult, tokens);
       return;                           // this line will be our next result
 
     }

@@ -126,8 +126,8 @@ public class TransformingTreebank extends Treebank {
    */
   public static void main(String[] args) {
     Timing.startTime();
-    Treebank treebank = new DiskTreebank(in -> new PennTreeReader(in));
-    Treebank treebank2 = new MemoryTreebank(in -> new PennTreeReader(in));
+    Treebank treebank = new DiskTreebank(PennTreeReader::new);
+    Treebank treebank2 = new MemoryTreebank(PennTreeReader::new);
     treebank.loadPath(args[0]);
     treebank2.loadPath(args[0]);
     CompositeTreebank c = new CompositeTreebank(treebank, treebank2);

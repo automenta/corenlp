@@ -4,9 +4,6 @@ package edu.stanford.nlp.semgraph.semgrex;
 // all generated classes are in this package
 
 //imports
-import java.io.StringReader;
-import java.util.*;
-import edu.stanford.nlp.util.Generics;
 
 /** Token Manager. */
 @SuppressWarnings("unused")class SemgrexParserTokenManager implements SemgrexParserConstants {
@@ -15,7 +12,7 @@ import edu.stanford.nlp.util.Generics;
   public  java.io.PrintStream debugStream = System.out;
   /** Set debug output. */
   public  void setDebugStream(java.io.PrintStream ds) { debugStream = ds; }
-private final int jjStopStringLiteralDfa_0(int pos, long active0){
+private static int jjStopStringLiteralDfa_0(int pos, long active0){
    switch (pos)
    {
       default :

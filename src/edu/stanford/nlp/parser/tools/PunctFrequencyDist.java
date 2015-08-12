@@ -28,7 +28,7 @@ public final class PunctFrequencyDist {
   static {
     usage.append(String.format("Usage: java %s [OPTS] punct_tag tree_file \n\n",PunctFrequencyDist.class.getName()));
     usage.append("Options:\n");
-    usage.append("  -l lang    : Select language settings from " + Language.langList + "\n");
+    usage.append("  -l lang    : Select language settings from ").append(Language.langList).append('\n');
     usage.append("  -e enc     : Encoding.\n");
   }
 
@@ -77,7 +77,7 @@ public final class PunctFrequencyDist {
       }
     }
 
-    Counter<String> puncTypes = new ClassicCounter<String>();
+    Counter<String> puncTypes = new ClassicCounter<>();
     for(Tree t : tb) {
       List<CoreLabel> yield = t.taggedLabeledYield();
       for(CoreLabel word : yield)
@@ -85,7 +85,7 @@ public final class PunctFrequencyDist {
           puncTypes.incrementCount(word.word());
     }
 
-    List<String> biggestKeys = new ArrayList<String>(puncTypes.keySet());
+    List<String> biggestKeys = new ArrayList<>(puncTypes.keySet());
     Collections.sort(biggestKeys, Counters.toComparatorDescending(puncTypes));
 
     PrintWriter pw = tlpp.pw();

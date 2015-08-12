@@ -81,7 +81,7 @@ public final class SplitCanditoTrees {
   static List<String> readIds(String filename)
     throws IOException
   {
-    List<String> ids = new ArrayList<String>();
+    List<String> ids = new ArrayList<>();
     BufferedReader fin =
       new BufferedReader(new InputStreamReader
                          (new FileInputStream(filename), "ISO8859_1"));
@@ -113,7 +113,7 @@ public final class SplitCanditoTrees {
       Tree t = null;
       int numTrees;
       for (numTrees = 0; (t = tr.readTree()) != null; numTrees++) {
-        String id = canonicalFilename + "-" + ((CoreLabel) t.label()).get(CoreAnnotations.SentenceIDAnnotation.class);
+        String id = canonicalFilename + '-' + ((CoreLabel) t.label()).get(CoreAnnotations.SentenceIDAnnotation.class);
         treeMap.put(id, t);
       }
 
@@ -126,16 +126,16 @@ public final class SplitCanditoTrees {
   static void preprocessMWEs(Map<String, Tree> treeMap) {
 
     TwoDimensionalCounter<String,String> labelTerm =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
     TwoDimensionalCounter<String,String> termLabel =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
     TwoDimensionalCounter<String,String> labelPreterm =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
     TwoDimensionalCounter<String,String> pretermLabel =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
 
     TwoDimensionalCounter<String,String> unigramTagger =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
 
     for (Tree t : treeMap.values()) {
       MWEPreprocessor.countMWEStatistics(t, unigramTagger,
@@ -149,7 +149,7 @@ public final class SplitCanditoTrees {
   }
 
   public static void mungeLeaves(Tree tree, boolean lemmasAsLeaves, boolean addMorphoToLeaves) {
-    List<Label> labels = tree.yield();
+    List<? extends Label> labels = tree.yield();
     
     for (Label label : labels) {
       ++nTokens;
@@ -178,7 +178,7 @@ public final class SplitCanditoTrees {
 
       if (addMorphoToLeaves) {
         String morphStr = coreLabel.originalText();
-        if(morphStr == null || morphStr.equals("")) {
+        if(morphStr == null || morphStr.isEmpty()) {
           morphStr = MorphoFeatureSpecification.NO_ANALYSIS;
         } else {
           ++nMorphAnalyses;
@@ -200,7 +200,7 @@ public final class SplitCanditoTrees {
   }
 
   private static void replacePOSTags(Tree tree) {
-    List<Label> yield = tree.yield();
+    List<? extends Label> yield = tree.yield();
     List<Label> preYield = tree.preTerminalYield();
 
     assert yield.size() == preYield.size();
@@ -209,18 +209,18 @@ public final class SplitCanditoTrees {
     for(int i = 0; i < yield.size(); i++) {
       // Morphological Analysis
       String morphStr = ((CoreLabel) yield.get(i)).originalText();
-      if (morphStr == null || morphStr.equals("")) {
+      if (morphStr == null || morphStr.isEmpty()) {
         morphStr = preYield.get(i).value();
         // POS subcategory
         String subCat = ((CoreLabel) yield.get(i)).category();
         if (subCat != null && subCat != "") {
-          morphStr += "-" + subCat + "--";
+          morphStr += '-' + subCat + "--";
         } else {
           morphStr += "---";
         }
       }
       MorphoFeatures feats = spec.strToFeatures(morphStr);
-      if(feats.getAltTag() != null && !feats.getAltTag().equals("")) {
+      if(feats.getAltTag() != null && !feats.getAltTag().isEmpty()) {
         CoreLabel cl = (CoreLabel) preYield.get(i);
         cl.setValue(feats.getAltTag());
         cl.setTag(feats.getAltTag());
@@ -241,8 +241,8 @@ public final class SplitCanditoTrees {
                                   Map<String, Tree> treeMap)
     throws IOException
   {
-    Queue<Integer> fSizeQueue = new LinkedList<Integer>(Arrays.asList(fSizes));
-    Queue<String> fNameQueue = new LinkedList<String>(Arrays.asList(fNames));
+    Queue<Integer> fSizeQueue = new LinkedList<>(Arrays.asList(fSizes));
+    Queue<String> fNameQueue = new LinkedList<>(Arrays.asList(fNames));
 
     TregexPattern pBadTree = TregexPattern.compile("@SENT <: @PUNC");
     TregexPattern pBadTree2 = TregexPattern.compile("@SENT <1 @PUNC <2 @PUNC !<3 __");
@@ -319,7 +319,7 @@ public final class SplitCanditoTrees {
    */
   private static String treeToMorfette(Tree tree) {
     StringBuilder sb = new StringBuilder();
-    List<Label> yield = tree.yield();
+    List<? extends Label> yield = tree.yield();
     List<Label> tagYield = tree.preTerminalYield();
     assert yield.size() == tagYield.size();
     int listLen = yield.size();
@@ -327,11 +327,11 @@ public final class SplitCanditoTrees {
       CoreLabel token = (CoreLabel) yield.get(i);
       CoreLabel tag = (CoreLabel) tagYield.get(i);
       String morphStr = token.originalText();
-      if (morphStr == null || morphStr.equals("")) {
+      if (morphStr == null || morphStr.isEmpty()) {
         morphStr = tag.value();
       }
       String lemma = token.lemma();
-      if (lemma == null || lemma.equals("")) {
+      if (lemma == null || lemma.isEmpty()) {
         lemma = token.value();
       }
       sb.append(String.format("%s %s %s%n", token.value(), lemma, morphStr));
@@ -358,8 +358,7 @@ public final class SplitCanditoTrees {
     System.err.println("Read " + ids.size() + " ids");
 
     String[] newArgs = new String[args.length - 1];
-    for (int i = 1; i < args.length; ++i)
-      newArgs[i - 1] = args[i];
+    System.arraycopy(args, 1, newArgs, 0, args.length - 1);
 
     Map<String, Tree> treeMap = readTrees(newArgs);
     System.err.println("Read " + treeMap.size() + " trees");

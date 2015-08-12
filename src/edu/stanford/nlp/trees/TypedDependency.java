@@ -114,7 +114,7 @@ public class TypedDependency implements Comparable<TypedDependency>, Serializabl
   }
 
   public String toString(CoreLabel.OutputFormat format) {
-    return reln + "(" + gov.toString(format) + ", " + dep.toString(format) + ")";
+    return reln + "(" + gov.toString(format) + ", " + dep.toString(format) + ')';
   }
 
   public int compareTo(TypedDependency tdArg) {

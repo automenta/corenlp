@@ -775,7 +775,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
     String pShape = p.getString(CoreAnnotations.ShapeAnnotation.class);
     String nShape = n.getString(CoreAnnotations.ShapeAnnotation.class);
 
-    Collection<String> featuresC = new ArrayList<String>();
+    Collection<String> featuresC = new ArrayList<>();
 
     if (flags.useDistSim) {
       distSimAnnotate(cInfo);
@@ -841,17 +841,17 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
 
       if (flags.useLemmas) {
         String lem = c.getString(CoreAnnotations.LemmaAnnotation.class);
-        if (! "".equals(lem)) {
+        if (lem != null && !lem.isEmpty()) {
           featuresC.add(lem + "-LEM");
         }
       }
       if (flags.usePrevNextLemmas) {
         String plem = p.getString(CoreAnnotations.LemmaAnnotation.class);
         String nlem = n.getString(CoreAnnotations.LemmaAnnotation.class);
-        if (! "".equals(plem)) {
+        if (plem != null && !plem.isEmpty()) {
           featuresC.add(plem + "-PLEM");
         }
-        if (! "".equals(nlem)) {
+        if (nlem != null && !nlem.isEmpty()) {
           featuresC.add(nlem + "-NLEM");
         }
       }
@@ -1202,10 +1202,10 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
         // be more narrow and would clobber other potential uses
         featuresC.add(c.get(CoreAnnotations.HeadWordStringAnnotation.class) + "-HW");
         if (flags.useTags) {
-          featuresC.add(c.get(CoreAnnotations.HeadWordStringAnnotation.class) + "-" + c.getString(CoreAnnotations.PartOfSpeechAnnotation.class) + "-HW-T");
+          featuresC.add(c.get(CoreAnnotations.HeadWordStringAnnotation.class) + '-' + c.getString(CoreAnnotations.PartOfSpeechAnnotation.class) + "-HW-T");
         }
         if (flags.useDistSim) {
-          featuresC.add(c.get(CoreAnnotations.HeadWordStringAnnotation.class) + "-" + c.get(CoreAnnotations.DistSimAnnotation.class) + "-HW-DISTSIM");
+          featuresC.add(c.get(CoreAnnotations.HeadWordStringAnnotation.class) + '-' + c.get(CoreAnnotations.DistSimAnnotation.class) + "-HW-DISTSIM");
         }
       }
 
@@ -1223,7 +1223,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
         // TODO: neat idea, but this would need to be set somewhere.
         // Probably should have its own annotation as this one would
         // be more narrow and would clobber other potential uses
-        featuresC.add(c.get(CoreAnnotations.HeadWordStringAnnotation.class) + "-" + c.get(CoreAnnotations.GovernorAnnotation.class) + "-HW_GW");
+        featuresC.add(c.get(CoreAnnotations.HeadWordStringAnnotation.class) + '-' + c.get(CoreAnnotations.GovernorAnnotation.class) + "-HW_GW");
       }
 
       if (flags.useClassFeature) {
@@ -1241,7 +1241,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
           subs = wordToSubstrings.get(cWord);
         }
         if (subs == null) {
-          subs = new ArrayList<String>();
+          subs = new ArrayList<>();
           String word = '<' + cWord + '>';
           if (flags.lowercaseNGrams) {
             word = word.toLowerCase();
@@ -1417,7 +1417,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
       if (flags.useNGrams) {
         Collection<String> subs = wordToSubstrings.get(cWord);
         if (subs == null) {
-          subs = new ArrayList<String>();
+          subs = new ArrayList<>();
           String word = '<' + cWord + '>';
           if (flags.lowercaseNGrams) {
             word = word.toLowerCase();
@@ -1594,11 +1594,11 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
     // NER tag annotations from a previous NER system
     if (c.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class) != null) {
       featuresC.add(c.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class)+ "-CStackedNERTag");
-      featuresC.add(cWord + "-" + c.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class)+ "-WCStackedNERTag");
+      featuresC.add(cWord + '-' + c.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class)+ "-WCStackedNERTag");
 
       if (flags.useNext) {
         featuresC.add(c.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class) + '-' + n.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class) + "-CNStackedNERTag");
-        featuresC.add(cWord + "-" + c.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class) + '-' + n.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class) + "-WCNStackedNERTag");
+        featuresC.add(cWord + '-' + c.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class) + '-' + n.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class) + "-WCNStackedNERTag");
 
         if (flags.usePrev) {
           featuresC.add(p.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class) + '-' + c.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class) + '-' + n.get(CoreAnnotations.StackedNamedEntityTagAnnotation.class) + "-PCNStackedNERTag");
@@ -1683,7 +1683,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
     String pDS = p.getString(CoreAnnotations.DistSimAnnotation.class);
     String cShape = c.getString(CoreAnnotations.ShapeAnnotation.class);
     String pShape = p.getString(CoreAnnotations.ShapeAnnotation.class);
-    Collection<String> featuresCpC = new ArrayList<String>();
+    Collection<String> featuresCpC = new ArrayList<>();
 
     if (flags.noEdgeFeature)
       return featuresCpC;
@@ -1788,7 +1788,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
         if (flags.useYetMoreCpCShapes) {
           String p2Shape = cInfo.get(loc - 2).getString(CoreAnnotations.ShapeAnnotation.class);
           featuresCpC.add(p2Shape + '-' + pShape + '-' + cShape + "-YMS");
-          featuresCpC.add(pShape + '-' + cShape + "-" + n.getString(CoreAnnotations.ShapeAnnotation.class) + "-YMSPCN");
+          featuresCpC.add(pShape + '-' + cShape + '-' + n.getString(CoreAnnotations.ShapeAnnotation.class) + "-YMSPCN");
         }
       }
 
@@ -1869,7 +1869,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
     String cWord = getWord(c);
     String pWord = getWord(p);
     String p2Word = getWord(p2);
-    Collection<String> featuresCp2C = new ArrayList<String>();
+    Collection<String> featuresCp2C = new ArrayList<>();
 
     if (flags.useMoreAbbr) {
       featuresCp2C.add(p2.get(CoreAnnotations.AbbrAnnotation.class) + '-' + c.get(CoreAnnotations.AbbrAnnotation.class) + "-P2ABBRANS");
@@ -1914,7 +1914,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
     String pWord = getWord(p);
     String p2Word = getWord(p2);
     String p3Word = getWord(p3);
-    Collection<String> featuresCp3C = new ArrayList<String>();
+    Collection<String> featuresCp3C = new ArrayList<>();
 
     if (flags.useParenMatching) {
       if (flags.useReverse) {
@@ -1948,7 +1948,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
     String p3Word = getWord(p3);
     String p4Word = getWord(p4);
 
-    Collection<String> featuresCp4C = new ArrayList<String>();
+    Collection<String> featuresCp4C = new ArrayList<>();
 
     if (flags.useParenMatching) {
       if (flags.useReverse) {
@@ -1983,7 +1983,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
     String p3Word = getWord(p3);
     String p4Word = getWord(p4);
     String p5Word = getWord(p5);
-    Collection<String> featuresCp5C = new ArrayList<String>();
+    Collection<String> featuresCp5C = new ArrayList<>();
 
     if (flags.useParenMatching) {
       if (flags.useReverse) {
@@ -2012,7 +2012,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
     String pWord = getWord(p);
     // String p2Word = getWord(p2);
 
-    Collection<String> featuresCpCp2C = new ArrayList<String>();
+    Collection<String> featuresCpCp2C = new ArrayList<>();
 
     if (flags.useInternal && flags.useExternal) {
 
@@ -2098,7 +2098,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
     CoreLabel p2 = cInfo.get(loc - 2);
     CoreLabel p3 = cInfo.get(loc - 3);
 
-    Collection<String> featuresCpCp2Cp3C = new ArrayList<String>();
+    Collection<String> featuresCpCp2Cp3C = new ArrayList<>();
 
     if (flags.useTaggySequences) {
       if (flags.useTags) {
@@ -2132,7 +2132,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
   }
 
   protected Collection<String> featuresCpCp2Cp3Cp4C(PaddedList<IN> cInfo, int loc) {
-    Collection<String> featuresCpCp2Cp3Cp4C = new ArrayList<String>();
+    Collection<String> featuresCpCp2Cp3Cp4C = new ArrayList<>();
 
     CoreLabel p = cInfo.get(loc - 1);
 
@@ -2152,7 +2152,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
   protected Collection<String> featuresCnC(PaddedList<IN> cInfo, int loc) {
     CoreLabel c = cInfo.get(loc);
 
-    Collection<String> featuresCnC = new ArrayList<String>();
+    Collection<String> featuresCnC = new ArrayList<>();
 
     if (flags.useNext) {
       if (flags.useSequences && flags.useNextSequences) {
@@ -2168,7 +2168,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
   protected Collection<String> featuresCpCnC(PaddedList<IN> cInfo, int loc) {
     CoreLabel c = cInfo.get(loc);
 
-    Collection<String> featuresCpCnC = new ArrayList<String>();
+    Collection<String> featuresCpCnC = new ArrayList<>();
 
     if (flags.useNext && flags.usePrev) {
       if (flags.useSequences && flags.usePrevSequences && flags.useNextSequences) {
@@ -2263,7 +2263,7 @@ public class NERFeatureFactory<IN extends CoreLabel> extends FeatureFactory<IN> 
   public void initGazette() {
     try {
       // read in gazettes
-      if (flags.gazettes == null) { flags.gazettes = new ArrayList<String>(); }
+      if (flags.gazettes == null) { flags.gazettes = new ArrayList<>(); }
       List<String> gazettes = flags.gazettes;
       for (String gazetteFile : gazettes) {
         BufferedReader r = IOUtils.readerFromString(gazetteFile, flags.inputEncoding);

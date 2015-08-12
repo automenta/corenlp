@@ -53,11 +53,11 @@ public interface DataSeries {
     public void setDomain(DataSeries domain) { this.domain = domain; }
 
     public List<Pair<Double, Double>> toListPairDouble() {
-      List<Pair<Double, Double>> list = new ArrayList<Pair<Double, Double>>();
+      List<Pair<Double, Double>> list = new ArrayList<>();
       for (int i = 0; i < size(); i++) {
         double x = (domain() != null ? domain().get(i) : (double) i);
         double y = get(i);
-        list.add(new Pair<Double, Double>(x, y));
+        list.add(new Pair<>(x, y));
       }
       return list;
     }
@@ -119,11 +119,12 @@ public interface DataSeries {
 
   public static class ArrayDataSeries extends AbstractDataSeries {
 
+    public static final double[] ZERO = new double[0];
     private double[] data;
 
     public ArrayDataSeries(String name) { 
       setName(name);
-      setData(new double[0]);
+      setData(ZERO);
     }
 
     public ArrayDataSeries(String name, double[] data) { 
@@ -164,7 +165,7 @@ public interface DataSeries {
 
     public ListDataSeries(String name) { 
       setName(name);
-      setData(new ArrayList<Double>());
+      setData(new ArrayList<>());
     }
 
     public ListDataSeries(String name, List<Double> data) { 
@@ -325,7 +326,7 @@ public interface DataSeries {
         if (flag) name.append(", "); else flag = true;
         name.append(series.name());
       }
-      name.append(")");
+      name.append(')');
       return name.toString();
     }
 

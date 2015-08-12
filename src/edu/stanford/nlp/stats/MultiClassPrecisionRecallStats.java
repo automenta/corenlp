@@ -56,8 +56,8 @@ public class MultiClassPrecisionRecallStats<L> implements Scorer<L> {
 
   public <F> double score(Classifier<L,F> classifier, GeneralDataset<L,F> data) {
 
-    List<L> guesses = new ArrayList<L>();
-    List<L> labels = new ArrayList<L>();
+    List<L> guesses = new ArrayList<>();
+    List<L> labels = new ArrayList<>();
 
     for (int i = 0; i < data.size(); i++) {
       Datum<L, F> d = data.getRVFDatum(i);
@@ -71,7 +71,7 @@ public class MultiClassPrecisionRecallStats<L> implements Scorer<L> {
       labels.add(labelIndex.get(labelsArr[i]));
     }
 
-    labelIndex = new HashIndex<L>();
+    labelIndex = new HashIndex<>();
     labelIndex.addAll(data.labelIndex().objectsList());
     labelIndex.addAll(classifier.labels());
 
@@ -113,9 +113,9 @@ public class MultiClassPrecisionRecallStats<L> implements Scorer<L> {
   public Triple<Double, Integer, Integer> getPrecisionInfo(L label) {
     int i = labelIndex.indexOf(label);
     if (tpCount[i] == 0 && fpCount[i] == 0) {
-      return new Triple<Double, Integer, Integer>(1.0, tpCount[i], fpCount[i]);
+      return new Triple<>(1.0, tpCount[i], fpCount[i]);
     }
-    return new Triple<Double, Integer, Integer>((((double) tpCount[i]) / (tpCount[i] + fpCount[i])), tpCount[i], fpCount[i]);
+    return new Triple<>((((double) tpCount[i]) / (tpCount[i] + fpCount[i])), tpCount[i], fpCount[i]);
   }
 
   public double getPrecision(L label) {
@@ -129,7 +129,7 @@ public class MultiClassPrecisionRecallStats<L> implements Scorer<L> {
       tp += tpCount[i];
       fp += fpCount[i];
     }
-    return new Triple<Double, Integer, Integer>((((double) tp) / (tp + fp)), tp, fp);
+    return new Triple<>((((double) tp) / (tp + fp)), tp, fp);
   }
 
   public double getPrecision() {
@@ -143,22 +143,22 @@ public class MultiClassPrecisionRecallStats<L> implements Scorer<L> {
     NumberFormat nf = NumberFormat.getNumberInstance();
     nf.setMaximumFractionDigits(numDigits);
     Triple<Double, Integer, Integer> prec = getPrecisionInfo();
-    return nf.format(prec.first()) + "  (" + prec.second() + "/" + (prec.second() + prec.third()) + ")";
+    return nf.format(prec.first()) + "  (" + prec.second() + '/' + (prec.second() + prec.third()) + ')';
   }
 
   public String getPrecisionDescription(int numDigits, L label) {
     NumberFormat nf = NumberFormat.getNumberInstance();
     nf.setMaximumFractionDigits(numDigits);
     Triple<Double, Integer, Integer> prec = getPrecisionInfo(label);
-    return nf.format(prec.first()) + "  (" + prec.second() + "/" + (prec.second() + prec.third()) + ")";
+    return nf.format(prec.first()) + "  (" + prec.second() + '/' + (prec.second() + prec.third()) + ')';
   }
 
   public Triple<Double, Integer, Integer> getRecallInfo(L label) {
     int i = labelIndex.indexOf(label);
     if (tpCount[i] == 0 && fnCount[i] == 0) {
-      return new Triple<Double, Integer, Integer>(1.0, tpCount[i], fnCount[i]);
+      return new Triple<>(1.0, tpCount[i], fnCount[i]);
     }
-    return new Triple<Double, Integer, Integer>((((double) tpCount[i]) / (tpCount[i] + fnCount[i])), tpCount[i], fnCount[i]);
+    return new Triple<>((((double) tpCount[i]) / (tpCount[i] + fnCount[i])), tpCount[i], fnCount[i]);
   }
 
   public double getRecall(L label) {
@@ -172,7 +172,7 @@ public class MultiClassPrecisionRecallStats<L> implements Scorer<L> {
       tp += tpCount[i];
       fn += fnCount[i];
     }
-    return new Triple<Double, Integer, Integer>((((double) tp) / (tp + fn)), tp, fn);
+    return new Triple<>((((double) tp) / (tp + fn)), tp, fn);
   }
 
   public double getRecall() {
@@ -186,14 +186,14 @@ public class MultiClassPrecisionRecallStats<L> implements Scorer<L> {
     NumberFormat nf = NumberFormat.getNumberInstance();
     nf.setMaximumFractionDigits(numDigits);
     Triple<Double, Integer, Integer> recall = getRecallInfo();
-    return nf.format(recall.first()) + "  (" + recall.second() + "/" + (recall.second() + recall.third()) + ")";
+    return nf.format(recall.first()) + "  (" + recall.second() + '/' + (recall.second() + recall.third()) + ')';
   }
 
   public String getRecallDescription(int numDigits, L label) {
     NumberFormat nf = NumberFormat.getNumberInstance();
     nf.setMaximumFractionDigits(numDigits);
     Triple<Double, Integer, Integer> recall = getRecallInfo(label);
-    return nf.format(recall.first()) + "  (" + recall.second() + "/" + (recall.second() + recall.third()) + ")";
+    return nf.format(recall.first()) + "  (" + recall.second() + '/' + (recall.second() + recall.third()) + ')';
   }
 
   public double getFMeasure(L label) {
@@ -229,18 +229,18 @@ public class MultiClassPrecisionRecallStats<L> implements Scorer<L> {
    * Returns a String summarizing F1 that will print nicely.
    */
   public String getDescription(int numDigits) {
-    StringBuffer sb = new StringBuffer();
-    sb.append("--- PR Stats ---").append("\n");
+    StringBuilder sb = new StringBuilder();
+    sb.append("--- PR Stats ---").append('\n');
     for (L label : labelIndex) {
       if (label == null || label.equals(negLabel)) { continue; }
       sb.append("** ").append(label.toString()).append(" **\n");
-      sb.append("\tPrec:   ").append(getPrecisionDescription(numDigits, label)).append("\n");
-      sb.append("\tRecall: ").append(getRecallDescription(numDigits, label)).append("\n");
-      sb.append("\tF1:     ").append(getF1Description(numDigits, label)).append("\n");
+      sb.append("\tPrec:   ").append(getPrecisionDescription(numDigits, label)).append('\n');
+      sb.append("\tRecall: ").append(getRecallDescription(numDigits, label)).append('\n');
+      sb.append("\tF1:     ").append(getF1Description(numDigits, label)).append('\n');
     }
     sb.append("** Overall **\n");
-    sb.append("\tPrec:   ").append(getPrecisionDescription(numDigits)).append("\n");
-    sb.append("\tRecall: ").append(getRecallDescription(numDigits)).append("\n");
+    sb.append("\tPrec:   ").append(getPrecisionDescription(numDigits)).append('\n');
+    sb.append("\tRecall: ").append(getRecallDescription(numDigits)).append('\n');
     sb.append("\tF1:     ").append(getF1Description(numDigits));
     return sb.toString();
   }

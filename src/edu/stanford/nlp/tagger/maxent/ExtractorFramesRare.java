@@ -256,7 +256,7 @@ public class ExtractorFramesRare {
    *  @return A set of extractors for rare word features
    */
   protected static Extractor[] getExtractorFramesRare(String identifier, TTags ttags) {
-    ArrayList<Extractor> extrs = new ArrayList<Extractor>();
+    ArrayList<Extractor> extrs = new ArrayList<>();
     List<String> args = StringUtils.valueSplit(identifier, "[a-zA-Z0-9]*(?:\\([^)]*\\))?", "\\s*,\\s*");
 
     for (String arg : args) {
@@ -1211,7 +1211,7 @@ class ExtractorWordSuff extends RareExtractor {
 
   @Override
   public String toString() {
-    return StringUtils.getShortClassName(this) + "(len" + num + ",w" + position + ")";
+    return StringUtils.getShortClassName(this) + "(len" + num + ",w" + position + ')';
   }
 
   @Override public boolean isLocal() { return (position == 0); }
@@ -1245,7 +1245,7 @@ class ExtractorWordPref extends RareExtractor {
 
   @Override
   public String toString() {
-    return StringUtils.getShortClassName(this) + "(len" + num + ",w" + position + ")";
+    return StringUtils.getShortClassName(this) + "(len" + num + ",w" + position + ')';
   }
 
   @Override public boolean isLocal() { return (position == 0); }
@@ -1349,7 +1349,7 @@ class CtbPreDetector extends RareExtractor {
   String extract(History h, PairsHolder pH) {
     String s = TestSentence.toNice(pH.getWord(h, position));
 
-    if (!s.equals("") && CtbDict.getTagPre(t1, s.substring(0, 1)).equals("1"))
+    if (!s.isEmpty() && CtbDict.getTagPre(t1, s.substring(0, 1)).equals("1"))
       return "1:"+t1;
     return "0:"+t1;
   }
@@ -1380,7 +1380,7 @@ class CtbSufDetector extends RareExtractor {
   String extract(History h, PairsHolder pH) {
     String s=TestSentence.toNice(pH.getWord(h, position));
 
-    if(!s.equals("") && CtbDict.getTagSuf(t1, s.substring(s.length()-1, s.length())).equals("1"))
+    if(!s.isEmpty() && CtbDict.getTagSuf(t1, s.substring(s.length()-1, s.length())).equals("1"))
       return "1:"+t1;
     return "0:"+t1;
   }

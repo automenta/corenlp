@@ -22,6 +22,7 @@ import edu.stanford.nlp.util.Generics;
  */
 public class UniversalPOSMapper extends LDCPosMapper {
 
+  public static final String[] EMPTY = new String[0];
   private final Map<String,String> universalMap;
   private final MorphoFeatureSpecification morphoSpec;
   
@@ -62,7 +63,7 @@ public class UniversalPOSMapper extends LDCPosMapper {
   @Override
   public void setup(File path, String... options) {
     //Setup the Bies tag mapping
-    super.setup(path, new String[0]);
+    super.setup(path, EMPTY);
     
     for(String opt : options) {
       String[] optToks = opt.split(":");
@@ -86,7 +87,7 @@ public class UniversalPOSMapper extends LDCPosMapper {
       reader = new LineNumberReader(new FileReader(path));
       
       for(String line; (line = reader.readLine()) != null;) {
-        if(line.trim().equals("")) continue;
+        if(line.trim().isEmpty()) continue;
         
         String[] toks = line.trim().split("\\s+");
         if(toks.length != 2)

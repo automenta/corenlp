@@ -47,7 +47,7 @@ public class AnnotatorFactories {
         if (keepNewline) {
           extraOptions = "tokenizeNLs,";
         }
-        return annotatorImplementation.tokenizer(properties, false, extraOptions);
+        return AnnotatorImplementations.tokenizer(properties, false, extraOptions);
       }
 
       @Override
@@ -132,7 +132,7 @@ public class AnnotatorFactories {
                 CleanXmlAnnotator.DEFAULT_SECTION_ANNOTATIONS_PATTERNS);
         String ssplitDiscardTokens =
             properties.getProperty("clean.ssplitDiscardTokens");
-        CleanXmlAnnotator annotator = annotatorImplementation.cleanXML(properties, xmlTags,
+        CleanXmlAnnotator annotator = AnnotatorImplementations.cleanXML(properties, xmlTags,
             sentenceEndingTags,
             dateTags,
             allowFlawed);
@@ -257,7 +257,7 @@ public class AnnotatorFactories {
           String nlsb = properties.getProperty(StanfordCoreNLP.NEWLINE_IS_SENTENCE_BREAK_PROPERTY,
               StanfordCoreNLP.DEFAULT_NEWLINE_IS_SENTENCE_BREAK);
 
-          return annotatorImplementation.wordToSentences(properties,
+          return AnnotatorImplementations.wordToSentences(properties,
               false, boundaryTokenRegex, boundariesToDiscard, htmlElementsToDiscard,
               nlsb, boundaryMultiTokenRegex, tokenRegexesToDiscard);
         }
@@ -287,7 +287,7 @@ public class AnnotatorFactories {
       @Override
       public Annotator create() {
         try {
-          return annotatorImplementation.posTagger(properties);
+          return AnnotatorImplementations.posTagger(properties);
         } catch (Exception e) {
           throw new RuntimeException(e);
         }
@@ -309,7 +309,7 @@ public class AnnotatorFactories {
       private static final long serialVersionUID = 1L;
       @Override
       public Annotator create() {
-        return annotatorImplementation.morpha(properties, false);
+        return AnnotatorImplementations.morpha(properties, false);
       }
 
       @Override
@@ -330,7 +330,7 @@ public class AnnotatorFactories {
       @Override
       public Annotator create() {
         try {
-          return annotatorImplementation.ner(properties);
+          return AnnotatorImplementations.ner(properties);
         } catch (IOException e) {
           throw new RuntimeIOException(e);
         }
@@ -359,7 +359,7 @@ public class AnnotatorFactories {
       private static final long serialVersionUID = 1L;
       @Override
       public Annotator create() {
-        return annotatorImplementation.tokensRegexNER(properties, Annotator.STANFORD_REGEXNER);
+        return AnnotatorImplementations.tokensRegexNER(properties, Annotator.STANFORD_REGEXNER);
       }
 
       @Override
@@ -378,7 +378,7 @@ public class AnnotatorFactories {
       private static final long serialVersionUID = 1L;
       @Override
       public Annotator create() {
-        return annotatorImplementation.mentions(properties, Annotator.STANFORD_ENTITY_MENTIONS);
+        return AnnotatorImplementations.mentions(properties, Annotator.STANFORD_ENTITY_MENTIONS);
       }
 
       @Override
@@ -397,7 +397,7 @@ public class AnnotatorFactories {
       private static final long serialVersionUID = 1L;
       @Override
       public Annotator create() {
-        return annotatorImplementation.gender(properties, false);
+        return AnnotatorImplementations.gender(properties, false);
       }
 
       @Override
@@ -422,7 +422,7 @@ public class AnnotatorFactories {
         String model = properties.getProperty("truecase.model", DefaultPaths.DEFAULT_TRUECASE_MODEL);
         String bias = properties.getProperty("truecase.bias", TrueCaseAnnotator.DEFAULT_MODEL_BIAS);
         String mixed = properties.getProperty("truecase.mixedcasefile", DefaultPaths.DEFAULT_TRUECASE_DISAMBIGUATION_LIST);
-        return annotatorImplementation.trueCase(properties, model, bias, mixed, false);
+        return AnnotatorImplementations.trueCase(properties, model, bias, mixed, false);
       }
 
       @Override
@@ -450,7 +450,7 @@ public class AnnotatorFactories {
 
       @Override
       public Annotator create() {
-        return annotatorImplementation.parse(properties);
+        return AnnotatorImplementations.parse(properties);
       }
 
       @Override
@@ -483,7 +483,7 @@ public class AnnotatorFactories {
 
       @Override
       public Annotator create() {
-        return annotatorImplementation.coref(properties);
+        return AnnotatorImplementations.coref(properties);
       }
 
       @Override
@@ -501,7 +501,7 @@ public class AnnotatorFactories {
 
       @Override
       public Annotator create() {
-        return annotatorImplementation.relations(properties);
+        return AnnotatorImplementations.relations(properties);
       }
 
       @Override
@@ -522,7 +522,7 @@ public class AnnotatorFactories {
 
       @Override
       public Annotator create() {
-        return annotatorImplementation.sentiment(properties, StanfordCoreNLP.STANFORD_SENTIMENT);
+        return AnnotatorImplementations.sentiment(properties, StanfordCoreNLP.STANFORD_SENTIMENT);
       }
 
       @Override
@@ -557,7 +557,7 @@ public class AnnotatorFactories {
       private static final long serialVersionUID = 1L;
       @Override
       public Annotator create() {
-        return annotatorImpl.dependencies(properties);
+        return AnnotatorImplementations.dependencies(properties);
       }
 
       @Override
@@ -576,7 +576,7 @@ public class AnnotatorFactories {
 
       @Override
       public Annotator create() {
-        return annotatorImpl.natlog(properties);
+        return AnnotatorImplementations.natlog(properties);
       }
 
       @Override
@@ -595,7 +595,7 @@ public class AnnotatorFactories {
 
       @Override
       public Annotator create() {
-        return annotatorImpl.openie(properties);
+        return AnnotatorImplementations.openie(properties);
       }
 
       @Override
@@ -614,7 +614,7 @@ public class AnnotatorFactories {
 
       @Override
       public Annotator create() {
-        return annotatorImpl.quote(properties);
+        return AnnotatorImplementations.quote(properties);
       }
 
       @Override

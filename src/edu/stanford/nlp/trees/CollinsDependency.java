@@ -81,7 +81,7 @@ public class CollinsDependency implements Dependency<CoreLabel, CoreLabel, Strin
 	 * @return A set of dependencies
 	 */
 	private static Set<CollinsDependency> extractFromTree(Tree t, String startSymbol, HeadFinder hf, boolean normPOS) {
-		if(t == null || startSymbol.equals("") || hf == null) return null;
+		if(t == null || startSymbol.isEmpty() || hf == null) return null;
 
 		final Set<CollinsDependency> deps = Generics.newHashSet();
 

@@ -81,7 +81,7 @@ public class PatternsForEachTokenDB<E extends Pattern> extends PatternsForEachTo
       stmt.execute(query);
       stmt.close();
       conn.close();} catch (SQLException e) {
-      throw new RuntimeException("Error executing query " + query + "\n" + e);
+      throw new RuntimeException("Error executing query " + query + '\n' + e);
     }
   }
 
@@ -107,9 +107,7 @@ public class PatternsForEachTokenDB<E extends Pattern> extends PatternsForEachTo
       conn.commit();
       pstmt.close();
       conn.close();
-    }catch(SQLException e){
-      throw new RuntimeException(e);
-    } catch (IOException e) {
+    }catch(SQLException | IOException e){
       throw new RuntimeException(e);
     }
   }
@@ -132,9 +130,7 @@ public class PatternsForEachTokenDB<E extends Pattern> extends PatternsForEachTo
 
     pstmt.close();
       conn.close();
-    } catch (SQLException e) {
-      throw new RuntimeException(e);
-    } catch (IOException e) {
+    } catch (SQLException | IOException e) {
       throw new RuntimeException(e);
     }
   }
@@ -267,7 +263,7 @@ public class PatternsForEachTokenDB<E extends Pattern> extends PatternsForEachTo
 
 
 
-  private PreparedStatement getPreparedStmt(Connection conn) throws SQLException {
+  private static PreparedStatement getPreparedStmt(Connection conn) throws SQLException {
     conn.setAutoCommit(false);
     //return conn.prepareStatement("UPDATE " + tableName + " SET patterns = ? WHERE sentid = ? and tokenid = ?; " +
     //  "INSERT INTO " + tableName + " (sentid, tokenid, patterns) (SELECT ?,?,? WHERE NOT EXISTS (SELECT sentid FROM " + tableName + " WHERE sentid  =? and tokenid=?));");
@@ -308,10 +304,10 @@ public class PatternsForEachTokenDB<E extends Pattern> extends PatternsForEachTo
   try{
       Connection conn = SQLConnection.getConnection();
       //Map<Integer, Set<Integer>> pats = new ConcurrentHashMap<Integer, Set<Integer>>();
-      String query = "Select patterns from " + tableName + " where sentid=\'" + sentId + "\'";
+      String query = "Select patterns from " + tableName + " where sentid=\'" + sentId + '\'';
       Statement stmt = conn.createStatement();
       ResultSet rs = stmt.executeQuery(query);
-      Map<Integer, Set<E>> patsToken = new HashMap<Integer, Set<E>>();
+      Map<Integer, Set<E>> patsToken = new HashMap<>();
       if(rs.next()){
         byte[] st = (byte[]) rs.getObject(1);
         ByteArrayInputStream baip = new ByteArrayInputStream(st);
@@ -321,11 +317,7 @@ public class PatternsForEachTokenDB<E extends Pattern> extends PatternsForEachTo
       }
       conn.close();
       return patsToken;
-  }catch(SQLException e){
-    throw new RuntimeException(e);
-  } catch (ClassNotFoundException e) {
-    throw new RuntimeException(e);
-  } catch (IOException e) {
+  }catch(SQLException | IOException | ClassNotFoundException e){
     throw new RuntimeException(e);
   }
   }
@@ -484,7 +476,7 @@ public class PatternsForEachTokenDB<E extends Pattern> extends PatternsForEachTo
   @Override
   public Map<String, Map<Integer, Set<E>>> getPatternsForAllTokens(Collection<String> sampledSentIds) {
     try{
-      Map<String, Map<Integer, Set<E>>> pats = new HashMap<String, Map<Integer, Set<E>>>();
+      Map<String, Map<Integer, Set<E>>> pats = new HashMap<>();
       Connection conn = SQLConnection.getConnection();
       Iterator<String> iter = sampledSentIds.iterator();
       int totalNumberOfValuesLeftToBatch = sampledSentIds.size();
@@ -510,7 +502,7 @@ public class PatternsForEachTokenDB<E extends Pattern> extends PatternsForEachTo
           }
         }
         PreparedStatement stmt = conn.prepareStatement(
-          "select sentid, patterns from " + tableName + " where sentid in (" + inClause.toString() + ")");
+          "select sentid, patterns from " + tableName + " where sentid in (" + inClause + ')');
         for (int i=0; i < batchSize && iter.hasNext(); i++) {
           stmt.setString(i+1, iter.next());  // or whatever values you are trying to query by
         }
@@ -527,11 +519,7 @@ public class PatternsForEachTokenDB<E extends Pattern> extends PatternsForEachTo
       }
       conn.close();
       return pats;
-    }catch(SQLException e){
-      throw new RuntimeException(e);
-    } catch (ClassNotFoundException e) {
-      throw new RuntimeException(e);
-    } catch (IOException e) {
+    }catch(SQLException | IOException | ClassNotFoundException e){
       throw new RuntimeException(e);
     }
   }

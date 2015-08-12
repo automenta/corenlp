@@ -168,7 +168,7 @@ public class MatchesPanel extends JPanel implements ListSelectionListener {
 
     list.addMouseMotionListener(mouseListener);
     list.addMouseListener(mouseListener);
-    listeners = new ArrayList<MatchesPanelListener>();
+    listeners = new ArrayList<>();
     //layout
     this.setLayout(new BorderLayout());
     this.setBorder(BorderFactory.createTitledBorder(BorderFactory.createEmptyBorder(),"Matches: "));
@@ -184,7 +184,7 @@ public class MatchesPanel extends JPanel implements ListSelectionListener {
   }
 
   private static List<Tree> getTreebankAsList(Treebank tb) {
-    List<Tree> treeList = new ArrayList<Tree>();
+    List<Tree> treeList = new ArrayList<>();
     if (tb != null) {
       treeList.addAll(tb);
     }
@@ -253,10 +253,10 @@ public class MatchesPanel extends JPanel implements ListSelectionListener {
       }
     } else {
       int i = 0;
-      for (TreeFromFile t : matchedParts.keySet()) {
-        List<Tree> curMatches = matchedParts.get(t);
+      for (Map.Entry<TreeFromFile, List<Tree>> treeFromFileListEntry : matchedParts.entrySet()) {
+        List<Tree> curMatches = treeFromFileListEntry.getValue();
         for (Tree match : curMatches) {
-          newModel.addElement(new TreeFromFile(match, t.getFilename()));
+          newModel.addElement(new TreeFromFile(match, treeFromFileListEntry.getKey().getFilename()));
           i++;
           if (i >= maxMatches) break;
         }
@@ -284,7 +284,7 @@ public class MatchesPanel extends JPanel implements ListSelectionListener {
   public Pair<TreeFromFile, List<Tree>> getSelectedMatch() {
     if(!isEmpty()) {
       TreeFromFile selectedTree = (TreeFromFile) list.getSelectedValue();
-      return new Pair<TreeFromFile,List<Tree>>(selectedTree, matchedParts.get(selectedTree));
+      return new Pair<>(selectedTree, matchedParts.get(selectedTree));
     }
     else
       return null;
@@ -316,7 +316,7 @@ public class MatchesPanel extends JPanel implements ListSelectionListener {
     for (int i = 0, sz = list.getModel().getSize(); i < sz; i++) {
       String t = ((TreeFromFile) list.getModel().getElementAt(i)).getLabel().getText();
       sb.append(t);
-      sb.append("\n");
+      sb.append('\n');
     }
     return sb.toString();
   }

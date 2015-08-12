@@ -33,7 +33,7 @@ public class DistsimFeatureFactory extends FeatureFactory {
     String cluster = distsim.getMapping(word);
 
     features.add(featureName + "dis-" + cluster);
-    features.add(featureName + "disT-" + cluster + "-" + tag);
+    features.add(featureName + "disT-" + cluster + '-' + tag);
   }
 
   @Override

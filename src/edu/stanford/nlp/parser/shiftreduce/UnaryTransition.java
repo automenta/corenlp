@@ -120,7 +120,7 @@ public class UnaryTransition implements Transition {
 
   @Override
   public String toString() {
-    return "Unary" + (isRoot ? "*" : "") + "(" + label + ")";
+    return "Unary" + (isRoot ? "*" : "") + '(' + label + ')';
   }
 
   private static final long serialVersionUID = 1;  

@@ -53,7 +53,7 @@ public class Weight implements Serializable {
     return Float.intBitsToFloat((int) (pack & 0xFFFFFFFF));
   }
 
-  private long pack(int index, float score) {
+  private static long pack(int index, float score) {
     long pack = ((long) (Float.floatToIntBits(score))) & 0x00000000FFFFFFFFL;
     pack = pack | (((long) index) << 32);
     return pack;
@@ -135,9 +135,7 @@ public class Weight implements Serializable {
     }
 
     long[] newPacked = new long[packed.length + 1];
-    for (int i = 0; i < packed.length; ++i) {
-      newPacked[i] = packed[i];
-    }
+    System.arraycopy(packed, 0, newPacked, 0, packed.length);
     newPacked[packed.length] = pack(index, increment);
     packed = newPacked;
   }

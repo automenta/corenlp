@@ -31,7 +31,7 @@ public class ManipulateTopBracket {
     usage.append("Options:").append(nl);
     usage.append("  -v         : Verbose mode.").append(nl);
     usage.append("  -r         : Remove top bracket.").append(nl);
-    usage.append("  -l lang    : Select language settings from " + Language.langList).append(nl);
+    usage.append("  -l lang    : Select language settings from ").append(Language.langList).append(nl);
     usage.append("  -e enc     : Encoding.").append(nl);
     return usage.toString();
   }

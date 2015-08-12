@@ -90,14 +90,14 @@ public class DecimatedArabicDataset extends ATBArabicDataset {
 
         outFiles = Generics.newHashMap();
 
-        for(String keyForFile : outFilenames.keySet()) {
+        for(Map.Entry<String, String> stringStringEntry : outFilenames.entrySet()) {
 
-          curOutFileName = outFilenames.get(keyForFile);
+          curOutFileName = stringStringEntry.getValue();
 
           if(!makeFlatFile && curOutFileName.contains(flatExtension)) continue;
 
           outfile = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(curOutFileName),"UTF-8")));
-          outFiles.put(keyForFile, outfile);
+          outFiles.put(stringStringEntry.getKey(), outfile);
         }
 
       } catch (UnsupportedEncodingException e) {
@@ -109,8 +109,8 @@ public class DecimatedArabicDataset extends ATBArabicDataset {
     }
 
     public void closeOutputFiles() {
-      for(String keyForFile : outFiles.keySet())
-        outFiles.get(keyForFile).close();
+      for(Map.Entry<String, PrintWriter> stringPrintWriterEntry : outFiles.entrySet())
+        stringPrintWriterEntry.getValue().close();
     }
 
     public void visitTree(Tree t) {
@@ -148,9 +148,9 @@ public class DecimatedArabicDataset extends ATBArabicDataset {
     }
 
     public List<String> getFilenames() {
-      List<String> filenames = new ArrayList<String>();
-      for(String keyForFile : outFilenames.keySet())
-        filenames.add(outFilenames.get(keyForFile));
+      List<String> filenames = new ArrayList<>();
+      for(Map.Entry<String, String> stringStringEntry : outFilenames.entrySet())
+        filenames.add(stringStringEntry.getValue());
 
       return filenames;
     }

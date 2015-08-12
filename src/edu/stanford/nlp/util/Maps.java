@@ -51,8 +51,8 @@ public class Maps {
    */
   public static <X, Y, Z> Map<X, Z> compose(Map<X, Y> map1, Map<Y, Z> map2) {
     Map<X, Z> composedMap = Generics.newHashMap();
-    for (X key : map1.keySet()) {
-      composedMap.put(key, map2.get(map1.get(key)));
+    for (Entry<X, Y> xyEntry : map1.entrySet()) {
+      composedMap.put(xyEntry.getKey(), map2.get(xyEntry.getValue()));
     }
     return composedMap;
   }
@@ -91,7 +91,7 @@ public class Maps {
    * Sorts a list of entries.  This method is here since the entries might come from a Counter.
    */
   public static <K extends Comparable<? super K>, V> List<Map.Entry<K, V>> sortedEntries(Collection<Map.Entry<K, V>> entries) {
-    List<Entry<K,V>> entriesList = new ArrayList<Map.Entry<K, V>>(entries);
+    List<Entry<K,V>> entriesList = new ArrayList<>(entries);
     Collections.sort(entriesList, (e1, e2) -> e1.getKey().compareTo(e2.getKey()));
     return entriesList;
   }
@@ -107,17 +107,17 @@ public class Maps {
    * Stringifies a Map in a stable fashion.
    */
   public static <K extends Comparable<K>, V> void toStringSorted(Map<K, V> map, StringBuilder builder) {
-    builder.append("{");
+    builder.append('{');
     List<Entry<K,V>> sortedProperties = Maps.sortedEntries(map);
     int index = 0;
     for (Entry<K, V> entry : sortedProperties) {
       if (index > 0) {
         builder.append(", ");
       }
-      builder.append(entry.getKey()).append("=").append(entry.getValue());
+      builder.append(entry.getKey()).append('=').append(entry.getValue());
       index++;
     }
-    builder.append("}");
+    builder.append('}');
   }
 
   /**
@@ -156,7 +156,7 @@ public class Maps {
    * @return a submap corresponding to the indices
    */
   public static<T,V> Map<T, V> getAll(Map<T, V> map, Collection<T> indices){
-    Map<T,V> result = new HashMap<T,V>();
+    Map<T,V> result = new HashMap<>();
     for(T i: indices)
       if(map.containsKey(i)){
         result.put(i, map.get(i));

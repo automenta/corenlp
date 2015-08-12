@@ -37,19 +37,17 @@ public final class MungeTreesWithMorfetteAnalyses {
       try {
         reader = new BufferedReader(new InputStreamReader(new FileInputStream(filename), "UTF-8"));
         primeNext();
-      } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
-      } catch (FileNotFoundException e) {
+      } catch (UnsupportedEncodingException | FileNotFoundException e) {
         e.printStackTrace();
       }
     }
 
     private void primeNext() {
       try {
-        nextList = new ArrayList<CoreLabel>(40);
+        nextList = new ArrayList<>(40);
         for (String line; (line = reader.readLine()) != null; ++lineId) {
           line = line.trim();
-          if (line.equals("")) {
+          if (line.isEmpty()) {
             ++lineId;
             break;
           }
@@ -122,7 +120,7 @@ public final class MungeTreesWithMorfetteAnalyses {
       Iterator<List<CoreLabel>> morfetteItr = new MorfetteFileIterator(morfetteFile);
       for (Tree tree; (tree = tr.readTree()) != null && morfetteItr.hasNext();) {
         List<CoreLabel> analysis = morfetteItr.next();
-        List<Label> yield = tree.yield();
+        List<? extends Label> yield = tree.yield();
         assert analysis.size() == yield.size();
 
         int yieldLen = yield.size();
@@ -147,8 +145,6 @@ public final class MungeTreesWithMorfetteAnalyses {
       tr.close();
 
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();

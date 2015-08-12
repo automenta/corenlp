@@ -76,22 +76,22 @@ public class AceRelationMention extends AceMention {
   public String toXml(int offset) {
     StringBuffer buffer = new StringBuffer();
     appendOffset(buffer, offset);
-    buffer.append("<relation_mention ID=\"" + getId() + "\"");
+    buffer.append("<relation_mention ID=\"").append(getId()).append('"');
     if(mLexicalCondition != null)
-      buffer.append(" LEXICALCONDITION=\"" + mLexicalCondition + "\"");
+      buffer.append(" LEXICALCONDITION=\"").append(mLexicalCondition).append('"');
     buffer.append(">\n");
 
     buffer.append(mExtent.toXml("extent", offset + 2));
-    buffer.append("\n");
+    buffer.append('\n');
 
     AceRelationMentionArgument arg1 = getArgs()[0];
     AceRelationMentionArgument arg2 = getArgs()[1];
     if(arg1.getRole().equals("Arg-1")){ // left to right
-      buffer.append(arg1.toXml(offset + 2) + "\n");
-      buffer.append(arg2.toXml(offset + 2) + "\n");  
+      buffer.append(arg1.toXml(offset + 2)).append('\n');
+      buffer.append(arg2.toXml(offset + 2)).append('\n');
     } else { // right to left
-      buffer.append(arg2.toXml(offset + 2) + "\n");
-      buffer.append(arg1.toXml(offset + 2) + "\n");  
+      buffer.append(arg2.toXml(offset + 2)).append('\n');
+      buffer.append(arg1.toXml(offset + 2)).append('\n');
     }  
 
     appendOffset(buffer, offset);

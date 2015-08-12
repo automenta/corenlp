@@ -177,7 +177,7 @@ public abstract class DeterministicCorefSieve extends Sieve {
       skip = true; // An indefinite pronoun - unlikely to have an antecedent (e.g. "Some" say that... )
     }
     for(String indef : dict.indefinitePronouns){
-      if(m1.lowercaseNormalizedSpanString().startsWith(indef + " ")) {
+      if(m1.lowercaseNormalizedSpanString().startsWith(indef + ' ')) {
         skip = true; // A noun phrase starting with an indefinite adjective - unlikely to have an antecedent (e.g. "Another opinion" on the topic is...)
         break;
       }
@@ -481,7 +481,7 @@ public abstract class DeterministicCorefSieve extends Sieve {
       if (mention2.headWord == ant.headWord && mention2.insideIn(ant)) {
         if(!document.isCoref(mention2, ant)) {
           // TODO: exclude conjunction
-          System.err.println("error in chinese head match: "+mention2.spanToString()+"\t"+ant.spanToString());
+          System.err.println("error in chinese head match: "+mention2.spanToString()+ '\t' +ant.spanToString());
         }
         return true;
       }
@@ -511,7 +511,7 @@ public abstract class DeterministicCorefSieve extends Sieve {
       int m1Position,
       Map<Integer, CorefCluster> corefClusters,
       Dictionaries dict) {
-    List<Mention> orderedAntecedents = new ArrayList<Mention>();
+    List<Mention> orderedAntecedents = new ArrayList<>();
 
     // ordering antecedents
     if (antecedentSentence == mySentence) {   // same sentence
@@ -529,7 +529,7 @@ public abstract class DeterministicCorefSieve extends Sieve {
 
   /** Divides a sentence into clauses and sort the antecedents for pronoun matching  */
   private static List<Mention> sortMentionsForPronoun(List<Mention> l, Mention m1) {
-    List<Mention> sorted = new ArrayList<Mention>();
+    List<Mention> sorted = new ArrayList<>();
     Tree tree = m1.contextParseTree;
     Tree current = m1.mentionSubTree;
     if(tree==null || current==null) return l;

@@ -35,7 +35,7 @@ public class NonDict2  {
     }
   }
 
-  public String checkDic(String c2, SeqClassifierFlags flags) {
+  public static String checkDic(String c2, SeqClassifierFlags flags) {
     if (cd.getW(c2).equals("1")) {
       return "1";
     } 

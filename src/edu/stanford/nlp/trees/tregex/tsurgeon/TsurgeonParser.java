@@ -83,9 +83,7 @@ jjtree.closeNodeScope(jjtn000, true);
 if (results == null) {
         results = Generics.newArrayList();
       }
-      for (TsurgeonPattern child : result.children) {
-        results.add(child);
-      }
+                Collections.addAll(results, result.children);
               switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
               case OPEN_BRACKET:{
                 ;
@@ -148,7 +146,7 @@ if (jjtc000) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case DELETE:{
         operator = jj_consume_token(DELETE);
-        nodeSelections = NodeSelectionList(new ArrayList<TsurgeonPattern>());
+        nodeSelections = NodeSelectionList(new ArrayList<>());
 jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
 {if ("" != null) return new DeleteNode(nodeSelections);}
@@ -156,7 +154,7 @@ jjtree.closeNodeScope(jjtn000, true);
         }
       case PRUNE:{
         operator = jj_consume_token(PRUNE);
-        nodeSelections = NodeSelectionList(new ArrayList<TsurgeonPattern>());
+        nodeSelections = NodeSelectionList(new ArrayList<>());
 jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
 {if ("" != null) return new PruneNode(nodeSelections);}
@@ -247,7 +245,7 @@ jjtree.closeNodeScope(jjtn000, true);
               case CREATE_SUBTREE:{
                 operator = jj_consume_token(CREATE_SUBTREE);
                 tree = TreeRoot(false);
-                nodeSelections = NodeSelectionList(new ArrayList<TsurgeonPattern>());
+                nodeSelections = NodeSelectionList(new ArrayList<>());
 jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
 if (nodeSelections.size() == 1) {
@@ -255,7 +253,7 @@ if (nodeSelections.size() == 1) {
       } else if (nodeSelections.size() == 2) {
         {if ("" != null) return new CreateSubtreeNode(nodeSelections.get(0), nodeSelections.get(1), tree);}
       } else {
-        {if (true) throw new ParseException("Illegal number of nodes given to createSubtree (" + nodeSelections.size() + ")");}
+        {if (true) throw new ParseException("Illegal number of nodes given to createSubtree (" + nodeSelections.size() + ')');}
       }
                 break;
                 }
@@ -288,10 +286,10 @@ jjtree.closeNodeScope(jjtn000, true);
                 }
               case COINDEX:{
                 operator = jj_consume_token(COINDEX);
-                nodeSelections = NodeSelectionList(new ArrayList<TsurgeonPattern>());
+                nodeSelections = NodeSelectionList(new ArrayList<>());
 jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
-{if ("" != null) return new CoindexNodes(nodeSelections.toArray(new TsurgeonPattern[] {}));}
+{if ("" != null) return new CoindexNodes(nodeSelections.toArray(new TsurgeonPattern[nodeSelections.size()]));}
                 break;
                 }
               default:
@@ -544,7 +542,7 @@ if (jjtc000) {
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case TREE_NODE_NONTERMINAL_LABEL:{
         label = jj_consume_token(TREE_NODE_NONTERMINAL_LABEL);
-        dtrs = TreeDtrs(new ArrayList<Tree>());
+        dtrs = TreeDtrs(new ArrayList<>());
 jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
 {if ("" != null) return treeFactory.newTreeNode(label.image.substring(1),dtrs);}
@@ -554,14 +552,14 @@ jjtree.closeNodeScope(jjtn000, true);
         label = jj_consume_token(TREE_NODE_TERMINAL_LABEL);
 jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
-{if ("" != null) return treeFactory.newTreeNode(label.image,new ArrayList<Tree>());}
+{if ("" != null) return treeFactory.newTreeNode(label.image, new ArrayList<>());}
         break;
         }
       case IDENTIFIER:{
         label = jj_consume_token(IDENTIFIER);
 jjtree.closeNodeScope(jjtn000, true);
       jjtc000 = false;
-{if ("" != null) return treeFactory.newTreeNode(label.image,new ArrayList<Tree>());}
+{if ("" != null) return treeFactory.newTreeNode(label.image, new ArrayList<>());}
         break;
         }
       default:
@@ -1063,7 +1061,7 @@ if (jjtc000) {
       return (jj_ntk = jj_nt.kind);
   }
 
-  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<>();
   private int[] jj_expentry;
   private int jj_kind = -1;
   private int[] jj_lasttokens = new int[100];
@@ -1075,9 +1073,7 @@ if (jjtc000) {
       jj_lasttokens[jj_endpos++] = kind;
     } else if (jj_endpos != 0) {
       jj_expentry = new int[jj_endpos];
-      for (int i = 0; i < jj_endpos; i++) {
-        jj_expentry[i] = jj_lasttokens[i];
-      }
+        System.arraycopy(jj_lasttokens, 0, jj_expentry, 0, jj_endpos);
       jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries.iterator(); it.hasNext();) {
         int[] oldentry = (int[])(it.next());
         if (oldentry.length == jj_expentry.length) {

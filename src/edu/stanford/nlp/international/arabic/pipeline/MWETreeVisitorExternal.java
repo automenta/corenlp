@@ -2,7 +2,6 @@ package edu.stanford.nlp.international.arabic.pipeline;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -34,7 +33,7 @@ public class MWETreeVisitorExternal implements TreeVisitor {
     mweDictionary = loadMWEs();
   }
   
-  private Set<String> loadMWEs() {
+  private static Set<String> loadMWEs() {
     Set<String> mweSet = Generics.newHashSet();  
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(mweFile), "UTF-8"));
@@ -44,9 +43,6 @@ public class MWETreeVisitorExternal implements TreeVisitor {
       br.close();
     
     } catch (UnsupportedEncodingException e) {
-      // TODO Auto-generated catch block
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
       // TODO Auto-generated catch block
       e.printStackTrace();
     } catch (IOException e) {
@@ -81,8 +77,8 @@ public class MWETreeVisitorExternal implements TreeVisitor {
     }
   }
   
-  private List<Tree> getPreterminalSubtrees(Tree tree) {
-    List<Tree> preterminals = new ArrayList<Tree>();
+  private static List<Tree> getPreterminalSubtrees(Tree tree) {
+    List<Tree> preterminals = new ArrayList<>();
     for (Tree subTree : tree) {
       if (subTree.isPreTerminal()) {
         preterminals.add(subTree);
@@ -121,8 +117,6 @@ public class MWETreeVisitorExternal implements TreeVisitor {
       System.err.printf("Processed %d trees.%n", treeId);
     
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();

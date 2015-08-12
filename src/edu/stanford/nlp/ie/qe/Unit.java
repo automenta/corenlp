@@ -36,10 +36,14 @@ public class Unit {
   }
 
   public String formatInDefaultUnit(double amount) {
-    if (defaultUnit != null && defaultUnit != this) {
-      return defaultUnit.formatInDefaultUnit(amount*defaultUnitScale);
-    } else {
-      return format(amount);
+    Unit other = this;
+    while (true) {
+      if (other.defaultUnit != null && other.defaultUnit != other) {
+        amount = amount * defaultUnitScale;
+        other = other.defaultUnit;
+      } else {
+        return other.format(amount);
+      }
     }
   }
 

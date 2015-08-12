@@ -57,7 +57,7 @@ public final class MultiWordPreprocessor {
    *
    *     (grup.adv (rg cerca) (sp000 de))
    */
-  private static Map<String, String> phrasalCategoryMap = new HashMap<String, String>();
+  private static Map<String, String> phrasalCategoryMap = new HashMap<>();
   static {
     phrasalCategoryMap.put("ao0000", "grup.a");
     phrasalCategoryMap.put("aq0000", "grup.a");
@@ -94,7 +94,7 @@ public final class MultiWordPreprocessor {
 
   private static class ManualUWModel {
 
-    private static Map<String, String> posMap = new HashMap<String, String>();
+    private static Map<String, String> posMap = new HashMap<>();
     static {
       // i.e., "metros cúbicos"
       posMap.put("cúbico", "aq0000");
@@ -224,15 +224,15 @@ public final class MultiWordPreprocessor {
      * unigram tagger (and which never appear as function words in
      * multi-word tokens)
      */
-    private static final Set<String> actuallyNames = new HashSet<String>(Arrays.asList(
-      "Avenida",
-      "Contra",
-      "Gracias", // interjection
-      "in", // preposition; only appears in corpus as "in extremis" (preposition)
-      "Mercado",
-      "Jesús", // interjection
-      "Salvo",
-      "Van" // verb
+    private static final Set<String> actuallyNames = new HashSet<>(Arrays.asList(
+            "Avenida",
+            "Contra",
+            "Gracias", // interjection
+            "in", // preposition; only appears in corpus as "in extremis" (preposition)
+            "Mercado",
+            "Jesús", // interjection
+            "Salvo",
+            "Van" // verb
     ));
 
     // Name-looking word that isn't "Al"
@@ -345,12 +345,15 @@ public final class MultiWordPreprocessor {
 
     public static String getTag(String word, String containingPhrase) {
       // Exact matches
-      if (word.equals("%"))
-        return "ft";
-      else if (word.equals("+"))
-        return "fz";
-      else if (word.equals("&") || word.equals("@"))
-        return "f0";
+      switch (word) {
+        case "%":
+          return "ft";
+        case "+":
+          return "fz";
+        case "&":
+        case "@":
+          return "f0";
+      }
 
       if(digit.matcher(word).find())
         return "z0";
@@ -426,10 +429,10 @@ public final class MultiWordPreprocessor {
     if (parent == null)
       return null;
 
-    List<Label> phraseYield = parent.yield();
+    List<? extends Label> phraseYield = parent.yield();
     StringBuilder containingPhrase = new StringBuilder();
     for (Label l : phraseYield)
-      containingPhrase.append(l.value()).append(" ");
+      containingPhrase.append(l.value()).append(' ');
 
     return containingPhrase.toString().substring(0, containingPhrase.length() - 1);
   }
@@ -527,7 +530,7 @@ public final class MultiWordPreprocessor {
     // constituents
     StringBuilder sb = new StringBuilder();
     for(Tree kid : t.children())
-      sb.append(kid.value()).append(" ");
+      sb.append(kid.value()).append(' ');
     String posSequence = sb.toString().trim();
     System.err.println("No phrasal cat for: " + posSequence);
 
@@ -568,8 +571,6 @@ public final class MultiWordPreprocessor {
       System.out.println("Processed " +nTrees+ " trees");
 
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
@@ -612,16 +613,16 @@ public final class MultiWordPreprocessor {
 
     final File treeFile = new File(options.getProperty(""));
     TwoDimensionalCounter<String,String> labelTerm =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
     TwoDimensionalCounter<String,String> termLabel =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
     TwoDimensionalCounter<String,String> labelPreterm =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
     TwoDimensionalCounter<String,String> pretermLabel =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
 
     TwoDimensionalCounter<String,String> unigramTagger =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
 
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(treeFile), "UTF-8"));
@@ -648,9 +649,6 @@ public final class MultiWordPreprocessor {
       System.out.println("Done!");
 
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
 
     } catch (IOException e) {

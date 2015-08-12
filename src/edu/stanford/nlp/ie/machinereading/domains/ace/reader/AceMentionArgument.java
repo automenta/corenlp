@@ -20,26 +20,23 @@ public class AceMentionArgument {
   public String toXml(int offset) {
     StringBuffer buffer = new StringBuffer();
     AceElement.appendOffset(buffer, offset);
-    buffer.append("<" + mentionType + "_mention_argument REFID=\"" + mContent.getId() + 
-  	  "\" ROLE=\"" + mRole + "\">\n");
+    buffer.append('<').append(mentionType).append("_mention_argument REFID=\"").append(mContent.getId()).append("\" ROLE=\"").append(mRole).append("\">\n");
   
     
     //buffer.append(getContent().toXml(offset + 2));
     AceCharSeq ext = getContent().getExtent();
     buffer.append(ext.toXml("extent", offset + 2));
-    buffer.append("\n");
+    buffer.append('\n');
   
     AceElement.appendOffset(buffer, offset);
-    buffer.append("</" + mentionType + "_mention_argument>");
+    buffer.append("</").append(mentionType).append("_mention_argument>");
     return buffer.toString();
   }
 
   public String toXmlShort(int offset) {
     StringBuffer buffer = new StringBuffer();
     AceElement.appendOffset(buffer, offset);
-    buffer.append("<" + mentionType + "_argument REFID=\"" + 
-  	  mContent.getParent().getId() + 
-  	  "\" ROLE=\"" + mRole + "\"/>");
+    buffer.append('<').append(mentionType).append("_argument REFID=\"").append(mContent.getParent().getId()).append("\" ROLE=\"").append(mRole).append("\"/>");
     return buffer.toString();
   }
 

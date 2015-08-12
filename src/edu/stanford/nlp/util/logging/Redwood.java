@@ -78,7 +78,7 @@ public class Redwood {
    * The stack of track titles, for consistency checking
    * the endTrack() call
    */
-  private static final Stack<String> titleStack = new Stack<String>();
+  private static final Stack<String> titleStack = new Stack<>();
   /**
    * Signals that no more log messages should be accepted by Redwood
    */
@@ -97,7 +97,7 @@ public class Redwood {
    * Threads which have something they wish to log, but do not yet
    * have control of Redwood
    */
-  private static final Queue<Long> threadsWaiting = new LinkedList<Long>();
+  private static final Queue<Long> threadsWaiting = new LinkedList<>();
   /**
    * Indicator that messages are coming from multiple threads
    */
@@ -121,7 +121,7 @@ public class Redwood {
     assert threadId != currentThread;
     //(get queue)
     if(!threadedLogQueue.containsKey(threadId)){
-      threadedLogQueue.put(threadId, new LinkedList<Runnable>());
+      threadedLogQueue.put(threadId, new LinkedList<>());
     }
     Queue<Runnable> threadLogQueue = threadedLogQueue.get(threadId);
     //(add to queue)
@@ -558,11 +558,11 @@ public class Redwood {
     if(day > 0) b.append(day).append(day > 1 ? " days, " : " day, ");
     if(hr > 0) b.append(hr).append(hr > 1 ? " hours, " : " hour, ");
     if(min > 0) {
-      if(min < 10){ b.append("0"); }
-      b.append(min).append(":");
+      if(min < 10){ b.append('0'); }
+      b.append(min).append(':');
     }
-    if(min > 0 && sec < 10){ b.append("0"); }
-    b.append(sec).append(".").append(mili);
+    if(min > 0 && sec < 10){ b.append('0'); }
+    b.append(sec).append('.').append(mili);
     if(min > 0) b.append(" minutes");
     else b.append(" seconds");
   }
@@ -600,7 +600,7 @@ public class Redwood {
     // -- Overhead --
     private final boolean isRoot;
     private final LogRecordHandler head;
-    private final List<RecordHandlerTree> children = new ArrayList<RecordHandlerTree>();
+    private final List<RecordHandlerTree> children = new ArrayList<>();
 
     public RecordHandlerTree() {
       isRoot = true;
@@ -704,7 +704,7 @@ public class Redwood {
 
     private static List<Record> append(List<Record> lst, Record toAppend){
       if(lst == LogRecordHandler.EMPTY){
-        lst = new ArrayList<Record>();
+        lst = new ArrayList<>();
       }
       lst.add(toAppend);
       return lst;
@@ -738,7 +738,7 @@ public class Redwood {
         }
       } else {
         //(case: is root)
-        toPassOn = new ArrayList<Record>();
+        toPassOn = new ArrayList<>();
         switch(type){
           case SIMPLE:
             toPassOn = append(toPassOn, toPass);
@@ -774,7 +774,7 @@ public class Redwood {
       for(int i=0; i<depth; i++){
         b.append("  ");
       }
-      b.append(head == null ? "ROOT" : head).append("\n");
+      b.append(head == null ? "ROOT" : head).append('\n');
       for(RecordHandlerTree child : children){
         child.toStringHelper(b, depth+1);
       }
@@ -854,7 +854,7 @@ public class Redwood {
     @Override
     public String toString() {
       return "Record [content=" + content + ", depth=" + depth
-          + ", channels=" + Arrays.toString(channels()) + ", thread=" + thread + ", timesstamp=" + timesstamp + "]";
+          + ", channels=" + Arrays.toString(channels()) + ", thread=" + thread + ", timesstamp=" + timesstamp + ']';
     }
   }
 
@@ -997,13 +997,14 @@ public class Redwood {
       final AtomicInteger numPending = new AtomicInteger(0);
       final Iterator<Runnable> iter = runnables.iterator();
       //--Create Runnables
-      return new IterableIterator<Runnable>(new Iterator<Runnable>() {
+      return new IterableIterator<>(new Iterator<Runnable>() {
         @Override
         public boolean hasNext() {
           synchronized (iter) {
             return iter.hasNext();
           }
         }
+
         @Override
         public synchronized Runnable next() {
           final Runnable runnable;
@@ -1012,25 +1013,27 @@ public class Redwood {
           }
           // (don't flood the queu)
           while (numPending.get() > 100) {
-            try { Thread.sleep(100); }
-            catch (InterruptedException e) { }
+            try {
+              Thread.sleep(100);
+            } catch (InterruptedException e) {
+            }
           }
           numPending.incrementAndGet();
           // (add the job)
-          Runnable toReturn = new Runnable(){
-            public void run(){
+          Runnable toReturn = new Runnable() {
+            public void run() {
               boolean threadFinished = false;
-              try{
+              try {
                 //(signal start of threads)
                 metaInfoLock.lock();
-                if(!haveStarted.getAndSet(true)){
+                if (!haveStarted.getAndSet(true)) {
                   startThreads(title); //<--this must be a blocking operation
                 }
                 metaInfoLock.unlock();
                 //(run runnable)
-                try{
+                try {
                   runnable.run();
-                } catch (Exception | AssertionError e){
+                } catch (Exception | AssertionError e) {
                   e.printStackTrace();
                   System.exit(1);
                 }
@@ -1044,9 +1047,11 @@ public class Redwood {
                     endThreads(title);
                   }
                 }
-              } catch(Throwable t){
+              } catch (Throwable t) {
                 t.printStackTrace();
-                if (!threadFinished) { finishThread(); }
+                if (!threadFinished) {
+                  finishThread();
+                }
               }
             }
           };
@@ -1076,9 +1081,9 @@ public class Redwood {
     public static void threadAndRun(String title, Iterable<Runnable> runnables, int numThreads){
       // (short circuit if single thread)
       if (numThreads <= 1 || isThreaded || (runnables instanceof Collection && ((Collection<Runnable>) runnables).size() <= 1)) {
-        startTrack( "Threads (" + title + ")" );
+        startTrack( "Threads (" + title + ')');
         for (Runnable toRun : runnables) { toRun.run(); }
-        endTrack( "Threads (" + title + ")" );
+        endTrack( "Threads (" + title + ')');
         return;
       }
       //(create executor)
@@ -1240,7 +1245,7 @@ public class Redwood {
     System.exit(1);
 
     // -- STRESS TEST THREADS --
-    LinkedList<Runnable> tasks = new LinkedList<Runnable>();
+    LinkedList<Runnable> tasks = new LinkedList<>();
     for(int i=0; i<1000; i++){
       final int fI = i;
       tasks.add(() -> {
@@ -1375,14 +1380,14 @@ public class Redwood {
     for(int i=0; i<50; i++){
       final int theI = i;
       exec.execute(() -> {
-        startTrack("Thread " + theI + " (" + Thread.currentThread().getId() + ")");
+        startTrack("Thread " + theI + " (" + Thread.currentThread().getId() + ')');
         for(int time=0; time<5; time++){
-          log("tick " + time + " from " + theI + " (" + Thread.currentThread().getId() + ")");
+          log("tick " + time + " from " + theI + " (" + Thread.currentThread().getId() + ')');
           try {
             Thread.sleep(50);
           } catch (Exception e) {}
         }
-        endTrack("Thread " + theI + " (" + Thread.currentThread().getId() + ")");
+        endTrack("Thread " + theI + " (" + Thread.currentThread().getId() + ')');
         finishThread();
       });
 

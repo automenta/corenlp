@@ -64,7 +64,7 @@ public class TeXHyphenator {
   private Node head = new Node();
 
   public static String toString(int[]i) {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     for(int j = 0; j < i.length; ++j) {
       sb.append(i[j]);
     }
@@ -119,12 +119,11 @@ public class TeXHyphenator {
 
     for( int c = 0; c < word.length; ++c ) {
       List patterns = getMatchingPatterns(word, c);
-      Iterator iter = patterns.iterator();
-      while(iter.hasNext()) {
-        int [] pattern = (int[]) iter.next();
-        for( int i = 0; i < pattern.length; ++i ) {
-          if( breakScore[c+i] < pattern[i] ) {
-            breakScore[c+i] = pattern[i];
+      for (Object pattern1 : patterns) {
+        int[] pattern = (int[]) pattern1;
+        for (int i = 0; i < pattern.length; ++i) {
+          if (breakScore[c + i] < pattern[i]) {
+            breakScore[c + i] = pattern[i];
           }
         }
       }
@@ -176,12 +175,12 @@ public class TeXHyphenator {
       char[] chars = args[a].toLowerCase().toCharArray();
       boolean [] breakPoints = hyphenator.findBreakPoints(chars);
       System.out.println(args[a]);
-      StringBuffer sb = new StringBuffer();
+      StringBuilder sb = new StringBuilder();
       for(int i = 0; i < breakPoints.length; ++i) {
         if( breakPoints[i] ) {
-          sb.append("^");
+          sb.append('^');
         } else {
-          sb.append("-");
+          sb.append('-');
         }
       }
       System.out.println(sb.toString());

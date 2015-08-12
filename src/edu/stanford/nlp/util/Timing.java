@@ -406,7 +406,7 @@ public class Timing {
 
   @Override
   public String toString() {
-    return "Timing[start=" + startTime + "]";
+    return "Timing[start=" + startTime + ']';
   }
 
 }

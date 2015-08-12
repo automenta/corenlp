@@ -267,7 +267,7 @@ public class PreferencesPanel extends JDialog {
   private static Integer checkNumberFormat(JTextField component, String errorType) throws NumberFormatException {
     Integer number = null;
     String txt = component.getText();
-    if(txt!= null && !"".equals(txt)) {
+    if(txt!= null && !txt.isEmpty()) {
       try {
         number = Integer.parseInt(txt);
         if(number <= 0)

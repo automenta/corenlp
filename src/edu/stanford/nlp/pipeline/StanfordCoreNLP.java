@@ -163,7 +163,7 @@ public class StanfordCoreNLP extends AnnotationPipeline {
    *         when creating the annotator pool. The canonical annotators are defaulted to in
    *         {@link edu.stanford.nlp.pipeline.AnnotatorImplementations}.
    */
-  protected AnnotatorImplementations getAnnotatorImplementations() {
+  protected static AnnotatorImplementations getAnnotatorImplementations() {
     return new AnnotatorImplementations();
   }
 
@@ -365,25 +365,7 @@ public class StanfordCoreNLP extends AnnotationPipeline {
         final String customClassName = inputProps.getProperty(property);
         System.err.println("Registering annotator " + customName +
             " with class " + customClassName);
-        pool.register(customName, new AnnotatorFactory(inputProps, annotatorImplementation) {
-          private static final long serialVersionUID = 1L;
-          @Override
-          public Annotator create() {
-            return annotatorImplementation.custom(properties, property);
-          }
-          @Override
-          public String additionalSignature() {
-            // keep track of all relevant properties for this annotator here!
-            // since we don't know what props they need, let's copy all
-            // TODO: can we do better here? maybe signature() should be a method in the Annotator?
-            StringBuilder os = new StringBuilder();
-            for(Object key: properties.keySet()) {
-              String skey = (String) key;
-              os.append(skey + ":" + properties.getProperty(skey));
-            }
-            return os.toString();
-          }
-        });
+        pool.register(customName, new MyAnnotatorFactory(inputProps, annotatorImplementation, property));
       }
     }
 
@@ -710,7 +692,7 @@ public class StanfordCoreNLP extends AnnotationPipeline {
   }
 
   public void processFiles(String base, final Collection<File> files, int numThreads) throws IOException {
-    List<Runnable> toRun = new LinkedList<Runnable>();
+    List<Runnable> toRun = new LinkedList<>();
 
     // Process properties here
     final String baseOutputDir = properties.getProperty("outputDirectory", ".");
@@ -718,7 +700,7 @@ public class StanfordCoreNLP extends AnnotationPipeline {
 
     // Set of files to exclude
     final String excludeFilesParam = properties.getProperty("excludeFiles");
-    final Set<String> excludeFiles = new HashSet<String>();
+    final Set<String> excludeFiles = new HashSet<>();
     if (excludeFilesParam != null) {
       Iterable<String> lines = IOUtils.readLines(excludeFilesParam);
       for (String line:lines) {
@@ -996,7 +978,7 @@ public class StanfordCoreNLP extends AnnotationPipeline {
     else if (properties.containsKey("filelist")){
       String fileName = properties.getProperty("filelist");
       Collection<File> inputfiles = readFileList(fileName);
-      Collection<File> files = new ArrayList<File>(inputfiles.size());
+      Collection<File> files = new ArrayList<>(inputfiles.size());
       for (File file:inputfiles) {
         if (file.isDirectory()) {
           files.addAll(new FileSequentialCollection(new File(fileName), properties.getProperty("extension"), true));
@@ -1065,4 +1047,33 @@ public class StanfordCoreNLP extends AnnotationPipeline {
     new StanfordCoreNLP(props).run();
   }
 
+  private static class MyAnnotatorFactory extends AnnotatorFactory {
+    private static final long serialVersionUID = 1L;
+    private final AnnotatorImplementations annotatorImplementation;
+    private final String property;
+
+    public MyAnnotatorFactory(Properties inputProps, AnnotatorImplementations annotatorImplementation, String property) {
+      super(inputProps, annotatorImplementation);
+      this.annotatorImplementation = annotatorImplementation;
+      this.property = property;
+    }
+
+    @Override
+    public Annotator create() {
+      return AnnotatorImplementations.custom(properties, property);
+    }
+
+    @Override
+    public String additionalSignature() {
+      // keep track of all relevant properties for this annotator here!
+      // since we don't know what props they need, let's copy all
+      // TODO: can we do better here? maybe signature() should be a method in the Annotator?
+      StringBuilder os = new StringBuilder();
+      for(Object key: properties.keySet()) {
+        String skey = (String) key;
+        os.append(skey + ":" + properties.getProperty(skey));
+      }
+      return os.toString();
+    }
+  }
 }

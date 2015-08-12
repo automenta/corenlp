@@ -93,7 +93,7 @@ public class NumberSequenceClassifier extends AbstractSequenceClassifier<CoreLab
    */
   @Override
   public List<CoreLabel> classify(List<CoreLabel> document) {
-    return classifyWithGlobalInformation(document, null, null);
+    return classifyWithGlobalInformation(document, null, (Annotation)null);
   }
 
   @Override
@@ -154,7 +154,7 @@ public class NumberSequenceClassifier extends AbstractSequenceClassifier<CoreLab
         if(timex != null){
           if(DEBUG){
             System.err.println("FOUND DATE/TIME \"" + timeExpression +
-                "\" with offsets " + start + " " + end +
+                "\" with offsets " + start + ' ' + end +
                 " and value " + timex);
             System.err.println("The above CoreMap has the following fields:");
             // for(Class key: timeExpression.keySet()) System.err.println("\t" + key + ": " + timeExpression.get(key));
@@ -186,7 +186,7 @@ public class NumberSequenceClassifier extends AbstractSequenceClassifier<CoreLab
           String type = number.get(CoreAnnotations.NumericCompositeTypeAnnotation.class);
           Number value = number.get(CoreAnnotations.NumericCompositeValueAnnotation.class);
           if(type != null){
-            if(DEBUG) System.err.println("FOUND NUMBER \"" + number + "\" with offsets " + start + " " + end + " and value " + value + " and type " + type);
+            if(DEBUG) System.err.println("FOUND NUMBER \"" + number + "\" with offsets " + start + ' ' + end + " and value " + value + " and type " + type);
             for(int i = start; i < end; i ++){
               CoreLabel token = tokenSequence.get(i - offset);
               if(token.get(CoreAnnotations.AnswerAnnotation.class).equals(flags.backgroundSymbol)){
@@ -232,7 +232,7 @@ public class NumberSequenceClassifier extends AbstractSequenceClassifier<CoreLab
       return sentence;
     }
 
-    CoreMap newSentence = buildSentenceFromTokens(
+    Annotation newSentence = buildSentenceFromTokens(
         sentence.get(CoreAnnotations.TokensAnnotation.class),
         sentence.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class),
         sentence.get(CoreAnnotations.CharacterOffsetEndAnnotation.class));
@@ -245,11 +245,11 @@ public class NumberSequenceClassifier extends AbstractSequenceClassifier<CoreLab
     return newSentence;
   }
 
-  private static CoreMap buildSentenceFromTokens(List<CoreLabel> tokens) {
+  private static Annotation buildSentenceFromTokens(List<CoreLabel> tokens) {
     return buildSentenceFromTokens(tokens, null, null);
   }
 
-  private static CoreMap buildSentenceFromTokens(
+  private static Annotation buildSentenceFromTokens(
       List<CoreLabel> tokens,
       Integer characterOffsetStart,
       Integer characterOffsetEnd) {
@@ -465,7 +465,7 @@ public class NumberSequenceClassifier extends AbstractSequenceClassifier<CoreLab
     // no need to adjust anything; use the original list
     if(! adjustCharacterOffsets && ! forceCopy) return srcList;
 
-    List<CoreLabel> dstList = new ArrayList<CoreLabel>();
+    List<CoreLabel> dstList = new ArrayList<>();
     int adjustment = 0;
     int offset = 0; // for when offsets are not available
     for(CoreLabel src: srcList) {
@@ -605,7 +605,7 @@ public class NumberSequenceClassifier extends AbstractSequenceClassifier<CoreLab
 
   private List<CoreLabel> classifyOld(List<CoreLabel> document) {
     // if (DEBUG) { System.err.println("NumberSequenceClassifier tagging"); }
-    PaddedList<CoreLabel> pl = new PaddedList<CoreLabel>(document, pad);
+    PaddedList<CoreLabel> pl = new PaddedList<>(document, pad);
     for (int i = 0, sz = pl.size(); i < sz; i++) {
       CoreLabel me = pl.get(i);
       CoreLabel prev = pl.get(i - 1);
@@ -849,7 +849,7 @@ public class NumberSequenceClassifier extends AbstractSequenceClassifier<CoreLab
 
     if (textFile != null) {
       DocumentReaderAndWriter<CoreLabel> readerAndWriter =
-        new PlainTextDocumentReaderAndWriter<CoreLabel>();
+              new PlainTextDocumentReaderAndWriter<>();
       nsc.classifyAndWriteAnswers(textFile, readerAndWriter, false);
     }
   } // end main

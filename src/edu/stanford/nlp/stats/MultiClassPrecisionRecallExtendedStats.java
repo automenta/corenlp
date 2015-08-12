@@ -51,7 +51,7 @@ public class MultiClassPrecisionRecallExtendedStats<L> extends MultiClassPrecisi
   }
 
   public <F> double score(Classifier<L,F> classifier, GeneralDataset<L,F> data) {
-    labelIndex = new HashIndex<L>();
+    labelIndex = new HashIndex<>();
     labelIndex.addAll(classifier.labels());
     labelIndex.addAll(data.labelIndex.objectsList());
     clearCounts();
@@ -102,17 +102,17 @@ public class MultiClassPrecisionRecallExtendedStats<L> extends MultiClassPrecisi
     if (foundCorrect != null) {
       foundCorrect.clear();
     } else {
-      foundCorrect = new IntCounter<L>();
+      foundCorrect = new IntCounter<>();
     }
     if (foundGuessed != null) {
       foundGuessed.clear();
     } else {
-      foundGuessed = new IntCounter<L>();
+      foundGuessed = new IntCounter<>();
     }
     if (correctGuesses != null) {
       correctGuesses.clear();
     } else {
-      correctGuesses = new IntCounter<L>();
+      correctGuesses = new IntCounter<>();
     }
     if (tpCount != null) {
       Arrays.fill(tpCount, 0);
@@ -165,7 +165,7 @@ public class MultiClassPrecisionRecallExtendedStats<L> extends MultiClassPrecisi
     }
     if (addUnknownLabels) {
       if (labelIndex == null) {
-        labelIndex = new HashIndex<L>();
+        labelIndex = new HashIndex<>();
       }
       labelIndex.add(guess);
       labelIndex.add(label);
@@ -235,7 +235,7 @@ public class MultiClassPrecisionRecallExtendedStats<L> extends MultiClassPrecisi
   {
     int totalCorrect = tokensCorrect;
     int totalWrong = tokensCount - tokensCorrect;
-    return new Triple<Double, Integer, Integer>((((double) totalCorrect) / tokensCount),
+    return new Triple<>((((double) totalCorrect) / tokensCount),
             totalCorrect, totalWrong);
   }
 
@@ -250,7 +250,7 @@ public class MultiClassPrecisionRecallExtendedStats<L> extends MultiClassPrecisi
     NumberFormat nf = NumberFormat.getNumberInstance();
     nf.setMaximumFractionDigits(numDigits);
     Triple<Double, Integer, Integer> accu = getAccuracyInfo();
-    return nf.format(accu.first()) + "  (" + accu.second() + "/" + (accu.second() + accu.third()) + ")";
+    return nf.format(accu.first()) + "  (" + accu.second() + '/' + (accu.second() + accu.third()) + ')';
   }
 
   public double score(String filename, String delimiter) throws IOException {
@@ -318,8 +318,8 @@ public class MultiClassPrecisionRecallExtendedStats<L> extends MultiClassPrecisi
     int correctPhrases = getCorrect() - getCorrect(negLabel);
     Triple<Double,Integer,Integer> accuracyInfo = getAccuracyInfo();
     int totalCount = accuracyInfo.second() + accuracyInfo.third();
-    sb.append("processed " + totalCount + " tokens with " + getRelevant() + " phrases; ");
-    sb.append("found: " + getRetrieved() + " phrases; correct: " + correctPhrases + "\n");
+    sb.append("processed ").append(totalCount).append(" tokens with ").append(getRelevant()).append(" phrases; ");
+    sb.append("found: ").append(getRetrieved()).append(" phrases; correct: ").append(correctPhrases).append('\n');
 
     Formatter formatter = new Formatter(sb, Locale.US);
     formatter.format("accuracy: %6.2f%%; ", accuracyInfo.first() * 100);

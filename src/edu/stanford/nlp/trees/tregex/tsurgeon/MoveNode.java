@@ -50,7 +50,7 @@ class MoveNode extends TsurgeonPattern {
 
   @Override
   public String toString() {
-    return label + "(" + children[0] + " " + location + ")"; 
+    return label + '(' + children[0] + ' ' + location + ')';
   }
 
 

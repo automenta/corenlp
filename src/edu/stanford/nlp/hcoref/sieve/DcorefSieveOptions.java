@@ -35,7 +35,7 @@ public class DcorefSieveOptions {
   
   public String toString() {
     StringBuilder os = new StringBuilder();
-    os.append("{");
+    os.append('{');
     if(DO_PRONOUN) os.append("DO_PRONOUN");
     if(USE_INCOMPATIBLES) os.append(", USE_INCOMPATIBLES");
     if(USE_iwithini) os.append(", USE_iwithini");
@@ -67,7 +67,7 @@ public class DcorefSieveOptions {
     if(USE_COREF_DICT) os.append(", USE_COREF_DICT");
     if(USE_SPEAKERMATCH) os.append(", USE_SPEAKERMATCH");
     if(USE_CHINESE_HEAD_MATCH) os.append(", USE_CHINESE_HEAD_MATCH");
-    os.append("}");
+    os.append('}');
     return os.toString();
   }
   

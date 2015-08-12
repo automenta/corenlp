@@ -59,7 +59,7 @@ public class CRFLabel implements Serializable {
   }
 
   public <E> String toString(Index<E> classIndex) {
-    List<E> l = new ArrayList<E>();
+    List<E> l = new ArrayList<>();
     for (int i = 0; i < label.length; i++) {
       l.add(classIndex.get(label[i]));
     }
@@ -68,7 +68,7 @@ public class CRFLabel implements Serializable {
 
   @Override
   public String toString() {
-    List<Integer> l = new ArrayList<Integer>();
+    List<Integer> l = new ArrayList<>();
     for (int i = 0; i < label.length; i++) {
       l.add(Integer.valueOf(label[i]));
     }

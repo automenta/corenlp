@@ -106,7 +106,7 @@ public class NegraHeadFinder extends AbstractCollinsHeadFinder {
 
   /* Some Negra local trees have an explicitly marked head.  Use it if
   * possible. */
-  protected Tree findMarkedHead(Tree[] kids) {
+  protected static Tree findMarkedHead(Tree[] kids) {
     for (int i = 0, n = kids.length; i < n; i++) {
       if (kids[i].label() instanceof NegraLabel && ((NegraLabel) kids[i].label()).getEdge() != null && ((NegraLabel) kids[i].label()).getEdge().equals("HD")) {
         //System.err.println("found manually-labeled head");
@@ -178,7 +178,7 @@ public class NegraHeadFinder extends AbstractCollinsHeadFinder {
     if (DEBUG) {
       System.err.println("Looking for head of " + t.label() +
                          "; value is |" + t.label().value() + "|, " +
-                         " baseCat is |" + motherCat + "|");
+                         " baseCat is |" + motherCat + '|');
     }
     // We know we have nonterminals underneath
     // (a bit of a Penn Treebank assumption, but).
@@ -188,7 +188,7 @@ public class NegraHeadFinder extends AbstractCollinsHeadFinder {
     if (how == null) {
       if (DEBUG) {
         System.err.println("Warning: No rule found for " + motherCat +
-                           " (first char: " + motherCat.charAt(0) + ")");
+                           " (first char: " + motherCat.charAt(0) + ')');
         System.err.println("Known nonterms are: " + nonTerminalInfo.keySet());
       }
       if (defaultRule != null) {

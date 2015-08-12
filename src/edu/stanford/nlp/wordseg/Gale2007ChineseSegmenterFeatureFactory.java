@@ -166,7 +166,7 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
 
 
   protected Collection<String> featuresC(PaddedList<? extends CoreLabel> cInfo, int loc) {
-    Collection<String> features = new ArrayList<String>();
+    Collection<String> features = new ArrayList<>();
     CoreLabel c = cInfo.get(loc);
     CoreLabel c2 = cInfo.get(loc + 1);
     CoreLabel c3 = cInfo.get(loc + 2);
@@ -237,16 +237,16 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
     }
 
     if (flags.useUnicodeType || flags.useUnicodeType4gram || flags.useUnicodeType5gram) {
-      features.add(uTypep + "-" + uTypec + "-" + uTypec2 + "-uType3");
+      features.add(uTypep + '-' + uTypec + '-' + uTypec2 + "-uType3");
     }
     if (flags.useUnicodeType4gram || flags.useUnicodeType5gram) {
-      features.add(uTypep2 + "-" + uTypep + "-" + uTypec + "-" + uTypec2 + "-uType4");
+      features.add(uTypep2 + '-' + uTypep + '-' + uTypec + '-' + uTypec2 + "-uType4");
     }
     if (flags.useUnicodeType5gram) {
-      features.add(uTypep2 + "-" + uTypep + "-" + uTypec + "-" + uTypec2 + "-" + uTypec3 + "-uType5");
+      features.add(uTypep2 + '-' + uTypep + '-' + uTypec + '-' + uTypec2 + '-' + uTypec3 + "-uType5");
     }
     if (flags.useUnicodeBlock) {
-      features.add(p.getString(CoreAnnotations.UBlockAnnotation.class) + "-" + c.getString(CoreAnnotations.UBlockAnnotation.class) + "-" + c2.getString(CoreAnnotations.UBlockAnnotation.class) + "-uBlock");
+      features.add(p.getString(CoreAnnotations.UBlockAnnotation.class) + '-' + c.getString(CoreAnnotations.UBlockAnnotation.class) + '-' + c2.getString(CoreAnnotations.UBlockAnnotation.class) + "-uBlock");
     }
     if (flags.useShapeStrings) {
       if (flags.useShapeStrings1) {
@@ -312,7 +312,7 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
 
 
   protected Collection<String> featuresCpC(PaddedList<? extends CoreLabel> cInfo, int loc) {
-    Collection<String> features = new ArrayList<String>();
+    Collection<String> features = new ArrayList<>();
     CoreLabel c = cInfo.get(loc);
     CoreLabel c2 = cInfo.get(loc + 1);
     CoreLabel c3 = cInfo.get(loc + 2);
@@ -394,13 +394,13 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
     }
 
     if (flags.useUnicodeType || flags.useUnicodeType4gram || flags.useUnicodeType5gram) {
-      features.add(uTypep + "-" + uTypec + "-" + uTypec2 + "-uType3");
+      features.add(uTypep + '-' + uTypec + '-' + uTypec2 + "-uType3");
     }
     if (flags.useUnicodeType4gram || flags.useUnicodeType5gram) {
-      features.add(uTypep2 + "-" + uTypep + "-" + uTypec + "-" + uTypec2 + "-uType4");
+      features.add(uTypep2 + '-' + uTypep + '-' + uTypec + '-' + uTypec2 + "-uType4");
     }
     if (flags.useUnicodeType5gram) {
-      features.add(uTypep2 + "-" + uTypep + "-" + uTypec + "-" + uTypec2 + "-" + uTypec3 + "-uType5");
+      features.add(uTypep2 + '-' + uTypep + '-' + uTypec + '-' + uTypec2 + '-' + uTypec3 + "-uType5");
     }
     if (flags.useWordUTypeConjunctions2) {
       features.add(uTypep + charc + "putcc");
@@ -412,7 +412,7 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
       features.add(charc + uTypec2 + uTypec3 + "ccc2utc3ut");
     }
     if (flags.useUnicodeBlock) {
-      features.add(p.getString(CoreAnnotations.UBlockAnnotation.class) + "-" + c.getString(CoreAnnotations.UBlockAnnotation.class) + "-" + c2.getString(CoreAnnotations.UBlockAnnotation.class) + "-uBlock");
+      features.add(p.getString(CoreAnnotations.UBlockAnnotation.class) + '-' + c.getString(CoreAnnotations.UBlockAnnotation.class) + '-' + c2.getString(CoreAnnotations.UBlockAnnotation.class) + "-uBlock");
     }
 
     if (flags.useShapeStrings) {
@@ -475,7 +475,7 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
      */
     if (flags.useDict2) {
       NonDict2 nd = new NonDict2(flags);
-      features.add(nd.checkDic(charp+charc, flags)+"nondict");
+      features.add(NonDict2.checkDic(charp+charc, flags)+"nondict");
     }
 
     if (flags.useOutDict2) {
@@ -522,7 +522,7 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
         createTADetector();
       }
       for (String tag : tagsets) {
-	features.add(taDetector.checkDic(tag+"p", charp) + taDetector.checkDic(tag+"i", charp) + taDetector.checkDic(tag+"s", charc)+ taDetector.checkInDic(charp)+taDetector.checkInDic(charc)+ tag+ "prep-sufc" );
+	features.add(taDetector.checkDic(tag+ 'p', charp) + taDetector.checkDic(tag+ 'i', charp) + taDetector.checkDic(tag+ 's', charc)+ taDetector.checkInDic(charp)+taDetector.checkInDic(charc)+ tag+ "prep-sufc" );
         //features.add("|ctbchar2");
       }
     }
@@ -608,9 +608,9 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
 
       String engType = isEnglish(charp, charc);
       String engPU = isEngPU(charp);
-      if ( ! engType.equals(""))
+      if (!engType.isEmpty())
         features.add(engType);
-      if ( ! engPU.equals("") && ! engType.equals("")) {
+      if (!engPU.isEmpty() && !engType.isEmpty()) {
         StringBuilder sb = new StringBuilder();
         sb.append(engPU).append(engType).append("R2");
         features.add(sb.toString());
@@ -653,7 +653,7 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
    *  @return Collection of String features (sparse set of boolean features
    */
   protected Collection<String> featuresCnC(PaddedList<? extends CoreLabel> cInfo, int loc) {
-    Collection<String> features = new ArrayList<String>();
+    Collection<String> features = new ArrayList<>();
     if (flags.useWordn) {
       CoreLabel c = cInfo.get(loc);
       CoreLabel c2 = cInfo.get(loc + 1);
@@ -664,14 +664,14 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
       String charp = p.getString(CoreAnnotations.CharAnnotation.class);
       String charp2 = p2.getString(CoreAnnotations.CharAnnotation.class);
 
-      features.add(charc +"c");
+      features.add(charc + 'c');
       features.add(charc2+"c2");
-      features.add(charp +"p");
+      features.add(charp + 'p');
       features.add(charp2 + "p2");
       features.add(charp2 + charp  +"p2p");
       features.add(charp + charc  +"pc");
       features.add(charc + charc2  +"cc2");
-      features.add(charp + "-" + charc2 + "pc2");
+      features.add(charp + '-' + charc2 + "pc2");
       features.add("cliqueCnC");
     }
     return features;
@@ -685,7 +685,7 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
    *  @return Collection of String features (sparse set of boolean features
    */
   protected Collection<String> featuresCpCp2C(PaddedList<? extends CoreLabel> cInfo, int loc) {
-    Collection<String> features = new ArrayList<String>();
+    Collection<String> features = new ArrayList<>();
     CoreLabel c = cInfo.get(loc);
     CoreLabel c2 = cInfo.get(loc + 1);
     CoreLabel c3 = cInfo.get(loc + 2);
@@ -780,7 +780,7 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
 
 
   protected Collection<String> featuresCpCp2Cp3C(PaddedList<? extends CoreLabel> cInfo, int loc) {
-    Collection<String> features = new ArrayList<String>();
+    Collection<String> features = new ArrayList<>();
     if (flags.use4Clique && flags.maxLeft >= 3) {
       CoreLabel c = cInfo.get(loc);
       CoreLabel c2 = cInfo.get(loc + 1);
@@ -807,10 +807,10 @@ public class Gale2007ChineseSegmenterFeatureFactory<IN extends CoreLabel> extend
         features.add(charp3 + charp2 + charp + charc + "p3p2pc");
       }
       if (flags.useUnicodeType4gram || flags.useUnicodeType5gram) {
-        features.add(uTypep3 + "-" + uTypep2 + "-" + uTypep + "-" + uTypec + "-uType4");
+        features.add(uTypep3 + '-' + uTypep2 + '-' + uTypep + '-' + uTypec + "-uType4");
       }
       if (flags.useUnicodeType5gram) {
-        features.add(uTypep3 + "-" + uTypep2 + "-" + uTypep + "-" + uTypec + "-" + uTypec2 + "-uType5");
+        features.add(uTypep3 + '-' + uTypep2 + '-' + uTypep + '-' + uTypec + '-' + uTypec2 + "-uType5");
       }
       features.add("cliqueCpCp2Cp3C");
     }

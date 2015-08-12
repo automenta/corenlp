@@ -31,10 +31,10 @@ public class PRCurve {
    */
   public PRCurve(String filename) {
     try {
-      ArrayList<Pair<Double, Integer>> dataScores = new ArrayList<Pair<Double, Integer>>();
+      ArrayList<Pair<Double, Integer>> dataScores = new ArrayList<>();
       for(String line : ObjectBank.getLineIterator(new File(filename))) {
         List<String> elems = StringUtils.split(line);
-        Pair<Double, Integer> p = new Pair<Double, Integer>(Double.valueOf(elems.get(0)), Integer.valueOf(elems.get(1)));
+        Pair<Double, Integer> p = new Pair<>(Double.valueOf(elems.get(0)), Integer.valueOf(elems.get(1)));
         dataScores.add(p);
       }
       init(dataScores);
@@ -52,7 +52,7 @@ public class PRCurve {
   public PRCurve(String filename, boolean svm) {
     try {
 
-      ArrayList<Pair<Double, Integer>> dataScores = new ArrayList<Pair<Double, Integer>>();
+      ArrayList<Pair<Double, Integer>> dataScores = new ArrayList<>();
       for(String line : ObjectBank.getLineIterator(new File(filename))) {
         List<String> elems = StringUtils.split(line);
         int cls = Double.valueOf(elems.get(0)).intValue();
@@ -60,7 +60,7 @@ public class PRCurve {
           cls = 0;
         }
         double score = Double.valueOf(elems.get(1)) + 0.5;
-        Pair<Double, Integer> p = new Pair<Double, Integer>(new Double(score), Integer.valueOf(cls));
+        Pair<Double, Integer> p = new Pair<>(new Double(score), Integer.valueOf(cls));
         dataScores.add(p);
       }
       init(dataScores);
@@ -84,9 +84,9 @@ public class PRCurve {
   }
 
   public void init(List<Pair<Double, Integer>> dataScores) {
-    PriorityQueue<Pair<Integer, Pair<Double, Integer>>> q = new BinaryHeapPriorityQueue<Pair<Integer, Pair<Double, Integer>>>();
+    PriorityQueue<Pair<Integer, Pair<Double, Integer>>> q = new BinaryHeapPriorityQueue<>();
     for (int i = 0; i < dataScores.size(); i++) {
-      q.add(new Pair<Integer, Pair<Double, Integer>>(Integer.valueOf(i), dataScores.get(i)), -dataScores.get(i).first().doubleValue());
+      q.add(new Pair<>(Integer.valueOf(i), dataScores.get(i)), -dataScores.get(i).first().doubleValue());
     }
     List<Pair<Integer, Pair<Double, Integer>>> sorted = q.toSortedList();
     scores = new double[sorted.size()];
@@ -103,9 +103,9 @@ public class PRCurve {
 
 
   public void initMC(ArrayList<Triple<Double, Integer, Integer>> dataScores) {
-    PriorityQueue<Pair<Integer, Triple<Double, Integer, Integer>>> q = new BinaryHeapPriorityQueue<Pair<Integer, Triple<Double, Integer, Integer>>>();
+    PriorityQueue<Pair<Integer, Triple<Double, Integer, Integer>>> q = new BinaryHeapPriorityQueue<>();
     for (int i = 0; i < dataScores.size(); i++) {
-      q.add(new Pair<Integer, Triple<Double, Integer, Integer>>(Integer.valueOf(i), dataScores.get(i)), -dataScores.get(i).first().doubleValue());
+      q.add(new Pair<>(Integer.valueOf(i), dataScores.get(i)), -dataScores.get(i).first().doubleValue());
     }
     List<Pair<Integer, Triple<Double, Integer, Integer>>> sorted = q.toSortedList();
     scores = new double[sorted.size()];
@@ -350,7 +350,7 @@ public class PRCurve {
 
   public static void main(String[] args) {
 
-    PriorityQueue<String> q = new BinaryHeapPriorityQueue<String>();
+    PriorityQueue<String> q = new BinaryHeapPriorityQueue<>();
     q.add("bla", 2);
     q.add("bla3", 2);
     System.err.println("size of q " + q.size());
@@ -358,8 +358,8 @@ public class PRCurve {
     PRCurve pr = new PRCurve("c:/data0204/precsvm", true);
     System.err.println("acc " + pr.accuracy() + " opt " + pr.optimalAccuracy() + " cwa " + pr.cwa() + " optcwa " + pr.optimalCwa());
     for (int r = 1; r <= pr.numSamples(); r++) {
-      System.err.println("optimal precision at recall " + r + " " + pr.precision(r));
-      System.err.println("model precision at recall " + r + " " + pr.logPrecision(r));
+      System.err.println("optimal precision at recall " + r + ' ' + pr.precision(r));
+      System.err.println("model precision at recall " + r + ' ' + pr.logPrecision(r));
     }
   }
 

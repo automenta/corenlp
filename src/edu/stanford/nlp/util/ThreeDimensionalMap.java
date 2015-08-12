@@ -63,7 +63,7 @@ public class ThreeDimensionalMap<K1, K2, K3, V> implements Serializable {
   public TwoDimensionalMap<K2, K3, V> getTwoDimensionalMap(K1 key1) {
     TwoDimensionalMap<K2, K3, V> m = map.get(key1);
     if (m == null) {
-      m = new TwoDimensionalMap<K2, K3, V>();
+      m = new TwoDimensionalMap<>();
       map.put(key1, m);
     }
     return m;
@@ -91,8 +91,8 @@ public class ThreeDimensionalMap<K1, K2, K3, V> implements Serializable {
 
   public Set<K3> thirdKeySet() {
     Set<K3> keys = Generics.newHashSet();
-    for (K1 k1 : map.keySet()) {
-      TwoDimensionalMap<K2, K3, V> m = map.get(k1);
+    for (Map.Entry<K1, TwoDimensionalMap<K2, K3, V>> k1TwoDimensionalMapEntry : map.entrySet()) {
+      TwoDimensionalMap<K2, K3, V> m = k1TwoDimensionalMapEntry.getValue();
       for (K2 k2 : m.firstKeySet()) {
         keys.addAll(m.get(k2).keySet());
       }

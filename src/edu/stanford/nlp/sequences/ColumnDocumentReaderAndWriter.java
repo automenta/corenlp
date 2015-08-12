@@ -66,10 +66,10 @@ public class ColumnDocumentReaderAndWriter implements DocumentReaderAndWriter<Co
 
     @Override
     public List<CoreLabel> apply(String doc) {
-      if (num > 0 && num % 1000 == 0) { System.err.print("["+num+"]"); }
+      if (num > 0 && num % 1000 == 0) { System.err.print("["+num+ ']'); }
       num++;
 
-      List<CoreLabel> words = new ArrayList<CoreLabel>();
+      List<CoreLabel> words = new ArrayList<>();
 
       String[] lines = doc.split("\n");
 
@@ -104,7 +104,7 @@ public class ColumnDocumentReaderAndWriter implements DocumentReaderAndWriter<Co
     for (CoreLabel wi : doc) {
       String answer = wi.get(CoreAnnotations.AnswerAnnotation.class);
       String goldAnswer = wi.get(CoreAnnotations.GoldAnswerAnnotation.class);
-      out.println(wi.word() + "\t" + goldAnswer + "\t" + answer);
+      out.println(wi.word() + '\t' + goldAnswer + '\t' + answer);
     }
     out.println();
   }

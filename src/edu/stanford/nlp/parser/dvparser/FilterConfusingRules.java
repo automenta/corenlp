@@ -29,8 +29,8 @@ import edu.stanford.nlp.util.TwoDimensionalSet;
  * with <code>-compactGrammar 0</code>.
  */
 public class FilterConfusingRules implements Predicate<Tree>, Serializable {
-  final Set<String> unaryRules = new HashSet<String>();
-  final TwoDimensionalSet<String, String> binaryRules = new TwoDimensionalSet<String, String>();
+  final Set<String> unaryRules = new HashSet<>();
+  final TwoDimensionalSet<String, String> binaryRules = new TwoDimensionalSet<>();
   
   static final boolean DEBUG = false;
 
@@ -92,7 +92,7 @@ public class FilterConfusingRules implements Predicate<Tree>, Serializable {
     } else {
       if (!binaryRules.contains(tree.children()[0].label().value(), tree.children()[1].label().value())) {
         if (DEBUG) {
-          System.err.println("Filtered tree because of binary rule: " + tree.children()[0].label().value() + "," + tree.children()[1].label().value());
+          System.err.println("Filtered tree because of binary rule: " + tree.children()[0].label().value() + ',' + tree.children()[1].label().value());
         }
         return false;
       }

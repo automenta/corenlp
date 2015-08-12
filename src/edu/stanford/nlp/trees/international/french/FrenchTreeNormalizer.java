@@ -41,7 +41,7 @@ public class FrenchTreeNormalizer extends BobChrisTreeNormalizer {
     emptyFilter = new Predicate<Tree>() {
       private static final long serialVersionUID = -22673346831392110L;
       public boolean test(Tree tree) {
-        if(tree.isPreTerminal() && (tree.firstChild().value().equals("") || tree.firstChild().value().equals("-NONE-"))) {
+        if(tree.isPreTerminal() && (tree.firstChild().value().isEmpty() || tree.firstChild().value().equals("-NONE-"))) {
           return false;
         }
         return true;
@@ -85,18 +85,18 @@ public class FrenchTreeNormalizer extends BobChrisTreeNormalizer {
 
     // Morphological Analysis
     String morphStr = childLabel.originalText();
-    if (morphStr == null || morphStr.equals("")) {
+    if (morphStr == null || morphStr.isEmpty()) {
       morphStr = label.value();
       // POS subcategory
       String subCat = childLabel.category();
       if (subCat != null && subCat != "") {
-        morphStr += "-" + subCat + "--";
+        morphStr += '-' + subCat + "--";
       } else {
         morphStr += "---";
       }
     }
     MorphoFeatures feats = morpho.strToFeatures(morphStr);
-    if(feats.getAltTag() != null && !feats.getAltTag().equals("")) {
+    if(feats.getAltTag() != null && !feats.getAltTag().isEmpty()) {
       label.setValue(feats.getAltTag());
       label.setTag(feats.getAltTag());
     }
@@ -152,7 +152,7 @@ public class FrenchTreeNormalizer extends BobChrisTreeNormalizer {
     //Add start symbol so that the root has only one sub-state. Escape any enclosing brackets.
     //If the "tree" consists entirely of enclosing brackets e.g. ((())) then this method
     //will return null. In this case, readers e.g. PennTreeReader will try to read the next tree.
-    while(tree != null && (tree.value() == null || tree.value().equals("")) && tree.numChildren() <= 1)
+    while(tree != null && (tree.value() == null || tree.value().isEmpty()) && tree.numChildren() <= 1)
       tree = tree.firstChild();
 
     //Ensure that the tree has a top-level unary rewrite

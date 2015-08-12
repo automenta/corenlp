@@ -84,10 +84,10 @@ public class FixLocation {
     }
     for (int i = pos-1; i >= 0 && cols[i].length >= 2; i--) {
       if (cols[i][1].equals("LOCATION")) {
-        if (pre.equals("")) {
+        if (pre.isEmpty()) {
           pre = cols[i][0];
         } else {
-          pre = cols[i][0] + " " + pre;
+          pre = cols[i][0] + ' ' + pre;
         }
       } else {
         break;
@@ -97,10 +97,10 @@ public class FixLocation {
     String post = "";
     for (int i = pos+1; i < cols.length && cols[i].length >= 2; i++) {
       if (cols[i][1].equals("LOCATION")) {
-        if (post.equals("")) {
+        if (post.isEmpty()) {
           post = cols[i][0];
         } else {
-          post = post + " " + cols[i][0];
+          post = post + ' ' + cols[i][0];
         }
       } else {
         break;
@@ -108,7 +108,7 @@ public class FixLocation {
     }
 
     String ans = (answers == null) ? "": answers.readLine();
-    String loc = pre+","+post+" ?";
+    String loc = pre+ ',' +post+" ?";
 
     System.err.println(loc);
 
@@ -138,7 +138,7 @@ public class FixLocation {
     BufferedWriter out = new BufferedWriter(new FileWriter(outputFilename));
     for (int i = 0; i < cols.length; i++) {
       if (cols[i].length >= 2) {
-        out.write(cols[i][0]+"\t"+cols[i][1]+"\n");
+        out.write(cols[i][0]+ '\t' +cols[i][1]+ '\n');
       } else {
         out.write("\n");
       }

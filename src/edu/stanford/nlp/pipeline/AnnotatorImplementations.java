@@ -24,29 +24,29 @@ public class AnnotatorImplementations {
   /**
    * Tokenize, emulating the Penn Treebank
    */
-  public Annotator tokenizer(Properties properties, boolean verbose, String options) {
+  public static Annotator tokenizer(Properties properties, boolean verbose, String options) {
     return new TokenizerAnnotator(verbose, properties, options);
   }
 
   /**
    * Clean XML input
    */
-  public CleanXmlAnnotator cleanXML(Properties properties,
-                               String xmlTagsToRemove,
-                               String sentenceEndingTags,
-                               String dateTags,
-                               boolean allowFlawedXml) {
+  public static CleanXmlAnnotator cleanXML(Properties properties,
+                                           String xmlTagsToRemove,
+                                           String sentenceEndingTags,
+                                           String dateTags,
+                                           boolean allowFlawedXml) {
     return new CleanXmlAnnotator(xmlTagsToRemove, sentenceEndingTags, dateTags, allowFlawedXml);
   }
 
   /**
    * Sentence split, in addition to a bunch of other things in this annotator (be careful to check the implementation!)
    */
-  public Annotator wordToSentences(Properties properties,
-                                      boolean verbose, String boundaryTokenRegex,
-                                      Set<String> boundaryToDiscard, Set<String> htmlElementsToDiscard,
-                                      String newlineIsSentenceBreak, String boundaryMultiTokenRegex,
-                                      Set<String> tokenRegexesToDiscard) {
+  public static Annotator wordToSentences(Properties properties,
+                                          boolean verbose, String boundaryTokenRegex,
+                                          Set<String> boundaryToDiscard, Set<String> htmlElementsToDiscard,
+                                          String newlineIsSentenceBreak, String boundaryMultiTokenRegex,
+                                          Set<String> tokenRegexesToDiscard) {
     return new WordsToSentencesAnnotator(verbose, boundaryTokenRegex, boundaryToDiscard, htmlElementsToDiscard,
         newlineIsSentenceBreak, boundaryMultiTokenRegex, tokenRegexesToDiscard);
   }
@@ -54,7 +54,7 @@ public class AnnotatorImplementations {
   /**
    * Part of speech tag
    */
-  public Annotator posTagger(Properties properties) {
+  public static Annotator posTagger(Properties properties) {
     String annotatorName = "pos";
     return new POSTaggerAnnotator(annotatorName, properties);
   }
@@ -62,19 +62,19 @@ public class AnnotatorImplementations {
   /**
    * Annotate lemmas
    */
-  public Annotator morpha(Properties properties, boolean verbose) {
+  public static Annotator morpha(Properties properties, boolean verbose) {
     return new MorphaAnnotator(verbose);
   }
 
   /**
    * Annotate for named entities -- note that this combines multiple NER tag sets, and some auxiliary things (like temporal tagging)
    */
-  public Annotator ner(Properties properties) throws IOException {
+  public static Annotator ner(Properties properties) throws IOException {
 
     List<String> models = new ArrayList<>();
     String modelNames = properties.getProperty("ner.model");
     if (modelNames == null) {
-      modelNames = DefaultPaths.DEFAULT_NER_THREECLASS_MODEL + "," + DefaultPaths.DEFAULT_NER_MUC_MODEL + "," + DefaultPaths.DEFAULT_NER_CONLL_MODEL;
+      modelNames = DefaultPaths.DEFAULT_NER_THREECLASS_MODEL + ',' + DefaultPaths.DEFAULT_NER_MUC_MODEL + ',' + DefaultPaths.DEFAULT_NER_CONLL_MODEL;
     }
     if ( ! modelNames.isEmpty()) {
       models.addAll(Arrays.asList(modelNames.split(",")));
@@ -113,21 +113,21 @@ public class AnnotatorImplementations {
   /**
    * Run RegexNER -- rule-based NER based on a deterministic mapping file
    */
-  public Annotator tokensRegexNER(Properties properties, String name) {
+  public static Annotator tokensRegexNER(Properties properties, String name) {
     return new TokensRegexNERAnnotator(name, properties);
   }
 
   /**
    * Annotate mentions
    */
-  public Annotator mentions(Properties properties, String name) {
+  public static Annotator mentions(Properties properties, String name) {
     return new EntityMentionsAnnotator(name, properties);
   }
 
   /**
    * Annotate for gender of tokens
    */
-  public Annotator gender(Properties properties, boolean verbose) {
+  public static Annotator gender(Properties properties, boolean verbose) {
     return new GenderAnnotator(false, properties.getProperty("gender.firstnames", DefaultPaths.DEFAULT_GENDER_FIRST_NAMES));
   }
 
@@ -137,7 +137,7 @@ public class AnnotatorImplementations {
    * @param properties Properties that control the behavior of the parser. It use "parse.x" properties.
    * @return A ParserAnnotator
    */
-  public Annotator parse(Properties properties) {
+  public static Annotator parse(Properties properties) {
     String parserType = properties.getProperty("parse.type", "stanford");
     String maxLenStr = properties.getProperty("parse.maxlen");
 
@@ -160,7 +160,7 @@ public class AnnotatorImplementations {
     }
   }
 
-  public Annotator custom(Properties properties, String property) {
+  public static Annotator custom(Properties properties, String property) {
     String customName = property.substring(StanfordCoreNLP
             .CUSTOM_ANNOTATOR_PREFIX.length());
     String customClassName = properties.getProperty(property);
@@ -187,38 +187,38 @@ public class AnnotatorImplementations {
   /**
    * Infer the original casing of tokens
    */
-  public Annotator trueCase(Properties properties, String modelLoc,
-                               String classBias,
-                               String mixedCaseFileName,
-                               boolean verbose) {
+  public static Annotator trueCase(Properties properties, String modelLoc,
+                                   String classBias,
+                                   String mixedCaseFileName,
+                                   boolean verbose) {
     return new TrueCaseAnnotator(modelLoc, classBias, mixedCaseFileName, verbose);
   }
 
   /**
    * Annotate for coreference
    */
-  public Annotator coref(Properties properties) {
+  public static Annotator coref(Properties properties) {
     return new DeterministicCorefAnnotator(properties);
   }
 
   /**
    * Annotate for relations expressed in sentences
    */
-  public Annotator relations(Properties properties) {
+  public static Annotator relations(Properties properties) {
     return new RelationExtractorAnnotator(properties);
   }
 
   /**
    * Annotate for sentiment in sentences
    */
-  public Annotator sentiment(Properties properties, String name) {
+  public static Annotator sentiment(Properties properties, String name) {
     return new SentimentAnnotator(name, properties);
   }
 
   /**
    * Annotate dependency relations in sentences
    */
-  public Annotator dependencies(Properties properties) {
+  public static Annotator dependencies(Properties properties) {
     Properties relevantProperties = PropertiesUtils.extractPrefixedProperties(properties,
         Annotator.STANFORD_DEPENDENCIES + '.');
     return new DependencyParseAnnotator(relevantProperties);
@@ -227,7 +227,7 @@ public class AnnotatorImplementations {
   /**
    * Annotate operators (e.g., quantifiers) and polarity of tokens in a sentence
    */
-  public Annotator natlog(Properties properties) {
+  public static Annotator natlog(Properties properties) {
     Properties relevantProperties = PropertiesUtils.extractPrefixedProperties(properties,
         Annotator.STANFORD_NATLOG + '.');
     return new NaturalLogicAnnotator(relevantProperties);
@@ -236,7 +236,7 @@ public class AnnotatorImplementations {
   /**
    * Annotate {@link edu.stanford.nlp.ie.util.RelationTriple}s from text.
    */
-  public Annotator openie(Properties properties) {
+  public static Annotator openie(Properties properties) {
     Properties relevantProperties = PropertiesUtils.extractPrefixedProperties(properties,
         Annotator.STANFORD_OPENIE + '.');
     return new OpenIE(relevantProperties);
@@ -245,7 +245,7 @@ public class AnnotatorImplementations {
   /**
    * Annotate quotes and extract them like sentences
    */
-  public Annotator quote(Properties properties) {
+  public static Annotator quote(Properties properties) {
     Properties relevantProperties = PropertiesUtils.extractPrefixedProperties(properties,
         Annotator.STANFORD_QUOTE + '.');
     return new QuoteAnnotator(relevantProperties);

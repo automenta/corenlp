@@ -119,7 +119,7 @@ public class GrammaticalRelation implements Comparable<GrammaticalRelation>, Ser
   private static final boolean DEBUG = System.getProperty("GrammaticalRelation", null) != null;
 
   private static final EnumMap<Language, Map<String, GrammaticalRelation>>
-    stringsToRelations = new EnumMap<Language, Map<String, GrammaticalRelation>>(Language.class);
+    stringsToRelations = new EnumMap<>(Language.class);
 
   /**
    * The "governor" grammatical relation, which is the inverse of "dependent".<p>
@@ -178,10 +178,7 @@ public class GrammaticalRelation implements Comparable<GrammaticalRelation>, Ser
    * @return The GrammaticalRelation with that name
    */
   public static GrammaticalRelation valueOf(String s, Map<String, GrammaticalRelation> map) {
-    if (map.containsKey(s)) {
-      return map.get(s);
-    }
-    return null;
+    return map.get(s);
   }
 
   /** Convert from a String representation of a GrammaticalRelation to a
@@ -199,7 +196,7 @@ public class GrammaticalRelation implements Comparable<GrammaticalRelation>, Ser
    */
   public static GrammaticalRelation valueOf(Language language, String s) {
     GrammaticalRelation reln;
-    synchronized (stringsToRelations) {
+    /*synchronized (stringsToRelations)*/ {
       reln = (stringsToRelations.get(language) != null ? valueOf(s, stringsToRelations.get(language)) : null);
     }
     if (reln == null) {
@@ -252,10 +249,10 @@ public class GrammaticalRelation implements Comparable<GrammaticalRelation>, Ser
   private final String shortName;
   private final String longName;
   private final GrammaticalRelation parent;
-  private final List<GrammaticalRelation> children = new ArrayList<GrammaticalRelation>();
+  private final List<GrammaticalRelation> children = new ArrayList<>();
   // a regexp for node values at which this relation can hold
   private final Pattern sourcePattern;
-  private final List<TregexPattern> targetPatterns = new ArrayList<TregexPattern>();
+  private final List<TregexPattern> targetPatterns = new ArrayList<>();
   private final String specific; // to hold the specific prep or conjunction associated with the grammatical relation
 
   // TODO document constructor
@@ -298,7 +295,7 @@ public class GrammaticalRelation implements Comparable<GrammaticalRelation>, Ser
     }
 
     GrammaticalRelation previous;
-    synchronized (stringsToRelations) {
+    /*synchronized (stringsToRelations)*/ {
       Map<String, GrammaticalRelation> sToR = stringsToRelations.get(language);
       if (sToR == null) {
         sToR = Generics.newHashMap();
@@ -360,7 +357,7 @@ public class GrammaticalRelation implements Comparable<GrammaticalRelation>, Ser
    *  @return A Collection of dependent nodes to which t bears this GR
    */
   public Collection<TreeGraphNode> getRelatedNodes(TreeGraphNode t, TreeGraphNode root, HeadFinder headFinder) {
-    Set<TreeGraphNode> nodeList = new ArraySet<TreeGraphNode>();
+    Set<TreeGraphNode> nodeList = new ArraySet<>();
     for (TregexPattern p : targetPatterns) {    // cdm: I deleted: && nodeList.isEmpty()
       // Initialize the TregexMatcher with the HeadFinder so that we
       // can use the same HeadFinder through the entire process of
@@ -373,16 +370,20 @@ public class GrammaticalRelation implements Comparable<GrammaticalRelation>, Ser
         }
         nodeList.add(target);
         if (DEBUG) {
-          System.err.println("found " + this + "(" + t + "-" + t.headWordNode() + ", " + m.getNode("target") + "-" + ((TreeGraphNode) m.getNode("target")).headWordNode() + ") using pattern " + p);
-          for (String nodeName : m.getNodeNames()) {
-            if (nodeName.equals("target"))
-              continue;
-            System.err.println("  node " + nodeName + ": " + m.getNode(nodeName));
-          }
+            debug(t, p, m);
         }
       }
     }
     return nodeList;
+  }
+
+  private void debug(TreeGraphNode t, TregexPattern p, TregexMatcher m) {
+    System.err.println("found " + this + '(' + t + '-' + t.headWordNode() + ", " + m.getNode("target") + '-' + ((TreeGraphNode) m.getNode("target")).headWordNode() + ") using pattern " + p);
+    for (String nodeName : m.getNodeNames()) {
+      if (nodeName.equals("target"))
+        continue;
+      System.err.println("  node " + nodeName + ": " + m.getNode(nodeName));
+    }
   }
 
   /** Returns <code>true</code> iff the value of <code>Tree</code>
@@ -599,7 +600,7 @@ public class GrammaticalRelation implements Comparable<GrammaticalRelation>, Ser
       } else {
         return rel;
       }
-      
+
     default: {
       throw new RuntimeException("Unknown language " + language);
     }

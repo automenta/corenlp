@@ -69,12 +69,12 @@ abstract class GraphRelation implements Serializable {
 	
   @Override
   public String toString() {
-    return symbol + ((rawType != null) ? rawType : "") + ((name != null) ? "=" + name : "");
+    return symbol + ((rawType != null) ? rawType : "") + ((name != null) ? '=' + name : "");
   }
 	
   public Predicate<String> getPattern(String relnType)
   {
-    if ((relnType == null) || (relnType.equals(""))) {
+    if ((relnType == null) || (relnType.isEmpty())) {
       return Filters.acceptFilter();
     } else if (relnType.matches("/.*/")) {
       return new RegexStringFilter(relnType.substring(1, relnType.length() - 1));
@@ -355,7 +355,7 @@ abstract class GraphRelation implements Serializable {
     boolean satisfies(IndexedWord l1, IndexedWord l2, SemanticGraph sg) {
       if (l1.equals(IndexedWord.NO_WORD) || l2.equals(IndexedWord.NO_WORD) ) 
         return false;
-      List<Set<IndexedWord>> usedNodes = new ArrayList<Set<IndexedWord>>();
+      List<Set<IndexedWord>> usedNodes = new ArrayList<>();
       for (int i = 0; i <= endDepth; ++i) {
         usedNodes.add(Generics.<IndexedWord>newIdentityHashSet());
       }
@@ -405,9 +405,9 @@ abstract class GraphRelation implements Serializable {
             }
             searchStack = Generics.newArrayList();
             for (int i = 0; i <= endDepth; ++i) {
-              searchStack.add(new Stack<Pair<GrammaticalRelation, IndexedWord>>());
+              searchStack.add(new Stack<>());
             }
-            seenNodes = new ArrayList<Set<IndexedWord>>();
+            seenNodes = new ArrayList<>();
             for (int i = 0; i <= endDepth; ++i) {
               seenNodes.add(Generics.<IndexedWord>newIdentityHashSet());
             }
@@ -646,7 +646,7 @@ abstract class GraphRelation implements Serializable {
     boolean satisfies(IndexedWord l1, IndexedWord l2, SemanticGraph sg) {
       if (l1.equals(IndexedWord.NO_WORD) || l2.equals(IndexedWord.NO_WORD) ) 
         return false;
-      List<Set<IndexedWord>> usedNodes = new ArrayList<Set<IndexedWord>>();
+      List<Set<IndexedWord>> usedNodes = new ArrayList<>();
       for (int i = 0; i <= endDepth; ++i) {
         usedNodes.add(Generics.<IndexedWord>newIdentityHashSet());
       }
@@ -696,9 +696,9 @@ abstract class GraphRelation implements Serializable {
             }
             searchStack = Generics.newArrayList();
             for (int i = 0; i <= endDepth; ++i) {
-              searchStack.add(new Stack<Pair<GrammaticalRelation, IndexedWord>>());
+              searchStack.add(new Stack<>());
             }
-            seenNodes = new ArrayList<Set<IndexedWord>>();
+            seenNodes = new ArrayList<>();
             for (int i = 0; i <= endDepth; ++i) {
               seenNodes.add(Generics.<IndexedWord>newIdentityHashSet());
             }
@@ -855,7 +855,7 @@ abstract class GraphRelation implements Serializable {
       throw new ParseException("Relation " + reln + 
                                " does not use numeric arguments");
     else //error
-      throw new ParseException("Unrecognized compound relation " + reln + " "
+      throw new ParseException("Unrecognized compound relation " + reln + ' '
                                + type);
   }
 	  
@@ -873,7 +873,7 @@ abstract class GraphRelation implements Serializable {
       throw new ParseException("Relation " + reln + 
                                " does not use numeric arguments");
     else //error
-      throw new ParseException("Unrecognized compound relation " + reln + " "
+      throw new ParseException("Unrecognized compound relation " + reln + ' '
                                + type);
   }
 	  

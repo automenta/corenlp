@@ -20,14 +20,14 @@ public class RelationMentionFactory implements Serializable {
    * @param args
    * @param probs
    */
-  public RelationMention constructRelationMention(
-      String objectId, 
-      CoreMap sentence,
-      Span span,
-      String type,
-      String subtype,
-      List<ExtractionObject> args,
-      Counter<String> probs) {
+  public static RelationMention constructRelationMention(
+          String objectId,
+          CoreMap sentence,
+          Span span,
+          String type,
+          String subtype,
+          List<ExtractionObject> args,
+          Counter<String> probs) {
     RelationMention relation = new RelationMention(
         objectId,
         sentence,

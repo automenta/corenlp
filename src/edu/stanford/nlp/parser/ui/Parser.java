@@ -103,11 +103,11 @@ public class Parser extends javax.swing.JFrame {
     loadDataItem.setMnemonic('o');
     loadDataItem.setText("Load File");
     loadDataItem.setToolTipText("Load a data file.");
-    loadDataItem.addActionListener(evt -> loadDataItemActionPerformed(evt));
+    loadDataItem.addActionListener(this::loadDataItemActionPerformed);
 
     jMenu1.add(loadDataItem);
     loadParserItem.setText("Load Parser");
-    loadParserItem.addActionListener(evt -> loadParserItemActionPerformed(evt));
+    loadParserItem.addActionListener(this::loadParserItemActionPerformed);
 
     jMenu1.add(loadParserItem);
     jMenu1.add(jSeparator1);
@@ -115,7 +115,7 @@ public class Parser extends javax.swing.JFrame {
     exitItem.setMnemonic('x');
     exitItem.setText("Exit");
     exitItem.setToolTipText("Exits the program.");
-    exitItem.addActionListener(evt -> exitItemActionPerformed(evt));
+    exitItem.addActionListener(this::exitItemActionPerformed);
 
     jMenu1.add(exitItem);
     jMenuBar1.add(jMenu1);

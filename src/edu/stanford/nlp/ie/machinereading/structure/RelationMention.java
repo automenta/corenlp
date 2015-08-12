@@ -118,7 +118,7 @@ public class RelationMention extends ExtractionObject {
    * @return List of entity-mention args sorted in semantic order
    */
   public List<EntityMention> getEntityMentionArgs() {
-    List<EntityMention> ents = new ArrayList<EntityMention>();
+    List<EntityMention> ents = new ArrayList<>();
     for(ExtractionObject o: args) {
       if(o instanceof EntityMention){
         ents.add((EntityMention) o);
@@ -184,17 +184,15 @@ public class RelationMention extends ExtractionObject {
   @Override
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("RelationMention [type=" + type
-      + (subType != null ? ", subType=" + subType : "")
-      + ", start=" + getExtentTokenStart() + ", end=" + getExtentTokenEnd());
+    sb.append("RelationMention [type=").append(type).append(subType != null ? ", subType=" + subType : "").append(", start=").append(getExtentTokenStart()).append(", end=").append(getExtentTokenEnd());
     if(typeProbabilities != null){
-      sb.append(", " + probsToString());
+      sb.append(", ").append(probsToString());
     }
     
     if(args != null){
       for(int i = 0; i < args.size(); i ++){
         sb.append("\n\t");
-        if(argNames != null) sb.append(argNames.get(i) + " ");
+        if(argNames != null) sb.append(argNames.get(i)).append(' ');
         sb.append(args.get(i));
       }
     }
@@ -208,7 +206,7 @@ public class RelationMention extends ExtractionObject {
    * @param predictedMentions
    */
   public boolean replaceGoldArgsWithPredicted(List<EntityMention> predictedMentions) {
-  	List<ExtractionObject> newArgs = new ArrayList<ExtractionObject>();
+  	List<ExtractionObject> newArgs = new ArrayList<>();
   	for(ExtractionObject arg: args){
   		if(! (arg instanceof EntityMention)){
   			continue;
@@ -223,7 +221,7 @@ public class RelationMention extends ExtractionObject {
   		}
   		if(newArg != null){
   			newArgs.add(newArg);
-  			logger.info("Replacing relation argument: [" + goldEnt + "] with predicted mention [" + newArg + "]");
+  			logger.info("Replacing relation argument: [" + goldEnt + "] with predicted mention [" + newArg + ']');
   		} else {
   			/*
   			logger.info("Failed to match relation argument: " + goldEnt);
@@ -239,14 +237,14 @@ public class RelationMention extends ExtractionObject {
   }
   
   public void removeArgument(ExtractionObject argToRemove, boolean removeParent) {
-    Set<ExtractionObject> thisEvent = new IdentityHashSet<ExtractionObject>();
+    Set<ExtractionObject> thisEvent = new IdentityHashSet<>();
     thisEvent.add(argToRemove);
     removeArguments(thisEvent, removeParent);
   }
   
   public void removeArguments(Set<ExtractionObject> argsToRemove, boolean removeParent) {
-    List<ExtractionObject> newArgs = new ArrayList<ExtractionObject>();
-    List<String> newArgNames = new ArrayList<String>();
+    List<ExtractionObject> newArgs = new ArrayList<>();
+    List<String> newArgNames = new ArrayList<>();
     for(int i = 0; i < args.size(); i ++){
       ExtractionObject a = args.get(i);
       String n = argNames.get(i);
@@ -275,7 +273,7 @@ public class RelationMention extends ExtractionObject {
    */
 
   public static Collection<RelationMention> filterUnrelatedRelations(Collection<RelationMention> relationMentions) {
-    Collection<RelationMention> filtered = new ArrayList<RelationMention>();
+    Collection<RelationMention> filtered = new ArrayList<>();
     for (RelationMention relation : relationMentions) {
       if (!relation.getType().equals(UNRELATED)) {
         filtered.add(relation);
@@ -298,7 +296,7 @@ public class RelationMention extends ExtractionObject {
   }
   
   private static RelationMention createUnrelatedRelation(RelationMentionFactory factory, String type, ExtractionObject ... args) {
-    return factory.constructRelationMention(
+    return RelationMentionFactory.constructRelationMention(
         RelationMention.makeUniqueId(), args[0].getSentence(), ExtractionObject.getSpan(args),
         RelationMention.UNRELATED + type, null, Arrays.asList(args), null);
   }

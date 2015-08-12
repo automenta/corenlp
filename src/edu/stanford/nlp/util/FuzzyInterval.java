@@ -36,7 +36,7 @@ public class FuzzyInterval<E extends FuzzyInterval.FuzzyComparable<E>> extends I
   public static <E extends FuzzyComparable<E>> FuzzyInterval<E> toInterval(E a, E b, int flags) {
     int comp = a.compareTo(b);
     if (comp <= 0) {
-      return new FuzzyInterval<E>(a,b, flags);
+      return new FuzzyInterval<>(a, b, flags);
     } else {
       return null;
     }
@@ -49,9 +49,9 @@ public class FuzzyInterval<E extends FuzzyInterval.FuzzyComparable<E>> extends I
   public static <E extends FuzzyComparable<E>> FuzzyInterval<E> toValidInterval(E a, E b, int flags) {
     int comp = a.compareTo(b);
     if (comp <= 0) {
-      return new FuzzyInterval<E>(a,b,flags);
+      return new FuzzyInterval<>(a, b, flags);
     } else {
-      return new FuzzyInterval<E>(b,a,flags);
+      return new FuzzyInterval<>(b, a, flags);
     }
   }
 
@@ -96,7 +96,7 @@ public class FuzzyInterval<E extends FuzzyInterval.FuzzyComparable<E>> extends I
     return flags;
   }
 
-  private int restrictFlags(int flags) {
+  private static int restrictFlags(int flags) {
     // Eliminate inconsistent choices in flags
     int f11 = extractRelationSubflags(flags, REL_FLAGS_SS_SHIFT);
     int f22 = extractRelationSubflags(flags, REL_FLAGS_EE_SHIFT);

@@ -77,7 +77,7 @@ public class ChineseGrammaticalStructure extends GrammaticalStructure {
   }
 
   private static void collapsePrepAndPoss(Collection<TypedDependency> list) {
-    Collection<TypedDependency> newTypedDeps = new ArrayList<TypedDependency>();
+    Collection<TypedDependency> newTypedDeps = new ArrayList<>();
 
     // Construct a map from words to the set of typed
     // dependencies in which the word appears as governor.
@@ -242,7 +242,7 @@ public class ChineseGrammaticalStructure extends GrammaticalStructure {
         File dir = new File(treeDirname);
         String[] files = dir.list();
         for (String file : files) {
-          AddTreesFromFile(treeDirname+"/"+file, encoding, tb);
+          AddTreesFromFile(treeDirname+ '/' +file, encoding, tb);
         }
       } else if (treeFileName != null) {
         AddTreesFromFile(treeFileName, encoding, tb);

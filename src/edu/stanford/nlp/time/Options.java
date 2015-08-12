@@ -85,7 +85,7 @@ public class Options {
         String binderPrefix = name + ".binder." + bi;
         try {
           Class binderClass = Class.forName(binderClasses[i]);
-          binderPrefix = binderPrefix + ".";
+          binderPrefix = binderPrefix + '.';
           binders[i] = (Env.Binder) binderClass.newInstance();
           binders[i].init(binderPrefix, props);
         } catch (Exception ex) {

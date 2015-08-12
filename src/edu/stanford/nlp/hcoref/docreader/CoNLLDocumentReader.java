@@ -137,7 +137,7 @@ public class CoNLLDocumentReader implements DocReader {
   private static List<File> getFiles(String filepath, Pattern filter)
   {
     Iterable<File> iter = IOUtils.iterFilesRecursive(new File(filepath), filter);
-    List<File> fileList = new ArrayList<File>();
+    List<File> fileList = new ArrayList<>();
     for (File f:iter) {
       fileList.add(f);
     }
@@ -241,7 +241,7 @@ public class CoNLLDocumentReader implements DocReader {
     String partNo;
     public String filename;
     
-    public List<List<String[]>> sentenceWordLists = new ArrayList<List<String[]>>();
+    public List<List<String[]>> sentenceWordLists = new ArrayList<>();
 
     Annotation annotation;
     CollectionValuedMap<String,CoreMap> corefChainMap;
@@ -355,7 +355,7 @@ public class CoNLLDocumentReader implements DocReader {
         }
 
         String str = fields[FIELD_PARSE_BIT].replace("NOPARSE", "X");
-        String tagword = "(" + fields[FIELD_POS_TAG] + " " + fields[FIELD_WORD] + ")";
+        String tagword = '(' + fields[FIELD_POS_TAG] + ' ' + fields[FIELD_WORD] + ')';
         // Replace stars
         int si = str.indexOf('*');
         sb.append(str.substring(0, si));
@@ -388,8 +388,8 @@ public class CoNLLDocumentReader implements DocReader {
     private static List<Triple<Integer,Integer,String>> getLabelledSpans(List<String[]> sentWords, int fieldIndex,
                                                                          String defaultMarker, boolean checkEndLabel)
     {
-      List<Triple<Integer,Integer,String>> spans = new ArrayList<Triple<Integer,Integer,String>>();
-      Stack<Triple<Integer,Integer, String>> openSpans = new Stack<Triple<Integer,Integer,String>>();
+      List<Triple<Integer,Integer,String>> spans = new ArrayList<>();
+      Stack<Triple<Integer,Integer, String>> openSpans = new Stack<>();
       boolean removeStar = (ASTERISK.equals(defaultMarker));
       for (int wordPos = 0; wordPos < sentWords.size(); wordPos++) {
         String[] fields = sentWords.get(wordPos);
@@ -406,7 +406,7 @@ public class CoNLLDocumentReader implements DocReader {
                 if (removeStar) {
                   s = starPattern.matcher(s).replaceAll("");
                 }
-                openSpans.push(new Triple<Integer,Integer,String>(wordPos,-1,s));
+                openSpans.push(new Triple<>(wordPos, -1, s));
                 openParenIndex = -1;
               }
               isDelimiter = true;
@@ -420,7 +420,7 @@ public class CoNLLDocumentReader implements DocReader {
                 // and it is just an artifact of the ordering
                 String s = val.substring(lastDelimiterIndex+1, j);
                 if (!s.equals(t.third())) {
-                  Stack<Triple<Integer,Integer, String>> saved = new Stack<Triple<Integer,Integer,String>>();
+                  Stack<Triple<Integer,Integer, String>> saved = new Stack<>();
                   while (!s.equals(t.third())) {
                     // find correct match
                     saved.push(t);
@@ -447,7 +447,7 @@ public class CoNLLDocumentReader implements DocReader {
             if (removeStar) {
               s = starPattern.matcher(s).replaceAll("");
             }
-            openSpans.push(new Triple<Integer,Integer,String>(wordPos,-1,s));
+            openSpans.push(new Triple<>(wordPos, -1, s));
           }
         }
       }
@@ -467,7 +467,7 @@ public class CoNLLDocumentReader implements DocReader {
       List<Tree> leaves = tree.getLeaves();
       // Check leaves == number of words
       assert(leaves.size() == sentWords.size());
-      List<CoreLabel> tokens = new ArrayList<CoreLabel>(leaves.size());
+      List<CoreLabel> tokens = new ArrayList<>(leaves.size());
       sentence.set(CoreAnnotations.TokensAnnotation.class, tokens);
       for (int i = 0; i < sentWords.size(); i++) {
         String[] fields = sentWords.get(i);
@@ -536,7 +536,7 @@ public class CoNLLDocumentReader implements DocReader {
             }
             String oldLabel = token.get(CorefCoreAnnotations.CorefAnnotation.class);
             if (oldLabel != null) {
-              curLabel = oldLabel + "|" + curLabel;
+              curLabel = oldLabel + '|' + curLabel;
             }
             token.set(CorefCoreAnnotations.CorefAnnotation.class, curLabel);
           }
@@ -554,7 +554,7 @@ public class CoNLLDocumentReader implements DocReader {
 
 
       // Accumulate docTokens and label sentence with overall token begin/end, and sentence index annotations
-      List<CoreLabel> docTokens = new ArrayList<CoreLabel>();
+      List<CoreLabel> docTokens = new ArrayList<>();
       int sentenceIndex = 0;
       int tokenBegin = 0;
       for (CoreMap sentenceAnnotation:sentences) {
@@ -612,7 +612,7 @@ public class CoNLLDocumentReader implements DocReader {
 
     public void annotateDocument(CoNLLDocument document)
     {
-      List<CoreMap> sentences = new ArrayList<CoreMap>(document.sentenceWordLists.size());
+      List<CoreMap> sentences = new ArrayList<>(document.sentenceWordLists.size());
       for (List<String[]> sentWords:document.sentenceWordLists) {
         sentences.add(wordsToSentence(sentWords));
       }
@@ -621,8 +621,8 @@ public class CoNLLDocumentReader implements DocReader {
       document.setAnnotation(docAnnotation);
 
       // Do this here so we have updated character offsets and all
-      CollectionValuedMap<String, CoreMap> corefChainMap = new CollectionValuedMap<String, CoreMap>(CollectionFactory.<CoreMap>arrayListFactory());
-      List<CoreMap> nerChunks = new ArrayList<CoreMap>();
+      CollectionValuedMap<String, CoreMap> corefChainMap = new CollectionValuedMap<>(CollectionFactory.<CoreMap>arrayListFactory());
+      List<CoreMap> nerChunks = new ArrayList<>();
       for (int i = 0; i < sentences.size(); i++) {
         CoreMap sentence = sentences.get(i);
         Tree tree = sentence.get(TreeCoreAnnotations.TreeAnnotation.class);
@@ -680,7 +680,7 @@ public class CoNLLDocumentReader implements DocReader {
 
     public CoNLLDocument readNextDocument() {
       try {
-        List<String[]> curSentWords = new ArrayList<String[]>();
+        List<String[]> curSentWords = new ArrayList<>();
         CoNLLDocument document = null;
         for (String line; (line = br.readLine()) != null; ) {
           lineCnt++;
@@ -704,7 +704,7 @@ public class CoNLLDocumentReader implements DocReader {
               String[] fields = delimiterPattern.split(line);
               if (fields.length < FIELDS_MIN) {
                 throw new RuntimeException("Unexpected number of field " + fields.length +
-                        ", expected >= " + FIELDS_MIN + " for line (" + filename + "," + lineCnt + "): " + line);
+                        ", expected >= " + FIELDS_MIN + " for line (" + filename + ',' + lineCnt + "): " + line);
               }
               String curDocId = fields[FIELD_DOC_ID];
               String partNo = fields[FIELD_PART_NO];
@@ -723,7 +723,7 @@ public class CoNLLDocumentReader implements DocReader {
             if (curSentWords.size() > 0) {
               assert document != null;
               document.addSentence(curSentWords);
-              curSentWords = new ArrayList<String[]>();
+              curSentWords = new ArrayList<>();
             }
           }
         }
@@ -771,10 +771,10 @@ public class CoNLLDocumentReader implements DocReader {
                                 Pair<Integer,Integer> mention,
                                 String corefG) {
     Set<Pair<Integer,Integer>> keys = sentenceInfo.keySet();
-    for (Pair<Integer, Integer> key : keys) {
-      String corefS = sentenceInfo.get(key);
+    for (Map.Entry<Pair<Integer, Integer>, String> pairStringEntry : sentenceInfo.entrySet()) {
+      String corefS = pairStringEntry.getValue();
       if (corefS != null && corefS.equals(corefG)) {
-        if (key.first < mention.first && key.second.equals(mention.second)) {
+        if (pairStringEntry.getKey().first < mention.first && pairStringEntry.getKey().second.equals(mention.second)) {
           return true;
         }
       }
@@ -860,7 +860,7 @@ public class CoNLLDocumentReader implements DocReader {
           finalSentence[i+1][3] = "O";
         }
       }
-      pw.println(wordInfo[0] + "\t" + wordInfo[1] + "\t" + wordInfo[2] + "\t" + wordInfo[3]);
+      pw.println(wordInfo[0] + '\t' + wordInfo[1] + '\t' + wordInfo[2] + '\t' + wordInfo[3]);
     }
 
     pw.println("");
@@ -869,12 +869,12 @@ public class CoNLLDocumentReader implements DocReader {
 
   public static class CorpusStats
   {
-    IntCounter<String> mentionTreeLabelCounter = new IntCounter<String>();
-    IntCounter<String> mentionTreeNonPretermLabelCounter = new IntCounter<String>();
-    IntCounter<String> mentionTreePretermNonPretermNoMatchLabelCounter = new IntCounter<String>();
-    IntCounter<String> mentionTreeMixedLabelCounter = new IntCounter<String>();
-    IntCounter<Integer> mentionTokenLengthCounter = new IntCounter<Integer>();
-    IntCounter<Integer> nerMentionTokenLengthCounter = new IntCounter<Integer>();
+    IntCounter<String> mentionTreeLabelCounter = new IntCounter<>();
+    IntCounter<String> mentionTreeNonPretermLabelCounter = new IntCounter<>();
+    IntCounter<String> mentionTreePretermNonPretermNoMatchLabelCounter = new IntCounter<>();
+    IntCounter<String> mentionTreeMixedLabelCounter = new IntCounter<>();
+    IntCounter<Integer> mentionTokenLengthCounter = new IntCounter<>();
+    IntCounter<Integer> nerMentionTokenLengthCounter = new IntCounter<>();
     int mentionExactTreeSpan = 0;
     int nonPretermSpanMatches = 0;
     int totalMentions = 0;
@@ -907,7 +907,7 @@ public class CoNLLDocumentReader implements DocReader {
               mentionExactTreeSpan++;
             } else {
               logger.info("Tree span is " + span + ", tree node is " + t);
-              logger.info("Mention span is " + tokenStart + " " + (tokenEnd - 1) + ", mention is " + m);
+              logger.info("Mention span is " + tokenStart + ' ' + (tokenEnd - 1) + ", mention is " + m);
             }
           } else {
             logger.warning("No span for " + t);
@@ -919,7 +919,7 @@ public class CoNLLDocumentReader implements DocReader {
           } else {
             mentionTreePretermNonPretermNoMatchLabelCounter.incrementCount(t.label().value());
             logger.info("NPT: Tree span is " + span + ", tree node is " + npt);
-            logger.info("NPT: Mention span is " + tokenStart + " " + (tokenEnd - 1) + ", mention is " + m);
+            logger.info("NPT: Mention span is " + tokenStart + ' ' + (tokenEnd - 1) + ", mention is " + m);
             Label tlabel = t.label();
             if (tlabel instanceof CoreLabel) {
               CoreMap mention = ((CoreLabel) tlabel).get(CorefMentionAnnotation.class);
@@ -966,18 +966,18 @@ public class CoNLLDocumentReader implements DocReader {
     private static void appendFrac(StringBuilder sb, String label, int num, int den)
     {
       double frac = ((double) num)/ den;
-      sb.append(label).append("\t").append(frac).append("\t(").append(num).append("/").append(den).append(")");
+      sb.append(label).append('\t').append(frac).append("\t(").append(num).append('/').append(den).append(')');
     }
 
     private static <E> void appendIntCountStats(StringBuilder sb, String label, IntCounter<E> counts)
     {
-      sb.append(label).append("\n");
+      sb.append(label).append('\n');
       List<E> sortedKeys = Counters.toSortedList(counts);
       int total = counts.totalIntCount();
       for (E key:sortedKeys) {
         int count = counts.getIntCount(key);
         appendFrac(sb, key.toString(), count, total);
-        sb.append("\n");
+        sb.append('\n');
       }
     }
 
@@ -985,23 +985,23 @@ public class CoNLLDocumentReader implements DocReader {
     {
       StringBuilder sb = new StringBuilder();
       appendIntCountStats(sb, "Mention Tree Labels (no preterminals)", mentionTreeNonPretermLabelCounter);
-      sb.append("\n");
+      sb.append('\n');
       appendIntCountStats(sb, "Mention Tree Labels (with preterminals)", mentionTreeLabelCounter);
-      sb.append("\n");
+      sb.append('\n');
       appendIntCountStats(sb, "Mention Tree Labels (preterminals with parent span not match)", mentionTreePretermNonPretermNoMatchLabelCounter);
-      sb.append("\n");
+      sb.append('\n');
       appendIntCountStats(sb, "Mention Tree Labels (mixed)", mentionTreeMixedLabelCounter);
-      sb.append("\n");
+      sb.append('\n');
       appendIntCountStats(sb, "Mention Lengths", mentionTokenLengthCounter);
-      sb.append("\n");
+      sb.append('\n');
       appendFrac(sb, "Mention Exact Non Preterm Tree Span", nonPretermSpanMatches, totalMentions);
-      sb.append("\n");
+      sb.append('\n');
       appendFrac(sb, "Mention Exact Tree Span", mentionExactTreeSpan, totalMentions);
-      sb.append("\n");
+      sb.append('\n');
       appendFrac(sb, "NER", nerMentions, totalMentions);
-      sb.append("\n");
+      sb.append('\n');
       appendFrac(sb, "Nested NER", nestedNerMentions, totalMentions);
-      sb.append("\n");
+      sb.append('\n');
       appendIntCountStats(sb, "NER Mention Lengths", nerMentionTokenLengthCounter);
       return sb.toString();
     }
@@ -1023,7 +1023,7 @@ public class CoNLLDocumentReader implements DocReader {
     String ext = props.getProperty("ext");
     Options options;
     if (ext != null) {
-      options = new Options(".*" + ext + "$");
+      options = new Options(".*" + ext + '$');
     } else {
       options = new Options();
     }
@@ -1082,7 +1082,7 @@ public class CoNLLDocumentReader implements DocReader {
   }
 
   // store any useful information for later (as features, debug, etc)
-  private Map<String, String> makeDocInfo(CoNLLDocument conllDoc) {
+  private static Map<String, String> makeDocInfo(CoNLLDocument conllDoc) {
     Map<String, String> docInfo = Generics.newHashMap();
     docInfo.put("DOC_ID", conllDoc.documentID);
     docInfo.put("DOC_PART", conllDoc.partNo);
@@ -1130,16 +1130,16 @@ public class CoNLLDocumentReader implements DocReader {
   }
 
   // extract gold mentions (mention span, mention ID, cluster ID)
-  public List<List<Mention>> extractGoldMentions(CoNLLDocument conllDoc) {
+  public static List<List<Mention>> extractGoldMentions(CoNLLDocument conllDoc) {
     List<CoreMap> sentences = conllDoc.getAnnotation().get(CoreAnnotations.SentencesAnnotation.class);
-    List<List<Mention>> allGoldMentions = new ArrayList<List<Mention>>();
+    List<List<Mention>> allGoldMentions = new ArrayList<>();
     CollectionValuedMap<String,CoreMap> corefChainMap = conllDoc.getCorefChainMap();
     for (int i = 0; i < sentences.size(); i++) {
-      allGoldMentions.add(new ArrayList<Mention>());
+      allGoldMentions.add(new ArrayList<>());
     }
-    for (String corefIdStr : corefChainMap.keySet()) {
-      int id = Integer.parseInt(corefIdStr);
-      for (CoreMap m : corefChainMap.get(corefIdStr)) {
+    for (Map.Entry<String, Collection<CoreMap>> stringCollectionEntry : corefChainMap.entrySet()) {
+      int id = Integer.parseInt(stringCollectionEntry.getKey());
+      for (CoreMap m : stringCollectionEntry.getValue()) {
         Mention mention = new Mention();
 
         mention.goldCorefClusterID = id;

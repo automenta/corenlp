@@ -26,93 +26,95 @@ public class ReorderingOracle {
    * continue.
    */
   boolean reorder(State state, Transition chosenTransition, List<Transition> transitions) {
-    if (transitions.size() == 0) {
-      throw new AssertionError();
-    }
+    while (true) {
+      if (transitions.size() == 0) {
+        throw new AssertionError();
+      }
 
-    Transition goldTransition = transitions.get(0);
+      Transition goldTransition = transitions.get(0);
 
-    // If the transition is gold, we are already satisfied.
-    if (chosenTransition.equals(goldTransition)) {
-      transitions.remove(0);
-      return true;
-    }
+      // If the transition is gold, we are already satisfied.
+      if (chosenTransition.equals(goldTransition)) {
+        transitions.remove(0);
+        return true;
+      }
 
-    // If the transition should have been a Unary/CompoundUnary
-    // transition and it was something else or a different Unary
-    // transition, see if the transition sequence can be continued
-    // after skipping past the unary
-    if ((goldTransition instanceof UnaryTransition) || (goldTransition instanceof CompoundUnaryTransition)) {
-      transitions.remove(0);
-      return reorder(state, chosenTransition, transitions);
-    }
+      // If the transition should have been a Unary/CompoundUnary
+      // transition and it was something else or a different Unary
+      // transition, see if the transition sequence can be continued
+      // after skipping past the unary
+      if ((goldTransition instanceof UnaryTransition) || (goldTransition instanceof CompoundUnaryTransition)) {
+        transitions.remove(0);
+        continue;
+      }
 
-    // If the chosen transition was an incorrect Unary/CompoundUnary
-    // transition, skip past it and hope to continue the gold
-    // transition sequence.  However, if we have Unary/CompoundUnary
-    // in a row, we have to return false to prevent loops.
-    // Also, if the state stack size is 0, can't keep going
-    if ((chosenTransition instanceof UnaryTransition) || (chosenTransition instanceof CompoundUnaryTransition)) {
-      if (state.transitions.size() > 0) {
-        Transition previous = state.transitions.peek();
-        if ((previous instanceof UnaryTransition) || (previous instanceof CompoundUnaryTransition)) {
+      // If the chosen transition was an incorrect Unary/CompoundUnary
+      // transition, skip past it and hope to continue the gold
+      // transition sequence.  However, if we have Unary/CompoundUnary
+      // in a row, we have to return false to prevent loops.
+      // Also, if the state stack size is 0, can't keep going
+      if ((chosenTransition instanceof UnaryTransition) || (chosenTransition instanceof CompoundUnaryTransition)) {
+        if (state.transitions.size() > 0) {
+          Transition previous = state.transitions.peek();
+          if ((previous instanceof UnaryTransition) || (previous instanceof CompoundUnaryTransition)) {
+            return false;
+          }
+        }
+        if (state.stack.size() == 0) {
           return false;
         }
-      }
-      if (state.stack.size() == 0) {
-        return false;
-      }
-      return true;
-    }
-
-    if (chosenTransition instanceof BinaryTransition) {
-      if (state.stack.size() < 2) {
-        return false;
+        return true;
       }
 
-      if (goldTransition instanceof ShiftTransition) {
-        // Helps, but adds quite a bit of size to the model and only helps a tiny bit
-        return op.trainOptions().oracleBinaryToShift && reorderIncorrectBinaryTransition(transitions);
-      }
-
-      if (!(goldTransition instanceof BinaryTransition)) {
-        return false;
-      }
-
-      BinaryTransition chosenBinary = (BinaryTransition) chosenTransition;
-      BinaryTransition goldBinary = (BinaryTransition) goldTransition;
-      if (chosenBinary.isBinarized()) {
-        // Binarized labels only work (for now, at least) if the side
-        // is wrong but the label itself is correct
-        if (goldBinary.isBinarized() && chosenBinary.label.equals(goldBinary.label)) {
-          transitions.remove(0);
-          return true;
-        } else {
+      if (chosenTransition instanceof BinaryTransition) {
+        if (state.stack.size() < 2) {
           return false;
+        }
+
+        if (goldTransition instanceof ShiftTransition) {
+          // Helps, but adds quite a bit of size to the model and only helps a tiny bit
+          return op.trainOptions().oracleBinaryToShift && reorderIncorrectBinaryTransition(transitions);
+        }
+
+        if (!(goldTransition instanceof BinaryTransition)) {
+          return false;
+        }
+
+        BinaryTransition chosenBinary = (BinaryTransition) chosenTransition;
+        BinaryTransition goldBinary = (BinaryTransition) goldTransition;
+        if (chosenBinary.isBinarized()) {
+          // Binarized labels only work (for now, at least) if the side
+          // is wrong but the label itself is correct
+          if (goldBinary.isBinarized() && chosenBinary.label.equals(goldBinary.label)) {
+            transitions.remove(0);
+            return true;
+          } else {
+            return false;
+          }
+        }
+
+        // In all other binarized situations, essentially what has
+        // happened is we added a bracket error, but future brackets can
+        // still wind up being correct
+        transitions.remove(0);
+        return true;
+      }
+
+      if ((chosenTransition instanceof ShiftTransition) && (goldTransition instanceof BinaryTransition)) {
+        // can't shift at the end of the queue
+        if (state.endOfQueue()) {
+          return false;
+        }
+
+        // doesn't help, sadly
+        BinaryTransition goldBinary = (BinaryTransition) goldTransition;
+        if (!goldBinary.isBinarized()) {
+          return op.trainOptions().oracleShiftToBinary && reorderIncorrectShiftTransition(transitions);
         }
       }
 
-      // In all other binarized situations, essentially what has
-      // happened is we added a bracket error, but future brackets can
-      // still wind up being correct
-      transitions.remove(0);
-      return true;
+      return false;
     }
-
-    if ((chosenTransition instanceof ShiftTransition) && (goldTransition instanceof BinaryTransition)) {
-      // can't shift at the end of the queue
-      if (state.endOfQueue()) {
-        return false;
-      }
-
-      // doesn't help, sadly
-      BinaryTransition goldBinary = (BinaryTransition) goldTransition;
-      if (!goldBinary.isBinarized()) {
-        return op.trainOptions().oracleShiftToBinary && reorderIncorrectShiftTransition(transitions);
-      }
-    }
-
-    return false;
   }
 
   static boolean reorderIncorrectBinaryTransition(List<Transition> transitions) {
@@ -213,14 +215,14 @@ public class ReorderingOracle {
       // we add a bunch of temporary binary transitions with a right
       // head, ending up with a binary transition with a right head
       for (int i = 0; i < leftoverBinary.size(); ++i) {
-        cursor.add(new BinaryTransition("@" + label, BinaryTransition.Side.RIGHT));
+        cursor.add(new BinaryTransition('@' + label, BinaryTransition.Side.RIGHT));
       }
       // use lastBinary.label in case the last transition is temporary
       cursor.add(new BinaryTransition(lastBinary.label, BinaryTransition.Side.RIGHT));
     } else {
-      cursor.add(new BinaryTransition("@" + label, BinaryTransition.Side.LEFT));
+      cursor.add(new BinaryTransition('@' + label, BinaryTransition.Side.LEFT));
       for (int i = 0; i < leftoverBinary.size() - 1; ++i) {
-        cursor.add(new BinaryTransition("@" + label, leftoverBinary.get(i).side));
+        cursor.add(new BinaryTransition('@' + label, leftoverBinary.get(i).side));
       }
       cursor.add(new BinaryTransition(lastBinary.label, leftoverBinary.get(leftoverBinary.size() - 1).side));
     }

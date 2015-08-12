@@ -38,7 +38,7 @@ public class MixDisambiguation {
           String lctok = tok.toLowerCase();
           Counter<String> counter = map.get(lctok);
           if (counter == null) {
-            counter = new ClassicCounter<String>();
+            counter = new ClassicCounter<>();
             map.put(lctok, counter);
           }
           counter.incrementCount(tok);
@@ -46,8 +46,8 @@ public class MixDisambiguation {
       }
     }
 
-    for (String k : map.keySet()) {
-      Counter<String> counter = map.get(k);
+    for (Map.Entry<String, Counter<String>> stringCounterEntry : map.entrySet()) {
+      Counter<String> counter = stringCounterEntry.getValue();
       String maxstr = "";
       int maxcount = -1;
       for(String str : counter.keySet()) {
@@ -57,15 +57,15 @@ public class MixDisambiguation {
           maxcount = count;
         }
       }
-      highest.put(k, maxstr);
+      highest.put(stringCounterEntry.getKey(), maxstr);
     }
 
-    for (String k : highest.keySet()) {
-      String cased = highest.get(k);
-      if (!outputLowercase && k.equals(cased)) {
+    for (Map.Entry<String, String> stringStringEntry : highest.entrySet()) {
+      String cased = stringStringEntry.getValue();
+      if (!outputLowercase && stringStringEntry.getKey().equals(cased)) {
         continue;
       }
-      System.out.printf("%s\t%s\n", k, cased);
+      System.out.printf("%s\t%s\n", stringStringEntry.getKey(), cased);
     }
   }
 }

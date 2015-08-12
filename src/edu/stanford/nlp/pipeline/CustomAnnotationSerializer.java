@@ -188,10 +188,10 @@ public class CustomAnnotationSerializer extends AnnotationSerializer {
     pw.println(chains.size());
 
     // save each cluster
-    for(Integer cid: chains.keySet()) {
+    for(Map.Entry<Integer, CorefChain> integerCorefChainEntry : chains.entrySet()) {
       // cluster id + how many mentions in the cluster
-      CorefChain cluster = chains.get(cid);
-      saveCorefChain(pw, cid, cluster);
+      CorefChain cluster = integerCorefChainEntry.getValue();
+      saveCorefChain(pw, integerCorefChainEntry.getKey(), cluster);
     }
 
     // an empty line at end
@@ -216,12 +216,12 @@ public class CustomAnnotationSerializer extends AnnotationSerializer {
     pw.println(cid + " " + countMentions(cluster));
     // each mention saved on one line
     Map<IntPair, Set<CorefChain.CorefMention>> mentionMap = cluster.getMentionMap();
-    for(IntPair mid: mentionMap.keySet()) {
+    for(Map.Entry<IntPair, Set<CorefChain.CorefMention>> intPairSetEntry : mentionMap.entrySet()) {
       // all mentions with the same head
-      Set<CorefChain.CorefMention> mentions = mentionMap.get(mid);
+      Set<CorefChain.CorefMention> mentions = intPairSetEntry.getValue();
       for(CorefChain.CorefMention mention: mentions) {
         // one mention per line
-        pw.print(mid.getSource() + " " + mid.getTarget());
+        pw.print(intPairSetEntry.getKey().getSource() + " " + intPairSetEntry.getKey().getTarget());
         if(mention == cluster.getRepresentativeMention()) pw.print(" " + 1);
         else pw.print(" " + 0);
 
@@ -238,7 +238,7 @@ public class CustomAnnotationSerializer extends AnnotationSerializer {
         pw.print(" " + mention.position.length());
         for(int i = 0; i < mention.position.length(); i ++)
           pw.print(" " + mention.position.get(i));
-        pw.print(" " + escapeSpace(mention.mentionSpan));
+        pw.print(' ' + escapeSpace(mention.mentionSpan));
         pw.println();
       }
     }
@@ -418,7 +418,7 @@ public class CustomAnnotationSerializer extends AnnotationSerializer {
       if(bits.length % 4 != 0){
         throw new RuntimeIOException("ERROR: Incorrect format for the serialized coref graph: " + line);
       }
-      List<Pair<IntTuple, IntTuple>> corefGraph = new ArrayList<Pair<IntTuple,IntTuple>>();
+      List<Pair<IntTuple, IntTuple>> corefGraph = new ArrayList<>();
       for(int i = 0; i < bits.length; i += 4){
         IntTuple src = new IntTuple(2);
         IntTuple dst = new IntTuple(2);
@@ -426,15 +426,15 @@ public class CustomAnnotationSerializer extends AnnotationSerializer {
         src.set(1, Integer.parseInt(bits[i + 1]));
         dst.set(0, Integer.parseInt(bits[i + 2]));
         dst.set(1, Integer.parseInt(bits[i + 3]));
-        corefGraph.add(new Pair<IntTuple, IntTuple>(src, dst));
+        corefGraph.add(new Pair<>(src, dst));
       }
       doc.set(CorefCoreAnnotations.CorefGraphAnnotation.class, corefGraph);
     }
 
     // read individual sentences
-    List<CoreMap> sentences = new ArrayList<CoreMap>();
+    List<CoreMap> sentences = new ArrayList<>();
     while((line = reader.readLine()) != null){
-      CoreMap sentence = new Annotation("");
+      Annotation sentence = new Annotation("");
 
       // first line is the parse tree. construct it with CoreLabels in Tree nodes
       Tree tree = new PennTreeReader(new StringReader(line), new LabeledScoredTreeFactory(CoreLabel.factory())).readTree();
@@ -446,7 +446,7 @@ public class CustomAnnotationSerializer extends AnnotationSerializer {
       IntermediateSemanticGraph intermCcDeps = loadDependencyGraph(reader);
 
       // the remaining lines until empty line are tokens
-      List<CoreLabel> tokens = new ArrayList<CoreLabel>();
+      List<CoreLabel> tokens = new ArrayList<>();
       while((line = reader.readLine()) != null){
         if(line.length() == 0) break;
         CoreLabel token = loadToken(line, haveExplicitAntecedent);
@@ -569,15 +569,15 @@ public class CustomAnnotationSerializer extends AnnotationSerializer {
     StanfordCoreNLP pipeline = new StanfordCoreNLP(props);
     String file = props.getProperty("file");
     String loadFile = props.getProperty("loadFile");
-    if (loadFile != null && ! loadFile.equals("")) {
+    if (loadFile != null && !loadFile.isEmpty()) {
       CustomAnnotationSerializer ser = new CustomAnnotationSerializer(false, false);
       InputStream is = new FileInputStream(loadFile);
       Pair<Annotation, InputStream> pair = ser.read(is);
       pair.second.close();
       Annotation anno = pair.first;
-      System.out.println(anno.toShorterString(new String[0]));
+      //System.out.println(anno.toShorterString(new String[0]));
       is.close();
-    } else if (file != null && ! file.equals("")) {
+    } else if (file != null && !file.isEmpty()) {
       String text = edu.stanford.nlp.io.IOUtils.slurpFile(file);
       Annotation doc = new Annotation(text);
       pipeline.annotate(doc);

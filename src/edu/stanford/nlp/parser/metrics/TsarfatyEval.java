@@ -74,7 +74,7 @@ public class TsarfatyEval extends AbstractEval {
     usage.append(String.format("Usage: java %s [OPTS] gold guess\n\n",TsarfatyEval.class.getName()));
     usage.append("Options:\n");
     usage.append("  -v         : Verbose mode.\n");
-    usage.append("  -l lang    : Select language settings from " + Language.class.getName() + "\n");
+    usage.append("  -l lang    : Select language settings from ").append(Language.class.getName()).append('\n');
     usage.append("  -y num     : Skip gold trees with yields longer than num.\n");
     usage.append("  -g num     : Skip guess trees with yields longer than num.\n");
     usage.append("  -t         : Tagging mode (default: segmentation).\n");
@@ -176,7 +176,7 @@ public class TsarfatyEval extends AbstractEval {
 
     for(final Tree guess : guessTreebank) {
       final Tree evalGuess = tc.transformTree(guess);
-      final ArrayList<Label> guessSent = guess.yield();
+      final ArrayList<? extends Label> guessSent = guess.yield();
       final String guessChars = Sentence.listToString(guessSent).replaceAll("\\s+","");
       if(guessSent.size() > maxGuessYield) {
         skippedGuessTrees++;
@@ -189,7 +189,7 @@ public class TsarfatyEval extends AbstractEval {
         final Tree evalGold = tc.transformTree(gold);
         goldLineId++;
 
-        final ArrayList<Label> goldSent = gold.yield();
+        final ArrayList<? extends Label> goldSent = gold.yield();
         final String goldChars = Sentence.listToString(goldSent).replaceAll("\\s+","");
 
         if(goldSent.size() > maxGoldYield) {

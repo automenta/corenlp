@@ -19,7 +19,7 @@ public class Options {
   String unitsFilename = DEFAULT_UNITS_FILE;
   String unitsRulesFilename = RULES_DIR + "/english.units.rules.txt";
   String text2UnitMapping = RULES_DIR + "/english.units.txt";
-  String grammarFilename = StringUtils.join(new String[]{RULES_DIR + "/defs.qe.txt", prefixRulesFilename, unitsRulesFilename}, ",") + "," +
+  String grammarFilename = StringUtils.join(new String[]{RULES_DIR + "/defs.qe.txt", prefixRulesFilename, unitsRulesFilename}, ",") + ',' +
       StringUtils.join(DEFAULT_GRAMMAR_FILES);
   boolean verbose = false;
 

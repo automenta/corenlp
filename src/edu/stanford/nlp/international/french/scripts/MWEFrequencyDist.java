@@ -39,7 +39,7 @@ public final class MWEFrequencyDist {
     }
     
     final File treeFile = new File(args[0]);
-    TwoDimensionalCounter<String,String> mweLabelToString = new TwoDimensionalCounter<String,String>();
+    TwoDimensionalCounter<String,String> mweLabelToString = new TwoDimensionalCounter<>();
     Set<String> uniquePOSSequences = Generics.newHashSet();
     
     try {
@@ -58,8 +58,8 @@ public final class MWEFrequencyDist {
           StringBuilder termYield = new StringBuilder();
           StringBuilder posYield = new StringBuilder();
           for(CoreLabel cl : yield) {
-            termYield.append(cl.word()).append(" ");
-            posYield.append(cl.tag()).append(" ");
+            termYield.append(cl.word()).append(' ');
+            posYield.append(cl.tag()).append(' ');
           }
           mweLabelToString.incrementCount(label, termYield.toString().trim());
           uniquePOSSequences.add(posYield.toString().trim());
@@ -87,12 +87,6 @@ public final class MWEFrequencyDist {
       System.out.printf("TOTAL:\t%d\t%d\t%.2f%n", (int) nMWEs,nAllSingletons, 100.0 * nAllSingletons / nMWEs);
       System.out.println("#tokens = " + nTokens);
       System.out.println("#unique MWE POS sequences = " + uniquePOSSequences.size());
-
-    } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
 
     } catch (TregexParseException e) {
       e.printStackTrace();

@@ -85,7 +85,7 @@ public class PropertiesUtils {
     } else {
       List<Map.Entry<String, String>> entries = getSortedEntries(properties);
       for (Map.Entry<String, String> entry : entries) {
-        if ( ! "".equals(entry.getKey())) {
+        if (entry.getKey() != null && !entry.getKey().isEmpty()) {
           stream.format("  %-30s = %s%n", entry.getKey(), entry.getValue());
         }
       }

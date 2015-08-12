@@ -262,10 +262,10 @@ public class LabeledChunkIdentifier {
     public String toString()
     {
       StringBuilder sb = new StringBuilder();
-      sb.append("(");
-      sb.append(label).append(",");
-      sb.append(tag).append(",");
-      sb.append(type).append(")");
+      sb.append('(');
+      sb.append(label).append(',');
+      sb.append(tag).append(',');
+      sb.append(type).append(')');
       return sb.toString();
     }
   }

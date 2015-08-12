@@ -61,7 +61,7 @@ public class MUCDocumentReaderAndWriter implements DocumentReaderAndWriter<CoreL
       PTBTokenizer ptb = PTBTokenizer.newPTBTokenizer(new BufferedReader(new StringReader(doc)), false, true);
       List<CoreLabel> words = ptb.tokenize();
 
-      List<CoreLabel> result = new ArrayList<CoreLabel>();
+      List<CoreLabel> result = new ArrayList<>();
 
       CoreLabel prev = null;
       String prevString = "";
@@ -139,9 +139,9 @@ public class MUCDocumentReaderAndWriter implements DocumentReaderAndWriter<CoreL
           wi.set(CoreAnnotations.OriginalTextAnnotation.class, word.originalText());
           wi.set(CoreAnnotations.BeforeAnnotation.class, prevString+word.before());
           wi.set(CoreAnnotations.AfterAnnotation.class, word.after());
-          wi.set(CoreAnnotations.WordPositionAnnotation.class, ""+wNum);
-          wi.set(CoreAnnotations.SentencePositionAnnotation.class, ""+sNum);
-          wi.set(CoreAnnotations.ParaPositionAnnotation.class, ""+pNum);
+          wi.set(CoreAnnotations.WordPositionAnnotation.class, String.valueOf(wNum));
+          wi.set(CoreAnnotations.SentencePositionAnnotation.class, String.valueOf(sNum));
+          wi.set(CoreAnnotations.ParaPositionAnnotation.class, String.valueOf(pNum));
           wi.set(CoreAnnotations.SectionAnnotation.class, section);
           wi.set(CoreAnnotations.AnswerAnnotation.class, entity);
           wi.set(CoreAnnotations.EntityClassAnnotation.class, entityClass);
@@ -166,7 +166,7 @@ public class MUCDocumentReaderAndWriter implements DocumentReaderAndWriter<CoreL
     String afterLast = "";
     for (CoreLabel word : doc) {
       if (!prevAnswer.equals("O") && !prevAnswer.equals(word.get(CoreAnnotations.AnswerAnnotation.class))) {
-        pw.print("</"+prevClass+">");
+        pw.print("</"+prevClass+ '>');
         prevClass = "";
       }
       pw.print(word.get(CoreAnnotations.BeforeAnnotation.class));
@@ -185,14 +185,14 @@ public class MUCDocumentReaderAndWriter implements DocumentReaderAndWriter<CoreL
           System.err.println("unknown type: "+word.get(CoreAnnotations.AnswerAnnotation.class));
           System.exit(0);
         }
-        pw.print("<"+prevClass+" TYPE=\""+word.get(CoreAnnotations.AnswerAnnotation.class)+"\">");
+        pw.print('<' +prevClass+" TYPE=\""+word.get(CoreAnnotations.AnswerAnnotation.class)+"\">");
       }
       pw.print(word.get(CoreAnnotations.OriginalTextAnnotation.class));
       afterLast = word.get(CoreAnnotations.AfterAnnotation.class);
       prevAnswer = word.get(CoreAnnotations.AnswerAnnotation.class);
     }
     if (!prevAnswer.equals("O")) {
-      pw.print("</"+prevClass+">");
+      pw.print("</"+prevClass+ '>');
       prevClass = "";
     }
     pw.println(afterLast);

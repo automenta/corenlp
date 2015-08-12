@@ -6,7 +6,6 @@ import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.util.Pair;
 
-import java.io.Reader;
 import java.text.NumberFormat;
 import java.util.*;
 
@@ -73,7 +72,7 @@ public class SisterAnnotationStats implements TreeVisitor {
    * string-value labels of left sisters; from inside to outside (right-left)
    */
   public static List<String> leftSisterLabels(Tree t, Tree p) {
-    List<String> l = new ArrayList<String>();
+    List<String> l = new ArrayList<>();
     if (p == null) {
       return l;
     }
@@ -92,7 +91,7 @@ public class SisterAnnotationStats implements TreeVisitor {
    * string-value labels of right sisters; from inside to outside (left-right)
    */
   public static List<String> rightSisterLabels(Tree t, Tree p) {
-    List<String> l = new ArrayList<String>();
+    List<String> l = new ArrayList<>();
     if (p == null) {
       return l;
     }
@@ -110,7 +109,7 @@ public class SisterAnnotationStats implements TreeVisitor {
 
   public static List<String> kidLabels(Tree t) {
     Tree[] kids = t.children();
-    List<String> l = new ArrayList<String>(kids.length);
+    List<String> l = new ArrayList<>(kids.length);
     for (int i = 0; i < kids.length; i++) {
       l.add(kids[i].label().value());
     }
@@ -145,7 +144,7 @@ public class SisterAnnotationStats implements TreeVisitor {
 
   }
 
-  protected void sideCounters(String label, List rewrite, List sideSisters, Map sideRules) {
+  protected static void sideCounters(String label, List rewrite, List sideSisters, Map sideRules) {
     for (Iterator i = sideSisters.iterator(); i.hasNext();) {
       String sis = (String) i.next();
 
@@ -211,7 +210,7 @@ public class SisterAnnotationStats implements TreeVisitor {
         /* alternative 2 ends here */
 
         String annotatedLabel = label + "=l=" + sis;
-        System.out.println("KL(" + annotatedLabel + "||" + label + ") = " + nf.format(kl) + "\t" + "support(" + sis + ") = " + support2);
+        System.out.println("KL(" + annotatedLabel + "||" + label + ") = " + nf.format(kl) + '\t' + "support(" + sis + ") = " + support2);
         answers.add(new Pair(annotatedLabel, new Double(kl * support2)));
         topScores.add(new Pair(annotatedLabel, new Double(kl * support2)));
       }
@@ -222,7 +221,7 @@ public class SisterAnnotationStats implements TreeVisitor {
         double support2 = (cntr2.totalCount());
         double kl = Counters.klDivergence(cntr2, cntr);
         String annotatedLabel = label + "=r=" + sis;
-        System.out.println("KL(" + annotatedLabel + "||" + label + ") = " + nf.format(kl) + "\t" + "support(" + sis + ") = " + support2);
+        System.out.println("KL(" + annotatedLabel + "||" + label + ") = " + nf.format(kl) + '\t' + "support(" + sis + ") = " + support2);
         answers.add(new Pair(annotatedLabel, new Double(kl * support2)));
         topScores.add(new Pair(annotatedLabel, new Double(kl * support2)));
       }
@@ -287,7 +286,7 @@ public class SisterAnnotationStats implements TreeVisitor {
           continue;
         }
       }
-      javaSB[k].append("\"").append(p.first());
+      javaSB[k].append('"').append(p.first());
       javaSB[k].append("\",");
     }
 
@@ -323,7 +322,7 @@ public class SisterAnnotationStats implements TreeVisitor {
    */
   public static void main(String[] args) {
 
-    ClassicCounter<String> c = new ClassicCounter<String>();
+    ClassicCounter<String> c = new ClassicCounter<>();
     c.setCount("A", 0);
     c.setCount("B", 1);
 

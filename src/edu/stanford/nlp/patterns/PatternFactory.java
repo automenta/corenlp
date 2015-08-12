@@ -29,7 +29,7 @@ public class PatternFactory {
   @Execution.Option(name = "numWordsCompound")
   public static String numWordsCompound = "2";
 
-  public static Map<String, Integer> numWordsCompoundMapped = new HashMap<String, Integer>();
+  public static Map<String, Integer> numWordsCompoundMapped = new HashMap<>();
 
   public static int numWordsCompoundMax = 2;
   /**

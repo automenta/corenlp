@@ -49,8 +49,6 @@ public class HebrewTreeReaderFactory implements TreeReaderFactory, Serializable 
 
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
     }

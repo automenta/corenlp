@@ -153,7 +153,7 @@ public class ArabicTreeNormalizer extends BobChrisTreeNormalizer {
 
       } else if (t.isPreTerminal()) {
 
-        if (t.value() == null || t.value().equals("")) {
+        if (t.value() == null || t.value().isEmpty()) {
           System.err.printf("%s: missing tag for\n%s\n",this.getClass().getName(),t.pennString());
         } else if(t.label() instanceof HasTag) {
           ((HasTag) t.label()).setTag(t.value());
@@ -163,7 +163,7 @@ public class ArabicTreeNormalizer extends BobChrisTreeNormalizer {
 
         // there are some nodes "/" missing preterminals.  We'll splice in a tag for these.
         int nk = t.numChildren();
-        List<Tree> newKids = new ArrayList<Tree>(nk);
+        List<Tree> newKids = new ArrayList<>(nk);
         for (int j = 0; j < nk; j++) {
           Tree child = t.getChild(j);
           if (child.isLeaf()) {
@@ -219,7 +219,7 @@ public class ArabicTreeNormalizer extends BobChrisTreeNormalizer {
     //Add start symbol so that the root has only one sub-state. Escape any enclosing brackets.
     //If the "tree" consists entirely of enclosing brackets e.g. ((())) then this method
     //will return null. In this case, readers e.g. PennTreeReader will try to read the next tree.
-    while(tree != null && (tree.value() == null || tree.value().equals("")) && tree.numChildren() <= 1)
+    while(tree != null && (tree.value() == null || tree.value().isEmpty()) && tree.numChildren() <= 1)
       tree = tree.firstChild();
 
     if(tree != null && !tree.value().equals(rootLabel))

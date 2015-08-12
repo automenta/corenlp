@@ -42,12 +42,16 @@ class PruneNode extends TsurgeonPattern {
   }
 
   private static Tree pruneHelper(Tree root, Tree nodeToPrune) {
-    if(nodeToPrune==root)
-      return null;
-    Tree parent = nodeToPrune.parent(root);
-    parent.removeChild(Trees.objectEqualityIndexOf(parent,nodeToPrune));
-    if(parent.children().length==0)
-      return pruneHelper(root,parent);
-    return root;
+    while (true) {
+      if (nodeToPrune == root)
+        return null;
+      Tree parent = nodeToPrune.parent(root);
+      parent.removeChild(Trees.objectEqualityIndexOf(parent, nodeToPrune));
+      if (parent.children().length == 0) {
+        nodeToPrune = parent;
+        continue;
+      }
+      return root;
+    }
   }
 }

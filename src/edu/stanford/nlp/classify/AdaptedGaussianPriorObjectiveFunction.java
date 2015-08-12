@@ -32,7 +32,7 @@ public class AdaptedGaussianPriorObjectiveFunction<L, F> extends LogConditionalO
 
   /**
    */
-  private void calculateSCL(double[] x) {
+  private static void calculateSCL(double[] x) {
     throw new UnsupportedOperationException();
   }
 

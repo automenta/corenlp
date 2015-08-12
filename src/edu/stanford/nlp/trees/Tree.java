@@ -261,7 +261,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
    * @return The children of the node
    */
   public List<Tree> getChildrenAsList() {
-    return new ArrayList<Tree>(Arrays.asList(children()));
+    return new ArrayList<>(Arrays.asList(children()));
   }
 
 
@@ -387,25 +387,29 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
     return kids[kids.length - 1];
   }
 
-  /** Return the highest node of the (perhaps trivial) unary chain that
-   *  this node is part of.
-   *  In case this node is the only child of its parent, trace up the chain of
-   *  unaries, and return the uppermost node of the chain (the node whose
-   *  parent has multiple children, or the node that is the root of the tree).
+  /**
+   * Return the highest node of the (perhaps trivial) unary chain that
+   * this node is part of.
+   * In case this node is the only child of its parent, trace up the chain of
+   * unaries, and return the uppermost node of the chain (the node whose
+   * parent has multiple children, or the node that is the root of the tree).
    *
-   *  @param root The root of the tree that contains this subtree
-   *  @return The uppermost node of the unary chain, if this node is in a unary
-   *         chain, or else the current node
+   * @param root The root of the tree that contains this subtree
+   * @return The uppermost node of the unary chain, if this node is in a unary
+   * chain, or else the current node
    */
   public Tree upperMostUnary(Tree root) {
-    Tree parent = parent(root);
-    if (parent == null) {
-      return this;
+    Tree result = this;
+    while (true) {
+      Tree parent = result.parent(root);
+      if (parent == null) {
+        return result;
+      }
+      if (parent.numChildren() > 1) {
+        return result;
+      }
+      result = parent;
     }
-    if (parent.numChildren() > 1) {
-      return this;
-    }
-    return parent.upperMostUnary(root);
   }
 
   /**
@@ -809,20 +813,20 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
     Tree[] children = children();
     Label label = label();
     if (label != null) {
-      sb.append("<");
+      sb.append('<');
       if (children.length > 0) {
         sb.append("node value=\"");
       } else {
         sb.append("leaf value=\"");
       }
       sb.append(XMLUtils.escapeXML(Sentence.wordToString(label, true)));
-      sb.append("\"");
+      sb.append('"');
       if (printScores) {
         sb.append(" score=");
         sb.append(score());
       }
       if (children.length > 0) {
-        sb.append(">");
+        sb.append('>');
       } else {
         sb.append("/>");
       }
@@ -1029,20 +1033,24 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
   /**
    * Returns the tree leaf that is the head of the tree.
    *
-   * @param hf The head-finding algorithm to use
-   * @param parent  The parent of this tree
+   * @param hf     The head-finding algorithm to use
+   * @param parent The parent of this tree
    * @return The head tree leaf if any, else <code>null</code>
    */
   public Tree headTerminal(HeadFinder hf, Tree parent) {
-    if (isLeaf()) {
-      return this;
+    Tree result = this;
+    while (true) {
+      if (result.isLeaf()) {
+        return result;
+      }
+      Tree head = hf.determineHead(result, parent);
+      if (head != null) {
+        result = head;
+        continue;
+      }
+      System.err.println("Head is null: " + result);
+      return null;
     }
-    Tree head = hf.determineHead(this, parent);
-    if (head != null) {
-      return head.headTerminal(hf, parent);
-    }
-    System.err.println("Head is null: " + this);
-    return null;
   }
 
   /**
@@ -1067,17 +1075,21 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
    * @throws IllegalArgumentException if called on a leaf node
    */
   public Tree headPreTerminal(HeadFinder hf) {
-    if (isPreTerminal()) {
-      return this;
-    } else if (isLeaf()) {
-      throw new IllegalArgumentException("Called headPreTerminal on a leaf: " + this);
-    } else {
-      Tree head = hf.determineHead(this);
-      if (head != null) {
-        return head.headPreTerminal(hf);
+    Tree result = this;
+    while (true) {
+      if (result.isPreTerminal()) {
+        return result;
+      } else if (result.isLeaf()) {
+        throw new IllegalArgumentException("Called headPreTerminal on a leaf: " + result);
+      } else {
+        Tree head = hf.determineHead(result);
+        if (head != null) {
+          result = head;
+          continue;
+        }
+        System.err.println("Head preterminal is null: " + result);
+        return null;
       }
-      System.err.println("Head preterminal is null: " + this);
-      return null;
     }
   }
 
@@ -1379,8 +1391,8 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
    *
    * @return a <code>List</code> of the data in the tree's leaves.
    */
-  public ArrayList<Label> yield() {
-    return yield(new ArrayList<Label>());
+  public ArrayList<? extends Label> yield() {
+    return yield(new ArrayList());
   }
 
   /**
@@ -1399,7 +1411,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
    *          if not, the new yield is added to the end of the list.
    * @return a <code>List</code> of the data in the tree's leaves.
    */
-  public ArrayList<Label> yield(ArrayList<Label> y) {
+  public ArrayList<? super Label> yield(ArrayList<? super Label> y) {
     if (isLeaf()) {
       y.add(label());
 
@@ -1413,7 +1425,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
   }
 
   public ArrayList<Word> yieldWords() {
-    return yieldWords(new ArrayList<Word>());
+    return yieldWords(new ArrayList<>());
   }
 
   public ArrayList<Word> yieldWords(ArrayList<Word> y) {
@@ -1428,7 +1440,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
   }
 
   public <X extends HasWord> ArrayList<X> yieldHasWord() {
-    return yieldHasWord(new ArrayList<X>());
+    return yieldHasWord(new ArrayList<>());
   }
 
   @SuppressWarnings("unchecked")
@@ -1479,7 +1491,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
    * @return a <code>List</code> of the data in the tree's leaves.
    */
   @SuppressWarnings("unchecked")
-  public <T> List<T> yield(List<T> y) {
+  public <T> List<? super T> yield(List<? super T> y) {
     if (isLeaf()) {
       if(label() instanceof HasWord) {
         HasWord hw = (HasWord) label();
@@ -1506,11 +1518,11 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
    * @return a <code>List</code> of the data in the tree's leaves.
    */
   public ArrayList<TaggedWord> taggedYield() {
-    return taggedYield(new ArrayList<TaggedWord>());
+    return taggedYield(new ArrayList<>());
   }
 
   public List<LabeledWord> labeledYield() {
-    return labeledYield(new ArrayList<LabeledWord>());
+    return labeledYield(new ArrayList<>());
   }
 
   /**
@@ -1555,7 +1567,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
   }
 
   public List<CoreLabel> taggedLabeledYield() {
-    List<CoreLabel> ty = new ArrayList<CoreLabel>();
+    List<CoreLabel> ty = new ArrayList<>();
     taggedLabeledYield(ty, 0);
     return ty;
   }
@@ -1589,7 +1601,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
    * @return a {@code List} of the data in the tree's pre-leaves.
    */
   public List<Label> preTerminalYield() {
-    return preTerminalYield(new ArrayList<Label>());
+    return preTerminalYield(new ArrayList<>());
   }
 
 
@@ -1624,7 +1636,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
    * @return a <code>List</code> of the leaves.
    */
   public <T extends Tree> List<T> getLeaves() {
-    return getLeaves(new ArrayList<T>());
+    return getLeaves(new ArrayList<>());
   }
 
   /**
@@ -1711,7 +1723,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
       return this;
     }
     Tree[] kids = children();
-    List<Tree> newChildren = new ArrayList<Tree>(kids.length);
+    List<Tree> newChildren = new ArrayList<>(kids.length);
     for (Tree child : kids) {
       if (child.isLeaf() || child.isPreTerminal()) {
         newChildren.add(child);
@@ -1757,7 +1769,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
    * @return the <code>List</code> of all subtrees in the tree.
    */
   public List<Tree> subTreeList() {
-    return subTrees(new ArrayList<Tree>());
+    return subTrees(new ArrayList<>());
   }
 
 
@@ -1873,7 +1885,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
       t = tf.newLeaf(label());
     } else {
       Tree[] kids = children();
-      List<Tree> newKids = new ArrayList<Tree>(kids.length);
+      List<Tree> newKids = new ArrayList<>(kids.length);
       for (Tree kid : kids) {
         newKids.add(kid.treeSkeletonCopy(tf));
       }
@@ -1906,7 +1918,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
     }
     Label label = lf.newLabel(label());
     Tree[] kids = children();
-    List<Tree> newKids = new ArrayList<Tree>(kids.length);
+    List<Tree> newKids = new ArrayList<>(kids.length);
     for (Tree kid : kids) {
       newKids.add(kid.treeSkeletonConstituentCopy(tf, lf));
     }
@@ -1946,7 +1958,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
       t = tf.newLeaf(label());
     } else {
       Tree[] kids = children();
-      List<Tree> newKids = new ArrayList<Tree>(kids.length);
+      List<Tree> newKids = new ArrayList<>(kids.length);
       for (Tree kid : kids) {
         newKids.add(kid.transform(transformer, tf));
       }
@@ -2002,7 +2014,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
   private List<Tree> spliceOutHelper(Predicate<Tree> nodeFilter, TreeFactory tf) {
     // recurse over all children first
     Tree[] kids = children();
-    List<Tree> l = new ArrayList<Tree>();
+    List<Tree> l = new ArrayList<>();
     for (Tree kid : kids) {
       l.addAll(kid.spliceOutHelper(nodeFilter, tf));
     }
@@ -2015,7 +2027,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
       } else {
         t = tf.newLeaf(label());
       }
-      l = new ArrayList<Tree>(1);
+      l = new ArrayList<>(1);
       l.add(t);
       return l;
     }
@@ -2070,7 +2082,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
       return null;
     }
     // if not, recurse over all children
-    List<Tree> l = new ArrayList<Tree>();
+    List<Tree> l = new ArrayList<>();
     Tree[] kids = children();
     for (Tree kid : kids) {
       Tree prunedChild = kid.prune(filter, tf);
@@ -2183,23 +2195,27 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
    *
    * @param height How many nodes up to go. A parameter of 0 means return
    *               this node, 1 means to return the parent node and so on.
-   * @param root The root node that this Tree is embedded under
+   * @param root   The root node that this Tree is embedded under
    * @return The ancestor at height <code>height</code>.  It returns null
-   *         if it does not exist or the tree implementation does not keep track
-   *         of parents
+   * if it does not exist or the tree implementation does not keep track
+   * of parents
    */
   public Tree ancestor(int height, Tree root) {
-    if (height < 0) {
-      throw new IllegalArgumentException("ancestor: height cannot be negative");
+    Tree result = this;
+    while (true) {
+      if (height < 0) {
+        throw new IllegalArgumentException("ancestor: height cannot be negative");
+      }
+      if (height == 0) {
+        return result;
+      }
+      Tree par = result.parent(root);
+      if (par == null) {
+        return null;
+      }
+      height = height - 1;
+      result = par;
     }
-    if (height == 0) {
-      return this;
-    }
-    Tree par = parent(root);
-    if (par == null) {
-      return null;
-    }
-    return par.ancestor(height - 1, root);
   }
 
 
@@ -2208,7 +2224,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
     private final List<Tree> treeStack;
 
     protected TreeIterator(Tree t) {
-      treeStack = new ArrayList<Tree>();
+      treeStack = new ArrayList<>();
       treeStack.add(t);
     }
 
@@ -2264,7 +2280,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
   }
 
   public List<Tree> postOrderNodeList() {
-    List<Tree> nodes = new ArrayList<Tree>();
+    List<Tree> nodes = new ArrayList<>();
     postOrderRecurse(this, nodes);
     return nodes;
   }
@@ -2276,7 +2292,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
   }
 
   public List<Tree> preOrderNodeList() {
-    List<Tree> nodes = new ArrayList<Tree>();
+    List<Tree> nodes = new ArrayList<>();
     preOrderRecurse(this, nodes);
     return nodes;
   }
@@ -2489,8 +2505,7 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
     if (t1DomPath == null || t2DomPath == null) {
       return null;
     }
-    ArrayList<Tree> path = new ArrayList<Tree>();
-    path.addAll(t1DomPath);
+    ArrayList<Tree> path = new ArrayList<>(t1DomPath);
     Collections.reverse(path);
     path.remove(joinNode);
     path.addAll(t2DomPath);

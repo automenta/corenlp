@@ -50,7 +50,7 @@ public class SimpleTensor implements Serializable {
     this.slices = new SimpleMatrix[slices.length];
     for (int i = 0; i < numSlices; ++i) {
       if (slices[i].numRows() != numRows || slices[i].numCols() != numCols) {
-        throw new IllegalArgumentException("Slice " + i + " has matrix dimensions " + slices[i].numRows() + "," + slices[i].numCols() + ", expected " + numRows + "," + numCols);
+        throw new IllegalArgumentException("Slice " + i + " has matrix dimensions " + slices[i].numRows() + ',' + slices[i].numCols() + ", expected " + numRows + ',' + numCols);
       }
       this.slices[i] = new SimpleMatrix(slices[i]);
     }
@@ -121,7 +121,7 @@ public class SimpleTensor implements Serializable {
    */
   public SimpleTensor plus(SimpleTensor other) {
     if (other.numRows != numRows || other.numCols != numCols || other.numSlices != numSlices) {
-      throw new IllegalArgumentException("Sizes of tensors do not match.  Our size: " + numRows + "," + numCols + "," + numSlices + "; other size " + other.numRows + "," + other.numCols + "," + other.numSlices);
+      throw new IllegalArgumentException("Sizes of tensors do not match.  Our size: " + numRows + ',' + numCols + ',' + numSlices + "; other size " + other.numRows + ',' + other.numCols + ',' + other.numSlices);
     }
     SimpleTensor result = new SimpleTensor(numRows, numCols, numSlices);
     for (int i = 0; i < numSlices; ++i) {
@@ -136,7 +136,7 @@ public class SimpleTensor implements Serializable {
    */
   public SimpleTensor elementMult(SimpleTensor other) {
     if (other.numRows != numRows || other.numCols != numCols || other.numSlices != numSlices) {
-      throw new IllegalArgumentException("Sizes of tensors do not match.  Our size: " + numRows + "," + numCols + "," + numSlices + "; other size " + other.numRows + "," + other.numCols + "," + other.numSlices);
+      throw new IllegalArgumentException("Sizes of tensors do not match.  Our size: " + numRows + ',' + numCols + ',' + numSlices + "; other size " + other.numRows + ',' + other.numCols + ',' + other.numSlices);
     }
     SimpleTensor result = new SimpleTensor(numRows, numCols, numSlices);
     for (int i = 0; i < numSlices; ++i) {
@@ -290,7 +290,7 @@ public class SimpleTensor implements Serializable {
   public String toString() {
     StringBuilder result = new StringBuilder();
     for (int slice = 0; slice < numSlices; ++slice) {
-      result.append("Slice " + slice + "\n");
+      result.append("Slice ").append(slice).append('\n');
       result.append(slices[slice]);
     }
     return result.toString();
@@ -303,7 +303,7 @@ public class SimpleTensor implements Serializable {
   public String toString(String format) {
     StringBuilder result = new StringBuilder();
     for (int slice = 0; slice < numSlices; ++slice) {
-      result.append("Slice " + slice + "\n");
+      result.append("Slice ").append(slice).append('\n');
       result.append(NeuralUtils.toString(slices[slice], format));
     }
     return result.toString();

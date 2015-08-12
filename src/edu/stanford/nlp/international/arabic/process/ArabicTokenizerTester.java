@@ -52,7 +52,7 @@ public class ArabicTokenizerTester {
         String[] toks = line.split("\\s+");
         for (String tok : toks) {
           String mappedTok = lexMapper.map(null, tok);
-          sb.append(mappedTok).append(" ");
+          sb.append(mappedTok).append(' ');
         }
         List<String> mappedToks = Arrays.asList(sb.toString().trim().split("\\s+"));
 
@@ -84,8 +84,6 @@ public class ArabicTokenizerTester {
       System.err.printf("Read %d lines.%n", lineId);
 
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();

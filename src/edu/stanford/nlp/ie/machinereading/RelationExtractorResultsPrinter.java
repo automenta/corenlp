@@ -48,8 +48,8 @@ public class RelationExtractorResultsPrinter extends ResultsPrinter {
     assert relationMentionFactory != null: "ERROR: RelationExtractorResultsPrinter.relationMentionFactory cannot be null in printResults!";
     
     // Count predicted-actual relation type pairs
-    Counter<Pair<String, String>> results = new ClassicCounter<Pair<String, String>>();
-    ClassicCounter<String> labelCount = new ClassicCounter<String>();
+    Counter<Pair<String, String>> results = new ClassicCounter<>();
+    ClassicCounter<String> labelCount = new ClassicCounter<>();
     
     // TODO: assumes binary relations
     for (int goldSentenceIndex = 0; goldSentenceIndex < goldStandard.size(); goldSentenceIndex++) {
@@ -58,7 +58,7 @@ public class RelationExtractorResultsPrinter extends ResultsPrinter {
         List<RelationMention> extractorRelations = AnnotationUtils.getRelations(relationMentionFactory, extractorSentence, goldRelation.getArg(0), goldRelation.getArg(1));
         labelCount.incrementCount(goldRelation.getType());
         for (RelationMention extractorRelation : extractorRelations) {
-          results.incrementCount(new Pair<String, String>(extractorRelation.getType(), goldRelation.getType()));  
+          results.incrementCount(new Pair<>(extractorRelation.getType(), goldRelation.getType()));
         }
       }
     }
@@ -66,12 +66,12 @@ public class RelationExtractorResultsPrinter extends ResultsPrinter {
     printResultsInternal(pw, results, labelCount);
   }
   
-  private void printResultsInternal(PrintWriter pw, Counter<Pair<String, String>> results, ClassicCounter<String> labelCount) {
-    ClassicCounter<String> correct = new ClassicCounter<String>();
-    ClassicCounter<String> predictionCount = new ClassicCounter<String>();
+  private static void printResultsInternal(PrintWriter pw, Counter<Pair<String, String>> results, ClassicCounter<String> labelCount) {
+    ClassicCounter<String> correct = new ClassicCounter<>();
+    ClassicCounter<String> predictionCount = new ClassicCounter<>();
     boolean countGoldLabels = false;
     if (labelCount == null) {
-      labelCount = new ClassicCounter<String>();
+      labelCount = new ClassicCounter<>();
       countGoldLabels = true;
     }
 
@@ -95,7 +95,7 @@ public class RelationExtractorResultsPrinter extends ResultsPrinter {
     double totalCorrect = 0;
     double totalPredicted = 0;
     pw.println("Label\tCorrect\tPredict\tActual\tPrecn\tRecall\tF");
-    List<String> labels = new ArrayList<String>(labelCount.keySet());
+    List<String> labels = new ArrayList<>(labelCount.keySet());
     Collections.sort(labels);
     for (String label : labels) {
       double numcorrect = correct.getCount(label);
@@ -104,8 +104,8 @@ public class RelationExtractorResultsPrinter extends ResultsPrinter {
       double precision = (predicted > 0) ? (numcorrect / predicted) : 0;
       double recall = numcorrect / trueCount;
       double f = (precision + recall > 0) ? 2 * precision * recall / (precision + recall) : 0.0;
-      pw.println(StringUtils.padOrTrim(label, MAX_LABEL_LENGTH) + "\t" + numcorrect + "\t" + predicted + "\t" + trueCount + "\t"
-          + formatter.format(precision * 100) + "\t" + formatter.format(100 * recall) + "\t"
+      pw.println(StringUtils.padOrTrim(label, MAX_LABEL_LENGTH) + '\t' + numcorrect + '\t' + predicted + '\t' + trueCount + '\t'
+          + formatter.format(precision * 100) + '\t' + formatter.format(100 * recall) + '\t'
           + formatter.format(100 * f));
       if (!RelationMention.isUnrelatedLabel(label)) {
         totalCount += trueCount;
@@ -116,8 +116,8 @@ public class RelationExtractorResultsPrinter extends ResultsPrinter {
     double precision = (totalPredicted > 0) ? (totalCorrect / totalPredicted) : 0;
     double recall = totalCorrect / totalCount;
     double f = (totalPredicted > 0 && totalCorrect > 0) ? 2 * precision * recall / (precision + recall) : 0.0;
-    pw.println("Total\t" + totalCorrect + "\t" + totalPredicted + "\t" + totalCount + "\t"
-        + formatter.format(100 * precision) + "\t" + formatter.format(100 * recall) + "\t" + formatter.format(100 * f));
+    pw.println("Total\t" + totalCorrect + '\t' + totalPredicted + '\t' + totalCount + '\t'
+        + formatter.format(100 * precision) + '\t' + formatter.format(100 * recall) + '\t' + formatter.format(100 * f));
   }
 
   public void printResultsUsingLabels(PrintWriter pw, 
@@ -125,10 +125,10 @@ public class RelationExtractorResultsPrinter extends ResultsPrinter {
       List<String> extractorOutput) {
     
     // Count predicted-actual relation type pairs
-    Counter<Pair<String, String>> results = new ClassicCounter<Pair<String, String>>();
+    Counter<Pair<String, String>> results = new ClassicCounter<>();
     assert(goldStandard.size() == extractorOutput.size());
     for(int i = 0; i < goldStandard.size(); i ++) 
-      results.incrementCount(new Pair<String, String>(extractorOutput.get(i), goldStandard.get(i)));
+      results.incrementCount(new Pair<>(extractorOutput.get(i), goldStandard.get(i)));
     
     printResultsInternal(pw, results, null);
   }

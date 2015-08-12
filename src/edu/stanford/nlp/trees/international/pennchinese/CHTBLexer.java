@@ -362,7 +362,7 @@ class CHTBLexer {
     try {
       PrintWriter p = new PrintWriter(new OutputStreamWriter(System.err,
                                                 "GB18030"), true);
-      p.println("chtbl.flex tokenization error: \"" + yytext + "\"");
+      p.println("chtbl.flex tokenization error: \"" + yytext + '"');
       if (yytext.length() >= 1) {
 	p.println("First character is: " + yytext.charAt(0));
 	if (yytext.length() >= 2) {
@@ -572,7 +572,7 @@ class CHTBLexer {
    *
    * @param   errorCode  the code of the errormessage to display
    */
-  private void zzScanError(int errorCode) {
+  private static void zzScanError(int errorCode) {
     String message;
     try {
       message = ZZ_ERROR_MSG[errorCode];

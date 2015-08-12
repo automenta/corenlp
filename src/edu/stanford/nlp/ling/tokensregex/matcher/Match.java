@@ -86,10 +86,10 @@ public class Match<K,V> implements HasInterval<Integer>
 
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("[" + ((matched != null)? StringUtils.join(matched, " - "):"") + "]");
+    sb.append('[').append((matched != null) ? StringUtils.join(matched, " - ") : "").append(']');
     sb.append(" -> ").append(value);
     sb.append(" at (").append(begin);
-    sb.append(",").append(end).append(")");
+    sb.append(',').append(end).append(')');
     return sb.toString();
   }
 

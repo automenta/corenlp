@@ -40,18 +40,18 @@ public class FactoredLexicon extends BaseLexicon {
 
   private static final String NO_MORPH_ANALYSIS = "xXxNONExXx";
 
-  private Index<String> morphIndex = new HashIndex<String>();
+  private Index<String> morphIndex = new HashIndex<>();
 
-  private TwoDimensionalIntCounter<Integer,Integer> wordTag = new TwoDimensionalIntCounter<Integer,Integer>(40000);
-  private Counter<Integer> wordTagUnseen = new ClassicCounter<Integer>(500);
+  private TwoDimensionalIntCounter<Integer,Integer> wordTag = new TwoDimensionalIntCounter<>(40000);
+  private Counter<Integer> wordTagUnseen = new ClassicCounter<>(500);
 
-  private TwoDimensionalIntCounter<Integer,Integer> lemmaTag = new TwoDimensionalIntCounter<Integer,Integer>(40000);
-  private Counter<Integer> lemmaTagUnseen = new ClassicCounter<Integer>(500);
+  private TwoDimensionalIntCounter<Integer,Integer> lemmaTag = new TwoDimensionalIntCounter<>(40000);
+  private Counter<Integer> lemmaTagUnseen = new ClassicCounter<>(500);
 
-  private TwoDimensionalIntCounter<Integer,Integer> morphTag = new TwoDimensionalIntCounter<Integer,Integer>(500);
-  private Counter<Integer> morphTagUnseen = new ClassicCounter<Integer>(500);
+  private TwoDimensionalIntCounter<Integer,Integer> morphTag = new TwoDimensionalIntCounter<>(500);
+  private Counter<Integer> morphTagUnseen = new ClassicCounter<>(500);
 
-  private Counter<Integer> tagCounter = new ClassicCounter<Integer>(300);
+  private Counter<Integer> tagCounter = new ClassicCounter<>(300);
 
   public FactoredLexicon(MorphoFeatureSpecification morphoSpec, Index<String> wordIndex, Index<String> tagIndex) {
     super(wordIndex, tagIndex);
@@ -259,9 +259,9 @@ public class FactoredLexicon extends BaseLexicon {
     while (treeItr.hasNext()) {
       Tree tree = treeItr.next();
       // CoreLabels, with morph analysis in the originalText annotation
-      List<Label> yield = rawTrees == null ? tree.yield() : rawTreesItr.next().yield();
+      List<? extends Label> yield = rawTrees == null ? tree.yield() : rawTreesItr.next().yield();
       // Annotated, binarized tree for the tags (labels are usually CategoryWordTag)
-      List<Label> pretermYield = tree.preTerminalYield();
+      List<? extends Label> pretermYield = tree.preTerminalYield();
 
       int yieldLen = yield.size();
       for (int i = 0; i < yieldLen; ++i) {
@@ -324,7 +324,7 @@ public class FactoredLexicon extends BaseLexicon {
     final int numWords = wordIndex.size();
     rulesWithWord = new List[numWords];
     for (int w = 0; w < numWords; w++) {
-      rulesWithWord[w] = new ArrayList<IntTaggedWord>(1);
+      rulesWithWord[w] = new ArrayList<>(1);
     }
 
     // Collect rules, indexed by word
@@ -355,7 +355,7 @@ public class FactoredLexicon extends BaseLexicon {
 
     System.err.print("The " + rulesWithWord[unkWord].size() + " open class tags are: [");
     for (IntTaggedWord item : rulesWithWord[unkWord]) {
-      System.err.print(" " + tagIndex.get(item.tag()));
+      System.err.print(' ' + tagIndex.get(item.tag()));
     }
     System.err.println(" ] ");
 
@@ -369,10 +369,10 @@ public class FactoredLexicon extends BaseLexicon {
    */
   private static List<FactoredLexiconEvent> treebankToLexiconEvents(List<Tree> treebank,
       FactoredLexicon lexicon) {
-    List<FactoredLexiconEvent> events = new ArrayList<FactoredLexiconEvent>(70000);
+    List<FactoredLexiconEvent> events = new ArrayList<>(70000);
     for (Tree tree : treebank) {
-      List<Label> yield = tree.yield();
-      List<Label> preterm = tree.preTerminalYield();
+      List<? extends Label> yield = tree.yield();
+      List<? extends Label> preterm = tree.preTerminalYield();
       assert yield.size() == preterm.size();
       int yieldLen = yield.size();
       for (int i = 0; i < yieldLen; ++i) {
@@ -382,7 +382,7 @@ public class FactoredLexicon extends BaseLexicon {
         int wordId = lexicon.wordIndex.indexOf(word);
         // Two checks to see if we keep this example
         if (tagId < 0) {
-          System.err.println("Discarding training example: " + word + " " + tag);
+          System.err.println("Discarding training example: " + word + ' ' + tag);
           continue;
         }
 //        if (counts.probWordTag(wordId, tagId) == 0.0) {
@@ -408,7 +408,7 @@ public class FactoredLexicon extends BaseLexicon {
 
   private static List<FactoredLexiconEvent> getTuningSet(Treebank devTreebank,
       FactoredLexicon lexicon, TreebankLangParserParams tlpp) {
-    List<Tree> devTrees = new ArrayList<Tree>(3000);
+    List<Tree> devTrees = new ArrayList<>(3000);
     for (Tree tree : devTreebank) {
       for (Tree subTree : tree) {
         if (!subTree.isLeaf()) {
@@ -479,9 +479,9 @@ public class FactoredLexicon extends BaseLexicon {
     // Create word and tag indices
     // Save trees in a collection since the interface requires that....
     System.out.print("Loading training trees...");
-    List<Tree> trainTrees = new ArrayList<Tree>(19000);
-    Index<String> wordIndex = new HashIndex<String>();
-    Index<String> tagIndex = new HashIndex<String>();
+    List<Tree> trainTrees = new ArrayList<>(19000);
+    Index<String> wordIndex = new HashIndex<>();
+    Index<String> tagIndex = new HashIndex<>();
     for (Tree tree : trainTreebank) {
       for (Tree subTree : tree) {
         if (!subTree.isLeaf()) {
@@ -509,10 +509,10 @@ public class FactoredLexicon extends BaseLexicon {
     // Print the probabilities that we obtain
     // TODO(spenceg): Implement tagging accuracy with FactLex
     int nCorrect = 0;
-    Counter<String> errors = new ClassicCounter<String>();
+    Counter<String> errors = new ClassicCounter<>();
     for (FactoredLexiconEvent event : tuningSet) {
       Iterator<IntTaggedWord> itr = lexicon.ruleIteratorByWord(event.word(), event.getLoc(), event.featureStr());
-      Counter<Integer> logScores = new ClassicCounter<Integer>();
+      Counter<Integer> logScores = new ClassicCounter<>();
       boolean noRules = true;
       int goldTagId = -1;
       while (itr.hasNext()) {
@@ -544,7 +544,7 @@ public class FactoredLexicon extends BaseLexicon {
     double acc = (double) nCorrect / (double) tuningSet.size();
     System.err.printf("%n%nACCURACY: %.2f%n%n", acc*100.0);
     System.err.println("% of errors by type:");
-    List<String> biggestKeys = new ArrayList<String>(errors.keySet());
+    List<String> biggestKeys = new ArrayList<>(errors.keySet());
     Collections.sort(biggestKeys, Counters.toComparator(errors, false, true));
     Counters.normalize(errors);
     for (String key : biggestKeys) {

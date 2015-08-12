@@ -119,18 +119,24 @@ public class LogPrior implements Serializable {
   private double epsilon;
 
   public double getSigma() {
-    if (type == LogPriorType.ADAPT) {
-      return otherPrior.getSigma();
-    } else {
-      return Math.sqrt(sigmaSq);
+    LogPrior other = this;
+    while (true) {
+      if (other.type == LogPriorType.ADAPT) {
+        other = other.otherPrior;
+      } else {
+        return Math.sqrt(other.sigmaSq);
+      }
     }
   }
 
   public double getSigmaSquared() {
-    if (type == LogPriorType.ADAPT) {
-      return otherPrior.getSigmaSquared();
-    } else {
-      return sigmaSq;
+    LogPrior other = this;
+    while (true) {
+      if (other.type == LogPriorType.ADAPT) {
+        other = other.otherPrior;
+      } else {
+        return other.sigmaSq;
+      }
     }
   }
 
@@ -144,10 +150,13 @@ public class LogPrior implements Serializable {
 
 
   public double getEpsilon() {
-    if (type == LogPriorType.ADAPT) {
-      return otherPrior.getEpsilon();
-    } else {
-      return epsilon;
+    LogPrior other = this;
+    while (true) {
+      if (other.type == LogPriorType.ADAPT) {
+        other = other.otherPrior;
+      } else {
+        return other.epsilon;
+      }
     }
   }
 
@@ -215,29 +224,33 @@ public class LogPrior implements Serializable {
   }
 
   public double computeStochastic(double[] x, double[] grad, double fractionOfData) {
-    if (type == LogPriorType.ADAPT) {
-      double[] newX = ArrayMath.pairwiseSubtract(x, means);
-      return otherPrior.computeStochastic(newX, grad, fractionOfData);
-    } else if (type == LogPriorType.MULTIPLE_QUADRATIC) {
+    LogPrior other = this;
+    while (true) {
+      if (other.type == LogPriorType.ADAPT) {
+        double[] newX = ArrayMath.pairwiseSubtract(x, other.means);
+        x = newX;
+        other = other.otherPrior;
+      } else if (other.type == LogPriorType.MULTIPLE_QUADRATIC) {
 
-      double[] sigmaSquaredOld = getSigmaSquaredM();
-      double[] sigmaSquaredTemp = sigmaSquaredOld.clone();
-      for (int i = 0; i < x.length; i++) {
-        sigmaSquaredTemp[i] /= fractionOfData;
+        double[] sigmaSquaredOld = other.getSigmaSquaredM();
+        double[] sigmaSquaredTemp = sigmaSquaredOld.clone();
+        for (int i = 0; i < x.length; i++) {
+          sigmaSquaredTemp[i] /= fractionOfData;
+        }
+        other.setSigmaSquaredM(sigmaSquaredTemp);
+
+        double val = other.compute(x, grad);
+        other.setSigmaSquaredM(sigmaSquaredOld);
+        return val;
+
+      } else {
+        double sigmaSquaredOld = other.getSigmaSquared();
+        other.setSigmaSquared(sigmaSquaredOld / fractionOfData);
+
+        double val = other.compute(x, grad);
+        other.setSigmaSquared(sigmaSquaredOld);
+        return val;
       }
-      setSigmaSquaredM(sigmaSquaredTemp);
-
-      double val = compute(x, grad);
-      setSigmaSquaredM(sigmaSquaredOld);
-      return val;
-
-    } else {
-      double sigmaSquaredOld = getSigmaSquared();
-      setSigmaSquared(sigmaSquaredOld / fractionOfData);
-
-      double val = compute(x, grad);
-      setSigmaSquared(sigmaSquaredOld);
-      return val;
     }
   }
 

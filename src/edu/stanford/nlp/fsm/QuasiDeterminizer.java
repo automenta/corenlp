@@ -82,7 +82,7 @@ public class QuasiDeterminizer implements TransducerGraph.GraphProcessor {
   /**
    * Takes time linear in number of arcs.
    */
-  public TransducerGraph pushLambdas(TransducerGraph graph, ClassicCounter lambda) {
+  public static TransducerGraph pushLambdas(TransducerGraph graph, ClassicCounter lambda) {
 
     TransducerGraph result = null;
     try {

@@ -738,7 +738,7 @@ public class JodaTimeUtils {
     StringBuilder b = new StringBuilder();
     b.append(value);
     while(b.length() < padding){
-      b.insert(0,"0");
+      b.insert(0, '0');
     }
     return b.toString();
   }
@@ -880,17 +880,17 @@ public class JodaTimeUtils {
       return timexDurationValue(begin, end);
     }
     //--Week/Month/Quarters
-    value.append("-");
+    value.append('-');
     if(noFurtherFields(monthOfYear(), begin, end) || noFurtherFields(weekOfWeekyear(), begin, end)){
       boolean monthTerminal = noFurtherFields(monthOfYear(), begin, end);
       boolean weekTerminal = noFurtherFields(weekOfWeekyear(), begin, end);
       //(Month/Quarter)
       if(monthTerminal && monthDiff == 6 && (begin.getMonthOfYear()-1) % 6 == 0){
         //(case: half of year)
-        value.append("H").append(( begin.getMonthOfYear()-1) / 6 + 1);
+        value.append('H').append(( begin.getMonthOfYear()-1) / 6 + 1);
        }else  if(monthTerminal && monthDiff == 3 && (begin.getMonthOfYear()-1) % 3 == 0){
         //(case: quarter of year)
-        value.append("Q").append(( begin.getMonthOfYear()-1) / 3 + 1);
+        value.append('Q').append(( begin.getMonthOfYear()-1) / 3 + 1);
       } else if(monthTerminal && monthDiff == 3 && begin.getMonthOfYear() % 3 == 0){
         //(case: season)
         switch( begin.getMonthOfYear() ){
@@ -911,7 +911,7 @@ public class JodaTimeUtils {
         }
       } else if(weekTerminal && weekDiff == 1) {
         //(case: a week)
-        value.append("W").append(zeroPad(begin.getWeekOfWeekyear(), 2));
+        value.append('W').append(zeroPad(begin.getWeekOfWeekyear(), 2));
       } else if(monthTerminal && monthDiff == 1 && weekDiff != 1 || opts.forceDate) {
         //(case: a month)
         value.append( zeroPad(begin.getMonthOfYear(),2) );
@@ -922,7 +922,7 @@ public class JodaTimeUtils {
       return value.toString();
     } else if(noFurtherFields(dayOfWeek(), begin, end) && dayDiff == 2 && begin.getDayOfWeek() == 6){
       //(case: a weekend)
-      value.append("W").append(zeroPad(begin.getWeekOfWeekyear(),2)).append("-WE");
+      value.append('W').append(zeroPad(begin.getWeekOfWeekyear(),2)).append("-WE");
       return value.toString();
     } else if(dayDiff < maximumValue(dayOfMonth(),begin) || opts.forceDate) {
       //(case: month and more)
@@ -932,7 +932,7 @@ public class JodaTimeUtils {
       return timexDurationValue(begin, end);
     }
     //--Weekday/Day
-    value.append("-");
+    value.append('-');
     if(noFurtherFields(dayOfMonth(), begin, end)){
       if(dayDiff == 1 || opts.forceDate){
         //(case: a day)
@@ -950,7 +950,7 @@ public class JodaTimeUtils {
       return timexDurationValue(begin, end);
     }
     //--Hour/TimeOfDay
-    value.append("T");
+    value.append('T');
     if(noFurtherFields(hourOfDay(),begin,end)){
       //((case: half day)
       if(hrDiff == 12 && begin.getHourOfDay() == 0){
@@ -982,7 +982,7 @@ public class JodaTimeUtils {
       return timexDurationValue(begin, end);
     }
     //--Minute/Second
-    value.append(":");
+    value.append(':');
     value.append(zeroPad(begin.getMinuteOfHour(),2));
     return value.toString();
   }
@@ -1022,60 +1022,60 @@ public class JodaTimeUtils {
    * @return The string representation of a DURATION type Timex3 expression
    */
   public static String timexDurationValue(ReadablePeriod duration, ConversionOptions opts){
-    StringBuilder b = new StringBuilder().append("P");
+    StringBuilder b = new StringBuilder().append('P');
     boolean seenTime = false;
     int years = duration.get(years());
     //(millenia)
     if(years >= 1000 && consistentWithForced("L",opts.forceUnits)){
-      b.append(opts.approximate ? "X" : years / 1000).append("L");
+      b.append(opts.approximate ? "X" : years / 1000).append('L');
       years = years % 1000;
     }
     //(centuries)
     if(years >= 100 && consistentWithForced("C", opts.forceUnits)){
-      b.append(opts.approximate ? "X" : years / 100).append("C");
+      b.append(opts.approximate ? "X" : years / 100).append('C');
       years = years % 100;
     }
     //(decades)
     if(years >= 10 && consistentWithForced("E", opts.forceUnits)){
-      b.append(opts.approximate ? "X" : years / 10).append("E");
+      b.append(opts.approximate ? "X" : years / 10).append('E');
       years = years % 10;
     }
     //(years)
     if(years != 0 && consistentWithForced("Y", opts.forceUnits)){
-      b.append(opts.approximate ? "X" : years).append("Y");
+      b.append(opts.approximate ? "X" : years).append('Y');
     }
     //(months)
     int months = duration.get(months());
     if(months != 0){
       if(months % 3 == 0 && consistentWithForced("Q", opts.forceUnits)){
-        b.append(opts.approximate ? "X" : months / 3).append("Q");
+        b.append(opts.approximate ? "X" : months / 3).append('Q');
         months = months % 3;
       } else {
-        b.append(opts.approximate ? "X" : months).append("M");
+        b.append(opts.approximate ? "X" : months).append('M');
       }
     }
     //(weeks)
     if(duration.get(weeks()) != 0){
-      b.append(opts.approximate ? "X" : duration.get(weeks())).append("W");
+      b.append(opts.approximate ? "X" : duration.get(weeks())).append('W');
     }
     //(days)
     if(duration.get(days()) != 0){
-      b.append(opts.approximate ? "X" : duration.get(days())).append("D");
+      b.append(opts.approximate ? "X" : duration.get(days())).append('D');
     }
     //(hours)
     if(duration.get(hours()) != 0){
-      if(!seenTime){ b.append("T"); seenTime = true; }
-      b.append(opts.approximate ? "X" : duration.get(hours())).append("H");
+      if(!seenTime){ b.append('T'); seenTime = true; }
+      b.append(opts.approximate ? "X" : duration.get(hours())).append('H');
     }
     //(minutes)
     if(duration.get(minutes()) != 0){
-      if(!seenTime){ b.append("T"); seenTime = true; }
-      b.append(opts.approximate ? "X" : duration.get(minutes())).append("M");
+      if(!seenTime){ b.append('T'); seenTime = true; }
+      b.append(opts.approximate ? "X" : duration.get(minutes())).append('M');
     }
     //(seconds)
     if(duration.get(seconds()) != 0){
-      if(!seenTime){ b.append("T"); seenTime = true; }
-      b.append(opts.approximate ? "X" : duration.get(seconds())).append("S");
+      if(!seenTime){ b.append('T'); seenTime = true; }
+      b.append(opts.approximate ? "X" : duration.get(seconds())).append('S');
     }
     return b.toString();
   }

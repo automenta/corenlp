@@ -55,7 +55,7 @@ public class RelationTriple implements Comparable<RelationTriple>, Iterable<Core
    * Returns all the tokens in the extraction, in the order subject then relation then object.
    */
   public List<CoreLabel> allTokens() {
-    List<CoreLabel> allTokens = new ArrayList<>();
+    List<CoreLabel> allTokens = new ArrayList<>(subject.size() + relation.size() + object.size());
     allTokens.addAll(subject);
     allTokens.addAll(relation);
     allTokens.addAll(object);
@@ -114,12 +114,14 @@ public class RelationTriple implements Comparable<RelationTriple>, Iterable<Core
         .filter(x -> !x.tag().matches("[\\.\\?,:;'\"!]") && (x.lemma() == null || !x.lemma().matches("[\\.,;'\"\\?!]"))).map(x -> x.lemma() == null ? x.word() : x.lemma()), " ").toLowerCase();
   }
 
+  final static DecimalFormat confDecimalFormat = new DecimalFormat("0.000");
+
   /** A textual representation of the confidence. */
   public String confidenceGloss() {
-    return new DecimalFormat("0.000").format(confidence);
+    return confDecimalFormat.format(confidence);
   }
 
-  protected Pair<Integer, Integer> getSpan(List<CoreLabel> tokens, Function<CoreLabel, Integer> toMin, Function<CoreLabel, Integer> toMax) {
+  protected static Pair<Integer, Integer> getSpan(List<CoreLabel> tokens, Function<CoreLabel, Integer> toMin, Function<CoreLabel, Integer> toMax) {
     int min = Integer.MAX_VALUE;
     int max = Integer.MIN_VALUE;
     for (CoreLabel token : tokens) {
@@ -188,27 +190,27 @@ public class RelationTriple implements Comparable<RelationTriple>, Iterable<Core
   /** Print a human-readable description of this relation triple, as a tab-separated line */
   @Override
   public String toString() {
-    return "" + this.confidence + "\t" + subjectGloss() + "\t" + relationGloss() + "\t" + objectGloss();
+    return this.confidence + "\t" + subjectGloss() + '\t' + relationGloss() + '\t' + objectGloss();
   }
 
   /** Print a description of this triple, formatted like the ReVerb outputs. */
   public String toReverbString(String docid, CoreMap sentence) {
-    return (docid == null ? "no_doc_id" : docid) + "\t" +
-        relation.get(0).sentIndex() + "\t" +
-        subjectGloss().replace('\t', ' ') + "\t" +
-        relationGloss().replace('\t', ' ') + "\t" +
-        objectGloss().replace('\t', ' ') + "\t" +
-        (subject.get(0).index() - 1) + "\t" +
-        subject.get(subject.size() - 1).index() + "\t" +
-        (relation.get(0).index() - 1) + "\t" +
-        relation.get(relation.size() - 1).index() + "\t" +
-        (object.get(0).index() - 1) + "\t" +
-        object.get(object.size() - 1).index() + "\t" +
-        confidenceGloss() + "\t" +
-        StringUtils.join(sentence.get(CoreAnnotations.TokensAnnotation.class).stream().map(x -> x.word().replace('\t', ' ').replace(" ", "")), " ") + "\t" +
-        StringUtils.join(sentence.get(CoreAnnotations.TokensAnnotation.class).stream().map(CoreLabel::tag), " ") + "\t" +
-        subjectLemmaGloss().replace('\t', ' ') + "\t" +
-        relationLemmaGloss().replace('\t', ' ') + "\t" +
+    return (docid == null ? "no_doc_id" : docid) + '\t' +
+        relation.get(0).sentIndex() + '\t' +
+        subjectGloss().replace('\t', ' ') + '\t' +
+        relationGloss().replace('\t', ' ') + '\t' +
+        objectGloss().replace('\t', ' ') + '\t' +
+        (subject.get(0).index() - 1) + '\t' +
+        subject.get(subject.size() - 1).index() + '\t' +
+        (relation.get(0).index() - 1) + '\t' +
+        relation.get(relation.size() - 1).index() + '\t' +
+        (object.get(0).index() - 1) + '\t' +
+        object.get(object.size() - 1).index() + '\t' +
+        confidenceGloss() + '\t' +
+        StringUtils.join(sentence.get(CoreAnnotations.TokensAnnotation.class).stream().map(x -> x.word().replace('\t', ' ').replace(" ", "")), " ") + '\t' +
+        StringUtils.join(sentence.get(CoreAnnotations.TokensAnnotation.class).stream().map(CoreLabel::tag), " ") + '\t' +
+        subjectLemmaGloss().replace('\t', ' ') + '\t' +
+        relationLemmaGloss().replace('\t', ' ') + '\t' +
         objectLemmaGloss().replace('\t', ' ');
   }
 

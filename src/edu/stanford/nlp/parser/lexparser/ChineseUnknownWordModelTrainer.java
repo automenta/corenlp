@@ -70,9 +70,9 @@ public class ChineseUnknownWordModelTrainer
     }
 
     this.c = Generics.newHashMap();
-    this.tc = new ClassicCounter<Label>();
-    this.unSeenCounter = new ClassicCounter<IntTaggedWord>();
-    this.seenCounter = new ClassicCounter<IntTaggedWord>();
+    this.tc = new ClassicCounter<>();
+    this.unSeenCounter = new ClassicCounter<>();
+    this.seenCounter = new ClassicCounter<>();
     this.seenFirst = Generics.newHashSet();
     this.tagHash = Generics.newHashMap();
 
@@ -116,7 +116,7 @@ public class ChineseUnknownWordModelTrainer
     String tag = tw.tag();
 
     if ( ! c.containsKey(tagL)) {
-      c.put(tagL, new ClassicCounter<String>());
+      c.put(tagL, new ClassicCounter<>());
     }
     c.get(tagL).incrementCount(first, weight);
 
@@ -145,24 +145,24 @@ public class ChineseUnknownWordModelTrainer
       // unknownGT = unknownGTTrainer.unknownGT;
     }
 
-    for (Label tagLab : c.keySet()) {
+    for (Map.Entry<Label, ClassicCounter<String>> labelClassicCounterEntry : c.entrySet()) {
       // outer iteration is over tags as Labels
-      ClassicCounter<String> wc = c.get(tagLab); // counts for words given a tag
+      ClassicCounter<String> wc = labelClassicCounterEntry.getValue(); // counts for words given a tag
 
-      if ( ! tagHash.containsKey(tagLab)) {
-        tagHash.put(tagLab, new ClassicCounter<String>());
+      if ( ! tagHash.containsKey(labelClassicCounterEntry.getKey())) {
+        tagHash.put(labelClassicCounterEntry.getKey(), new ClassicCounter<>());
       }
 
       // the UNKNOWN first character is assumed to be seen once in
       // each tag
       // this is really sort of broken!  (why??)
-      tc.incrementCount(tagLab);
+      tc.incrementCount(labelClassicCounterEntry.getKey());
       wc.setCount(unknown, 1.0);
 
       // inner iteration is over words  as strings
       for (String first : wc.keySet()) {
-        double prob = Math.log(((wc.getCount(first))) / tc.getCount(tagLab));
-        tagHash.get(tagLab).setCount(first, prob);
+        double prob = Math.log(((wc.getCount(first))) / tc.getCount(labelClassicCounterEntry.getKey()));
+        tagHash.get(labelClassicCounterEntry.getKey()).setCount(first, prob);
         //if (Test.verbose)
         //EncodingPrintWriter.out.println(tag + " rewrites as " + first + " first char with probability " + prob,encoding);
       }

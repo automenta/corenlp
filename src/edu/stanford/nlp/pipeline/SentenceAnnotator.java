@@ -38,7 +38,7 @@ public abstract class SentenceAnnotator implements Annotator {
   }
 
   private InterruptibleMulticoreWrapper<CoreMap, CoreMap> buildWrapper(Annotation annotation) {
-    InterruptibleMulticoreWrapper<CoreMap, CoreMap> wrapper = new InterruptibleMulticoreWrapper<CoreMap, CoreMap>(nThreads(), new AnnotatorProcessor(annotation), true, maxTime());
+    InterruptibleMulticoreWrapper<CoreMap, CoreMap> wrapper = new InterruptibleMulticoreWrapper<>(nThreads(), new AnnotatorProcessor(annotation), true, maxTime());
     return wrapper;
   }
 
@@ -47,7 +47,7 @@ public abstract class SentenceAnnotator implements Annotator {
     if (annotation.containsKey(CoreAnnotations.SentencesAnnotation.class)) {
       if (nThreads() != 1 || maxTime() > 0) {
         InterruptibleMulticoreWrapper<CoreMap, CoreMap> wrapper = buildWrapper(annotation);
-        for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
+        for (CoreMap sentence : (Iterable<CoreMap>)annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
           boolean success = false;
           // We iterate twice for each sentence so that if we fail for
           // a sentence once, we start a new queue and try again.
@@ -92,7 +92,7 @@ public abstract class SentenceAnnotator implements Annotator {
           }
         }
       } else {
-        for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
+        for (CoreMap sentence : (Iterable<CoreMap>)annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
           doOneSentence(annotation, sentence);
         }
       }

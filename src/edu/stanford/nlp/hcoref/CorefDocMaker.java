@@ -64,7 +64,7 @@ public class CorefDocMaker {
   }
   
   /** Load Stanford Processor: skip unnecessary annotator */
-  protected StanfordCoreNLP loadStanfordProcessor(Properties props) {
+  protected static StanfordCoreNLP loadStanfordProcessor(Properties props) {
 
     Properties pipelineProps = new Properties(props);
     StringBuilder annoSb = new StringBuilder("");
@@ -175,7 +175,7 @@ public class CorefDocMaker {
     return doc;
   }
   
-  private void findGoldMentionHeads(Document doc) {
+  private static void findGoldMentionHeads(Document doc) {
     List<CoreMap> sentences = doc.annotation.get(SentencesAnnotation.class);
     for(int i=0 ; i<sentences.size() ; i++ ) { 
 //      md.findHead(sentences.get(i), doc.goldMentions.get(i));

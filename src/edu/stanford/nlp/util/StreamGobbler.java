@@ -44,7 +44,7 @@ public class StreamGobbler extends Thread {
       br.close();
       outputFileHandle.flush();
     } catch (Exception ex) {
-      System.out.println ("Problem reading stream :"+is.getClass().getCanonicalName()+ " "+ ex);
+      System.out.println ("Problem reading stream :"+is.getClass().getCanonicalName()+ ' ' + ex);
       ex.printStackTrace ();
     }
 

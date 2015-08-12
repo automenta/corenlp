@@ -26,8 +26,8 @@ public class ChineseUtils {
 
   // These are good Unicode whitespace regexes for any language!
   public static final String ONEWHITE = "[\\s\\p{Zs}]";
-  public static final String WHITE = ONEWHITE + "*";
-  public static final String WHITEPLUS = ONEWHITE + "+";
+  public static final String WHITE = ONEWHITE + '*';
+  public static final String WHITEPLUS = ONEWHITE + '+';
 
   // Chinese numbers 1-10
   public static final String NUMBERS = "[\u4e00\u4e8c\u4e09\u56db\u4e94\u516d\u4e03\u516b\u4e5d\u5341]";
@@ -354,7 +354,7 @@ public class ChineseUtils {
         "\uff3d\uff01\uff02\uff08\uff09\uff0c\uff1b\uff1a\uff1c\uff1d\uff1e\uff1f" +
         "\uff3b\uff3c\uff40\uff5b\uff5c\uff5d\uff5e\uff3e]+");
   private static final Pattern ambiguousPuncChars = Pattern.compile("[-#$%&'*+/@_\uff0d\uff03\uff04\uff05\uff06\uff07\uff0a\uff0b\uff0f\uff20\uff3f]+");
-  private static final Pattern midDotPattern = Pattern.compile(ChineseUtils.MID_DOT_REGEX_STR + "+");
+  private static final Pattern midDotPattern = Pattern.compile(ChineseUtils.MID_DOT_REGEX_STR + '+');
 
 
   public static String shapeOf(CharSequence input,

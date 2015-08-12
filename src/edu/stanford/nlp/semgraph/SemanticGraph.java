@@ -136,7 +136,7 @@ public class SemanticGraph implements Serializable {
    * @return Ordered list of vertices
    */
   public List<IndexedWord> vertexListSorted() {
-    ArrayList<IndexedWord> vlist = new ArrayList<IndexedWord>(vertexSet());
+    ArrayList<IndexedWord> vlist = new ArrayList<>(vertexSet());
     Collections.sort(vlist);
     return vlist;
   }
@@ -335,7 +335,7 @@ public class SemanticGraph implements Serializable {
     pat = pat.replaceAll(">", ",>");
     String[] nodePath = pat.split(",");
     for (String s : nodePath) {
-      if (s.equals("")) {
+      if (s.isEmpty()) {
         continue;
       }
       String word = s.substring(1);
@@ -362,7 +362,7 @@ public class SemanticGraph implements Serializable {
           boolean match = false;
           for (IndexedWord child : children) {
             String lemma = child.get(CoreAnnotations.LemmaAnnotation.class);
-            if (lemma.equals("")) {
+            if (lemma.isEmpty()) {
               lemma = child.word().toLowerCase();
             }
             if (lemma.equals(word)) {
@@ -381,7 +381,7 @@ public class SemanticGraph implements Serializable {
               continue;
             IndexedWord child = pair.second();
             String lemma = child.get(CoreAnnotations.LemmaAnnotation.class);
-            if (lemma.equals("")) {
+            if (lemma.isEmpty()) {
               lemma = child.word().toLowerCase();
             }
             if (lemma.equals(word)) {
@@ -409,7 +409,7 @@ public class SemanticGraph implements Serializable {
     pat = pat.replaceAll(">", ",>");
     String[] nodePath = pat.split(",");
     for (String s : nodePath) {
-      if (s.equals("")) {
+      if (s.isEmpty()) {
         continue;
       }
       String word = s.substring(1);
@@ -432,7 +432,7 @@ public class SemanticGraph implements Serializable {
         boolean match = false;
         for (IndexedWord child : getChildren(vertex)) {
           String lemma = child.get(CoreAnnotations.LemmaAnnotation.class);
-          if (lemma == null || lemma.equals("")) {
+          if (lemma == null || lemma.isEmpty()) {
             lemma = child.word().toLowerCase();
           }
           if (lemma.equals(word)) {
@@ -454,7 +454,7 @@ public class SemanticGraph implements Serializable {
     if (!containsVertex(vertex)) {
       throw new IllegalArgumentException();
     }
-    List<IndexedWord> result = new ArrayList<IndexedWord>(getChildren(vertex));
+    List<IndexedWord> result = new ArrayList<>(getChildren(vertex));
     Collections.sort(result);
     return result;
   }
@@ -486,7 +486,7 @@ public class SemanticGraph implements Serializable {
     if (!containsVertex(vertex)) {
       throw new IllegalArgumentException();
     }
-    List<IndexedWord> result = new ArrayList<IndexedWord>(getParents(vertex));
+    List<IndexedWord> result = new ArrayList<>(getParents(vertex));
     Collections.sort(result);
     return result;
   }
@@ -627,7 +627,7 @@ public class SemanticGraph implements Serializable {
    */
   public List<IndexedWord> getAllNodesByWordPattern(String pattern) {
     Pattern p = Pattern.compile(pattern);
-    List<IndexedWord> nodes = new ArrayList<IndexedWord>();
+    List<IndexedWord> nodes = new ArrayList<>();
     for (IndexedWord vertex : vertexSet()) {
       String w = vertex.word();
       if ((w == null && pattern == null) || w != null && p.matcher(w).matches()) {
@@ -639,7 +639,7 @@ public class SemanticGraph implements Serializable {
   
   public List<IndexedWord> getAllNodesByPartOfSpeechPattern(String pattern) {
     Pattern p = Pattern.compile(pattern);
-    List<IndexedWord> nodes = new ArrayList<IndexedWord>();
+    List<IndexedWord> nodes = new ArrayList<>();
     for (IndexedWord vertex : vertexSet()) {
       String pos = vertex.tag();
       if ((pos == null && pattern == null) || pos != null && p.matcher(pos).matches()) {
@@ -684,7 +684,7 @@ public class SemanticGraph implements Serializable {
     List<Pair<GrammaticalRelation, IndexedWord>> childPairs =
       Generics.newArrayList();
     for (SemanticGraphEdge e : outgoingEdgeIterable(vertex)) {
-      childPairs.add(new Pair<GrammaticalRelation, IndexedWord>(e.getRelation(), e.getTarget()));
+      childPairs.add(new Pair<>(e.getRelation(), e.getTarget()));
     }
     return childPairs;
   }
@@ -699,7 +699,7 @@ public class SemanticGraph implements Serializable {
     }
     List<Pair<GrammaticalRelation, IndexedWord>> parentPairs = Generics.newArrayList();
     for (SemanticGraphEdge e : incomingEdgeIterable(vertex)) {
-      parentPairs.add(new Pair<GrammaticalRelation, IndexedWord>(e.getRelation(), e.getSource()));
+      parentPairs.add(new Pair<>(e.getRelation(), e.getSource()));
     }
     return parentPairs;
   }
@@ -768,7 +768,7 @@ public class SemanticGraph implements Serializable {
    * @return A list of root nodes or an empty list.
    */
   private List<IndexedWord> getVerticesWithoutParents() {
-    List<IndexedWord> result = new ArrayList<IndexedWord>();
+    List<IndexedWord> result = new ArrayList<>();
     for (IndexedWord v : vertexSet()) {
       int inDegree = inDegree(v);
       if (inDegree == 0) {
@@ -1198,7 +1198,7 @@ public class SemanticGraph implements Serializable {
     nodes.removeAll(used);
     while (!nodes.isEmpty()) {
       IndexedWord node = nodes.iterator().next();
-      sb.append(node.toString(wordFormat)).append("\n");
+      sb.append(node.toString(wordFormat)).append('\n');
       recToString(node, wordFormat, sb, 1, used);
       nodes.removeAll(used);
     }
@@ -1250,9 +1250,9 @@ public class SemanticGraph implements Serializable {
       }
       pastFirst = true;
       sb.append(word.word());
-      sb.append("(");
+      sb.append('(');
       sb.append(index++);
-      sb.append(")");
+      sb.append(')');
     }
     return sb.toString();
   }
@@ -1291,7 +1291,7 @@ public class SemanticGraph implements Serializable {
         // Insert the specific at the leftmost token that is not governed by
         // this node.
         if (specific != null) {
-          Pair<String, IndexedWord> specPair = new Pair<String, IndexedWord>(specific, word);
+          Pair<String, IndexedWord> specPair = new Pair<>(specific, word);
           specifics.add(specPair);
         }
       }
@@ -1422,7 +1422,7 @@ public class SemanticGraph implements Serializable {
       buf.append(toDepStyle(root)).append(")\n");
     }
     for (SemanticGraphEdge edge : this.edgeListSorted()) {
-      buf.append(edge.getRelation().toString()).append("(");
+      buf.append(edge.getRelation().toString()).append('(');
       buf.append(toDepStyle(edge.getSource())).append(", ");
       buf.append(toDepStyle(edge.getTarget())).append(")\n");
     }
@@ -1435,8 +1435,8 @@ public class SemanticGraph implements Serializable {
   public String toPOSList() {
     StringBuilder buf = new StringBuilder();
     for (SemanticGraphEdge edge : this.edgeListSorted()) {
-      buf.append(edge.getRelation().toString()).append("(");
-      buf.append(toPOSStyle(edge.getSource())).append(",");
+      buf.append(edge.getRelation().toString()).append('(');
+      buf.append(toPOSStyle(edge.getSource())).append(',');
       buf.append(toPOSStyle(edge.getTarget())).append(")\n");
     }
     return buf.toString();
@@ -1510,28 +1510,28 @@ public class SemanticGraph implements Serializable {
     try {
       boolean isntLeaf = (outDegree(node) > 0);
       if (isntLeaf) {
-        sb.append("[");
+        sb.append('[');
       }
       sb.append(node.word());
       if (showTags) {
-        sb.append("/");
+        sb.append('/');
         sb.append(node.tag());
       }
       for (SemanticGraphEdge edge : getOutEdgesSorted(node)) {
         IndexedWord target = edge.getTarget();
-        sb.append(" ").append(edge.getRelation()).append(">");
+        sb.append(' ').append(edge.getRelation()).append('>');
         if (!used.contains(target)) { // avoid infinite loop
           toCompactStringHelper(target, sb, used, showTags);
         } else {
           sb.append(target.word());
           if (showTags) {
-            sb.append("/");
+            sb.append('/');
             sb.append(target.tag());
           }
         }
       }
       if (isntLeaf) {
-        sb.append("]");
+        sb.append(']');
       }
     } catch (IllegalArgumentException e) {
       System.err.println("WHOA!  SemanticGraph.toCompactStringHelper() ran into problems at node " + node);
@@ -1591,16 +1591,12 @@ public class SemanticGraph implements Serializable {
 
   public String toDotFormat(String graphname, CoreLabel.OutputFormat indexedWordFormat) {
     StringBuilder output = new StringBuilder();
-    output.append("digraph " + graphname + " {\n");
+    output.append("digraph ").append(graphname).append(" {\n");
     for (IndexedWord word : graph.getAllVertices()) {
-      output.append("  N_" + word.index() + " [label=\"" +
-                    word.toString(indexedWordFormat) +
-                    "\"];\n");
+      output.append("  N_").append(word.index()).append(" [label=\"").append(word.toString(indexedWordFormat)).append("\"];\n");
     }
     for (SemanticGraphEdge edge : graph.edgeIterable()) {
-      output.append("  N_" + edge.getSource().index() +
-                    " -> N_" + edge.getTarget().index() +
-                    " [label=\"" + edge.getRelation() + "\"];\n");
+      output.append("  N_").append(edge.getSource().index()).append(" -> N_").append(edge.getTarget().index()).append(" [label=\"").append(edge.getRelation()).append("\"];\n");
     }
     output.append("}\n");
     return output.toString();
@@ -1629,7 +1625,7 @@ public class SemanticGraph implements Serializable {
   }
 
   public SemanticGraph() {
-    graph = new DirectedMultiGraph<IndexedWord, SemanticGraphEdge>(outerMapFactory, innerMapFactory);
+    graph = new DirectedMultiGraph<>(outerMapFactory, innerMapFactory);
     roots = wordMapFactory.newSet();
   }
 
@@ -1649,7 +1645,7 @@ public class SemanticGraph implements Serializable {
    */
   public SemanticGraph(SemanticGraph g,
                        Map<IndexedWord, IndexedWord> prevToNewMap) {
-    graph = new DirectedMultiGraph<IndexedWord, SemanticGraphEdge>(outerMapFactory, innerMapFactory);
+    graph = new DirectedMultiGraph<>(outerMapFactory, innerMapFactory);
     if (prevToNewMap == null) {
       prevToNewMap = wordMapFactory.newMap();
     }
@@ -1676,7 +1672,7 @@ public class SemanticGraph implements Serializable {
    * This is the constructor used by the parser.
    */
   public SemanticGraph(Collection<TypedDependency> dependencies) {
-    graph = new DirectedMultiGraph<IndexedWord, SemanticGraphEdge>(outerMapFactory, innerMapFactory);
+    graph = new DirectedMultiGraph<>(outerMapFactory, innerMapFactory);
     roots = wordMapFactory.newSet();
 
     for (TypedDependency d : dependencies) {
@@ -1846,7 +1842,7 @@ public class SemanticGraph implements Serializable {
       } else {
         word = matcher.group(1);
         Integer index = Integer.valueOf(matcher.group(2));
-        return new Pair<String, Integer>(word, index);
+        return new Pair<>(word, index);
       }
     }
 
@@ -1923,7 +1919,7 @@ public class SemanticGraph implements Serializable {
    *
    */
   public List<SemanticGraphEdge> findAllRelns(GrammaticalRelation tgtRelation) {
-    ArrayList<SemanticGraphEdge> relns = new ArrayList<SemanticGraphEdge>();
+    ArrayList<SemanticGraphEdge> relns = new ArrayList<>();
     for (SemanticGraphEdge edge : edgeIterable()) {
       GrammaticalRelation edgeRelation = edge.getRelation();
       if ((edgeRelation != null) && (edgeRelation.equals(tgtRelation))) {
@@ -1949,7 +1945,7 @@ public class SemanticGraph implements Serializable {
    *  @return A List of TypedDependency in the graph
    */
   public Collection<TypedDependency> typedDependencies() {
-    Collection<TypedDependency> dependencies = new ArrayList<TypedDependency>();
+    Collection<TypedDependency> dependencies = new ArrayList<>();
     IndexedWord root = null;
     for (IndexedWord node : roots) {
       if (root == null) {

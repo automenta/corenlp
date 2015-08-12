@@ -117,7 +117,7 @@ public abstract class TregexPoweredTreebankParserParams extends AbstractTreebank
       }
 
       Pair<TregexPattern, Function<TregexMatcher, String>> behavior =
-        new Pair<TregexPattern, Function<TregexMatcher, String>>(compiled, annotation.getValue().second());
+              new Pair<>(compiled, annotation.getValue().second());
 
       annotationPatterns.put(annotation.getKey(), behavior);
     }
@@ -134,7 +134,7 @@ public abstract class TregexPoweredTreebankParserParams extends AbstractTreebank
    */
   protected void addFeature(String featureName) {
     if (!annotations.containsKey(featureName))
-      throw new IllegalArgumentException("Invalid feature name '" + featureName + "'");
+      throw new IllegalArgumentException("Invalid feature name '" + featureName + '\'');
     if (!annotationPatterns.containsKey(featureName))
       throw new RuntimeException("Compiled patterns out of sync with annotations data structure;" +
         "did you call compileAnnotations?");

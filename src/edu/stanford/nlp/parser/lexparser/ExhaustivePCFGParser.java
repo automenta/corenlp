@@ -316,7 +316,7 @@ public class ExhaustivePCFGParser implements Scorer, KBestViterbiParser {
     long time2 = System.currentTimeMillis();
     long diff = time2 - time;
     time = time2;
-    System.err.print("done.  " + diff + "\n" + str);
+    System.err.print("done.  " + diff + '\n' + str);
   }
 
   protected boolean floodTags = false;
@@ -332,177 +332,179 @@ public class ExhaustivePCFGParser implements Scorer, KBestViterbiParser {
 
 
   public boolean parse(List<? extends HasWord> sentence) {
-    lr = null; // better nullPointer exception than silent error
-    //System.out.println("is it a taggedword?" + (sentence.get(0) instanceof TaggedWord)); //debugging
-    if (sentence != this.sentence) {
-      this.sentence = sentence;
-      floodTags = false;
-    }
-    if (op.testOptions.verbose) {
-      Timing.tick("Starting pcfg parse.");
-    }
-    if (spillGuts) {
-      tick("Starting PCFG parse...");
-    }
-    length = sentence.size();
-    if (length > arraySize) {
-      considerCreatingArrays(length);
-    }
-    int goal = stateIndex.indexOf(goalStr);
-    if (op.testOptions.verbose) {
-      // System.out.println(numStates + " states, " + goal + " is the goal state.");
-      // System.err.println(new ArrayList(ug.coreRules.keySet()));
-      System.err.print("Initializing PCFG...");
-    }
-    // map input words to words array (wordIndex ints)
-    words = new int[length];
-    beginOffsets = new int[length];
-    endOffsets = new int[length];
-    originalCoreLabels = new CoreLabel[length];
-    originalTags = new HasTag[length];
-    int unk = 0;
-    StringBuilder unkWords = new StringBuilder("[");
-    // int unkIndex = wordIndex.size();
+    while (true) {
+      lr = null; // better nullPointer exception than silent error
+      //System.out.println("is it a taggedword?" + (sentence.get(0) instanceof TaggedWord)); //debugging
+      if (sentence != this.sentence) {
+        this.sentence = sentence;
+        floodTags = false;
+      }
+      if (op.testOptions.verbose) {
+        Timing.tick("Starting pcfg parse.");
+      }
+      if (spillGuts) {
+        tick("Starting PCFG parse...");
+      }
+      length = sentence.size();
+      if (length > arraySize) {
+        considerCreatingArrays(length);
+      }
+      int goal = stateIndex.indexOf(goalStr);
+      if (op.testOptions.verbose) {
+        // System.out.println(numStates + " states, " + goal + " is the goal state.");
+        // System.err.println(new ArrayList(ug.coreRules.keySet()));
+        System.err.print("Initializing PCFG...");
+      }
+      // map input words to words array (wordIndex ints)
+      words = new int[length];
+      beginOffsets = new int[length];
+      endOffsets = new int[length];
+      originalCoreLabels = new CoreLabel[length];
+      originalTags = new HasTag[length];
+      int unk = 0;
+      StringBuilder unkWords = new StringBuilder("[");
+      // int unkIndex = wordIndex.size();
 
-    for (int i = 0; i < length; i++) {
-      String s = sentence.get(i).word();
+      for (int i = 0; i < length; i++) {
+        String s = sentence.get(i).word();
 
-      if (sentence.get(i) instanceof HasOffset) {
-        HasOffset word = (HasOffset) sentence.get(i);
-        beginOffsets[i] = word.beginPosition();
-        endOffsets[i] = word.endPosition();
-      } else {
-        //Storing the positions of the word interstices
-        //Account for single space between words
-        beginOffsets[i] = ((i == 0) ? 0 : endOffsets[i - 1] + 1);
-        endOffsets[i] = beginOffsets[i] + s.length();
+        if (sentence.get(i) instanceof HasOffset) {
+          HasOffset word = (HasOffset) sentence.get(i);
+          beginOffsets[i] = word.beginPosition();
+          endOffsets[i] = word.endPosition();
+        } else {
+          //Storing the positions of the word interstices
+          //Account for single space between words
+          beginOffsets[i] = ((i == 0) ? 0 : endOffsets[i - 1] + 1);
+          endOffsets[i] = beginOffsets[i] + s.length();
+        }
+
+        if (sentence.get(i) instanceof CoreLabel) {
+          originalCoreLabels[i] = (CoreLabel) sentence.get(i);
+        }
+        if (sentence.get(i) instanceof HasTag) {
+          HasTag tag = (HasTag) sentence.get(i);
+          if (tag.tag() != null) {
+            originalTags[i] = tag;
+          }
+        }
+
+        if (op.testOptions.verbose && (!wordIndex.contains(s) || !lex.isKnown(wordIndex.indexOf(s)))) {
+          unk++;
+          unkWords.append(' ');
+          unkWords.append(s);
+          unkWords.append(" { ");
+          for (int jj = 0; jj < s.length(); jj++) {
+            char ch = s.charAt(jj);
+            unkWords.append(Character.getType(ch)).append(' ');
+          }
+          unkWords.append('}');
+        }
+        // TODO: really, add a new word?
+        //words[i] = wordIndex.indexOf(s, unkIndex);
+        //if (words[i] == unkIndex) {
+        //  ++unkIndex;
+        //}
+        words[i] = wordIndex.addToIndex(s);
+        //if (wordIndex.contains(s)) {
+        //  words[i] = wordIndex.indexOf(s);
+        //} else {
+        //  words[i] = wordIndex.indexOf(Lexicon.UNKNOWN_WORD);
+        //}
       }
 
-      if (sentence.get(i) instanceof CoreLabel) {
-        originalCoreLabels[i] = (CoreLabel) sentence.get(i);
+      // initialize inside and outside score arrays
+      if (spillGuts) {
+        tick("Wiping arrays...");
       }
-      if (sentence.get(i) instanceof HasTag) {
-        HasTag tag = (HasTag) sentence.get(i);
-        if (tag.tag() != null) {
-          originalTags[i] = tag;
+      if (Thread.interrupted()) {
+        throw new RuntimeInterruptedException();
+      }
+      for (int start = 0; start < length; start++) {
+        for (int end = start + 1; end <= length; end++) {
+          Arrays.fill(iScore[start][end], Float.NEGATIVE_INFINITY);
+          if (op.doDep && !op.testOptions.useFastFactored) {
+            Arrays.fill(oScore[start][end], Float.NEGATIVE_INFINITY);
+          }
+          if (op.testOptions.lengthNormalization) {
+            Arrays.fill(wordsInSpan[start][end], 1);
+          }
         }
       }
-
-      if (op.testOptions.verbose && (!wordIndex.contains(s) || !lex.isKnown(wordIndex.indexOf(s)))) {
-        unk++;
-        unkWords.append(' ');
-        unkWords.append(s);
-        unkWords.append(" { ");
-        for (int jj = 0; jj < s.length(); jj++) {
-          char ch = s.charAt(jj);
-          unkWords.append(Character.getType(ch)).append(" ");
-        }
-        unkWords.append("}");
+      if (Thread.interrupted()) {
+        throw new RuntimeInterruptedException();
       }
-      // TODO: really, add a new word?
-      //words[i] = wordIndex.indexOf(s, unkIndex);
-      //if (words[i] == unkIndex) {
-      //  ++unkIndex;
-      //}
-      words[i] = wordIndex.addToIndex(s);
-      //if (wordIndex.contains(s)) {
-      //  words[i] = wordIndex.indexOf(s);
-      //} else {
-      //  words[i] = wordIndex.indexOf(Lexicon.UNKNOWN_WORD);
-      //}
-    }
-
-    // initialize inside and outside score arrays
-    if (spillGuts) {
-      tick("Wiping arrays...");
-    }
-    if (Thread.interrupted()) {
-      throw new RuntimeInterruptedException();
-    }
-    for (int start = 0; start < length; start++) {
-      for (int end = start + 1; end <= length; end++) {
-        Arrays.fill(iScore[start][end], Float.NEGATIVE_INFINITY);
-        if (op.doDep && ! op.testOptions.useFastFactored) {
-          Arrays.fill(oScore[start][end], Float.NEGATIVE_INFINITY);
-        }
-        if (op.testOptions.lengthNormalization) {
-          Arrays.fill(wordsInSpan[start][end], 1);
-        }
+      for (int loc = 0; loc <= length; loc++) {
+        Arrays.fill(narrowLExtent[loc], -1); // the rightmost left with state s ending at i that we can get is the beginning
+        Arrays.fill(wideLExtent[loc], length + 1); // the leftmost left with state s ending at i that we can get is the end
       }
-    }
-    if (Thread.interrupted()) {
-      throw new RuntimeInterruptedException();
-    }
-    for (int loc = 0; loc <= length; loc++) {
-      Arrays.fill(narrowLExtent[loc], -1); // the rightmost left with state s ending at i that we can get is the beginning
-      Arrays.fill(wideLExtent[loc], length + 1); // the leftmost left with state s ending at i that we can get is the end
-    }
-    for (int loc = 0; loc < length; loc++) {
-      Arrays.fill(narrowRExtent[loc], length + 1); // the leftmost right with state s starting at i that we can get is the end
-      Arrays.fill(wideRExtent[loc], -1); // the rightmost right with state s starting at i that we can get is the beginning
-    }
-    // int puncTag = stateIndex.indexOf(".");
-    // boolean lastIsPunc = false;
-    if (op.testOptions.verbose) {
-      Timing.tick("done.");
-      unkWords.append(" ]");
-      op.tlpParams.pw(System.err).println("Unknown words: " + unk + " " + unkWords);
-      System.err.print("Starting filters...");
-    }
-    if (Thread.interrupted()) {
-      throw new RuntimeInterruptedException();
-    }
-    // do tags
-    if (spillGuts) {
-      tick("Tagging...");
-    }
-    initializeChart(sentence);
-    //if (op.testOptions.outsideFilter)
-    // buildOFilter();
-    if (op.testOptions.verbose) {
-      Timing.tick("done.");
-      System.err.print("Starting insides...");
-    }
-    // do the inside probabilities
-    doInsideScores();
-    if (op.testOptions.verbose) {
-      // insideTime += Timing.tick("done.");
-      Timing.tick("done.");
-      System.out.println("PCFG parsing " + length + " words (incl. stop): insideScore = " + iScore[0][length][goal]);
-    }
-    bestScore = iScore[0][length][goal];
-    boolean succeeded = hasParse();
-    if (op.testOptions.doRecovery && !succeeded && !floodTags) {
-      floodTags = true; // sentence will try to reparse
-      // ms: disabled message. this is annoying and it doesn't really provide much information
-      //System.err.println("Trying recovery parse...");
-      return parse(sentence);
-    }
-    if ( ! op.doDep || op.testOptions.useFastFactored) {
+      for (int loc = 0; loc < length; loc++) {
+        Arrays.fill(narrowRExtent[loc], length + 1); // the leftmost right with state s starting at i that we can get is the end
+        Arrays.fill(wideRExtent[loc], -1); // the rightmost right with state s starting at i that we can get is the beginning
+      }
+      // int puncTag = stateIndex.indexOf(".");
+      // boolean lastIsPunc = false;
+      if (op.testOptions.verbose) {
+        Timing.tick("done.");
+        unkWords.append(" ]");
+        op.tlpParams.pw(System.err).println("Unknown words: " + unk + ' ' + unkWords);
+        System.err.print("Starting filters...");
+      }
+      if (Thread.interrupted()) {
+        throw new RuntimeInterruptedException();
+      }
+      // do tags
+      if (spillGuts) {
+        tick("Tagging...");
+      }
+      initializeChart(sentence);
+      //if (op.testOptions.outsideFilter)
+      // buildOFilter();
+      if (op.testOptions.verbose) {
+        Timing.tick("done.");
+        System.err.print("Starting insides...");
+      }
+      // do the inside probabilities
+      doInsideScores();
+      if (op.testOptions.verbose) {
+        // insideTime += Timing.tick("done.");
+        Timing.tick("done.");
+        System.out.println("PCFG parsing " + length + " words (incl. stop): insideScore = " + iScore[0][length][goal]);
+      }
+      bestScore = iScore[0][length][goal];
+      boolean succeeded = hasParse();
+      if (op.testOptions.doRecovery && !succeeded && !floodTags) {
+        floodTags = true; // sentence will try to reparse
+        // ms: disabled message. this is annoying and it doesn't really provide much information
+        //System.err.println("Trying recovery parse...");
+        continue;
+      }
+      if (!op.doDep || op.testOptions.useFastFactored) {
+        return succeeded;
+      }
+      if (op.testOptions.verbose) {
+        System.err.print("Starting outsides...");
+      }
+      // outside scores
+      oScore[0][length][goal] = 0.0f;
+      doOutsideScores();
+      //System.out.println("State rate: "+((int)(1000*ohits/otries))/10.0);
+      //System.out.println("Traversals: "+ohits);
+      if (op.testOptions.verbose) {
+        // outsideTime += Timing.tick("Done.");
+        Timing.tick("done.");
+      }
+
+      if (op.doDep) {
+        initializePossibles();
+      }
+
+      if (Thread.interrupted()) {
+        throw new RuntimeInterruptedException();
+      }
+
       return succeeded;
     }
-    if (op.testOptions.verbose) {
-      System.err.print("Starting outsides...");
-    }
-    // outside scores
-    oScore[0][length][goal] = 0.0f;
-    doOutsideScores();
-    //System.out.println("State rate: "+((int)(1000*ohits/otries))/10.0);
-    //System.out.println("Traversals: "+ohits);
-    if (op.testOptions.verbose) {
-      // outsideTime += Timing.tick("Done.");
-      Timing.tick("done.");
-    }
-
-    if (op.doDep) {
-      initializePossibles();
-    }
-
-    if (Thread.interrupted()) {
-      throw new RuntimeInterruptedException();
-    }
-
-    return succeeded;
   }
 
   public boolean parse(HTKLatticeReader lr) {
@@ -948,7 +950,7 @@ oScore[split][end][br.rightChild] = totR;
               continue;
             }
             float tot = pS + lS + rS;
-            if (spillGuts) { System.err.println("Rule " + rule + " over [" + start + "," + end + ") has log score " + tot + " from L[" + stateIndex.get(leftState) + "=" + leftState + "] = "+ lS  + " R[" + stateIndex.get(rightChild) + "=" + rightChild + "] =  " + rS); }
+            if (spillGuts) { System.err.println("Rule " + rule + " over [" + start + ',' + end + ") has log score " + tot + " from L[" + stateIndex.get(leftState) + '=' + leftState + "] = "+ lS  + " R[" + stateIndex.get(rightChild) + '=' + rightChild + "] =  " + rS); }
             if (tot > bestIScore) {
               bestIScore = tot;
             }
@@ -1314,7 +1316,7 @@ oScore[split][end][br.rightChild] = totR;
         String trueTagStr = null;
         if (sentence.get(start) instanceof HasTag) {
           trueTagStr = ((HasTag) sentence.get(start)).tag();
-          if ("".equals(trueTagStr)) {
+          if (trueTagStr != null && trueTagStr.isEmpty()) {
             trueTagStr = null;
           }
         }
@@ -1323,7 +1325,7 @@ oScore[split][end][br.rightChild] = totR;
         String candidateTagRegex = null;
         if (sentence.get(start) instanceof CoreLabel) {
           candidateTagRegex = ((CoreLabel) sentence.get(start)).get(ParserAnnotations.CandidatePartOfSpeechAnnotation.class);
-          if ("".equals(candidateTagRegex)) {
+          if (candidateTagRegex != null && candidateTagRegex.isEmpty()) {
             candidateTagRegex = null;
           }
         }
@@ -1332,7 +1334,7 @@ oScore[split][end][br.rightChild] = totR;
         String wordContextStr = null;
         if(sentence.get(start) instanceof HasContext) {
           wordContextStr = ((HasContext) sentence.get(start)).originalText();
-          if("".equals(wordContextStr))
+          if(wordContextStr != null && wordContextStr.isEmpty())
             wordContextStr = null;
         }
 
@@ -1342,7 +1344,7 @@ oScore[split][end][br.rightChild] = totR;
           // in this case we generate the taggings in the lexicon,
           // which may itself be tagging flexibly or using a strict lexicon.
           if (dumpTagging) {
-            EncodingPrintWriter.err.println("Normal tagging " + wordIndex.get(word) + " [" + word + "]", "UTF-8");
+            EncodingPrintWriter.err.println("Normal tagging " + wordIndex.get(word) + " [" + word + ']', "UTF-8");
           }
           for (Iterator<IntTaggedWord> taggingI = lex.ruleIteratorByWord(word, start, wordContextStr); taggingI.hasNext(); ) {
             IntTaggedWord tagging = taggingI.next();
@@ -1384,7 +1386,7 @@ oScore[split][end][br.rightChild] = totR;
             int tag = tagging.tag;
             tags[start][tag] = true;
             if (dumpTagging) {
-              EncodingPrintWriter.err.println("Word pos " + start + " tagging " + tagging + " score " + iScore_start_end[state] + " [state " + stateIndex.get(state) + " = " + state + "]", "UTF-8");
+              EncodingPrintWriter.err.println("Word pos " + start + " tagging " + tagging + " score " + iScore_start_end[state] + " [state " + stateIndex.get(state) + " = " + state + ']', "UTF-8");
             }
             //if (start == length-2 && tagging.parent == puncTag)
             //  lastIsPunc = true;
@@ -1426,7 +1428,7 @@ oScore[split][end][br.rightChild] = totR;
                 wideLExtent_end[state] = start;
               }
               if (dumpTagging) {
-                EncodingPrintWriter.err.println("Word pos " + start + " tagging " + (new IntTaggedWord(word, tagIndex.indexOf(stateIndex.get(state)))) + " score " + iScore_start_end[state]  + " [state " + stateIndex.get(state) + " = " + state + "]", "UTF-8");
+                EncodingPrintWriter.err.println("Word pos " + start + " tagging " + (new IntTaggedWord(word, tagIndex.indexOf(stateIndex.get(state)))) + " score " + iScore_start_end[state]  + " [state " + stateIndex.get(state) + " = " + state + ']', "UTF-8");
               }
             }
           }
@@ -1633,7 +1635,7 @@ oScore[split][end][br.rightChild] = totR;
           // build binary split
           Tree leftChildTree = extractBestParse(br.leftChild, start, split);
           Tree rightChildTree = extractBestParse(br.rightChild, split, end);
-          List<Tree> children = new ArrayList<Tree>();
+          List<Tree> children = new ArrayList<>();
           children.add(leftChildTree);
           children.add(rightChildTree);
           Tree result = tf.newTreeNode(goalStr, children);
@@ -1732,7 +1734,7 @@ oScore[split][end][br.rightChild] = totR;
       }
     }
     // check binaries first
-    List<Tree> bestTrees = new ArrayList<Tree>();
+    List<Tree> bestTrees = new ArrayList<>();
     for (int split = start + 1; split < end; split++) {
       for (Iterator<BinaryRule> binaryI = bg.ruleIteratorByParent(goal); binaryI.hasNext(); ) {
         BinaryRule br = binaryI.next();
@@ -1747,7 +1749,7 @@ oScore[split][end][br.rightChild] = totR;
           //                 rightChildTrees.size() + " ways to build.");
           for (Tree leftChildTree : leftChildTrees) {
             for (Tree rightChildTree : rightChildTrees) {
-              List<Tree> children = new ArrayList<Tree>();
+              List<Tree> children = new ArrayList<>();
               children.add(leftChildTree);
               children.add(rightChildTree);
               Tree result = tf.newTreeNode(goalStr, children);
@@ -1829,12 +1831,12 @@ oScore[split][end][br.rightChild] = totR;
     int goal = stateIndex.indexOf(goalStr);
 
     Vertex v = new Vertex(goal, start, end);
-    List<ScoredObject<Tree>> kBestTrees = new ArrayList<ScoredObject<Tree>>();
+    List<ScoredObject<Tree>> kBestTrees = new ArrayList<>();
     for (int i = 1; i <= k; i++) {
       Tree internalTree = getTree(v, i, k);
       if (internalTree == null) { break; }
       // restoreUnaries(internalTree);
-      kBestTrees.add(new ScoredObject<Tree>(internalTree, dHat.get(v).get(i-1).score));
+      kBestTrees.add(new ScoredObject<>(internalTree, dHat.get(v).get(i - 1).score));
     }
     return kBestTrees;
   }
@@ -1876,7 +1878,7 @@ oScore[split][end][br.rightChild] = totR;
 
     Derivation d = dHatV.get(k-1);
 
-    List<Tree> children = new ArrayList<Tree>();
+    List<Tree> children = new ArrayList<>();
     for (int i = 0; i < d.arc.size(); i++) {
       Vertex child = d.arc.tails.get(i);
       Tree t = getTree(child, d.j.get(i), kPrime);
@@ -1914,7 +1916,7 @@ oScore[split][end][br.rightChild] = totR;
     }
 
     public String toString() {
-      return goal+"["+start+","+end+"]";
+      return goal+"["+start+ ',' +end+ ']';
     }
   }
 
@@ -1980,11 +1982,11 @@ oScore[split][end][br.rightChild] = totR;
 
   private List<Arc> getBackwardsStar(Vertex v) {
 
-    List<Arc> bs = new ArrayList<Arc>();
+    List<Arc> bs = new ArrayList<>();
 
     // pre-terminal??
     if (isTag[v.goal] && v.start + 1 == v.end) {
-      List<Vertex> tails = new ArrayList<Vertex>();
+      List<Vertex> tails = new ArrayList<>();
       double score = iScore[v.start][v.end][v.goal];
       Arc arc = new Arc(tails, v, score);
       bs.add(arc);
@@ -1995,7 +1997,7 @@ oScore[split][end][br.rightChild] = totR;
       for (BinaryRule br : bg.ruleListByParent(v.goal)) {
         Vertex lChild = new Vertex(br.leftChild, v.start, split);
         Vertex rChild = new Vertex(br.rightChild, split, v.end);
-        List<Vertex> tails = new ArrayList<Vertex>();
+        List<Vertex> tails = new ArrayList<>();
         tails.add(lChild);
         tails.add(rChild);
         Arc arc = new Arc(tails, v, br.score);
@@ -2006,7 +2008,7 @@ oScore[split][end][br.rightChild] = totR;
     // check unaries
     for (UnaryRule ur : ug.rulesByParent(v.goal)) {
       Vertex child = new Vertex(ur.child, v.start, v.end);
-      List<Vertex> tails = new ArrayList<Vertex>();
+      List<Vertex> tails = new ArrayList<>();
       tails.add(child);
       Arc arc = new Arc(tails, v, ur.score);
       bs.add(arc);
@@ -2021,13 +2023,13 @@ oScore[split][end][br.rightChild] = totR;
   private PriorityQueue<Derivation> getCandidates(Vertex v, int k) {
     PriorityQueue<Derivation> candV = cand.get(v);
     if (candV == null) {
-      candV = new BinaryHeapPriorityQueue<Derivation>();
+      candV = new BinaryHeapPriorityQueue<>();
       List<Arc> bsV = getBackwardsStar(v);
 
       for (Arc arc : bsV) {
         int size = arc.size();
         double score = arc.ruleScore;
-        List<Double> childrenScores = new ArrayList<Double>();
+        List<Double> childrenScores = new ArrayList<>();
         for (int i = 0; i < size; i++) {
           Vertex child = arc.tails.get(i);
           double s = iScore[child.start][child.end][child.goal];
@@ -2035,14 +2037,14 @@ oScore[split][end][br.rightChild] = totR;
           score += s;
         }
         if (score == Double.NEGATIVE_INFINITY) { continue; }
-        List<Integer> j = new ArrayList<Integer>();
+        List<Integer> j = new ArrayList<>();
         for (int i = 0; i < size; i++) {
           j.add(1);
         }
         Derivation d = new Derivation(arc, j, score, childrenScores);
         candV.add(d, score);
       }
-      PriorityQueue<Derivation> tmp = new BinaryHeapPriorityQueue<Derivation>();
+      PriorityQueue<Derivation> tmp = new BinaryHeapPriorityQueue<>();
       for (int i = 0; i < k; i++) {
         if (candV.isEmpty()) { break; }
         Derivation d = candV.removeFirst();
@@ -2060,7 +2062,7 @@ oScore[split][end][br.rightChild] = totR;
 
     LinkedList<Derivation> dHatV = dHat.get(v);
     if (dHatV == null) {
-      dHatV = new LinkedList<Derivation>();
+      dHatV = new LinkedList<>();
       dHat.put(v,dHatV);
     }
     while (dHatV.size() < k) {
@@ -2080,7 +2082,7 @@ oScore[split][end][br.rightChild] = totR;
   private void lazyNext(PriorityQueue<Derivation> candV, Derivation derivation, int kPrime) {
     List<Vertex> tails = derivation.arc.tails;
     for  (int i = 0, sz = derivation.arc.size(); i < sz; i++) {
-      List<Integer> j = new ArrayList<Integer>(derivation.j);
+      List<Integer> j = new ArrayList<>(derivation.j);
       j.set(i, j.get(i)+1);
       Vertex Ti = tails.get(i);
       lazyKthBest(Ti, j.get(i), kPrime);
@@ -2089,7 +2091,7 @@ oScore[split][end][br.rightChild] = totR;
       if (j.get(i)-1 >= dHatTi.size()) { continue; }
       Derivation d = dHatTi.get(j.get(i)-1);
       double newScore = derivation.score - derivation.childrenScores.get(i) + d.score;
-      List<Double> childrenScores = new ArrayList<Double>(derivation.childrenScores);
+      List<Double> childrenScores = new ArrayList<>(derivation.childrenScores);
       childrenScores.set(i, d.score);
       Derivation newDerivation = new Derivation(derivation.arc, j, newScore, childrenScores);
       if (!candV.contains(newDerivation) && newScore > Double.NEGATIVE_INFINITY) {
@@ -2121,9 +2123,9 @@ oScore[split][end][br.rightChild] = totR;
     //   restoreUnaries(internalTree);
     // }
     //System.out.println("Restored unaries...");
-    List<ScoredObject<Tree>> scoredTrees = new ArrayList<ScoredObject<Tree>>(internalTrees.size());
+    List<ScoredObject<Tree>> scoredTrees = new ArrayList<>(internalTrees.size());
     for (Tree tr : internalTrees) {
-      scoredTrees.add(new ScoredObject<Tree>(tr, bestScore));
+      scoredTrees.add(new ScoredObject<>(tr, bestScore));
     }
     return scoredTrees;
     //TreeTransformer debinarizer = BinarizerFactory.getDebinarizer();

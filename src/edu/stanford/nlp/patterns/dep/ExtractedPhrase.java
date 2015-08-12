@@ -109,6 +109,6 @@ public class ExtractedPhrase implements Serializable{
 
   @Override
   public String toString(){
-    return this.value + "("+startIndex+","+endIndex+"," + features+")";
+    return this.value + '(' +startIndex+ ',' +endIndex+ ',' + features+ ')';
   }
 }

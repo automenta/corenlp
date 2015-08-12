@@ -439,7 +439,7 @@ public class Rules {
         || dict.allPronouns.contains(ant.lowercaseNormalizedSpanString())) return false;
     String mentionSpan = mention.removePhraseAfterHead();
     String antSpan = ant.removePhraseAfterHead();
-    if(mentionSpan.equals("") || antSpan.equals("")) return false;
+    if(mentionSpan.isEmpty() || antSpan.isEmpty()) return false;
 
     if(mentionSpan.equals(antSpan) || mentionSpan.equals(antSpan+" 's") || antSpan.equals(mentionSpan+" 's")){
       return true;
@@ -662,7 +662,7 @@ public class Rules {
   /** Is the speaker for mention the same entity as the ant entity? */
   public static boolean antecedentIsMentionSpeaker(Document document,
                                                    Mention mention, Mention ant, Dictionaries dict) {
-    if(document.speakerPairs.contains(new Pair<Integer, Integer>(mention.mentionID, ant.mentionID))) {
+    if(document.speakerPairs.contains(new Pair<>(mention.mentionID, ant.mentionID))) {
       return true;
     }
 
@@ -702,7 +702,7 @@ public class Rules {
     // We optimize a little here: if the name has no spaces, which is
     // the common case, then it is unnecessarily expensive to call
     // regex split
-    if (speaker.indexOf(" ") >= 0) {
+    if (speaker.contains(" ")) {
       // Perhaps we could optimize this, too, but that would be trickier
       for (String s : WHITESPACE_PATTERN.split(speaker)) {
         if (ant.headString.equalsIgnoreCase(s)) return true;
@@ -890,9 +890,9 @@ public class Rules {
    // COREF_DICT pairwise: the two mentions match in the dict
    public static boolean entityCorefDictionary(Mention men, Mention ant, Dictionaries dict, int dictVersion, int freq){  
           
-     Pair<String, String> mention_pair = new Pair<String, String>(
-         men.getSplitPattern()[dictVersion-1].toLowerCase(), 
-         ant.getSplitPattern()[dictVersion-1].toLowerCase());     
+     Pair<String, String> mention_pair = new Pair<>(
+             men.getSplitPattern()[dictVersion - 1].toLowerCase(),
+             ant.getSplitPattern()[dictVersion - 1].toLowerCase());
      
      int high_freq = -1;
      if(dictVersion == 1){ 

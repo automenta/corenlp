@@ -22,7 +22,7 @@ import java.io.Serializable;
  * defining hashcodes. The default hashcode is 37 * sum of all keys' hashcodes
  * plus the sum of all values' hashcodes. However, use of this class as HashMap
  * keys is discouraged because the hashcode can change over time. Consider using
- * a {@link HashableCoreMap}.
+ * a { HashableCoreMap}.
  * </p>
  *
  * @author dramage
@@ -45,5 +45,6 @@ public interface CoreMap extends TypesafeMap, PrettyLoggable, Serializable {
    */
 
   public String toShorterString(String... what);
+
 
 }

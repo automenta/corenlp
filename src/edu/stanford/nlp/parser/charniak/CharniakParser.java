@@ -90,7 +90,7 @@ public class CharniakParser {
       if (deleteTempFiles) errFile.deleteOnExit();
       printSentence(sentence, inFile.getAbsolutePath());
       runCharniak(k, inFile.getAbsolutePath(), outFile.getAbsolutePath(), errFile.getAbsolutePath());
-      Iterable<List<ScoredObject<Tree>>> iter = scoredParsesReaderWriter.readScoredTrees(outFile.getAbsolutePath());
+      Iterable<List<ScoredObject<Tree>>> iter = CharniakScoredParsesReaderWriter.readScoredTrees(outFile.getAbsolutePath());
       if (deleteTempFiles) {
         inFile.delete();
         outFile.delete();
@@ -118,13 +118,13 @@ public class CharniakParser {
       if (deleteTempFiles) errFile.deleteOnExit();
       printSentences(sentences, inFile.getAbsolutePath());
       runCharniak(k, inFile.getAbsolutePath(), outFile.getAbsolutePath(), errFile.getAbsolutePath());
-      Iterable<List<ScoredObject<Tree>>> iter = scoredParsesReaderWriter.readScoredTrees(outFile.getAbsolutePath());
+      Iterable<List<ScoredObject<Tree>>> iter = CharniakScoredParsesReaderWriter.readScoredTrees(outFile.getAbsolutePath());
       if (deleteTempFiles) {
         inFile.delete();
         outFile.delete();
         errFile.delete();
       }
-      return new IterableIterator<List<ScoredObject<Tree>>>(iter.iterator());
+      return new IterableIterator<>(iter.iterator());
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
@@ -132,7 +132,7 @@ public class CharniakParser {
 
   public void printSentence(List<? extends HasWord> sentence, String filename)
   {
-    List<List<? extends HasWord>> sentences = new ArrayList<List<? extends HasWord>>();
+    List<List<? extends HasWord>> sentences = new ArrayList<>();
     sentences.add(sentence);
     printSentences(sentences, filename);
   }
@@ -167,7 +167,7 @@ public class CharniakParser {
       //  -K do not tokenize
       //  -N <N> N best parsing
       //  -T <beamsize>
-      List<String> args = new ArrayList<String>();
+      List<String> args = new ArrayList<>();
       args.add(parserExecutable);
       args.add("-l" + maxSentenceLength);
       args.add("-K");

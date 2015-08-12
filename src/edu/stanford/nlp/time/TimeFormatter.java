@@ -98,31 +98,31 @@ public class TimeFormatter {
   }
 
   static class TimePatternExtractRuleCreator extends SequenceMatchRules.AnnotationExtractRuleCreator {
-    protected void updateExtractRule(SequenceMatchRules.AnnotationExtractRule r,
-                                     Env env,
-                                     Pattern pattern,
-                                     Function<String, Value> extractor)
+    protected static void updateExtractRule(SequenceMatchRules.AnnotationExtractRule r,
+                                            Env env,
+                                            Pattern pattern,
+                                            Function<String, Value> extractor)
     {
       MatchedExpression.SingleAnnotationExtractor valueExtractor = SequenceMatchRules.createAnnotationExtractor(env,r);
       valueExtractor.valueExtractor =
-              new SequenceMatchRules.CoreMapFunctionApplier< String, Value>(
+              new SequenceMatchRules.CoreMapFunctionApplier<>(
                       env, r.annotationField,
                       extractor);
-      r.extractRule = new SequenceMatchRules.CoreMapExtractRule< String, MatchedExpression >(
+      r.extractRule = new SequenceMatchRules.CoreMapExtractRule<>(
               env, r.annotationField,
-              new SequenceMatchRules.StringPatternExtractRule<MatchedExpression>(pattern,
-                      new SequenceMatchRules.StringMatchedExpressionExtractor( valueExtractor, r.matchedExpressionGroup)));
+              new SequenceMatchRules.StringPatternExtractRule<>(pattern,
+                      new SequenceMatchRules.StringMatchedExpressionExtractor(valueExtractor, r.matchedExpressionGroup)));
       r.filterRule = new SequenceMatchRules.AnnotationMatchedFilter(valueExtractor);
       r.pattern = pattern;
     }
 
-    protected void updateExtractRule(SequenceMatchRules.AnnotationExtractRule r,
-                                     Env env,
-                                     Function<CoreMap, Value> extractor)
+    protected static void updateExtractRule(SequenceMatchRules.AnnotationExtractRule r,
+                                            Env env,
+                                            Function<CoreMap, Value> extractor)
     {
       MatchedExpression.SingleAnnotationExtractor valueExtractor = SequenceMatchRules.createAnnotationExtractor(env,r);
       valueExtractor.valueExtractor = extractor;
-      r.extractRule = new SequenceMatchRules.CoreMapExtractRule<List<? extends CoreMap>, MatchedExpression >(
+      r.extractRule = new SequenceMatchRules.CoreMapExtractRule<>(
               env, r.annotationField,
               new SequenceMatchRules.BasicSequenceExtractRule(valueExtractor));
       r.filterRule = new SequenceMatchRules.AnnotationMatchedFilter(valueExtractor);
@@ -246,14 +246,14 @@ public class TimeFormatter {
 
     public StringBuilder appendRegex(StringBuilder sb) {
       if (group > 0) {
-        sb.append("(");
+        sb.append('(');
       }
       appendRegex0(sb);
       if (quantifier != null) {
         sb.append(quantifier);
       }
       if (group > 0) {
-        sb.append(")");
+        sb.append(')');
       }
       return sb;
     }
@@ -306,7 +306,7 @@ public class TimeFormatter {
 
     protected StringBuilder appendRegex0(StringBuilder sb) {
       if (maxDigits > 5 || minDigits != maxDigits) {
-        sb.append("\\d{").append(minDigits).append(",").append(maxDigits).append("}");
+        sb.append("\\d{").append(minDigits).append(',').append(maxDigits).append('}');
       } else {
         for (int i = 0; i < minDigits; i++) {
           sb.append("\\d");
@@ -343,7 +343,7 @@ public class TimeFormatter {
 
     protected StringBuilder appendRegex0(StringBuilder sb) {
       if (maxDigits > 5 || minDigits != maxDigits) {
-        sb.append("\\d{").append(minDigits).append(",").append(maxDigits).append("}");
+        sb.append("\\d{").append(minDigits).append(',').append(maxDigits).append('}');
       } else {
         for (int i = 0; i < minDigits; i++) {
           sb.append("\\d");
@@ -396,7 +396,7 @@ public class TimeFormatter {
       MutableDateTime.Property property = dt.property(fieldType);
       minValue = property.getMinimumValueOverall();
       maxValue = property.getMaximumValueOverall();
-      this.validValues = new ArrayList<String>(maxValue-minValue+1);
+      this.validValues = new ArrayList<>(maxValue - minValue + 1);
       this.valueMapping = Generics.newHashMap();
       for (int i = minValue; i <= maxValue; i++) {
         property.set(i);
@@ -432,7 +432,7 @@ public class TimeFormatter {
         if (first) {
           first = false;
         } else {
-          sb.append("|");
+          sb.append('|');
         }
         sb.append(Pattern.quote(v));
       }
@@ -460,12 +460,12 @@ public class TimeFormatter {
     protected StringBuilder appendRegex0(StringBuilder sb) {
       sb.append("[+-]\\d\\d(?::?\\d\\d(?::?\\d\\d(?:[.,]?\\d{1,3})?)?)?");
       if (zeroOffsetParseText != null) {
-        sb.append("|").append(Pattern.quote(zeroOffsetParseText));
+        sb.append('|').append(Pattern.quote(zeroOffsetParseText));
       }
       return sb;
     }
 
-    private int parseInteger(String str, int pos, int length) {
+    private static int parseInteger(String str, int pos, int length) {
       return Integer.parseInt(str.substring(pos, pos+length));
     }
 
@@ -533,7 +533,7 @@ public class TimeFormatter {
       if (first) {
         first = false;
       } else {
-        sb.append("|");
+        sb.append('|');
       }
       sb.append(Pattern.quote(v));
     }
@@ -551,7 +551,7 @@ public class TimeFormatter {
     static final List<String> timeZoneIds;
     static final String timeZoneIdsRegex;
     static {
-      timeZoneIds = new ArrayList<String>(DateTimeZone.getAvailableIDs());
+      timeZoneIds = new ArrayList<>(DateTimeZone.getAvailableIDs());
       timeZonesById = Generics.newHashMap();
       for (String str:timeZoneIds) {
         DateTimeZone dtz = DateTimeZone.forID(str);
@@ -611,10 +611,10 @@ public class TimeFormatter {
       }
     }
 
-    private void updateTimeZoneNames(Locale locale) {
+    private static void updateTimeZoneNames(Locale locale) {
       long time1 = new SUTime.IsoDate(2013,1,1).getJodaTimeInstant().getMillis();
       long time2 = new SUTime.IsoDate(2013,6,1).getJodaTimeInstant().getMillis();
-      CollectionValuedMap<String,DateTimeZone> tzMap = new CollectionValuedMap<String, DateTimeZone>();
+      CollectionValuedMap<String,DateTimeZone> tzMap = new CollectionValuedMap<>();
       for (DateTimeZone dtz:TimeZoneIdComponent.timeZonesById.values()) {
         // standard timezones
         tzMap.add(dtz.getShortName(time1, locale).toLowerCase(), dtz);
@@ -626,7 +626,7 @@ public class TimeFormatter {
 //      tzMap.add(dtz.getID().toLowerCase(), dtz);
       }
       // Order by length for regex
-      List<String> tzNames = new ArrayList<String>(tzMap.keySet());
+      List<String> tzNames = new ArrayList<>(tzMap.keySet());
       Collections.sort(tzNames, STRING_LENGTH_REV_COMPARATOR);
       String tzRegex = makeRegex(tzNames);
       synchronized (TimeZoneComponent.class) {
@@ -694,7 +694,7 @@ public class TimeFormatter {
     boolean useRelaxedHour = true;
     Locale locale;
     DateTimeFormatterBuilder builder = new DateTimeFormatterBuilder();
-    List<FormatComponent> pieces = new ArrayList<FormatComponent>();
+    List<FormatComponent> pieces = new ArrayList<>();
     int curGroup = 0;
 
     public DateTimeFormatter toFormatter() {
@@ -887,7 +887,7 @@ public class TimeFormatter {
     protected void appendGroupEnd() { appendRegexPart(")"); }
     protected void appendLiteral(char c) {
       builder.appendLiteral(c);
-      appendLiteralField("" + c);}
+      appendLiteralField(String.valueOf(c));}
     protected void appendLiteral(String s) {
       builder.appendLiteral(s);
       appendLiteralField(s); }
@@ -1067,7 +1067,7 @@ public class TimeFormatter {
           } else {
             // Create copy of sub since otherwise the temporary quoted
             // string would still be referenced internally.
-            builder.appendLiteral(new String(sub));
+            builder.appendLiteral(sub);
           }
           break;
         default:

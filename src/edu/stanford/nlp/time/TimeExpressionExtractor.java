@@ -1,5 +1,6 @@
 package edu.stanford.nlp.time;
 
+import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.util.CoreMap;
 
 import java.util.List;
@@ -45,7 +46,7 @@ public interface TimeExpressionExtractor {
    *     List<CoreLabel> tokens = cm.get(CoreAnnotations.TokensAnnotation.class); }
    *     </pre>
    */
-  List<CoreMap> extractTimeExpressionCoreMaps(CoreMap annotation, String docDate);
+  List<CoreMap> extractTimeExpressionCoreMaps(Annotation annotation, String docDate);
 
   /**
    * Indicates that all annotations on the document has been completed

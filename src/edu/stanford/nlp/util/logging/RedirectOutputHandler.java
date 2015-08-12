@@ -117,12 +117,12 @@ public class RedirectOutputHandler<LoggerClass, ChannelEquivalent> extends Outpu
     channelMapping.put(Redwood.DBG, Level.FINE);
     channelMapping.put(Redwood.ERR, Level.SEVERE);
     try {
-      return new RedirectOutputHandler<Logger, Level>(
-          logger,
-          Logger.class.getMethod("log", Level.class, String.class),
-          channelMapping,
-          Level.INFO
-          );
+      return new RedirectOutputHandler<>(
+              logger,
+              Logger.class.getMethod("log", Level.class, String.class),
+              channelMapping,
+              Level.INFO
+      );
     } catch (NoSuchMethodException e) {
       throw new IllegalStateException(e);
     }

@@ -355,7 +355,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
       for (int i = 0; i < initialFiles.size(); ++i) {
         files[i] = new File(initialFiles.get(i));
       }
-      startFileLoadingThread(new EnumMap<FilterType,String>(FilterType.class), files);
+      startFileLoadingThread(new EnumMap<>(FilterType.class), files);
     }
 
     setVisible(true);
@@ -381,14 +381,10 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
           Object[] args = {Boolean.TRUE};
           prefsEnableMethod.invoke(osxAdapter, args);
         }
-      } catch (NoClassDefFoundError e) {
+      } catch (NoClassDefFoundError | ClassNotFoundException e) {
         // This will be thrown first if the OSXAdapter is loaded on a system without the EAWT
         // because OSXAdapter extends ApplicationAdapter in its def
-        System.err.println("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
-      } catch (ClassNotFoundException e) {
-        // This shouldn't be reached; if there's a problem with the OSXAdapter we should get the
-        // above NoClassDefFoundError first.
-        System.err.println("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ")");
+        System.err.println("This version of Mac OS X does not support the Apple EAWT.  Application Menu handling has been disabled (" + e + ')');
       } catch (Exception e) {
         System.err.println("Exception while loading the OSXAdapter:");
         e.printStackTrace();
@@ -453,7 +449,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     String hfName = hf.getClass().getSimpleName();
     String trfName = trf.getClass().getSimpleName();
     String encoding = Preferences.getEncoding();
-    if(encoding != null && !encoding.equals(""))
+    if(encoding != null && !encoding.isEmpty())
       FileTreeModel.setCurEncoding(encoding);
     if (PreferencesPanel.isChinese(hfName, trfName))
       setChineseFont();
@@ -477,7 +473,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
           fontName = "Watanabe Mincho";
         }
 
-        if(!fontName.equals("")) {
+        if(!fontName.isEmpty()) {
           DisplayMatchesPanel.getInstance().setFontName(fontName);
           MatchesPanel.getInstance().setFontName(fontName);
         }
@@ -495,7 +491,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
         if (fonts.size() > 0) {
           fontName = fonts.get(0).getName();
         }
-        if(!fontName.equals("")) {
+        if(!fontName.isEmpty()) {
           DisplayMatchesPanel.getInstance().setFontName(fontName);
           MatchesPanel.getInstance().setFontName(fontName);
         }
@@ -529,7 +525,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
       if (haveDirectory) {
         doFileFilters(selectedFiles);
       } else {
-        startFileLoadingThread(new EnumMap<FilterType,String>(FilterType.class), selectedFiles);
+        startFileLoadingThread(new EnumMap<>(FilterType.class), selectedFiles);
       }
     }
   }
@@ -641,7 +637,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
   }
 
   private static EnumMap<FilterType,String> getFilters(JPanel panel) {
-    EnumMap<FilterType,String> filters = new EnumMap<FilterType, String>(FilterType.class);
+    EnumMap<FilterType,String> filters = new EnumMap<>(FilterType.class);
     Component[] components = panel.getComponents();
     for(Component c : components) {
       if (c.getClass() != Box.class) {
@@ -898,7 +894,7 @@ public class TregexGUI extends JFrame implements ActionListener, MatchesPanelLis
     Properties props = new Properties();
     List<String> filenames = Generics.newArrayList();
     for (int argIndex = 0; argIndex < args.length; ) {
-      if (args[argIndex].equalsIgnoreCase("-" + TRANSFORMER)) {
+      if (args[argIndex].equalsIgnoreCase('-' + TRANSFORMER)) {
         props.setProperty(TRANSFORMER, args[argIndex + 1]);
         argIndex += 2;
       } else {

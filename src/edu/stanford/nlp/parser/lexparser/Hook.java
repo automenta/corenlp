@@ -33,7 +33,7 @@ public class Hook extends Item {
   public String toString() {
     // TODO: used to have more useful information
     //return (isPreHook() ? "Pre" : "Post") + "Hook(" + Numberer.getGlobalNumberer("states").object(state) + "|" + Numberer.getGlobalNumberer("states").object(subState) + ":" + start + "-" + end + "," + head + "/" + Numberer.getGlobalNumberer("tags").object(tag) + ")";
-    return (isPreHook() ? "Pre" : "Post") + "Hook(" + state + "|" + subState + ":" + start + "-" + end + "," + head + "/" + tag + ")";
+    return (isPreHook() ? "Pre" : "Post") + "Hook(" + state + '|' + subState + ':' + start + '-' + end + ',' + head + '/' + tag + ')';
   }
 
   @Override

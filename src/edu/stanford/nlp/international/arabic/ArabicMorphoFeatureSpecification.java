@@ -75,7 +75,7 @@ public class ArabicMorphoFeatureSpecification extends MorphoFeatureSpecification
     MorphoFeatures features = new ArabicMorphoFeatures();
 
     // Check for the boundary symbol
-    if(spec == null || spec.equals("")) {
+    if(spec == null || spec.isEmpty()) {
       return features;
     }
     //Possessiveness
@@ -295,8 +295,6 @@ public class ArabicMorphoFeatureSpecification extends MorphoFeatureSpecification
       br.close();
       System.out.printf("%nRead %d lines%n",nLine);
 
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
     }

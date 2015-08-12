@@ -128,7 +128,7 @@ public class StringDictionary {
    */
   public void save(String path, String prefix, int threshold) throws java.io.IOException {
 
-    String fileName = path + java.io.File.separator + prefix + "." + mName;
+    String fileName = path + java.io.File.separator + prefix + '.' + mName;
     java.io.PrintStream os = new java.io.PrintStream(new java.io.FileOutputStream(fileName));
 
     int index = 0;
@@ -141,7 +141,7 @@ public class StringDictionary {
     }
 
     os.close();
-    System.err.println("Saved " + index + "/" + mDict.size() + " entries for dictionary \"" + mName + "\".");
+    System.err.println("Saved " + index + '/' + mDict.size() + " entries for dictionary \"" + mName + "\".");
   }
 
   public void clear() {
@@ -156,7 +156,7 @@ public class StringDictionary {
   /** Loads all saved dictionary entries from disk */
   public void load(String path, String prefix) throws java.io.IOException {
 
-    String fileName = path + java.io.File.separator + prefix + "." + mName;
+    String fileName = path + java.io.File.separator + prefix + '.' + mName;
     BufferedReader is = IOUtils.readerFromString(fileName);
 
     for (String line; (line = is.readLine()) != null; ) {

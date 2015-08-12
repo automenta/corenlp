@@ -71,7 +71,7 @@ public abstract class NodePattern<T> implements Serializable{
     }
 
     public String toString() {
-      return "[" + t + "]";
+      return "[" + t + ']';
     }
   }
 

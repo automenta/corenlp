@@ -57,7 +57,7 @@ public class Ssurgeon {
   // The prefix is used to append stuff in front of the logging messages
   private static final Logger log = Logger.getLogger(Ssurgeon.class.getName());
   private String logPrefix = null;
-  public void initLog(File logFilePath) throws IOException {
+  public static void initLog(File logFilePath) throws IOException {
     FileHandler fh = new FileHandler(logFilePath.toString(), false);
     log.addHandler(fh);
     log.setLevel(Level.FINE);
@@ -79,7 +79,7 @@ public class Ssurgeon {
    * the result of each edit applied against a copy of the graph.
    */
   public  List<SemanticGraph> expandFromPatterns(List<SsurgeonPattern> patternList, SemanticGraph sg) throws Exception {
-    List<SemanticGraph> retList = new ArrayList<SemanticGraph>();
+    List<SemanticGraph> retList = new ArrayList<>();
     for (SsurgeonPattern pattern :patternList) {
       Collection<SemanticGraph> generated = pattern.execute(sg);
       for (SemanticGraph orderedGraph : generated) {
@@ -133,7 +133,7 @@ public class Ssurgeon {
     return generated;
   }
   private  List<SemanticGraph> exhaustFromPatterns(List<SsurgeonPattern> patternList, SemanticGraph sg, int depth) throws Exception {
-    List<SemanticGraph> retList = new ArrayList<SemanticGraph>();
+    List<SemanticGraph> retList = new ArrayList<>();
     for (SsurgeonPattern pattern : patternList) {
       Collection<SemanticGraph> generated = pattern.execute(sg);
       for (SemanticGraph modGraph : generated) {
@@ -159,8 +159,7 @@ public class Ssurgeon {
     }
     
     if (retList.size() > 0) {
-      List<SemanticGraph> referenceList = new ArrayList<SemanticGraph>();
-      referenceList.addAll(retList);
+      List<SemanticGraph> referenceList = new ArrayList<>(retList);
       for (SemanticGraph childGraph : referenceList) {
         if (depth < 3)
           retList.addAll(exhaustFromPatterns(patternList, childGraph, depth + 1));
@@ -243,7 +242,7 @@ public class Ssurgeon {
    * in hashmaps in String form.
    */
   public static String[] parseArgs(String argsString) {
-    List<String> retList = new ArrayList<String>();
+    List<String> retList = new ArrayList<>();
     String patternString = "(?:[^\\s\\\"]++|\\\"[^\\\"]*+\\\"|(\\\"))++";
     Pattern pattern = Pattern.compile(patternString);
     Matcher matcher = pattern.matcher(argsString);
@@ -258,7 +257,7 @@ public class Ssurgeon {
       }  else
         throw new IllegalArgumentException("Unmatched quote in string to parse");
     }
-    return retList.toArray(new String[0]);
+    return retList.toArray(new String[retList.size()]);
   }
   
   /**
@@ -370,7 +369,7 @@ public class Ssurgeon {
   
   public static String writeToString(SsurgeonPattern pattern) {
     try {
-      List<SsurgeonPattern> patterns = new LinkedList<SsurgeonPattern>();
+      List<SsurgeonPattern> patterns = new LinkedList<>();
       patterns.add(pattern);
       Document domDoc = createPatternXMLDoc(patterns);
       if (domDoc != null) {
@@ -446,7 +445,7 @@ public class Ssurgeon {
    */
   @SuppressWarnings("unchecked")
   public List<SsurgeonPattern> readFromFile(File file) throws Exception {
-    List<SsurgeonPattern> retList = new ArrayList<SsurgeonPattern>();
+    List<SsurgeonPattern> retList = new ArrayList<>();
     Document doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(file);
     
     if (VERBOSE)
@@ -484,7 +483,7 @@ public class Ssurgeon {
     if (VERBOSE)
       System.out.println("Reading Ssurgeon patterns from directory = "+dir.getAbsolutePath());
     File[] files = dir.listFiles((dir1, name) -> name.toLowerCase().endsWith(".xml"));
-    List<SsurgeonPattern> patterns = new ArrayList<SsurgeonPattern>();
+    List<SsurgeonPattern> patterns = new ArrayList<>();
     for (File file : files) {
       try {
         patterns.addAll(readFromFile(file));
@@ -594,7 +593,7 @@ public class Ssurgeon {
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     String line;
     boolean runFlag = true;
-    Ssurgeon.inst().initLog(new File("./ssurgeon_run.log"));
+    Ssurgeon.initLog(new File("./ssurgeon_run.log"));
     while (runFlag) {
       try {
         System.out.println("Enter a sentence:");
@@ -697,7 +696,7 @@ public class Ssurgeon {
    * other node types.
    */
   public static List<Element> getChildElements(Element element) {
-    LinkedList<Element> childElements = new LinkedList<Element>();
+    LinkedList<Element> childElements = new LinkedList<>();
     try {
       NodeList nodeList = element.getChildNodes();
       for (int i=0; i<nodeList.getLength(); i++) {
@@ -741,7 +740,7 @@ public class Ssurgeon {
     @Override
     public String toString() {
       StringWriter buf = new StringWriter();
-      buf.write("type ="+type+"\n");
+      buf.write("type ="+type+ '\n');
       buf.write("pattern dir = "+patternDir.getAbsolutePath());
       if (type == RUNTYPE.testinfo) {
         buf.write("info file = "+info);

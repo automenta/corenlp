@@ -122,9 +122,8 @@ if (nodes.size() == 1) {
         ;
       }
 if(child != null) {
-        List<TregexPattern> newChildren = new ArrayList<TregexPattern>();
-        newChildren.addAll(result.getChildren());
-        newChildren.add(child);
+        List<TregexPattern> newChildren = new ArrayList<>(result.getChildren());
+    newChildren.add(child);
         result.setChild(new CoordinationPattern(newChildren,true));
       }
       {if ("" != null) return result;}
@@ -198,7 +197,7 @@ cat = true;
   boolean link = false;
   Token groupNum;
   Token groupVar;
-  List<Pair<Integer,String>> varGroups = new ArrayList<Pair<Integer,String>>();
+  List<Pair<Integer,String>> varGroups = new ArrayList<>();
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
     case IDENTIFIER:
     case BLANK:
@@ -236,7 +235,7 @@ cat = true;
         groupNum = jj_consume_token(NUMBER);
         jj_consume_token(19);
         groupVar = jj_consume_token(IDENTIFIER);
-varGroups.add(new Pair<Integer,String>(Integer.parseInt(groupNum.image),groupVar.image));
+varGroups.add(new Pair<>(Integer.parseInt(groupNum.image), groupVar.image));
       }
       switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
       case 20:{
@@ -304,7 +303,7 @@ DescriptionPattern ret = new DescriptionPattern(r, negateDesc, desc != null ? de
   }
 
   final public TregexPattern ChildrenDisj() throws ParseException {TregexPattern child;
-  List<TregexPattern> children = new ArrayList<TregexPattern>();
+  List<TregexPattern> children = new ArrayList<>();
   // When we keep track of the known variables to assert that
   // variables are not redefined, or that links are only set to known
   // variables, we want to separate those done in different parts of the
@@ -339,7 +338,7 @@ knownVariables = allKnownVariables;
   }
 
   final public TregexPattern ChildrenConj() throws ParseException {TregexPattern child;
-  List<TregexPattern> children = new ArrayList<TregexPattern>();
+  List<TregexPattern> children = new ArrayList<>();
     child = ModChild();
 children.add(child);
     label_4:
@@ -585,7 +584,7 @@ if (strArg != null) {
       } else if (numArg != null) {
         if (t.image.endsWith("-")) {
           t.image = t.image.substring(0, t.image.length()-1);
-          numArg.image = "-" + numArg.image;
+          numArg.image = '-' + numArg.image;
         }
         r = Relation.getRelation(t.image, numArg.image,
                                  basicCatFunction, headFinder);
@@ -1039,7 +1038,7 @@ children.add(child);
       return (jj_ntk = jj_nt.kind);
   }
 
-  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<>();
   private int[] jj_expentry;
   private int jj_kind = -1;
   private int[] jj_lasttokens = new int[100];
@@ -1051,9 +1050,7 @@ children.add(child);
       jj_lasttokens[jj_endpos++] = kind;
     } else if (jj_endpos != 0) {
       jj_expentry = new int[jj_endpos];
-      for (int i = 0; i < jj_endpos; i++) {
-        jj_expentry[i] = jj_lasttokens[i];
-      }
+        System.arraycopy(jj_lasttokens, 0, jj_expentry, 0, jj_endpos);
       jj_entries_loop: for (java.util.Iterator<?> it = jj_expentries.iterator(); it.hasNext();) {
         int[] oldentry = (int[])(it.next());
         if (oldentry.length == jj_expentry.length) {

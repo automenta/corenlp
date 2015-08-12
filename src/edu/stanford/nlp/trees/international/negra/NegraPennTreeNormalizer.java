@@ -66,7 +66,7 @@ public class NegraPennTreeNormalizer extends TreeNormalizer {
     return tlp.startSymbol();
   }
 
-  public String nonUnaryRootSymbol() {
+  public static String nonUnaryRootSymbol() {
     return nonUnaryRoot;
   }
 
@@ -147,14 +147,14 @@ public class NegraPennTreeNormalizer extends TreeNormalizer {
 
     for(Tree t : tree) {
       if(t.isLeaf() || t.isPreTerminal()) continue;
-      if(t.value() == null || t.value().equals("")) t.setValue("DUMMY");
+      if(t.value() == null || t.value().isEmpty()) t.setValue("DUMMY");
 
       // there's also a '--' category
       if(t.value().matches("--.*")) continue;
 
       // fix a bug in the ACL08 German tiger treebank
       String cat = t.value();
-      if(cat == null || cat.equals("")) {
+      if(cat == null || cat.isEmpty()) {
         if (t.numChildren() == 3 && t.firstChild().label().value().equals("NN") && t.getChild(1).label().value().equals("$.")) {
           System.err.println("Correcting treebank error: giving phrase label DL to " + t);
           t.label().setValue("DL");

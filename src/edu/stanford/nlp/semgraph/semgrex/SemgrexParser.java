@@ -20,7 +20,7 @@ class SemgrexParser implements SemgrexParserConstants {
 
   final public SemgrexPattern Root() throws ParseException {SemgrexPattern node;
   Token reverse = null;
-  List<SemgrexPattern> children = new ArrayList<SemgrexPattern>();
+  List<SemgrexPattern> children = new ArrayList<>();
   // a local variable
 
     switch ((jj_ntk==-1)?jj_ntk_f():jj_ntk) {
@@ -87,9 +87,8 @@ if (children.size() <= 1)
         ;
       }
 if (child != null) {
-                List<SemgrexPattern> newChildren = new ArrayList<SemgrexPattern>();
-                newChildren.addAll(result.getChildren());
-                newChildren.add(child);
+                List<SemgrexPattern> newChildren = new ArrayList<>(result.getChildren());
+  newChildren.add(child);
                 result.setChild(new CoordinationPattern(false, newChildren, true));
         }
         {if ("" != null) return result;}
@@ -126,7 +125,7 @@ if (child != null) result.setChild(child);
   }
 
   final public SemgrexPattern RelationDisj() throws ParseException {SemgrexPattern child;
-        List<SemgrexPattern> children = new ArrayList<SemgrexPattern>();
+        List<SemgrexPattern> children = new ArrayList<>();
     child = RelationConj();
 children.add(child);
     label_2:
@@ -152,7 +151,7 @@ if (children.size() == 1)
   }
 
   final public SemgrexPattern RelationConj() throws ParseException {SemgrexPattern child;
-        List<SemgrexPattern> children = new ArrayList<SemgrexPattern>();
+        List<SemgrexPattern> children = new ArrayList<>();
     child = ModRelation();
 children.add(child);
     label_3:
@@ -362,7 +361,7 @@ if (numArg == null && numArg2 == null) {
   }
 
   final public SemgrexPattern NodeDisj(GraphRelation r) throws ParseException {SemgrexPattern child;
-        List<SemgrexPattern> children = new ArrayList<SemgrexPattern>();
+        List<SemgrexPattern> children = new ArrayList<>();
     jj_consume_token(19);
     child = NodeConj(r);
 children.add(child);
@@ -390,7 +389,7 @@ if (children.size() == 1)
   }
 
   final public SemgrexPattern NodeConj(GraphRelation r) throws ParseException {SemgrexPattern child;
-        List<SemgrexPattern> children = new ArrayList<SemgrexPattern>();
+        List<SemgrexPattern> children = new ArrayList<>();
     child = ModNode(r);
 children.add(child);
     label_5:
@@ -702,7 +701,7 @@ pat = new NodePattern(r, underNodeNegation, attributes, isRoot, isEmpty, name !=
       return (jj_ntk = jj_nt.kind);
   }
 
-  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<int[]>();
+  private java.util.List<int[]> jj_expentries = new java.util.ArrayList<>();
   private int[] jj_expentry;
   private int jj_kind = -1;
 

@@ -66,7 +66,7 @@ public class GeneralizedCounter<K> implements Serializable {
    * in an {@link UnsupportedOperationException} being thrown.
    */
   public Set<Map.Entry<List<K>,Double>> entrySet() {
-    return ErasureUtils.<Set<Map.Entry<List<K>,Double>>>uncheckedCast(entrySet(new HashSet<Map.Entry<Object,Double>>(), zeroKey, true));
+    return ErasureUtils.<Set<Map.Entry<List<K>,Double>>>uncheckedCast(entrySet(new HashSet<>(), zeroKey, true));
   }
 
   /* this is (non-tail) recursive right now, haven't figured out a way
@@ -85,9 +85,9 @@ public class GeneralizedCounter<K> implements Serializable {
         MutableDouble value = (MutableDouble) map.get(finalKey);
         Double value1 = new Double(value.doubleValue());
         if (useLists) {
-          s.add(new Entry<Object,Double>(Arrays.asList(newKey), value1));
+          s.add(new Entry<>(Arrays.asList(newKey), value1));
         } else {
-          s.add(new Entry<Object,Double>(newKey[0], value1));
+          s.add(new Entry<>(newKey[0], value1));
         }
 
       }
@@ -117,7 +117,7 @@ public class GeneralizedCounter<K> implements Serializable {
    * in an {@link UnsupportedOperationException} being thrown.
    */
   public Set<Map.Entry<List<K>, ClassicCounter<K>>> lowestLevelCounterEntrySet() {
-    return ErasureUtils.<Set<Map.Entry<List<K>, ClassicCounter<K>>>>uncheckedCast(lowestLevelCounterEntrySet(new HashSet<Map.Entry<Object, ClassicCounter<K>>>(), zeroKey, true));
+    return ErasureUtils.<Set<Map.Entry<List<K>, ClassicCounter<K>>>>uncheckedCast(lowestLevelCounterEntrySet(new HashSet<>(), zeroKey, true));
   }
 
   /* this is (non-tail) recursive right now, haven't figured out a way
@@ -134,9 +134,9 @@ public class GeneralizedCounter<K> implements Serializable {
         newKey[key.length] = finalKey;
         ClassicCounter<K> c = conditionalizeHelper(finalKey).oneDimensionalCounterView();
         if (useLists) {
-          s.add(new Entry<Object,ClassicCounter<K>>(Arrays.asList(newKey), c));
+          s.add(new Entry<>(Arrays.asList(newKey), c));
         } else {
-          s.add(new Entry<Object,ClassicCounter<K>>(newKey[0], c));
+          s.add(new Entry<>(newKey[0], c));
         }
       }
     } else {
@@ -210,7 +210,7 @@ public class GeneralizedCounter<K> implements Serializable {
 
     @Override
     public String toString() {
-      return key.toString() + "=" + value.toString();
+      return key.toString() + '=' + value.toString();
     }
 
   } // end static class Entry
@@ -388,7 +388,7 @@ public class GeneralizedCounter<K> implements Serializable {
       GeneralizedCounter<K> next = ErasureUtils.<GeneralizedCounter<K>>uncheckedCast(map.get(o));
       if (next == null) // adds a new GeneralizedCounter if needed
       {
-        map.put(o, (next = new GeneralizedCounter<K>(depth - 1)));
+        map.put(o, (next = new GeneralizedCounter<>(depth - 1)));
       }
       return next;
     } else {
@@ -577,7 +577,7 @@ public class GeneralizedCounter<K> implements Serializable {
   }
 
   public GeneralizedCounter<K> reverseKeys() {
-    GeneralizedCounter<K> result = new GeneralizedCounter<K>();
+    GeneralizedCounter<K> result = new GeneralizedCounter<>();
     Set<Map.Entry<List<K>,Double>> entries = entrySet();
     for (Map.Entry<List<K>,Double> entry: entries) {
       List<K> list = entry.getKey();
@@ -700,15 +700,15 @@ public class GeneralizedCounter<K> implements Serializable {
 
     @Override
     public String toString() {
-      StringBuffer sb = new StringBuffer("{");
+      StringBuilder sb = new StringBuilder("{");
       for (Iterator<Map.Entry<List<K>, Double>> i = entrySet().iterator(); i.hasNext();) {
         Map.Entry<List<K>, Double> e = i.next();
         sb.append(e.toString());
         if (i.hasNext()) {
-          sb.append(",");
+          sb.append(',');
         }
       }
-      sb.append("}");
+      sb.append('}');
       return sb.toString();
     }
 
@@ -791,7 +791,7 @@ public class GeneralizedCounter<K> implements Serializable {
 
     @Override
     public Set<Map.Entry<K, Double>> entrySet() {
-      return ErasureUtils.<Set<Map.Entry<K, Double>>>uncheckedCast(GeneralizedCounter.this.entrySet(new HashSet<Map.Entry<Object, Double>>(), zeroKey, false));
+      return ErasureUtils.<Set<Map.Entry<K, Double>>>uncheckedCast(GeneralizedCounter.this.entrySet(new HashSet<>(), zeroKey, false));
     }
 
     @Override
@@ -827,10 +827,10 @@ public class GeneralizedCounter<K> implements Serializable {
         Map.Entry<K, Double> e = i.next();
         sb.append(e.toString());
         if (i.hasNext()) {
-          sb.append(",");
+          sb.append(',');
         }
       }
-      sb.append("}");
+      sb.append('}');
       return sb.toString();
     }
 
@@ -851,7 +851,7 @@ public class GeneralizedCounter<K> implements Serializable {
           sb.append(" = ");
           GeneralizedCounter<K> gc = conditionalizeOnce(obj);
           sb.append(gc);
-          sb.append("\n");
+          sb.append('\n');
         }
         return sb.toString();
       }
@@ -863,7 +863,7 @@ public class GeneralizedCounter<K> implements Serializable {
           sb.append(" = ");
           GeneralizedCounter<K> gc = conditionalizeOnce(obj);
           sb.append(gc);
-          sb.append("\n");
+          sb.append('\n');
         }
         sb.append("}\n");
         return sb.toString();
@@ -885,7 +885,7 @@ public class GeneralizedCounter<K> implements Serializable {
     System.out.println(Arrays.equals(a1, a2));
 
 
-    GeneralizedCounter<String> gc = new GeneralizedCounter<String>(3);
+    GeneralizedCounter<String> gc = new GeneralizedCounter<>(3);
     gc.incrementCount(Arrays.asList(new String[]{"a", "j", "x"}), 3.0);
     gc.incrementCount(Arrays.asList(new String[]{"a", "l", "x"}), 3.0);
     gc.incrementCount(Arrays.asList(new String[]{"b", "k", "y"}), 3.0);
@@ -947,8 +947,8 @@ public class GeneralizedCounter<K> implements Serializable {
 
     System.out.println("### testing equality of regular Counter...");
 
-    ClassicCounter<String> z1 = new ClassicCounter<String>();
-    ClassicCounter<String> z2 = new ClassicCounter<String>();
+    ClassicCounter<String> z1 = new ClassicCounter<>();
+    ClassicCounter<String> z2 = new ClassicCounter<>();
 
     z1.incrementCount("a1");
     z1.incrementCount("a2");
@@ -1013,12 +1013,12 @@ public class GeneralizedCounter<K> implements Serializable {
       for (Map.Entry<?, Double> e: entrySet()) {
         Object key = e.getKey();
         double count = e.getValue();
-        pw.println(buffer + key + "\t" + count);
+        pw.println(buffer + key + '\t' + count);
       }
     } else {
       for (K key: topLevelKeySet()) {
         GeneralizedCounter<K> gc1 = conditionalize(Arrays.asList(ErasureUtils.<K[]>uncheckedCast(new Object[]{key})));
-        pw.println(buffer + key + "\t" + gc1.totalCount());
+        pw.println(buffer + key + '\t' + gc1.totalCount());
         gc1.prettyPrint(pw, buffer + bufferIncrement, bufferIncrement);
       }
     }

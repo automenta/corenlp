@@ -27,7 +27,7 @@ class RelabelNode extends TsurgeonPattern {
     "((?:(?:[^/]*[^/\\\\])|\\\\/)*(?:\\\\\\\\)*)";
 
   static final Pattern regexPattern = 
-    Pattern.compile("/" + regexPatternString + "/");
+    Pattern.compile('/' + regexPatternString + '/');
 
   /**
    * This pattern finds relabel snippets that use a named node.
@@ -45,7 +45,7 @@ class RelabelNode extends TsurgeonPattern {
    * or captured variable
    */
   static final String oneGeneralReplacement = 
-    ("(" + nodePatternString + "|" + variablePatternString + ")");
+    ('(' + nodePatternString + '|' + variablePatternString + ')');
   static final Pattern oneGeneralReplacementPattern = 
     Pattern.compile(oneGeneralReplacement);
 
@@ -53,7 +53,7 @@ class RelabelNode extends TsurgeonPattern {
    * Identifies a node using the regex replacement strategy.
    */
   static final Pattern substPattern = 
-    Pattern.compile("/" + regexPatternString + "/(.*)/");
+    Pattern.compile('/' + regexPatternString + "/(.*)/");
 
   enum RelabelMode { FIXED, REGEX };
   private final RelabelMode mode;
@@ -71,7 +71,7 @@ class RelabelNode extends TsurgeonPattern {
       mode = RelabelMode.REGEX;
       this.labelRegex = Pattern.compile(m1.group(1));
       this.replacementString = m1.group(2);
-      replacementPieces = new ArrayList<String>();
+      replacementPieces = new ArrayList<>();
       Matcher generalMatcher = 
         oneGeneralReplacementPattern.matcher(m1.group(2));
       int lastPosition = 0;
@@ -81,7 +81,7 @@ class RelabelNode extends TsurgeonPattern {
         }
         lastPosition = generalMatcher.end();
         String piece = generalMatcher.group();
-        if (piece.equals(""))
+        if (piece.isEmpty())
           continue;
         replacementPieces.add(generalMatcher.group());
       }

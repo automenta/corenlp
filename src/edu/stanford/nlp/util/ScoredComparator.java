@@ -79,6 +79,6 @@ final public class ScoredComparator implements Comparator<Scored>, Serializable 
 
   @Override
   public String toString() {
-    return "ScoredComparator(" + (ascending ? "ascending": "descending") + ")";
+    return "ScoredComparator(" + (ascending ? "ascending": "descending") + ')';
   }
 }

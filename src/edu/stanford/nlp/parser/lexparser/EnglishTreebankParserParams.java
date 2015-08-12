@@ -85,7 +85,7 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
           if (kids.length == 1 &&
               tlp.basicCategory(kids[0].value()).equals("NP")) {
             // go through kidkids here so as to keep any annotation on me.
-            List<Tree> kidkids = new ArrayList<Tree>();
+            List<Tree> kidkids = new ArrayList<>();
             for (int cNum = 0; cNum < kids[0].children().length; cNum++) {
               Tree child = kids[0].children()[cNum];
               Tree newChild = transformTree(child);
@@ -102,7 +102,7 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
         if (englishTrain.splitPoss == 2 &&
             s.equals("POSSP")) {
           Tree[] kids = tree.children();
-          List<Tree> newkids = new ArrayList<Tree>();
+          List<Tree> newkids = new ArrayList<>();
           for (int j = 0; j < kids.length - 1; j++) {
             for (int cNum = 0; cNum < kids[j].children().length; cNum++) {
               Tree child = kids[0].children()[cNum];
@@ -124,7 +124,7 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
           tag = tlp.basicCategory(tag);
         }
       }
-      List<Tree> children = new ArrayList<Tree>();
+      List<Tree> children = new ArrayList<>();
       for (int cNum = 0; cNum < tree.numChildren(); cNum++) {
         Tree child = tree.getChild(cNum);
         Tree newChild = transformTree(child);
@@ -720,16 +720,22 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
               }
               break;
             case "RB":
-              if (word.equals("McNally")) {
-                cat = changeBaseCat(cat, "NNP");
-              } else if (word.equals("multifamily")) {
-                cat = changeBaseCat(cat, "NN");
-              } else if (word.equals("MORE")) {
-                cat = changeBaseCat(cat, "JJR");
-              } else if (word.equals("hand")) {
-                cat = changeBaseCat(cat, "NN");
-              } else if (word.equals("fist")) {
-                cat = changeBaseCat(cat, "NN");
+              switch (word) {
+                case "McNally":
+                  cat = changeBaseCat(cat, "NNP");
+                  break;
+                case "multifamily":
+                  cat = changeBaseCat(cat, "NN");
+                  break;
+                case "MORE":
+                  cat = changeBaseCat(cat, "JJR");
+                  break;
+                case "hand":
+                  cat = changeBaseCat(cat, "NN");
+                  break;
+                case "fist":
+                  cat = changeBaseCat(cat, "NN");
+                  break;
               }
               break;
             case "RP":
@@ -740,23 +746,49 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
               }
               break;
             case "JJ":
-              if (word.equals("U.S.")) {
-                cat = changeBaseCat(cat, "NNP");
-              } else if (word.equals("ours")) {
-                cat = changeBaseCat(cat, "PRP");
-              } else if (word.equals("mine")) {
-                cat = changeBaseCat(cat, "NN");
-              } else if (word.equals("Sept.")) {
-                cat = changeBaseCat(cat, "NNP");
+              switch (word) {
+                case "U.S.":
+                  cat = changeBaseCat(cat, "NNP");
+                  break;
+                case "ours":
+                  cat = changeBaseCat(cat, "PRP");
+                  break;
+                case "mine":
+                  cat = changeBaseCat(cat, "NN");
+                  break;
+                case "Sept.":
+                  cat = changeBaseCat(cat, "NNP");
+                  break;
               }
               break;
             case "NN":
-              if (word.equals("Chapman") || word.equals("Jan.") || word.equals("Sept.") || word.equals("Oct.") || word.equals("Nov.") || word.equals("Dec.")) {
-                cat = changeBaseCat(cat, "NNP");
-              } else if (word.equals("members") || word.equals("bureaus") || word.equals("days") || word.equals("outfits") || word.equals("institutes") || word.equals("innings") || word.equals("write-offs") || word.equals("wines") || word.equals("trade-offs") || word.equals("tie-ins") || word.equals("thrips") || word.equals("1980s") || word.equals("1920s")) {
-                cat = changeBaseCat(cat, "NNS");
-              } else if (word.equals("this")) {
-                cat = changeBaseCat(cat, "DT");
+              switch (word) {
+                case "Chapman":
+                case "Jan.":
+                case "Sept.":
+                case "Oct.":
+                case "Nov.":
+                case "Dec.":
+                  cat = changeBaseCat(cat, "NNP");
+                  break;
+                case "members":
+                case "bureaus":
+                case "days":
+                case "outfits":
+                case "institutes":
+                case "innings":
+                case "write-offs":
+                case "wines":
+                case "trade-offs":
+                case "tie-ins":
+                case "thrips":
+                case "1980s":
+                case "1920s":
+                  cat = changeBaseCat(cat, "NNS");
+                  break;
+                case "this":
+                  cat = changeBaseCat(cat, "DT");
+                  break;
               }
               break;
             case ":":
@@ -786,18 +818,79 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
               }
               break;
             case "VB":
-              if (word.equals("The")) {
-                cat = changeBaseCat(cat, "DT");
-              } else if (word.equals("allowed")) {
-                cat = changeBaseCat(cat, "VBD");
-              } else if (word.equals("short") || word.equals("key") || word.equals("many") || word.equals("last") || word.equals("further")) {
-                cat = changeBaseCat(cat, "JJ");
-              } else if (word.equals("lower")) {
-                cat = changeBaseCat(cat, "JJR");
-              } else if (word.equals("Nov.") || word.equals("Jan.") || word.equals("Dec.") || word.equals("Tandy") || word.equals("Release") || word.equals("Orkem")) {
-                cat = changeBaseCat(cat, "NNP");
-              } else if (word.equals("watch") || word.equals("review") || word.equals("risk") || word.equals("realestate") || word.equals("love") || word.equals("experience") || word.equals("control") || word.equals("Transport") || word.equals("mind") || word.equals("term") || word.equals("program") || word.equals("gender") || word.equals("audit") || word.equals("blame") || word.equals("stock") || word.equals("run") || word.equals("group") || word.equals("affect") || word.equals("rent") || word.equals("show") || word.equals("accord") || word.equals("change") || word.equals("finish") || word.equals("work") || word.equals("schedule") || word.equals("influence") || word.equals("school") || word.equals("freight") || word.equals("growth") || word.equals("travel") || word.equals("call") || word.equals("autograph") || word.equals("demand") || word.equals("abuse") || word.equals("return") || word.equals("defeat") || word.equals("pressure") || word.equals("bank") || word.equals("notice") || word.equals("tax") || word.equals("ooze") || word.equals("network") || word.equals("concern") || word.equals("pit") || word.equals("contract") || word.equals("cash")) {
-                cat = changeBaseCat(cat, "NN");
+              switch (word) {
+                case "The":
+                  cat = changeBaseCat(cat, "DT");
+                  break;
+                case "allowed":
+                  cat = changeBaseCat(cat, "VBD");
+                  break;
+                case "short":
+                case "key":
+                case "many":
+                case "last":
+                case "further":
+                  cat = changeBaseCat(cat, "JJ");
+                  break;
+                case "lower":
+                  cat = changeBaseCat(cat, "JJR");
+                  break;
+                case "Nov.":
+                case "Jan.":
+                case "Dec.":
+                case "Tandy":
+                case "Release":
+                case "Orkem":
+                  cat = changeBaseCat(cat, "NNP");
+                  break;
+                case "watch":
+                case "review":
+                case "risk":
+                case "realestate":
+                case "love":
+                case "experience":
+                case "control":
+                case "Transport":
+                case "mind":
+                case "term":
+                case "program":
+                case "gender":
+                case "audit":
+                case "blame":
+                case "stock":
+                case "run":
+                case "group":
+                case "affect":
+                case "rent":
+                case "show":
+                case "accord":
+                case "change":
+                case "finish":
+                case "work":
+                case "schedule":
+                case "influence":
+                case "school":
+                case "freight":
+                case "growth":
+                case "travel":
+                case "call":
+                case "autograph":
+                case "demand":
+                case "abuse":
+                case "return":
+                case "defeat":
+                case "pressure":
+                case "bank":
+                case "notice":
+                case "tax":
+                case "ooze":
+                case "network":
+                case "concern":
+                case "pit":
+                case "contract":
+                case "cash":
+                  cat = changeBaseCat(cat, "NN");
+                  break;
               }
               break;
             case "NNP":
@@ -1344,7 +1437,7 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
       }
       if (englishTrain.tagRBGPA) {
           if (baseCat.equals("RB")) {
-              cat = cat + "^" + baseGrandParentStr;
+              cat = cat + '^' + baseGrandParentStr;
           }
       }
       if (englishTrain.joinPound && baseCat.equals("#")) {
@@ -1564,10 +1657,10 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
             case "VBP":
             case "VBN":
             case "VB":
-              cat = cat + "-" + baseTag;
+              cat = cat + '-' + baseTag;
               break;
             default:
-              System.err.println("XXXX Head of " + t + " is " + word + "/" + baseTag);
+              System.err.println("XXXX Head of " + t + " is " + word + '/' + baseTag);
               break;
           }
         } else if (englishTrain.splitVP == 3 || englishTrain.splitVP == 4) {
@@ -1575,19 +1668,19 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
           if (baseTag.equals("VBZ") || baseTag.equals("VBD") || baseTag.equals("VBP") || baseTag.equals("MD")) {
             cat = cat + "-VBF";
           } else if (baseTag.equals("TO") || baseTag.equals("VBG") || baseTag.equals("VBN") || baseTag.equals("VB")) {
-            cat = cat + "-" + baseTag;
+            cat = cat + '-' + baseTag;
           } else if (englishTrain.splitVP == 4) {
             String dTag = deduceTag(word);
-            cat = cat + "-" + dTag;
+            cat = cat + '-' + dTag;
           }
         } else if (englishTrain.splitVP == 2) {
           if (baseTag.equals("VBZ") || baseTag.equals("VBD") || baseTag.equals("VBP") || baseTag.equals("MD")) {
             cat = cat + "-VBF";
           } else {
-            cat = cat + "-" + baseTag;
+            cat = cat + '-' + baseTag;
           }
         } else if (englishTrain.splitVP == 1) {
-          cat = cat + "-" + baseTag;
+          cat = cat + '-' + baseTag;
         }
       }
       if (englishTrain.dominatesV > 0) {
@@ -1691,13 +1784,13 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
             cat += "-PL";
           }
         } else {
-          System.err.println("XXXX Head of " + t + " is " + word + "/" + baseTag);
+          System.err.println("XXXX Head of " + t + " is " + word + '/' + baseTag);
         }
       }
       if (englishTrain.splitSTag > 0 &&
           (baseCat.equals("S") || (englishTrain.splitSTag <= 3 && (baseCat.equals("SINV") || baseCat.equals("SQ"))))) {
         if (englishTrain.splitSTag == 1) {
-          cat = cat + "-" + baseTag;
+          cat = cat + '-' + baseTag;
         } else if (baseTag.equals("VBZ") || baseTag.equals("VBD") || baseTag.equals("VBP") || baseTag.equals("MD")) {
           cat = cat + "-VBF";
         } else if ((englishTrain.splitSTag == 3 || englishTrain.splitSTag == 5) &&
@@ -1825,14 +1918,14 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
           List<Tree> oldKids = t.getChildrenAsList();
           // could I use subList() here or is a true copy better?
           // lose the last child
-          List<Tree> newKids = new ArrayList<Tree>();
+          List<Tree> newKids = new ArrayList<>();
           for (int i = 0; i < oldKids.size() - 1; i++) {
             newKids.add(oldKids.get(i));
           }
           t.setChildren(newKids);
           cat = changeBaseCat(cat, "POSSP");
           Label labelTop = new CategoryWordTag(cat, word, tag);
-          List<Tree> newerChildren = new ArrayList<Tree>(2);
+          List<Tree> newerChildren = new ArrayList<>(2);
           newerChildren.add(t);
           // add POS dtr
           Tree last = oldKids.get(oldKids.size() - 1);
@@ -1856,7 +1949,7 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
             Label labelBot = new CategoryWordTag("NP^NP-B", word, tag);
             t.setLabel(labelBot);
             Label labelTop = new CategoryWordTag(cat, word, tag);
-            List<Tree> newerChildren = new ArrayList<Tree>(1);
+            List<Tree> newerChildren = new ArrayList<>(1);
             newerChildren.add(t);
             return categoryWordTagTreeFactory.newTreeNode(labelTop, newerChildren);
           }
@@ -2330,7 +2423,7 @@ public class EnglishTreebankParserParams extends AbstractTreebankParserParams {
   /** {@inheritDoc} */
   @Override
   public List<Word> defaultTestSentence() {
-    List<Word> ret = new ArrayList<Word>();
+    List<Word> ret = new ArrayList<>();
     String[] sent = {"This", "is", "just", "a", "test", "."};
     for (String str : sent) {
       ret.add(new Word(str));

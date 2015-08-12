@@ -26,7 +26,7 @@ public class Edge extends Item {
   public String toString() {
     // TODO: used to contain more useful information
     //return "Edge(" + Numberer.getGlobalNumberer("states").object(state) + ":" + start + "-" + end + "," + head + "/" + Numberer.getGlobalNumberer("tags").object(tag) + ")";
-    return "Edge(" + state + ":" + start + "-" + end + "," + head + "/" + tag + ")";
+    return "Edge(" + state + ':' + start + '-' + end + ',' + head + '/' + tag + ')';
   }
 
   @Override

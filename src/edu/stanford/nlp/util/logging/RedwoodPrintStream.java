@@ -48,7 +48,7 @@ public class RedwoodPrintStream extends PrintStream {
         if(tag != null){ Redwood.log(tag, msg); } else { Redwood.log(msg); }
         buffer = new StringBuilder();
       } else {
-        buffer.append(""+c);
+        buffer.append(String.valueOf(c));
       }
     }
 

@@ -3,6 +3,7 @@ package edu.stanford.nlp.ie.machinereading.structure;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import edu.stanford.nlp.ie.machinereading.structure.MachineReadingAnnotations;
 import edu.stanford.nlp.ling.CoreAnnotations;
@@ -39,7 +40,7 @@ public class EventMention extends RelationMention {
       List<String> argNames) {
     super(objectId, sentence, span, type, subtype, args, argNames);
     this.anchor = anchor;
-    this.parents = new IdentityHashSet<ExtractionObject>();
+    this.parents = new IdentityHashSet<>();
     
     // set ourselves as the parent of any EventMentions in our args 
     for (ExtractionObject arg : args) {
@@ -50,8 +51,8 @@ public class EventMention extends RelationMention {
   }
   
   public void resetArguments() {
-    args = new ArrayList<ExtractionObject>();
-    argNames = new ArrayList<String>();
+    args = new ArrayList<>();
+    argNames = new ArrayList<>();
   }
   
   public void removeFromParents() {
@@ -102,7 +103,7 @@ public class EventMention extends RelationMention {
       System.err.println("DOC " + sentence.get(CoreAnnotations.DocIDAnnotation.class));
       System.err.print("SENTENCE:");
       for(CoreLabel t: sentence.get(CoreAnnotations.TokensAnnotation.class)){
-        System.err.print(" " + t.word());
+        System.err.print(' ' + t.word());
       }
       System.err.println("EVENTS IN SENTENCE:");
       count = 1;
@@ -129,7 +130,7 @@ public class EventMention extends RelationMention {
       + ", start=" + getExtentTokenStart() + ", end=" + getExtentTokenEnd()
       + (anchor != null ? ", anchor=" + anchor : "")
       + (args != null ? ", args=" + args : "") 
-      + (argNames != null ? ", argNames=" + argNames : "") + "]";
+      + (argNames != null ? ", argNames=" + argNames : "") + ']';
   }
   
   public boolean contains(EventMention e) {
@@ -196,7 +197,9 @@ public class EventMention extends RelationMention {
     if(! type.equals(oldType)){
       // This is not important: we use anchor types in the parser, not event types
       // This is done just for completeness of code
-      logger.fine("Type changed from " + oldType + " to " + type + " during check 3 merge.");
+      if (logger.isLoggable(Level.FINE)) {
+        logger.fine("Type changed from " + oldType + " to " + type + " during check 3 merge.");
+      }
     }
     
     // add e's arguments

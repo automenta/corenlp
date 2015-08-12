@@ -56,9 +56,7 @@ public class SystemUtils {
         String msg = "process %s exited with value %d";
         throw new ProcessException(String.format(msg, builder.command(), result));
       }
-    } catch (InterruptedException e) {
-      throw new ProcessException(e);
-    } catch (IOException e) {
+    } catch (InterruptedException | IOException e) {
       throw new ProcessException(e);
     }
   }
@@ -307,7 +305,7 @@ public class SystemUtils {
     int pid = getPID();
     System.out.println("The PID is " + pid);
     System.out.println("The memory in use is " + getMemoryInUse() + "MB");
-    List<String> foo = new ArrayList<String>();
+    List<String> foo = new ArrayList<>();
     for (int i = 0; i < 5000000; i++) {
       foo.add("0123456789");
     }

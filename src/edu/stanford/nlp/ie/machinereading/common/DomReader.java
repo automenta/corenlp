@@ -46,7 +46,7 @@ public class DomReader {
 	 * Searches for all immediate children with the given name
 	 */
 	protected static List<Node> getChildrenByName(Node node, String name) {
-		List<Node> matches = new ArrayList<Node>();
+		List<Node> matches = new ArrayList<>();
 		NodeList children = node.getChildNodes();
 
 		// search children
@@ -144,14 +144,10 @@ public class DomReader {
 				x = sxe.getException();
 			x.printStackTrace();
 			throw sxe;
-		} catch (ParserConfigurationException pce) {
+		} catch (ParserConfigurationException | IOException pce) {
 			// Parser with specified options can't be built
 			pce.printStackTrace();
 			throw pce;
-		} catch (IOException ioe) {
-			// I/O error
-			ioe.printStackTrace();
-			throw ioe;
 		}
 
 		return document;

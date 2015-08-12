@@ -147,8 +147,8 @@ public class LDCPosMapper implements Mapper {
 	@Override
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
-		for (String longTag : tagMap.keySet()) {
-		  sb.append(longTag).append('\t').append(tagMap.get(longTag)).append('\n');
+		for (Map.Entry<String, String> stringStringEntry : tagMap.entrySet()) {
+		  sb.append(stringStringEntry.getKey()).append('\t').append(stringStringEntry.getValue()).append('\n');
 		}
 		return sb.toString();
 	}

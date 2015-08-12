@@ -196,9 +196,9 @@ public class SUTimeMain {
     String docPubDate;
     String sentId;
     String text;
-    List<TimebankTimex> timexes = new ArrayList<TimebankTimex>();
+    List<TimebankTimex> timexes = new ArrayList<>();
 
-    List<String> origItems =  new ArrayList<String>();
+    List<String> origItems = new ArrayList<>();
 
     public boolean add(String item) {
       String[] fields = item.split("\\s*\\|\\s*", 9);
@@ -352,7 +352,7 @@ public class SUTimeMain {
           }
           item = line;
         } else {
-          item += " " + line;
+          item += ' ' + line;
         }
       } else {
         if (line.matches("#+ BEGIN DATA #+")) {
@@ -377,7 +377,7 @@ public class SUTimeMain {
   }
 
   public static String joinWordTags(List<? extends CoreMap> l, String glue, int start, int end) {
-    return StringUtils.join(l, glue, in -> in.get(CoreAnnotations.TextAnnotation.class) + "/" + in.get(CoreAnnotations.PartOfSpeechAnnotation.class), start, end);
+    return StringUtils.join(l, glue, in -> in.get(CoreAnnotations.TextAnnotation.class) + '/' + in.get(CoreAnnotations.PartOfSpeechAnnotation.class), start, end);
   }
 
   private static void processTempEval2Doc(AnnotationPipeline pipeline, Annotation docAnnotation,
@@ -474,27 +474,27 @@ public class SUTimeMain {
                   "type",
                   tmx.timexType(),
             };
-            attrPw.println(extString + "\t" + StringUtils.join(attrFields, "\t"));
+            attrPw.println(extString + '\t' + StringUtils.join(attrFields, "\t"));
             if (tmx.value() != null) {
               String val = tmx.value();
               // Fix up expression values (needed for GUTime)
               if (useGUTime) {
                 if ("TIME".equals(tmx.timexType())) {
                   if (val.matches("T\\d{4}")) {
-                    val = "T" + val.substring(1,3) + ":" + val.substring(3,5);
+                    val = 'T' + val.substring(1,3) + ':' + val.substring(3,5);
                   }
                 } else if ("DATE".equals(tmx.timexType())) {
                   if (val.matches("\\d{8}T.*")) {
-                    val = val.substring(0,4) + "-" + val.substring(4,6) + "-" + val.substring(6);
+                    val = val.substring(0,4) + '-' + val.substring(4,6) + '-' + val.substring(6);
                   } else if (val.matches("\\d{8}")) {
-                    val = val.substring(0,4) + "-" + val.substring(4,6) + "-" + val.substring(6,8);
+                    val = val.substring(0,4) + '-' + val.substring(4,6) + '-' + val.substring(6,8);
                   } else if (val.matches("\\d\\d\\d\\d..")) {
-                    val = val.substring(0,4) + "-" + val.substring(4,6);
+                    val = val.substring(0,4) + '-' + val.substring(4,6);
                   } else if (val.matches("[0-9X]{4}W[0-9X]{2}.*")) {
                     if (val.length() > 7) {
-                      val = val.substring(0,4) + "-" + val.substring(4,7) + "-" + val.substring(7);
+                      val = val.substring(0,4) + '-' + val.substring(4,7) + '-' + val.substring(7);
                     } else {
-                      val = val.substring(0,4) + "-" + val.substring(4,7);
+                      val = val.substring(0,4) + '-' + val.substring(4,7);
                     }
                   }
                 }
@@ -509,7 +509,7 @@ public class SUTimeMain {
               attrFields[0] = "value";
               attrFields[1] = val;
 
-              attrPw.println(extString + "\t" + StringUtils.join(attrFields, "\t"));
+              attrPw.println(extString + '\t' + StringUtils.join(attrFields, "\t"));
             }
           }
           tokenIndex++;
@@ -526,7 +526,7 @@ public class SUTimeMain {
   {
     String sentText = StringUtils.join(sentWords, " ");
     Annotation sentence = new Annotation(sentText);
-    List<CoreLabel> tokens = new ArrayList<CoreLabel>(sentWords.size());
+    List<CoreLabel> tokens = new ArrayList<>(sentWords.size());
     for (String text:sentWords) {
       CoreLabel token = tokenFactory.makeToken();
       token.set(CoreAnnotations.TextAnnotation.class, text);
@@ -545,7 +545,7 @@ public class SUTimeMain {
     document.set(CoreAnnotations.SentencesAnnotation.class, sentences);
 
     // Accumulate docTokens and label sentence with overall token begin/end, and sentence index annotations
-    List<CoreLabel> docTokens = new ArrayList<CoreLabel>();
+    List<CoreLabel> docTokens = new ArrayList<>();
     int sentenceIndex = 0;
     int tokenBegin = 0;
     for (CoreMap sentenceAnnotation:sentences) {
@@ -672,7 +672,7 @@ public class SUTimeMain {
         lastTimex = new TimexAttributes(tid, sentNo, tokenNo);
         List<TimexAttributes> list = timexMap.get(docName);
         if (list == null) {
-          timexMap.put(docName, list = new ArrayList<TimexAttributes>());
+          timexMap.put(docName, list = new ArrayList<>());
         }
         list.add(lastTimex);
       }
@@ -706,7 +706,7 @@ public class SUTimeMain {
           timex.value = attrvalue;
           break;
         default:
-          throw new RuntimeException("Error processing " + attrsFile + ":" +
+          throw new RuntimeException("Error processing " + attrsFile + ':' +
               "Unknown attribute " + attrname + ": from line " + line);
       }
     }
@@ -748,12 +748,12 @@ public class SUTimeMain {
           curDocName = null;
         }
         // New doc
-        tokens = new ArrayList<String>();
-        sentences = new ArrayList<CoreMap>();
+        tokens = new ArrayList<>();
+        sentences = new ArrayList<>();
       } else if (curSentNo != sentNo) {
         CoreMap lastSentence = wordsToSentence(tokens);
         sentences.add(lastSentence);
-        tokens = new ArrayList<String>();
+        tokens = new ArrayList<>();
       }
       tokens.add(tokenText);
       curDocName = docName;
@@ -782,14 +782,14 @@ public class SUTimeMain {
       // convert from yyyyMMdd to requiredDocDateFormat
       DateFormat defaultFormatter = new SimpleDateFormat("yyyyMMdd");
       DateFormat requiredFormatter = new SimpleDateFormat(requiredDocDateFormat);
-      for (String docId:docDates.keySet()) {
-        Date date = defaultFormatter.parse(docDates.get(docId));
-        docDates.put(docId, requiredFormatter.format(date));
+      for (Map.Entry<String, String> stringStringEntry : docDates.entrySet()) {
+        Date date = defaultFormatter.parse(stringStringEntry.getValue());
+        docDates.put(stringStringEntry.getKey(), requiredFormatter.format(date));
       }
     }
     processTempEval2Tab(pipeline, in, out, docDates);
     if (eval != null) {
-      List<String> command = new ArrayList<String>();
+      List<String> command = new ArrayList<>();
       if (PYTHON != null) {
         command.add(PYTHON);
       }
@@ -924,14 +924,14 @@ public class SUTimeMain {
     sb.append("java.util.logging.ConsoleHandler.level=SEVERE\n");
     sb.append("java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter\n");
     sb.append("java.util.logging.FileHandler.level=INFO\n");
-    sb.append("java.util.logging.FileHandler.pattern=" + out + "/err.log" + "\n");
+    sb.append("java.util.logging.FileHandler.pattern=").append(out).append("/err.log").append('\n');
     LogManager.getLogManager().readConfiguration(new ReaderInputStream(new StringReader(sb.toString())));
   }
 
   private static List<Node> createTimexNodes(String str, Integer charBeginOffset, List<CoreMap> timexAnns) {
-    List<ValuedInterval<CoreMap,Integer>> timexList = new ArrayList<ValuedInterval<CoreMap,Integer>>(timexAnns.size());
+    List<ValuedInterval<CoreMap,Integer>> timexList = new ArrayList<>(timexAnns.size());
     for (CoreMap timexAnn:timexAnns) {
-      timexList.add(new ValuedInterval<CoreMap, Integer>(timexAnn,
+      timexList.add(new ValuedInterval<>(timexAnn,
               MatchedExpression.COREMAP_TO_CHAR_OFFSETS_INTERVAL_FUNC.apply(timexAnn)));
     }
     Collections.sort(timexList, HasInterval.CONTAINS_FIRST_ENDPOINTS_COMPARATOR );
@@ -940,12 +940,12 @@ public class SUTimeMain {
 
   private static List<Node> createTimexNodesPresorted(String str, Integer charBeginOffset, List<ValuedInterval<CoreMap,Integer>> timexList) {
     if (charBeginOffset == null) charBeginOffset = 0;
-    List<Node> nodes = new ArrayList<Node>();
+    List<Node> nodes = new ArrayList<>();
     int previousEnd = 0;
-    List<Element> timexElems = new ArrayList<Element>();
-    List<ValuedInterval<CoreMap,Integer>> processed = new ArrayList<ValuedInterval<CoreMap,Integer>>();
+    List<Element> timexElems = new ArrayList<>();
+    List<ValuedInterval<CoreMap,Integer>> processed = new ArrayList<>();
     CollectionValuedMap<Integer, ValuedInterval<CoreMap,Integer>> unprocessed =
-            new CollectionValuedMap<Integer, ValuedInterval<CoreMap,Integer>>(CollectionFactory.<ValuedInterval<CoreMap,Integer>>arrayListFactory());
+            new CollectionValuedMap<>(CollectionFactory.<ValuedInterval<CoreMap, Integer>>arrayListFactory());
     for (ValuedInterval<CoreMap,Integer> v:timexList) {
       CoreMap timexAnn = v.getValue();
       int begin = timexAnn.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class) - charBeginOffset;
@@ -969,12 +969,12 @@ public class SUTimeMain {
     if (previousEnd < str.length()) {
       nodes.add(XMLUtils.createTextNode(str.substring(previousEnd)));
     }
-    for (Integer i:unprocessed.keySet()) {
-      ValuedInterval<CoreMap, Integer> v = processed.get(i);
+    for (Map.Entry<Integer, Collection<ValuedInterval<CoreMap, Integer>>> integerCollectionEntry : unprocessed.entrySet()) {
+      ValuedInterval<CoreMap, Integer> v = processed.get(integerCollectionEntry.getKey());
       String elemStr = v.getValue().get(CoreAnnotations.TextAnnotation.class);
       int charStart = v.getValue().get(CoreAnnotations.CharacterOffsetBeginAnnotation.class);
-      List<Node> innerElems = createTimexNodesPresorted(elemStr, charStart, (List<ValuedInterval<CoreMap, Integer>>) unprocessed.get(i));
-      Element timexElem = timexElems.get(i);
+      List<Node> innerElems = createTimexNodesPresorted(elemStr, charStart, (List<ValuedInterval<CoreMap, Integer>>) integerCollectionEntry.getValue());
+      Element timexElem = timexElems.get(integerCollectionEntry.getKey());
       XMLUtils.removeChildren(timexElem);
       for (Node n:innerElems) {
         timexElem.appendChild(n);

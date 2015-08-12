@@ -113,7 +113,7 @@ public class NegraLabel extends StringLabel {
       str += "->" + getEdge();
     }
     if ( ! features.isEmpty()) {
-      str += "." + features.toString();
+      str += '.' + features.toString();
     }
     return str;
   }

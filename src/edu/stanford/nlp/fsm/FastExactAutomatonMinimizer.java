@@ -162,7 +162,7 @@ public class FastExactAutomatonMinimizer implements AutomatonMinimizer {
     }
   }
 
-  protected void removeAll(Collection block, Collection members) {
+  protected static void removeAll(Collection block, Collection members) {
     // this is because AbstractCollection/Set.removeAll() isn't always linear in members.size()
     for (Iterator memberI = members.iterator(); memberI.hasNext();) {
       Object member = memberI.next();
@@ -170,7 +170,7 @@ public class FastExactAutomatonMinimizer implements AutomatonMinimizer {
     }
   }
 
-  protected Collection difference(Collection block, Collection members) {
+  protected static Collection difference(Collection block, Collection members) {
     Set difference = new HashSet();
     for (Iterator memberI = block.iterator(); memberI.hasNext();) {
       Object member = memberI.next();

@@ -38,14 +38,14 @@ public abstract class PatternsForEachToken<E> {
     for(Map.Entry<String, Map<Integer, Set<E>>> en :tempPatsForSents.entrySet()){
       Map<Integer, Set<E>> m = getPatternsForAllTokens(en.getKey());
       if(m == null)
-        m = new HashMap<Integer, Set<E>>();
+        m = new HashMap<>();
       tempPatsForSents.get(en.getKey()).putAll(m);
     }
     this.addPatterns(tempPatsForSents);
     close();
   }
 
-  public ConstantsAndVariables.PatternForEachTokenWay getStoreWay() {
+  public static ConstantsAndVariables.PatternForEachTokenWay getStoreWay() {
     return storeWay;
   }
 
@@ -70,13 +70,7 @@ public abstract class PatternsForEachToken<E> {
           break;
         }catch (ClassNotFoundException e) {
           throw new RuntimeException("Lucene option is not distributed (license clash). Email us if you really want it.");
-        } catch (InvocationTargetException e) {
-          throw new RuntimeException(e);
-        } catch (NoSuchMethodException e) {
-          throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-          throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
+        } catch (InvocationTargetException | IllegalAccessException | InstantiationException | NoSuchMethodException e) {
           throw new RuntimeException(e);
         }
 

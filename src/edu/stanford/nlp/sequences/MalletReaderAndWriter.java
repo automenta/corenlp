@@ -45,10 +45,10 @@ public class MalletReaderAndWriter implements DocumentReaderAndWriter<CoreLabel>
     private static final long serialVersionUID = -6211332661459630572L;
     public List<CoreLabel> apply(String doc) {
 
-      if (num % 1000 == 0) { System.err.print("["+num+"]"); }
+      if (num % 1000 == 0) { System.err.print("["+num+ ']'); }
       num++;
       
-      List<CoreLabel> words = new ArrayList<CoreLabel>();
+      List<CoreLabel> words = new ArrayList<>();
       
       String[] lines = doc.split("\n");
       
@@ -56,7 +56,7 @@ public class MalletReaderAndWriter implements DocumentReaderAndWriter<CoreLabel>
         String line = lines[i];
         if (line.trim().length() < 1)
           continue;
-        int idx = line.lastIndexOf(" ");
+        int idx = line.lastIndexOf(' ');
         if(idx < 0)
           throw new RuntimeException("Bad line: "+line);
         CoreLabel wi = new CoreLabel();
@@ -73,7 +73,7 @@ public class MalletReaderAndWriter implements DocumentReaderAndWriter<CoreLabel>
     for (CoreLabel wi : doc) {
       String answer = wi.get(CoreAnnotations.AnswerAnnotation.class);
       String goldAnswer = wi.get(CoreAnnotations.GoldAnswerAnnotation.class);
-      out.println(wi.word() + "\t" + goldAnswer + "\t" + answer);
+      out.println(wi.word() + '\t' + goldAnswer + '\t' + answer);
     }
     out.println();
   }

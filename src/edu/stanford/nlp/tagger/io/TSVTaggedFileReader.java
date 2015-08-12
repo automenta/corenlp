@@ -55,7 +55,7 @@ public class TSVTaggedFileReader implements TaggedFileReader {
   void primeNext() {
     // eat all blank lines until we hit the next block of text
     String line = "";
-    while (line.trim().equals("")) {
+    while (line.trim().isEmpty()) {
       try {
         line = reader.readLine();
         ++linesRead;
@@ -70,8 +70,8 @@ public class TSVTaggedFileReader implements TaggedFileReader {
     // we hit something with text, so now we read one line at a time
     // until we hit the next blank line.  the next blank line (or EOF)
     // ends the sentence.
-    next = new ArrayList<TaggedWord>();
-    while (line != null && !line.trim().equals("")) {
+    next = new ArrayList<>();
+    while (line != null && !line.trim().isEmpty()) {
       String[] pieces = line.split("\t");
       if (pieces.length <= wordColumn || pieces.length <= tagColumn) {
         throw new IllegalArgumentException("File " + filename + " line #" +

@@ -430,7 +430,7 @@ public class ClauseSplitterSearchProblem {
    * Stips aux and mark edges when we are splitting into a clause.
    * @param toModify The tree we are stripping the edges from.
    */
-  private void stripAuxMark(SemanticGraph toModify) {
+  private static void stripAuxMark(SemanticGraph toModify) {
     List<SemanticGraphEdge> toClean = new ArrayList<>();
     for (SemanticGraphEdge edge : toModify.outgoingEdgeIterable(toModify.getFirstRoot())) {
       String rel = edge.getRelation().toString();
@@ -714,7 +714,7 @@ public class ClauseSplitterSearchProblem {
   /**
    * Re-order the action space based on the specified order of names.
    */
-  private Collection<Action> orderActions(Collection<Action> actionSpace, List<String> order) {
+  private static Collection<Action> orderActions(Collection<Action> actionSpace, List<String> order) {
     List<Action> tmp = new ArrayList<>(actionSpace);
     List<Action> out = new ArrayList<>();
     for (String key : order) {
@@ -896,7 +896,7 @@ public class ClauseSplitterSearchProblem {
     String edgeRelTaken = to.edge == null ? "root" : to.edge.getRelation().toString();
     String edgeRelShort = to.edge == null ?  "root"  : to.edge.getRelation().getShortName();
     if (edgeRelShort.contains("_")) {
-      edgeRelShort = edgeRelShort.substring(0, edgeRelShort.indexOf("_"));
+      edgeRelShort = edgeRelShort.substring(0, edgeRelShort.indexOf('_'));
     }
 
     // -- Featurize --
@@ -920,7 +920,7 @@ public class ClauseSplitterSearchProblem {
       feats.incrementCount(signature + "&not_root");
       String lastRelShort = from.edge.getRelation().getShortName();
       if (lastRelShort.contains("_")) {
-        lastRelShort = lastRelShort.substring(0, lastRelShort.indexOf("_"));
+        lastRelShort = lastRelShort.substring(0, lastRelShort.indexOf('_'));
       }
       feats.incrementCount(signature + "&last_edge:" + lastRelShort);
     }
@@ -971,8 +971,8 @@ public class ClauseSplitterSearchProblem {
       // 6. POS tag info
       feats.incrementCount(signature + "&parent_pos:" + to.edge.getGovernor().tag());
       feats.incrementCount(signature + "&child_pos:" + to.edge.getDependent().tag());
-      feats.incrementCount(signature + "&pos_signature:" + to.edge.getGovernor().tag() + "_" + to.edge.getDependent().tag());
-      feats.incrementCount(signature + "&edge_type:" + edgeRelShort + "&pos_signature:" + to.edge.getGovernor().tag() + "_" + to.edge.getDependent().tag());
+      feats.incrementCount(signature + "&pos_signature:" + to.edge.getGovernor().tag() + '_' + to.edge.getDependent().tag());
+      feats.incrementCount(signature + "&edge_type:" + edgeRelShort + "&pos_signature:" + to.edge.getGovernor().tag() + '_' + to.edge.getDependent().tag());
     }
     return feats;
   };

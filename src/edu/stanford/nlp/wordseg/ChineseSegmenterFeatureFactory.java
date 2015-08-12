@@ -125,7 +125,7 @@ public class ChineseSegmenterFeatureFactory<IN extends CoreLabel> extends Featur
 
 
   public Collection<String> featuresC(PaddedList<IN> cInfo, int loc) {
-    Collection<String> features = new ArrayList<String>();
+    Collection<String> features = new ArrayList<>();
     CoreLabel c = cInfo.get(loc);
     CoreLabel c1 = cInfo.get(loc + 1);
     CoreLabel c2 = cInfo.get(loc + 2);
@@ -175,7 +175,7 @@ public class ChineseSegmenterFeatureFactory<IN extends CoreLabel> extends Featur
   private static CorpusDictionary outDict = null;
 
   public Collection<String> featuresCpC(PaddedList<IN> cInfo, int loc) {
-    Collection<String> features = new ArrayList<String>();
+    Collection<String> features = new ArrayList<>();
     CoreLabel c = cInfo.get(loc);
     CoreLabel c1 = cInfo.get(loc + 1);
     CoreLabel c2 = cInfo.get(loc + 2);
@@ -256,7 +256,7 @@ public class ChineseSegmenterFeatureFactory<IN extends CoreLabel> extends Featur
     /* non-word dictionary:SEEM bi-gram marked as non-word */
     if (flags.useDict2) {
       NonDict2 nd = new NonDict2(flags);
-      features.add(nd.checkDic(charp+charc, flags)+"nondict");
+      features.add(NonDict2.checkDic(charp+charc, flags)+"nondict");
       features.add("|useDict2");
     }
 
@@ -305,7 +305,7 @@ public class ChineseSegmenterFeatureFactory<IN extends CoreLabel> extends Featur
         taDetector = new TagAffixDetector(flags);
       }
       for (int k=0; k<tagsets.length; k++) {
-	features.add(taDetector.checkDic(tagsets[k]+"p", charp) + taDetector.checkDic(tagsets[k]+"i", charp) + taDetector.checkDic(tagsets[k]+"s", charc)+ taDetector.checkInDic(charp)+taDetector.checkInDic(charc)+ tagsets[k]+ "prep-sufc" );
+	features.add(taDetector.checkDic(tagsets[k]+ 'p', charp) + taDetector.checkDic(tagsets[k]+ 'i', charp) + taDetector.checkDic(tagsets[k]+ 's', charc)+ taDetector.checkInDic(charp)+taDetector.checkInDic(charc)+ tagsets[k]+ "prep-sufc" );
         // features.add("|ctbchar2");  // Added a constant feature several times!!
       }
     }
@@ -394,9 +394,9 @@ public class ChineseSegmenterFeatureFactory<IN extends CoreLabel> extends Featur
 
       String engType = isEnglish(charp, charc);
       String engPU = isEngPU(charp);
-      if ( ! engType.equals(""))
+      if (!engType.isEmpty())
         features.add(engType);
-      if ( ! engPU.equals("") && ! engType.equals(""))
+      if (!engPU.isEmpty() && !engType.isEmpty())
         features.add(engPU + engType);
     }//end of use rule
 
@@ -426,7 +426,7 @@ public class ChineseSegmenterFeatureFactory<IN extends CoreLabel> extends Featur
 
 
   public Collection<String> featuresCnC(PaddedList<IN> cInfo, int loc) {
-    Collection<String> features = new ArrayList<String>();
+    Collection<String> features = new ArrayList<>();
     CoreLabel c = cInfo.get(loc);
     CoreLabel c1 = cInfo.get(loc + 1);
     CoreLabel p = cInfo.get(loc - 1);
@@ -436,9 +436,9 @@ public class ChineseSegmenterFeatureFactory<IN extends CoreLabel> extends Featur
 
 
     if (flags.useWordn) {
-      features.add(charc +"c");
+      features.add(charc + 'c');
       features.add(charc1+"c1");
-      features.add(charp +"p");
+      features.add(charp + 'p');
       features.add(charp +charc  +"pc");
 
       if(flags.useAs || flags.useMsr||flags.usePk||flags.useHk){

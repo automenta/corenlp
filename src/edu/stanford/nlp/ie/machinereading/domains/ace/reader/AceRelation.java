@@ -31,7 +31,7 @@ public class AceRelation extends AceElement {
     mSubtype = subtype;
     mModality = modality;
     mTense = tense;
-    mMentions = new ArrayList<AceRelationMention>();
+    mMentions = new ArrayList<>();
   }
 
   public void addMention(AceRelationMention m) { 
@@ -52,23 +52,21 @@ public class AceRelation extends AceElement {
   public String toXml(int offset) {
     StringBuffer buffer = new StringBuffer();
     appendOffset(buffer, offset);
-    buffer.append("<relation ID=\"" + getId() + "\" TYPE =\"" + mType +
-		  "\" SUBTYPE=\"" + mSubtype + "\" MODALITY=\"" + mModality + 
-		  "\" TENSE=\"" + mTense + "\">\n");
+    buffer.append("<relation ID=\"").append(getId()).append("\" TYPE =\"").append(mType).append("\" SUBTYPE=\"").append(mSubtype).append("\" MODALITY=\"").append(mModality).append("\" TENSE=\"").append(mTense).append("\">\n");
 
     AceRelationMentionArgument arg1 = mMentions.get(0).getArgs()[0];
     AceRelationMentionArgument arg2 = mMentions.get(0).getArgs()[1];
     if(arg1.getRole().equals("Arg-1")){ // left to right
-      buffer.append(arg1.toXmlShort(offset + 2) + "\n");
-      buffer.append(arg2.toXmlShort(offset + 2) + "\n");  
+      buffer.append(arg1.toXmlShort(offset + 2)).append('\n');
+      buffer.append(arg2.toXmlShort(offset + 2)).append('\n');
     } else { // right to left
-      buffer.append(arg2.toXmlShort(offset + 2) + "\n");
-      buffer.append(arg1.toXmlShort(offset + 2) + "\n");  
+      buffer.append(arg2.toXmlShort(offset + 2)).append('\n');
+      buffer.append(arg1.toXmlShort(offset + 2)).append('\n');
     }  
 
     for(AceRelationMention m: mMentions){
       buffer.append(m.toXml(offset + 2));
-      buffer.append("\n");
+      buffer.append('\n');
     }
 
     appendOffset(buffer, offset);

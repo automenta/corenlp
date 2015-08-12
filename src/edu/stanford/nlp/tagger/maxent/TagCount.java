@@ -55,13 +55,13 @@ class TagCount {
   protected void save(DataOutputStream rf) {
     try {
       rf.writeInt(map.size());
-      for (String tag : map.keySet()) {
-        if (tag == null) {
+      for (Map.Entry<String, Integer> stringIntegerEntry : map.entrySet()) {
+        if (stringIntegerEntry.getKey() == null) {
           rf.writeUTF(NULL_SYMBOL);
         } else {
-          rf.writeUTF(tag);
+          rf.writeUTF(stringIntegerEntry.getKey());
         }
-        rf.writeInt(map.get(tag));
+        rf.writeInt(stringIntegerEntry.getValue());
       }
     } catch (Exception e) {
       e.printStackTrace();

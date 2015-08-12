@@ -87,9 +87,7 @@ public class TestSequenceModel implements SequenceModel {
   public double scoreOf(int[] tags, int pos) {
     int[] previous = new int[window - 1];
     int realPos = pos - window + 1;
-    for (int i = 0; i < window - 1; i++) {
-      previous[i] = tags[realPos + i];
-    }
+    System.arraycopy(tags, realPos + 0, previous, 0, window - 1);
     return cliqueTree.condLogProbGivenPrevious(realPos, tags[pos], previous);
   }
 
@@ -98,9 +96,7 @@ public class TestSequenceModel implements SequenceModel {
     int[] allowedTags = getPossibleValues(pos);
     int realPos = pos - window + 1;
     int[] previous = new int[window - 1];
-    for (int i = 0; i < window - 1; i++) {
-      previous[i] = tags[realPos + i];
-    }
+    System.arraycopy(tags, realPos + 0, previous, 0, window - 1);
     double[] scores = new double[allowedTags.length];
     for (int i = 0; i < allowedTags.length; i++) {
       scores[i] = cliqueTree.condLogProbGivenPrevious(realPos, allowedTags[i], previous);

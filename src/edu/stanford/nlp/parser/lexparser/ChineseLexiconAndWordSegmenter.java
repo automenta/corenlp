@@ -200,7 +200,7 @@ public class ChineseLexiconAndWordSegmenter implements Lexicon, WordSegmenter {
     if (op.trainOptions.collinsPunc) {
       collinsPuncTransformer = new CollinsPuncTransformer(tlpParams.treebankLanguagePack());
     }
-    List<Tree> binaryTrainTrees = new ArrayList<Tree>();
+    List<Tree> binaryTrainTrees = new ArrayList<>();
     // List<Tree> binaryTuneTrees = new ArrayList<Tree>();
 
     if (op.trainOptions.selectiveSplit) {
@@ -251,14 +251,14 @@ public class ChineseLexiconAndWordSegmenter implements Lexicon, WordSegmenter {
   private static void printArgs(String[] args, PrintStream ps) {
     ps.print("ChineseLexiconAndWordSegmenter invoked with arguments:");
     for (int i = 0; i < args.length; i++) {
-      ps.print(" " + args[i]);
+      ps.print(' ' + args[i]);
     }
     ps.println();
   }
 
   static void saveSegmenterDataToSerialized(ChineseLexiconAndWordSegmenter cs, String filename) {
     try {
-      System.err.print("Writing segmenter in serialized format to file " + filename + " ");
+      System.err.print("Writing segmenter in serialized format to file " + filename + ' ');
       ObjectOutputStream out = IOUtils.writeStreamFromString(filename);
 
       out.writeObject(cs);
@@ -361,14 +361,10 @@ public class ChineseLexiconAndWordSegmenter implements Lexicon, WordSegmenter {
       in.close();
       System.err.println(" done.");
       return cs;
-    } catch (InvalidClassException ice) {
+    } catch (InvalidClassException | FileNotFoundException ice) {
       // For this, it's not a good idea to continue and try it as a text file!
       System.err.println();   // as in middle of line from above message
       throw new RuntimeException(ice);
-    } catch (FileNotFoundException fnfe) {
-      // For this, it's not a good idea to continue and try it as a text file!
-      System.err.println();   // as in middle of line from above message
-      throw new RuntimeException(fnfe);
     } catch (StreamCorruptedException sce) {
       // suppress error message, on the assumption that we've really got
       // a text grammar, and that'll be tried next
@@ -536,8 +532,8 @@ public class ChineseLexiconAndWordSegmenter implements Lexicon, WordSegmenter {
         }
       }
       Treebank trainTreebank = makeTreebank(treebankPath, op, trainFilter);
-      Index<String> wordIndex = new HashIndex<String>();
-      Index<String> tagIndex = new HashIndex<String>();
+      Index<String> wordIndex = new HashIndex<>();
+      Index<String> tagIndex = new HashIndex<>();
       cs = new ChineseLexiconAndWordSegmenter(trainTreebank, op, wordIndex, tagIndex);
     } else if (textInputFileOrUrl != null) {
       // so we load the segmenter from a text grammar file
@@ -567,7 +563,7 @@ public class ChineseLexiconAndWordSegmenter implements Lexicon, WordSegmenter {
         if (treebankPath == null) {
           throw new RuntimeException("No test treebank path specified...");
         } else {
-          System.err.println("No test treebank path specified.  Using train path: \"" + treebankPath + "\"");
+          System.err.println("No test treebank path specified.  Using train path: \"" + treebankPath + '"');
           testPath = treebankPath;
         }
       }

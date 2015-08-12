@@ -108,7 +108,7 @@ public class ExactAutomatonMinimizer implements AutomatonMinimizer {
   }
 
   protected void makeBlock(Collection<Arc> members) {
-    ExactBlock<Arc> block = new ExactBlock<Arc>(Generics.newHashSet(members));
+    ExactBlock<Arc> block = new ExactBlock<>(Generics.newHashSet(members));
     for (Arc member : block.getMembers()) {
       if (member != SINK_NODE) {
         memberToBlock.put(member, block);
@@ -116,7 +116,7 @@ public class ExactAutomatonMinimizer implements AutomatonMinimizer {
     }
     for (Iterator symbolI = getSymbols().iterator(); symbolI.hasNext();) {
       Arc symbol = (Arc) symbolI.next();
-      addActivePair(new Pair<ExactBlock<Arc>, Arc>(block, symbol));
+      addActivePair(new Pair<>(block, symbol));
     }
   }
 
@@ -146,7 +146,7 @@ public class ExactAutomatonMinimizer implements AutomatonMinimizer {
   }
 
   protected Collection<Object> getInverseImages(ExactBlock<Arc> block, Object symbol) {
-    List<Object> inverseImages = new ArrayList<Object>();
+    List<Object> inverseImages = new ArrayList<>();
     for (Arc member : block.getMembers()) {
       Collection<Arc> arcs = null;
       if (member != SINK_NODE) {
@@ -188,18 +188,18 @@ public class ExactAutomatonMinimizer implements AutomatonMinimizer {
       Object symbol = activePair.second();
       Collection<Object> inverseImages = getInverseImages(activeBlock, symbol);
       Map<ExactBlock<Arc>, Set<Object>> inverseImagesByBlock = sortIntoBlocks(inverseImages);
-      for (ExactBlock<Arc> block : inverseImagesByBlock.keySet()) {
-        if (block == null) {
+      for (Map.Entry<ExactBlock<Arc>, Set<Object>> exactBlockSetEntry : inverseImagesByBlock.entrySet()) {
+        if (exactBlockSetEntry.getKey() == null) {
           throw new RuntimeException("block was null");
         }
-        Collection members = inverseImagesByBlock.get(block);
-        if (members.size() == 0 || members.size() == block.getMembers().size()) {
+        Collection members = exactBlockSetEntry.getValue();
+        if (members.size() == 0 || members.size() == exactBlockSetEntry.getKey().getMembers().size()) {
           continue;
         }
-        if (members.size() > block.getMembers().size() - members.size()) {
-          members = difference(block.getMembers(), members);
+        if (members.size() > exactBlockSetEntry.getKey().getMembers().size() - members.size()) {
+          members = difference(exactBlockSetEntry.getKey().getMembers(), members);
         }
-        removeAll(block.getMembers(), members);
+        removeAll(exactBlockSetEntry.getKey().getMembers(), members);
         makeBlock(members);
       }
     }

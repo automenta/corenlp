@@ -86,11 +86,9 @@ public final class MWEPreprocessor {
       }
       pw.close();
 
-    } catch (UnsupportedEncodingException e) {
+    } catch (UnsupportedEncodingException | FileNotFoundException e) {
       e.printStackTrace();
 
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     }
   }
 
@@ -129,7 +127,7 @@ public final class MWEPreprocessor {
       nMissingPhrasal++;
       StringBuilder sb = new StringBuilder();
       for(Tree kid : t.children())
-        sb.append(kid.value()).append(" ");
+        sb.append(kid.value()).append(' ');
 
       String posSequence = sb.toString().trim();
       if(pretermLabel.firstKeySet().contains(posSequence)) {
@@ -164,8 +162,6 @@ public final class MWEPreprocessor {
       System.out.println("Processed " +nTrees+ " trees");
 
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
@@ -214,16 +210,16 @@ public final class MWEPreprocessor {
 
     final File treeFile = new File(args[0]);
     TwoDimensionalCounter<String,String> labelTerm =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
     TwoDimensionalCounter<String,String> termLabel =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
     TwoDimensionalCounter<String,String> labelPreterm =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
     TwoDimensionalCounter<String,String> pretermLabel =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
 
     TwoDimensionalCounter<String,String> unigramTagger =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
 
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(treeFile), "UTF-8"));
@@ -260,9 +256,6 @@ public final class MWEPreprocessor {
       System.out.println("Done!");
 
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
 
     } catch (IOException e) {

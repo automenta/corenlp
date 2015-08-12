@@ -44,7 +44,7 @@ public class SpanishTreebankParserParams extends TregexPoweredTreebankParserPara
     setHeadFinder(new SpanishHeadFinder());
 
     optionsString = new StringBuilder();
-    optionsString.append(getClass().getSimpleName() + "\n");
+    optionsString.append(getClass().getSimpleName()).append('\n');
 
     buildAnnotations();
   }
@@ -296,7 +296,7 @@ public class SpanishTreebankParserParams extends TregexPoweredTreebankParserPara
         HeadFinder hf = (HeadFinder) Class.forName(args[i + 1]).newInstance();
         setHeadFinder(hf);
 
-        optionsString.append("HeadFinder: " + args[i + 1] + "\n");
+        optionsString.append("HeadFinder: ").append(args[i + 1]).append('\n');
       } catch (Exception e) {
         System.err.println(e);
         System.err.println(this.getClass().getName() + ": Could not load head finder " + args[i + 1]);

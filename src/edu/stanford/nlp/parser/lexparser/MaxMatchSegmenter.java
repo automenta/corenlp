@@ -54,7 +54,7 @@ public class MaxMatchSegmenter implements WordSegmenter {
 
   @Override
   public List<HasWord> segment(String s) {
-    List<Word> segmentedWords = new ArrayList<Word>();
+    List<Word> segmentedWords = new ArrayList<>();
     for (int start = 0, length = s.length(); start < length; ) {
       int end = Math.min(length, start + maxLength);
       while (end > start + 1) {
@@ -69,10 +69,10 @@ public class MaxMatchSegmenter implements WordSegmenter {
         // character does not start any word in our dictionary
         // handle non-BMP characters
         if (s.codePointAt(start) >= 0x10000) {
-          segmentedWords.add(new Word(new String(s.substring(start, start + 2))));
+          segmentedWords.add(new Word(s.substring(start, start + 2)));
           start += 2;
         } else {
-          segmentedWords.add(new Word(new String(s.substring(start, start + 1))));
+          segmentedWords.add(new Word(s.substring(start, start + 1)));
           start++;
         }
       } else {
@@ -80,7 +80,7 @@ public class MaxMatchSegmenter implements WordSegmenter {
       }
     }
 
-    return new ArrayList<HasWord>(segmentedWords);
+    return new ArrayList<>(segmentedWords);
   }
 
   private static final long serialVersionUID = 8260792244886911724L;

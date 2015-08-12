@@ -45,7 +45,7 @@ public class TreeShapedStack<T> {
    * Returns a new node with the new data attached.
    */
   public TreeShapedStack<T> push(T data) {
-    return new TreeShapedStack<T>(this, data, size + 1);
+    return new TreeShapedStack<>(this, data, size + 1);
   }
 
   /**
@@ -82,11 +82,11 @@ public class TreeShapedStack<T> {
 
   @Override
   public String toString() {
-    return "[" + internalToString(" ") + "]";
+    return '[' + internalToString(" ") + ']';
   }
 
   public String toString(String delimiter) {
-    return "[" + internalToString(delimiter) + "]";
+    return '[' + internalToString(delimiter) + ']';
   }
 
   private String internalToString(String delimiter) {
@@ -95,7 +95,7 @@ public class TreeShapedStack<T> {
     } else if (size() == 1) {
       return data.toString();
     } else {
-      return previous.internalToString(delimiter) + "," + delimiter + data.toString();
+      return previous.internalToString(delimiter) + ',' + delimiter + data.toString();
     }
   }
 

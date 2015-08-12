@@ -41,7 +41,7 @@ public class SemgrexBatchParser {
 	}
 	
 	private List<SemgrexPattern> parse(BufferedReader reader, Map<String, String> macros, Env env) throws IOException {
-	  List<SemgrexPattern> patterns = new ArrayList<SemgrexPattern>();
+	  List<SemgrexPattern> patterns = new ArrayList<>();
 	  for(String line; (line = reader.readLine()) != null; ) {
       line = line.trim();
       if(line.length() == 0 || line.startsWith("#")) continue;
@@ -56,7 +56,7 @@ public class SemgrexBatchParser {
 	private static final Pattern MACRO_NAME_PATTERN = Pattern.compile("\\$\\{[a-z0-9]+\\}", Pattern.CASE_INSENSITIVE);
 	
 	private String replaceMacros(String line, Map<String, String> macros) {
-	  StringBuffer out = new StringBuffer();
+	  StringBuilder out = new StringBuilder();
 	  Matcher matcher = MACRO_NAME_PATTERN.matcher(line);
 	  int offset = 0;
 	  while(matcher.find(offset)) {
@@ -75,7 +75,7 @@ public class SemgrexBatchParser {
 	  }
 	  if(offset < line.length()) out.append(line.substring(offset));
 	  String postProcessed =  out.toString();
-	  if(! postProcessed.equals(line)) System.err.println("Line \"" + line + "\" changed to \"" + postProcessed + "\"");
+	  if(! postProcessed.equals(line)) System.err.println("Line \"" + line + "\" changed to \"" + postProcessed + '"');
 	  return postProcessed;
 	}
 	
@@ -105,6 +105,6 @@ public class SemgrexBatchParser {
     if(value.length() == 0) {
       throw new RuntimeException("ERROR: Invalid syntax in macro line: \"" + line + "\"!");
     }
-    return new Pair<String, String>(name, value);
+    return new Pair<>(name, value);
   }
 }

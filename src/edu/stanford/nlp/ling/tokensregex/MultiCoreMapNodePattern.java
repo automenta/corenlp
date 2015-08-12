@@ -36,7 +36,7 @@ public class MultiCoreMapNodePattern extends MultiNodePattern<CoreMap> {
 
   protected Collection<Interval<Integer>> match(List<? extends CoreMap> nodes, int start)
   {
-    List<Interval<Integer>> matched = new ArrayList<Interval<Integer>>();
+    List<Interval<Integer>> matched = new ArrayList<>();
     int minEnd = start + minNodes;
     int maxEnd = nodes.size();
     if (maxNodes >= 0 && maxNodes + start < nodes.size()) {
@@ -71,9 +71,9 @@ public class MultiCoreMapNodePattern extends MultiNodePattern<CoreMap> {
     public StringSequenceAnnotationPattern(Class textKey, Map<List<String>, Object> targets, boolean ignoreCase) {
       this.textKey = textKey;
       phraseTable = new PhraseTable(false, ignoreCase, false);
-      for (List<String> target:targets.keySet()) {
-        phraseTable.addPhrase(target, null, targets.get(target));
-        if (maxNodes < 0 || target.size() > maxNodes) maxNodes = target.size();
+      for (Map.Entry<List<String>, Object> listObjectEntry : targets.entrySet()) {
+        phraseTable.addPhrase(listObjectEntry.getKey(), null, listObjectEntry.getValue());
+        if (maxNodes < 0 || listObjectEntry.getKey().size() > maxNodes) maxNodes = listObjectEntry.getKey().size();
       }
     }
 
@@ -84,7 +84,7 @@ public class MultiCoreMapNodePattern extends MultiNodePattern<CoreMap> {
     protected Collection<Interval<Integer>> match(List<? extends CoreMap> nodes, int start) {
       PhraseTable.WordList words = new PhraseTable.TokenList(nodes, textKey);
       List<PhraseTable.PhraseMatch> matches = phraseTable.findMatches(words, start, nodes.size(), false);
-      Collection<Interval<Integer>> intervals = new ArrayList<Interval<Integer>>(matches.size());
+      Collection<Interval<Integer>> intervals = new ArrayList<>(matches.size());
       for (PhraseTable.PhraseMatch match:matches) {
         intervals.add(match.getInterval());
       }

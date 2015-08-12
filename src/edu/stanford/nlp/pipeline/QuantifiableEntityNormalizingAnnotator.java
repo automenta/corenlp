@@ -40,11 +40,11 @@ public class QuantifiableEntityNormalizingAnnotator implements Annotator {
   }
 
   public QuantifiableEntityNormalizingAnnotator(String name, Properties props) {
-    String property = name + "." + BACKGROUND_SYMBOL_PROPERTY;
+    String property = name + '.' + BACKGROUND_SYMBOL_PROPERTY;
     String backgroundSymbol = props.getProperty(property, DEFAULT_BACKGROUND_SYMBOL);
     // this next line is yuck as QuantifiableEntityNormalizer is still static
     QuantifiableEntityNormalizer.BACKGROUND_SYMBOL = backgroundSymbol;
-    property = name + "." + COLLAPSE_PROPERTY;
+    property = name + '.' + COLLAPSE_PROPERTY;
     collapse = PropertiesUtils.getBool(props, property, false);
     if (this.collapse) {
       System.err.println("WARNING: QuantifiableEntityNormalizingAnnotator does not work well with collapse=true");
@@ -95,7 +95,7 @@ public class QuantifiableEntityNormalizingAnnotator implements Annotator {
     }
     if (annotation.containsKey(CoreAnnotations.SentencesAnnotation.class)) {
       List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-      for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
+      for (CoreMap sentence : (Iterable<CoreMap>)annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
         List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
         annotateTokens(tokens);
       }
@@ -113,7 +113,7 @@ public class QuantifiableEntityNormalizingAnnotator implements Annotator {
 
   private <TOKEN extends CoreLabel> void annotateTokens(List<TOKEN> tokens) {
     // Make a copy of the tokens before annotating because QuantifiableEntityNormalizer may change the POS too
-    List<CoreLabel> words = new ArrayList<CoreLabel>();
+    List<CoreLabel> words = new ArrayList<>();
     for (CoreLabel token : tokens) {
       CoreLabel word = new CoreLabel();
       word.setWord(token.word());

@@ -19,7 +19,7 @@ public class UnvocLexicalMapper extends DefaultLexicalMapper {
     
     String cleanElement = decoration.matcher(element).replaceAll("");
     
-    if(cleanElement.equals(""))
+    if(cleanElement.isEmpty())
       return element;
     
     return cleanElement;

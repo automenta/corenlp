@@ -142,7 +142,7 @@ public class Trees {
    * returns the leaves in a Tree in the order that they're found.
    */
   public static List<Tree> leaves(Tree t) {
-    List<Tree> l = new ArrayList<Tree>();
+    List<Tree> l = new ArrayList<>();
     leaves(t, l);
     return l;
   }
@@ -158,7 +158,7 @@ public class Trees {
   }
 
   public static List<Tree> preTerminals(Tree t) {
-    List<Tree> l = new ArrayList<Tree>();
+    List<Tree> l = new ArrayList<>();
     preTerminals(t, l);
     return l;
   }
@@ -178,7 +178,7 @@ public class Trees {
    * returns the labels of the leaves in a Tree in the order that they're found.
    */
   public static List<Label> leafLabels(Tree t) {
-    List<Label> l = new ArrayList<Label>();
+    List<Label> l = new ArrayList<>();
     leafLabels(t, l);
     return l;
   }
@@ -198,7 +198,7 @@ public class Trees {
    * the labels are CoreLabels.
    */
   public static List<CoreLabel> taggedLeafLabels(Tree t) {
-    List<CoreLabel> l = new ArrayList<CoreLabel>();
+    List<CoreLabel> l = new ArrayList<>();
     taggedLeafLabels(t, l);
     return l;
   }
@@ -239,9 +239,9 @@ public class Trees {
   /**
    * Replace the labels of the leaves with the given leaves.
    */
-  public static void setLeafLabels(Tree tree, List<Label> labels) {
+  public static void setLeafLabels(Tree tree, List<? extends Label> labels) {
     Iterator<Tree> leafIterator = tree.getLeaves().iterator();
-    Iterator<Label> labelIterator = labels.iterator();
+    Iterator<? extends Label> labelIterator = labels.iterator();
     while (leafIterator.hasNext() && labelIterator.hasNext()) {
       Tree leaf = leafIterator.next();
       Label label = labelIterator.next();
@@ -310,24 +310,26 @@ public class Trees {
   }
 
   static Tree getTerminal(Tree tree, MutableInteger i, int n) {
-    if (i.intValue() == n) {
-      if (tree.isLeaf()) {
-        return tree;
-      } else {
-        return getTerminal(tree.children()[0], i, n);
-      }
-    } else {
-      if (tree.isLeaf()) {
-        i.set(i.intValue() + tree.yield().size());
-        return null;
-      } else {
-        for (Tree kid : tree.children()) {
-          Tree result = getTerminal(kid, i, n);
-          if (result != null) {
-            return result;
-          }
+    while (true) {
+      if (i.intValue() == n) {
+        if (tree.isLeaf()) {
+          return tree;
+        } else {
+          tree = tree.children()[0];
         }
-        return null;
+      } else {
+        if (tree.isLeaf()) {
+          i.set(i.intValue() + tree.yield().size());
+          return null;
+        } else {
+          for (Tree kid : tree.children()) {
+            Tree result = getTerminal(kid, i, n);
+            if (result != null) {
+              return result;
+            }
+          }
+          return null;
+        }
       }
     }
   }
@@ -340,24 +342,26 @@ public class Trees {
   }
 
   static Tree getPreTerminal(Tree tree, MutableInteger i, int n) {
-    if (i.intValue() == n) {
-      if (tree.isPreTerminal()) {
-        return tree;
-      } else {
-        return getPreTerminal(tree.children()[0], i, n);
-      }
-    } else {
-      if (tree.isPreTerminal()) {
-        i.set(i.intValue() + tree.yield().size());
-        return null;
-      } else {
-        for (Tree kid : tree.children()) {
-          Tree result = getPreTerminal(kid, i, n);
-          if (result != null) {
-            return result;
-          }
+    while (true) {
+      if (i.intValue() == n) {
+        if (tree.isPreTerminal()) {
+          return tree;
+        } else {
+          tree = tree.children()[0];
         }
-        return null;
+      } else {
+        if (tree.isPreTerminal()) {
+          i.set(i.intValue() + tree.yield().size());
+          return null;
+        } else {
+          for (Tree kid : tree.children()) {
+            Tree result = getPreTerminal(kid, i, n);
+            if (result != null) {
+              return result;
+            }
+          }
+          return null;
+        }
       }
     }
   }
@@ -366,7 +370,7 @@ public class Trees {
    * returns the syntactic category of the tree as a list of the syntactic categories of the mother and the daughters
    */
   public static List<String> localTreeAsCatList(Tree t) {
-    List<String> l = new ArrayList<String>(t.children().length + 1);
+    List<String> l = new ArrayList<>(t.children().length + 1);
     l.add(t.label().value());
     for (int i = 0; i < t.children().length; i++) {
       l.add(t.children()[i].label().value());
@@ -496,7 +500,7 @@ public class Trees {
    *  @return The one phrasal level Tree
    */
   public static Tree toFlatTree(List<? extends HasWord> s, LabelFactory lf) {
-    List<Tree> daughters = new ArrayList<Tree>(s.size());
+    List<Tree> daughters = new ArrayList<>(s.size());
     for (HasWord word : s) {
       Tree wordNode = new LabeledScoredTreeNode(lf.newLabel(word.word()));
       if (word instanceof TaggedWord) {
@@ -649,7 +653,7 @@ public class Trees {
    * Get lowest common ancestor of all the nodes in the list with the tree rooted at root
    */
   public static Tree getLowestCommonAncestor(List<Tree> nodes, Tree root) {
-    List<List<Tree>> paths = new ArrayList<List<Tree>>();
+    List<List<Tree>> paths = new ArrayList<>();
     int min = Integer.MAX_VALUE;
     for (Tree t : nodes) {
       List<Tree> path = pathFromRoot(t, root);
@@ -708,7 +712,7 @@ public class Trees {
 
     //System.out.println(treeListToCatList(fromPath));
     //System.out.println(treeListToCatList(toPath));
-    List<String> totalPath = new ArrayList<String>();
+    List<String> totalPath = new ArrayList<>();
 
     for (int i = fromPath.size() - 1; i >= last; i--) {
       Tree t = fromPath.get(i);
@@ -746,7 +750,7 @@ public class Trees {
   public static List<Tree> pathFromRoot(Tree t, Tree root) {
     if (t == root) {
       //if (t.equals(root)) {
-      List<Tree> l = new ArrayList<Tree>(1);
+      List<Tree> l = new ArrayList<>(1);
       l.add(t);
       return l;
     } else if (root == null) {
@@ -764,7 +768,7 @@ public class Trees {
     if (t.isLeaf())
       return;
     Tree[] kids = t.children();
-    List<Tree> newKids = new ArrayList<Tree>(kids.length);
+    List<Tree> newKids = new ArrayList<>(kids.length);
     for (Tree kid : kids) {
       if (kid != node) {
         newKids.add(kid);
@@ -857,7 +861,7 @@ public class Trees {
    * (only works on CoreLabel)
    */
   public static void setSentIndex(Tree tree, int sentIndex) {
-    List<Label> leaves = tree.yield();
+    List<? extends Label> leaves = tree.yield();
     for (Label leaf : leaves) {
       if (!(leaf instanceof CoreLabel)) {
         throw new IllegalArgumentException("Only works on CoreLabel");

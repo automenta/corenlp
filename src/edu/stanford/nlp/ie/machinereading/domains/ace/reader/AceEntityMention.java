@@ -11,7 +11,7 @@ public class AceEntityMention extends AceMention {
   @Override
   public String toString() {
     return "AceEntityMention [mHead=" + mHead + ", mLdctype=" + mLdctype
-        + ", mType=" + mType + "]";
+        + ", mType=" + mType + ']';
   }
 
   private String mType;
@@ -44,8 +44,8 @@ public class AceEntityMention extends AceMention {
     mExtent = extent;
     mHeadTokenPosition = -1;
     mParent = null;
-    mRelationMentions = new ArrayList<AceRelationMention>();
-    mEventMentions = new ArrayList<AceEventMention>();
+    mRelationMentions = new ArrayList<>();
+    mEventMentions = new ArrayList<>();
   }
 
   public String getMention() { return mType; }
@@ -81,27 +81,25 @@ public class AceEntityMention extends AceMention {
     String mentionType = mType;
 
     appendOffset(buffer, offset);
-    buffer.append("<entity_mention ID=\"" + getId() + "\" TYPE =\"" + 
-		  mentionType +
-		  "\" LDCTYPE=\"" + mLdctype + "\">\n");
+    buffer.append("<entity_mention ID=\"").append(getId()).append("\" TYPE =\"").append(mentionType).append("\" LDCTYPE=\"").append(mLdctype).append("\">\n");
 
     buffer.append(mExtent.toXml("extent", offset + 2));
-    buffer.append("\n");
+    buffer.append('\n');
     buffer.append(mHead.toXml("head", offset + 2));
-    buffer.append("\n");
+    buffer.append('\n');
 
     appendOffset(buffer, offset);
     buffer.append("</entity_mention>");
 
     if(mentionType.equals("NAM")){
       // XXX: <entity_attributes> should be in Entity.toXml()
-      buffer.append("\n");
+      buffer.append('\n');
       appendOffset(buffer, offset);
       buffer.append("<entity_attributes>\n");
       
       appendOffset(buffer, offset + 2);
-      buffer.append("<name NAME=\"" + mHead.getText() + "\">\n");
-      buffer.append(mHead.toXml(offset + 4) + "\n");
+      buffer.append("<name NAME=\"").append(mHead.getText()).append("\">\n");
+      buffer.append(mHead.toXml(offset + 4)).append('\n');
       appendOffset(buffer, offset + 2);
       buffer.append("</name>\n");
 
@@ -128,7 +126,7 @@ public class AceEntityMention extends AceMention {
    * Note: the mHead must be already matched against tokens!
    */
   public void detectHeadToken(AceDocument doc) {
-    ArrayList<Integer> preps = new ArrayList<Integer>();
+    ArrayList<Integer> preps = new ArrayList<>();
     preps.add(AceToken.OTHERS.get("IN"));
 
     for(int i = mHead.getTokenStart(); i <= mHead.getTokenEnd(); i ++){

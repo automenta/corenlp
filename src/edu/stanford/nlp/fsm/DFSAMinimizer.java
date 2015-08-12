@@ -101,7 +101,7 @@ public final class DFSAMinimizer {
           }
           if (distinguishable) {
             // if the pair is distinguishable, record that
-            List<IntPair> markStack = new ArrayList<IntPair>();
+            List<IntPair> markStack = new ArrayList<>();
             markStack.add(ip);
             while (!markStack.isEmpty()) {
               IntPair ipToMark = markStack.get(markStack.size() - 1);
@@ -117,7 +117,7 @@ public final class DFSAMinimizer {
             for (IntPair pendingIPair : pendingIPairs) {
               List<IntPair> dependentList1 = dependentList[pendingIPair.i][pendingIPair.j];
               if (dependentList1 == null) {
-                dependentList1 = new ArrayList<IntPair>();
+                dependentList1 = new ArrayList<>();
                 dependentList[pendingIPair.i][pendingIPair.j] = dependentList1;
               }
               dependentList1.add(ip);
@@ -131,7 +131,7 @@ public final class DFSAMinimizer {
       time = System.currentTimeMillis();
     }
     // decide what canonical state each state will map to...
-    DisjointSet<DFSAState<T, S>> stateClasses = new FastDisjointSet<DFSAState<T, S>>(states);
+    DisjointSet<DFSAState<T, S>> stateClasses = new FastDisjointSet<>(states);
     for (int i = 0; i < numStates; i++) {
       for (int j = i + 1; j < numStates; j++) {
         if (!distinct[i][j]) {
@@ -187,7 +187,7 @@ public final class DFSAMinimizer {
     int numDone = 0;
     for (DFSAState<T, S> state1 : states) {
       for (DFSAState<T, S> state2 : states) {
-        UnorderedPair<DFSAState<T, S>, DFSAState<T, S>> up = new UnorderedPair<DFSAState<T, S>, DFSAState<T, S>>(state1, state2);
+        UnorderedPair<DFSAState<T, S>, DFSAState<T, S>> up = new UnorderedPair<>(state1, state2);
         if (state1.equals(state2)) {
           continue;
         }
@@ -221,11 +221,11 @@ public final class DFSAMinimizer {
       time = System.currentTimeMillis();
     }
     // visit each undistinguished pair
-    for (UnorderedPair<DFSAState<T, S>, DFSAState<T, S>> up : stateUPairToDistinguished.keySet()) {
+    for (Map.Entry<UnorderedPair<DFSAState<T, S>, DFSAState<T, S>>, Boolean> unorderedPairBooleanEntry : stateUPairToDistinguished.entrySet()) {
 
-      DFSAState<T, S> state1 = up.first;
-      DFSAState<T, S> state2 = up.second;
-      if (stateUPairToDistinguished.get(up).equals(Boolean.TRUE)) {
+      DFSAState<T, S> state1 = unorderedPairBooleanEntry.getKey().first;
+      DFSAState<T, S> state2 = unorderedPairBooleanEntry.getKey().second;
+      if (unorderedPairBooleanEntry.getValue().equals(Boolean.TRUE)) {
         continue;
       }
       // check if some input distinguishes this pair
@@ -244,7 +244,7 @@ public final class DFSAMinimizer {
         if (transition1 != null && transition2 != null) {
           DFSAState<T, S> target1 = transition1.getTarget();
           DFSAState<T, S> target2 = transition2.getTarget();
-          UnorderedPair<DFSAState<T, S>, DFSAState<T, S>> targetUPair = new UnorderedPair<DFSAState<T, S>, DFSAState<T, S>>(target1, target2);
+          UnorderedPair<DFSAState<T, S>, DFSAState<T, S>> targetUPair = new UnorderedPair<>(target1, target2);
           if (!target1.equals(target2)) {
             if (stateUPairToDistinguished.get(targetUPair).equals(Boolean.TRUE)) {
               distinguishable = true;
@@ -256,8 +256,8 @@ public final class DFSAMinimizer {
       }
       // if the pair is distinguishable, record that
       if (distinguishable) {
-        List<UnorderedPair<DFSAState<T, S>, DFSAState<T, S>>> markStack = new ArrayList<UnorderedPair<DFSAState<T, S>, DFSAState<T, S>>>();
-        markStack.add(up);
+        List<UnorderedPair<DFSAState<T, S>, DFSAState<T, S>>> markStack = new ArrayList<>();
+        markStack.add(unorderedPairBooleanEntry.getKey());
         while (!markStack.isEmpty()) {
           UnorderedPair<DFSAState<T, S>, DFSAState<T, S>> upToMark = markStack.get(markStack.size() - 1);
           markStack.remove(markStack.size() - 1);
@@ -273,10 +273,10 @@ public final class DFSAMinimizer {
         for (UnorderedPair<DFSAState<T, S>, DFSAState<T, S>> pendingUPair : pendingUPairs) {
           List<UnorderedPair<DFSAState<T, S>, DFSAState<T, S>>> dependentList = stateUPairToDependentUPairList.get(pendingUPair);
           if (dependentList == null) {
-            dependentList = new ArrayList<UnorderedPair<DFSAState<T, S>, DFSAState<T, S>>>();
+            dependentList = new ArrayList<>();
             stateUPairToDependentUPairList.put(pendingUPair, dependentList);
           }
-          dependentList.add(up);
+          dependentList.add(unorderedPairBooleanEntry.getKey());
         }
       }
     }
@@ -285,11 +285,11 @@ public final class DFSAMinimizer {
       time = System.currentTimeMillis();
     }
     // decide what canonical state each state will map to...
-    DisjointSet<DFSAState<T, S>> stateClasses = new FastDisjointSet<DFSAState<T, S>>(states);
-    for (UnorderedPair<DFSAState<T, S>, DFSAState<T, S>> up : stateUPairToDistinguished.keySet()) {
-      if (stateUPairToDistinguished.get(up).equals(Boolean.FALSE)) {
-        DFSAState<T, S> state1 = up.first;
-        DFSAState<T, S> state2 = up.second;
+    DisjointSet<DFSAState<T, S>> stateClasses = new FastDisjointSet<>(states);
+    for (Map.Entry<UnorderedPair<DFSAState<T, S>, DFSAState<T, S>>, Boolean> unorderedPairBooleanEntry : stateUPairToDistinguished.entrySet()) {
+      if (unorderedPairBooleanEntry.getValue().equals(Boolean.FALSE)) {
+        DFSAState<T, S> state1 = unorderedPairBooleanEntry.getKey().first;
+        DFSAState<T, S> state2 = unorderedPairBooleanEntry.getKey().second;
         stateClasses.union(state1, state2);
       }
     }

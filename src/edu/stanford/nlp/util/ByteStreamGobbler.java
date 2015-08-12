@@ -55,7 +55,7 @@ public class ByteStreamGobbler extends Thread {
       }
       inStream.close();
     } catch (Exception ex) {
-      System.out.println("Problem reading stream :"+inStream.getClass().getCanonicalName()+ " "+ ex);
+      System.out.println("Problem reading stream :"+inStream.getClass().getCanonicalName()+ ' ' + ex);
       ex.printStackTrace();
     }
   }

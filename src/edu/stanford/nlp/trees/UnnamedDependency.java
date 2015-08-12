@@ -75,7 +75,7 @@ public class UnnamedDependency implements Dependency<Label, Label, Object> {
     return null;
   }
   
-  protected String getText(Label label) {
+  protected static String getText(Label label) {
     if (label instanceof HasWord) {
       String word = ((HasWord) label).word();
       if (word != null) {
@@ -126,7 +126,7 @@ public class UnnamedDependency implements Dependency<Label, Label, Object> {
       case "xml":
         return "  <dep>\n    <governor>" + XMLUtils.escapeXML(governor().value()) + "</governor>\n    <dependent>" + XMLUtils.escapeXML(dependent().value()) + "</dependent>\n  </dep>";
       case "predicate":
-        return "dep(" + governor() + "," + dependent() + ")";
+        return "dep(" + governor() + ',' + dependent() + ')';
       default:
         return toString();
     }

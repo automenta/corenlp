@@ -68,11 +68,11 @@ public class ChineseDocumentToSentenceProcessor implements Serializable {
   public ChineseDocumentToSentenceProcessor(String normalizationTableFile) {
     // this.normalizationTableFile = normalizationTableFile;
     if (normalizationTableFile != null) {
-      normalizationTable = new ArrayList<Pair<String,String>>();
+      normalizationTable = new ArrayList<>();
       for (String line : ObjectBank.getLineIterator(new File(normalizationTableFile), encoding)) {
         Matcher pairMatcher = PAIR_PATTERN.matcher(line);
         if (pairMatcher.find()) {
-          normalizationTable.add(new Pair<String,String>(pairMatcher.group(1),pairMatcher.group(2)));
+          normalizationTable.add(new Pair<>(pairMatcher.group(1), pairMatcher.group(2)));
         } else {
           System.err.println("Didn't match: "+line);
         }
@@ -103,8 +103,8 @@ public class ChineseDocumentToSentenceProcessor implements Serializable {
   }
 
   private static final Pattern WHITEPLUS_PATTERN = Pattern.compile(WHITEPLUS);
-  private static final Pattern START_WHITEPLUS_PATTERN = Pattern.compile("^" + WHITEPLUS);
-  private static final Pattern END_WHITEPLUS_PATTERN = Pattern.compile(WHITEPLUS + "$");
+  private static final Pattern START_WHITEPLUS_PATTERN = Pattern.compile('^' + WHITEPLUS);
+  private static final Pattern END_WHITEPLUS_PATTERN = Pattern.compile(WHITEPLUS + '$');
 
   private String normalize(String inputString) {
     if (normalizationTable == null) {
@@ -179,14 +179,14 @@ public class ChineseDocumentToSentenceProcessor implements Serializable {
         // pw.println("The token is |" + s + "|");
         if (p2.matcher(s).matches()) {
           inSGML = true;
-          sgmlbuff.append(s).append(" ");
+          sgmlbuff.append(s).append(' ');
         } else if (p1.matcher(s).matches() || inSGML && p3.matcher(s).matches() || "\n".equals(s)) {
           inSGML = false;
           if (buff.toString().trim().length() > 0) {
             // pw.println("Dumping sentences");
             // pw.println("Buff is " + buff);
             boolean processIt = false;
-            if (parseInside.equals("")) {
+            if (parseInside.isEmpty()) {
               processIt = true;
             } else if (p4.matcher(lastSgml).find()) {
               processIt = true;
@@ -222,9 +222,9 @@ public class ChineseDocumentToSentenceProcessor implements Serializable {
           sgmlbuff = new StringBuilder();
         } else {
           if (inSGML) {
-            sgmlbuff.append(s).append(" ");
+            sgmlbuff.append(s).append(' ');
           } else {
-            buff.append(s).append(" ");
+            buff.append(s).append(' ');
           }
           // pw.println("Buff is now |" + buff + "|");
         }
@@ -255,7 +255,7 @@ public class ChineseDocumentToSentenceProcessor implements Serializable {
   public static List<String> fromHTML(String inputString) throws IOException {
     //HTMLParser parser = new HTMLParser();
     //return fromPlainText(parser.parse(inputString));
-    List<String> ans = new ArrayList<String>();
+    List<String> ans = new ArrayList<>();
     MyHTMLParser parser = new MyHTMLParser();
     List<String> sents = parser.parse(inputString);
     for (String s : sents) {
@@ -289,7 +289,7 @@ public class ChineseDocumentToSentenceProcessor implements Serializable {
 
     char[] content = contentString.toCharArray();
     boolean sentenceEnd = false;
-    List<String> sentenceList = new ArrayList<String>();
+    List<String> sentenceList = new ArrayList<>();
 
     int lastCh = -1;
     for (Character c : content) {
@@ -458,7 +458,7 @@ public class ChineseDocumentToSentenceProcessor implements Serializable {
       text = text.replaceAll("<\\?","<");
       StringReader r = new StringReader(text);
       textBuffer = new StringBuffer(200);
-      sentences = new ArrayList<String>();
+      sentences = new ArrayList<>();
       new ParserDelegator().parse(r, this, true);
       return sentences;
     }

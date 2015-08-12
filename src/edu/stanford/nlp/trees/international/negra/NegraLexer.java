@@ -432,7 +432,7 @@ class NegraLexer implements Lexer {
    *
    * @param   errorCode  the code of the errormessage to display
    */
-  private void zzScanError(int errorCode) {
+  private static void zzScanError(int errorCode) {
     String message;
     try {
       message = ZZ_ERROR_MSG[errorCode];
@@ -602,7 +602,7 @@ class NegraLexer implements Lexer {
         try {
           java.nio.charset.Charset.forName(encodingName); // Side-effect: is encodingName valid?
         } catch (Exception e) {
-          System.out.println("Invalid encoding '" + encodingName + "'");
+          System.out.println("Invalid encoding '" + encodingName + '\'');
           return;
         }
       }
@@ -615,10 +615,10 @@ class NegraLexer implements Lexer {
           while ( !scanner.zzAtEOF ) scanner.yylex();
         }
         catch (java.io.FileNotFoundException e) {
-          System.out.println("File not found : \""+argv[i]+"\"");
+          System.out.println("File not found : \""+argv[i]+ '"');
         }
         catch (java.io.IOException e) {
-          System.out.println("IO error scanning file \""+argv[i]+"\"");
+          System.out.println("IO error scanning file \""+argv[i]+ '"');
           System.out.println(e);
         }
         catch (Exception e) {

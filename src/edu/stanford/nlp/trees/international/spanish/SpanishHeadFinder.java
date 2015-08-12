@@ -1,7 +1,6 @@
 package edu.stanford.nlp.trees.international.spanish;
 
 import edu.stanford.nlp.ling.CategoryWordTag;
-import edu.stanford.nlp.ling.Label;
 import edu.stanford.nlp.trees.*;
 import edu.stanford.nlp.util.ArrayUtils;
 import edu.stanford.nlp.util.Generics;
@@ -125,7 +124,7 @@ public class SpanishHeadFinder extends AbstractCollinsHeadFinder {
    * tags. The verbs are inserted in between <tt>toLeft</tt> and
    * <tt>toRight</tt>.
    */
-  private String[] insertVerbs(String[] toLeft, String[] toRight) {
+  private static String[] insertVerbs(String[] toLeft, String[] toRight) {
     return ArrayUtils.concatenate(toLeft, ArrayUtils.concatenate(allVerbs, toRight));
   }
 

@@ -14,8 +14,8 @@ class TagAffixDetector {
       corporaDict = flags.sighanCorporaDict;
     }
 
-    if (!corporaDict.equals("") && !corporaDict.endsWith("/")) {
-      corporaDict = corporaDict + "/";
+    if (!corporaDict.isEmpty() && !corporaDict.endsWith("/")) {
+      corporaDict = corporaDict + '/';
     }
 
     String ccPath;

@@ -26,14 +26,17 @@
 
 package edu.stanford.nlp.pipeline;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.gs.collections.impl.map.mutable.UnifiedMap;
+import edu.stanford.nlp.ling.CoreAnnotation;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.Sentence;
-import edu.stanford.nlp.util.ArrayCoreMap;
 import edu.stanford.nlp.util.CoreMap;
+import edu.stanford.nlp.util.logging.Redwood;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * An annotation representing a span of text in a document.
@@ -46,7 +49,7 @@ import edu.stanford.nlp.util.CoreMap;
  * @author Anna Rafferty
  * @author bethard
  */
-public class Annotation extends ArrayCoreMap {
+public class Annotation extends UnifiedMap<Class<?>, Object> implements CoreMap {
 
   /**
    * SerialUID
@@ -57,15 +60,19 @@ public class Annotation extends ArrayCoreMap {
   /** Copy constructor.
    *  @param map The new Annotation copies this one.
    */
-  public Annotation(Annotation map) {
+  public Annotation(Map map) {
     super(map);
+  }
+
+  public Annotation(CoreMap map) {
+    super((Map)map);
   }
 
   /** Copies the map, but not a deep copy.
    *  @return The copy
    */
   public Annotation copy() {
-    return new Annotation(this);
+    return new Annotation((Map)this);
   }
 
   /**
@@ -76,6 +83,7 @@ public class Annotation extends ArrayCoreMap {
     this.set(CoreAnnotations.TextAnnotation.class, text);
   }
 
+
   /** The basic toString() method of an Annotation simply
    *  prints out the text over which any annotations have
    *  been made (TextAnnotation). To print all the
@@ -85,20 +93,23 @@ public class Annotation extends ArrayCoreMap {
    */
   @Override
   public String toString() {
-    return this.get(CoreAnnotations.TextAnnotation.class);
+      return this.get(CoreAnnotations.TextAnnotation.class).toString();
   }
+
+
+
 
   /** Make a new Annotation from a List of tokenized sentences. */
   public Annotation(List<CoreMap> sentences) {
     super();
     this.set(CoreAnnotations.SentencesAnnotation.class, sentences);
-    List<CoreLabel> tokens = new ArrayList<CoreLabel>();
+    List<CoreLabel> tokens = new ArrayList<>();
     StringBuilder text = new StringBuilder();
     for (CoreMap sentence : sentences) {
       List<CoreLabel> sentenceTokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
       tokens.addAll(sentenceTokens);
       if (sentence.containsKey(CoreAnnotations.TextAnnotation.class)) {
-        text.append(sentence.get(CoreAnnotations.TextAnnotation.class));
+        text.append(sentence.get(CoreAnnotations.TextAnnotation.class).toString());
       } else {
         // If there is no text in the sentence, fake it as best as we can
         if (text.length() > 0) {
@@ -111,6 +122,8 @@ public class Annotation extends ArrayCoreMap {
     this.set(CoreAnnotations.TextAnnotation.class, text.toString());
   }
 
+
+
   // ==================
   // Old Deprecated API
   // ==================
@@ -120,4 +133,52 @@ public class Annotation extends ArrayCoreMap {
     super(12);
   }
 
+  public String toShorterString() {
+    return toString();
+  }
+
+  @Override
+  public String toShorterString(String... what) {
+    return null;
+  }
+
+  @Override
+  public void prettyLog(Redwood.RedwoodChannels channels, String description) {
+
+  }
+
+  @Override
+  public <VALUE> boolean has(Class<? extends Key<VALUE>> key) {
+    return super.containsKey(key);
+  }
+
+
+
+  public <X> X get(Class<? extends Key<X>> c) {
+    return (X)super.get(c);
+  }
+
+//  @Override
+//  public <VALUE> VALUE get(Class<? extends Key<VALUE>> key) {
+//    return (VALUE) super.get(key);
+//  }
+
+  @Override
+  public <VALUE> VALUE set(Class<? extends Key<VALUE>> key, VALUE value) {
+    if (value == null) {
+        return (VALUE)remove(key);
+    }
+    else
+      return (VALUE)super.put(key, value);
+  }
+
+  @Override
+  public <VALUE> VALUE remove(Class<? extends Key<VALUE>> key) {
+    return (VALUE) super.remove(key);
+  }
+
+  @Override
+  public <VALUE> boolean containsKey(Class<? extends Key<VALUE>> key) {
+    return super.containsKey(key);
+  }
 }

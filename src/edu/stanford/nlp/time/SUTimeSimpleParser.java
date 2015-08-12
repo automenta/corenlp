@@ -35,7 +35,7 @@ public class SUTimeSimpleParser {
     }
 
     public String getLocalizedMessage() {
-      return "Error while parsing '" + timeExpression + "'";
+      return "Error while parsing '" + timeExpression + '\'';
     }
 
   }
@@ -100,7 +100,7 @@ public class SUTimeSimpleParser {
       assert doc.get(CoreAnnotations.SentencesAnnotation.class).size() > 0;
       List<CoreMap> timexAnnotations = doc.get(TimeAnnotations.TimexAnnotations.class);
       if (timexAnnotations.size() > 1) {
-        throw new RuntimeException("Too many timexes for '" + str + "'");
+        throw new RuntimeException("Too many timexes for '" + str + '\'');
       }
       CoreMap timex = timexAnnotations.get(0);
 

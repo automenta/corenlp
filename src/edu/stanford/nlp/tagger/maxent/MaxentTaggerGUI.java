@@ -137,7 +137,7 @@ public class MaxentTaggerGUI extends JFrame {
     tagButton.setBackground(Color.WHITE);
     buttonPanel.add(tagButton);
 
-    tagButton.addActionListener(e -> performTagAction(e));
+    tagButton.addActionListener(this::performTagAction);
 
 
     //Lay it all out

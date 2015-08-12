@@ -39,7 +39,7 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
   public static final String LEFT_PARENTHESIS = "=LRB=";
   public static final String RIGHT_PARENTHESIS = "=RRB=";
 
-  private static final Map<String, String> spellingFixes = new HashMap<String, String>();
+  private static final Map<String, String> spellingFixes = new HashMap<>();
   static {
     spellingFixes.put("embargp", "embargo"); // 18381_20000322.tbf-4
     spellingFixes.put("jucio", "juicio"); // 4800_2000406.tbf-5
@@ -167,17 +167,17 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
    * Note that this is only the case for constituents with a *single*
    * child which is a multi-word token.
    */
-  private static final Set<String> mergeWithConstituentWhenPossible = new HashSet<String>(
-    Arrays.asList(
-      "grup.adv",
-      "grup.nom",
-      "grup.nom.loc",
-      "grup.nom.org",
-      "grup.nom.otros",
-      "grup.nom.pers",
-      "grup.verb",
-      "spec"
-    ));
+  private static final Set<String> mergeWithConstituentWhenPossible = new HashSet<>(
+          Arrays.asList(
+                  "grup.adv",
+                  "grup.nom",
+                  "grup.nom.loc",
+                  "grup.nom.org",
+                  "grup.nom.otros",
+                  "grup.nom.pers",
+                  "grup.verb",
+                  "spec"
+          ));
 
   // Customization
   private boolean simplifiedTagset;
@@ -427,7 +427,7 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
       // matched clause and walk (at most) two constituents up
       StringBuilder clauseYieldBuilder = new StringBuilder();
       for (Label label : matcher.getNode("clause").yield())
-        clauseYieldBuilder.append(label.value()).append(" ");
+        clauseYieldBuilder.append(label.value()).append(' ');
       String clauseYield = clauseYieldBuilder.toString();
       clauseYield = clauseYield.substring(0, clauseYield.length() - 1);
 
@@ -501,14 +501,14 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
     };
 
     markSimpleNEs =
-      new ArrayList<Pair<TregexPattern, TsurgeonPattern>>(patternTemplates.length * namedEntityTypes.length);
+            new ArrayList<>(patternTemplates.length * namedEntityTypes.length);
     for (Pair<String, String> template : patternTemplates) {
       for (Pair<Character, String> namedEntityType : namedEntityTypes) {
         String tregex = String.format(template.first(), namedEntityType.first());
         String tsurgeon = String.format(template.second(), namedEntityType.second());
 
-        markSimpleNEs.add(new Pair<TregexPattern, TsurgeonPattern>(TregexPattern.compile(tregex),
-                                                                   Tsurgeon.parseOperation(tsurgeon)));
+        markSimpleNEs.add(new Pair<>(TregexPattern.compile(tregex),
+                Tsurgeon.parseOperation(tsurgeon)));
       }
     }
   };
@@ -520,7 +520,7 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
    * Do this only for "simple" NEs: the multi-word NEs have to be done
    * at a later step in `MultiWordPreprocessor`.
    */
-  void markSimpleNamedEntities(Tree t) {
+  static void markSimpleNamedEntities(Tree t) {
     Tsurgeon.processPatternsOnTree(markSimpleNEs, t);
   }
 
@@ -529,7 +529,7 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
    * expansion candidate. (True if the node has at least one grandchild
    * which is a leaf node.)
    */
-  boolean isMultiWordCandidate(Tree t) {
+  static boolean isMultiWordCandidate(Tree t) {
     for (Tree child : t.children())
       for (Tree grandchild : child.children())
         if (grandchild.isLeaf())
@@ -562,7 +562,7 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
 
       // Leaf is a multi-word token; build new nodes for each of its
       // constituent words
-      List<Tree> newNodes = new ArrayList<Tree>(words.length);
+      List<Tree> newNodes = new ArrayList<>(words.length);
       for (int j = 0; j < words.length; j++) {
         String word = normalizeTerminal(words[j]);
 
@@ -570,7 +570,7 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
         if (newLeaf.label() instanceof HasWord)
           ((HasWord) newLeaf.label()).setWord(word);
 
-        Tree newNode = tf.newTreeNode(MW_TAG, Arrays.asList(newLeaf));
+        Tree newNode = tf.newTreeNode(MW_TAG, Collections.singletonList(newLeaf));
         if (newNode.label() instanceof HasTag)
           ((HasTag) newNode.label()).setTag(MW_TAG);
 
@@ -580,7 +580,7 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
       // Value of the phrase which should head these preterminals. Mark
       // that this was created from a multiword token, and also retain
       // the original parts of speech.
-      String phraseValue = MW_PHRASE_TAG + "_"
+      String phraseValue = MW_PHRASE_TAG + '_'
         + simplifyPOSTag(preterminals[i].value());
 
       // Should we insert these new nodes as children of the parent `t`
@@ -618,18 +618,18 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
    * which they are joined by hyphen.
    */
   // TODO how to handle clitics? chino-japonés
-  private static final Set<String> hyphenBoundMorphemes = new HashSet<String>(Arrays.asList(
-      "anti", // anti-Gil
-      "co", // co-promotora
-      "ex", // ex-diputado
-      "meso", // meso-americano
-      "neo", // neo-proteccionismo
-      "pre", // pre-presidencia
-      "pro", // pro-indonesias
-      "quasi", // quasi-unidimensional
-      "re", // re-flotamiento
-      "semi", // semi-negro
-      "sub" // sub-18
+  private static final Set<String> hyphenBoundMorphemes = new HashSet<>(Arrays.asList(
+          "anti", // anti-Gil
+          "co", // co-promotora
+          "ex", // ex-diputado
+          "meso", // meso-americano
+          "neo", // neo-proteccionismo
+          "pre", // pre-presidencia
+          "pro", // pro-indonesias
+          "quasi", // quasi-unidimensional
+          "re", // re-flotamiento
+          "semi", // semi-negro
+          "sub" // sub-18
   ));
 
   /**
@@ -666,7 +666,7 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
                                                    true);
     int remainingTokens = splitter.countTokens();
 
-    List<String> words = new ArrayList<String>();
+    List<String> words = new ArrayList<>();
 
     while (splitter.hasMoreTokens()) {
       String word = splitter.nextToken();
@@ -727,7 +727,7 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
    * Determine if the given "word" which is part of a multiword token
    * should be dropped.
    */
-  private boolean shouldDropWord(String word) {
+  private static boolean shouldDropWord(String word) {
     return word.length() == 1
       && WORD_SEPARATORS_DROP.indexOf(word.charAt(0)) != -1;
   }
@@ -742,7 +742,7 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
    *
    * @param t Tree representing an entire sentence
    */
-  private Tree expandElisions(Tree t) {
+  private static Tree expandElisions(Tree t) {
     return Tsurgeon.processPatternsOnTree(elisionExpansions, t);
   }
 
@@ -936,10 +936,10 @@ public class SpanishTreeNormalizer extends BobChrisTreeNormalizer {
   }
 
   private static List<Pair<TregexPattern, TsurgeonPattern>> compilePatterns(Pair<String, String>[] patterns) {
-    List<Pair<TregexPattern, TsurgeonPattern>> ret = new ArrayList<Pair<TregexPattern, TsurgeonPattern>>(patterns.length);
+    List<Pair<TregexPattern, TsurgeonPattern>> ret = new ArrayList<>(patterns.length);
     for (Pair<String, String> pattern : patterns)
-      ret.add(new Pair<TregexPattern, TsurgeonPattern>(TregexPattern.compile(pattern.first()),
-                                                       Tsurgeon.parseOperation(pattern.second())));
+      ret.add(new Pair<>(TregexPattern.compile(pattern.first()),
+              Tsurgeon.parseOperation(pattern.second())));
 
     return ret;
   }

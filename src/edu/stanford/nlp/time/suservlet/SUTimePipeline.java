@@ -49,12 +49,12 @@ public class SUTimePipeline {
     this.pipeline = new StanfordCoreNLP(props);
   }
 
-  public boolean isDateOkay(String dateString) {
+  public static boolean isDateOkay(String dateString) {
     return true; // TODO: can we predict which ones it won't like?
   }
 
-  public Annotator getTimeAnnotator(String annotatorType,
-                                    Properties props)
+  public static Annotator getTimeAnnotator(String annotatorType,
+                                           Properties props)
   {
     switch (annotatorType) {
       case "sutime":
@@ -72,7 +72,7 @@ public class SUTimePipeline {
   {
     System.err.println("Processing text \"" + sentence + "\" with dateString = " + dateString);
     Annotation anno = new Annotation(sentence);
-    if (dateString != null && !dateString.equals("")) {
+    if (dateString != null && !dateString.isEmpty()) {
       anno.set(CoreAnnotations.DocDateAnnotation.class, dateString);
     }
     pipeline.annotate(anno);
@@ -83,7 +83,7 @@ public class SUTimePipeline {
 
   static public void main(String[] args) throws IOException {
     SUTimePipeline pipeline = new SUTimePipeline();
-    Annotator timeAnnotator = pipeline.getTimeAnnotator("sutime", new Properties());
+    Annotator timeAnnotator = SUTimePipeline.getTimeAnnotator("sutime", new Properties());
     BufferedReader is = new BufferedReader(new InputStreamReader(System.in));
     System.out.print("> ");
     for(String line; (line = is.readLine()) != null; ){

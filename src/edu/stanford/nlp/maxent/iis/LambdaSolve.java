@@ -362,7 +362,7 @@ public class LambdaSolve {
       double lambdaP = lambdaN;
       double gPrimeVal = gprime(lambdaP, index);
       if (Double.isNaN(gPrimeVal)) {
-        System.err.println("gPrime of " + lambdaP + " " + index + " is NaN " + gPrimeVal);
+        System.err.println("gPrime of " + lambdaP + ' ' + index + " is NaN " + gPrimeVal);
         //lambda_converged[index]=true;
         //   System.exit(1);
       }
@@ -372,7 +372,7 @@ public class LambdaSolve {
       }
       lambdaN = lambdaP - gVal / gPrimeVal;
       if (Double.isNaN(lambdaN)) {
-        System.err.println("the division of " + gVal + " " + gPrimeVal + " " + index + " is NaN " + lambdaN);
+        System.err.println("the division of " + gVal + ' ' + gPrimeVal + ' ' + index + " is NaN " + lambdaN);
         //lambda_converged[index]=true;
         return 0;
       }
@@ -483,7 +483,7 @@ public class LambdaSolve {
         System.err.println("empirical " + ftildeArr[f] + " expected " + fExpected(p.functions.get(f)));
       }
     }
-    System.err.println(" x size" + p.data.xSize + " " + " ysize " + p.data.ySize);
+    System.err.println(" x size" + p.data.xSize + ' ' + " ysize " + p.data.ySize);
     double summAllExp = 0;
     for (int i = 0; i < ftildeArr.length; i++) {
       double exp = Math.abs(ftildeArr[i] - fExpected(p.functions.get(i)));
@@ -492,7 +492,7 @@ public class LambdaSolve {
       //if(true)
       {
         flag = false;
-        System.err.println("Constraint not satisfied  " + i + " " + fExpected(p.functions.get(i)) + " " + ftildeArr[i] + " lambda " + lambda[i]);
+        System.err.println("Constraint not satisfied  " + i + ' ' + fExpected(p.functions.get(i)) + ' ' + ftildeArr[i] + " lambda " + lambda[i]);
       }
     }
 
@@ -506,7 +506,7 @@ public class LambdaSolve {
         for (int y = 0; y < probConds[x].length; y++)
             //System.err.println(y+" : "+ probConds[x][y]);
         {
-          System.err.println("probabilities do not sum to one " + x + " " + (float) s);
+          System.err.println("probabilities do not sum to one " + x + ' ' + (float) s);
         }
       }
     }
@@ -722,9 +722,7 @@ public class LambdaSolve {
         return (double[]) o;
       }
       throw new RuntimeIOException("Failed to read lambdas from given input stream");
-    } catch (IOException e) {
-      throw new RuntimeIOException(e);
-    } catch (ClassNotFoundException e) {
+    } catch (IOException | ClassNotFoundException e) {
       throw new RuntimeIOException(e);
     }
   }

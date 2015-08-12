@@ -53,14 +53,14 @@ public class CollinsDepEval extends AbstractEval {
     this.hf = hf;
     this.startSymbol = startSymbol;
 
-    precisions = new ClassicCounter<CollinsRelation>();
-    recalls = new ClassicCounter<CollinsRelation>();
-    f1s = new ClassicCounter<CollinsRelation>();
+    precisions = new ClassicCounter<>();
+    recalls = new ClassicCounter<>();
+    f1s = new ClassicCounter<>();
 
-    precisions2 = new ClassicCounter<CollinsRelation>();
-    recalls2 = new ClassicCounter<CollinsRelation>();
-    pnums2 = new ClassicCounter<CollinsRelation>();
-    rnums2 = new ClassicCounter<CollinsRelation>();
+    precisions2 = new ClassicCounter<>();
+    recalls2 = new ClassicCounter<>();
+    pnums2 = new ClassicCounter<>();
+    rnums2 = new ClassicCounter<>();
   }
 
   @Override
@@ -127,10 +127,10 @@ public class CollinsDepEval extends AbstractEval {
       rnums2.incrementCount(rel, thisGoldDeps.size());
 
       if (pw != null && runningAverages) {
-        pw.println(rel + "\tP: " + ((int) (currentPrecision * 10000)) / 100.0 + " (sent ave " + ((int) (precisions.getCount(rel) * 10000 / num)) / 100.0 + ") (evalb " + ((int) (precisions2.getCount(rel) * 10000 / pnums2.getCount(rel))) / 100.0 + ")");
-        pw.println("\tR: " + ((int) (currentRecall * 10000)) / 100.0 + " (sent ave " + ((int) (recalls.getCount(rel) * 10000 / num)) / 100.0 + ") (evalb " + ((int) (recalls2.getCount(rel) * 10000 / rnums2.getCount(rel))) / 100.0 + ")");
+        pw.println(rel + "\tP: " + ((int) (currentPrecision * 10000)) / 100.0 + " (sent ave " + ((int) (precisions.getCount(rel) * 10000 / num)) / 100.0 + ") (evalb " + ((int) (precisions2.getCount(rel) * 10000 / pnums2.getCount(rel))) / 100.0 + ')');
+        pw.println("\tR: " + ((int) (currentRecall * 10000)) / 100.0 + " (sent ave " + ((int) (recalls.getCount(rel) * 10000 / num)) / 100.0 + ") (evalb " + ((int) (recalls2.getCount(rel) * 10000 / rnums2.getCount(rel))) / 100.0 + ')');
         double cF1 = 2.0 / (rnums2.getCount(rel) / recalls2.getCount(rel) + pnums2.getCount(rel) / precisions2.getCount(rel));
-        String emit = str + " F1: " + ((int) (currentF1 * 10000)) / 100.0 + " (sent ave " + ((int) (10000 * f1s.getCount(rel) / num)) / 100.0 + ", evalb " + ((int) (10000 * cF1)) / 100.0 + ")";
+        String emit = str + " F1: " + ((int) (currentF1 * 10000)) / 100.0 + " (sent ave " + ((int) (10000 * f1s.getCount(rel) / num)) / 100.0 + ", evalb " + ((int) (10000 * cF1)) / 100.0 + ')';
         pw.println(emit);
       }
     }
@@ -147,7 +147,7 @@ public class CollinsDepEval extends AbstractEval {
     cats.addAll(precisions.keySet());
     cats.addAll(recalls.keySet());
 
-    Map<Double,CollinsRelation> f1Map = new TreeMap<Double,CollinsRelation>();
+    Map<Double,CollinsRelation> f1Map = new TreeMap<>();
     for (CollinsRelation cat : cats) {
       double pnum2 = pnums2.getCount(cat);
       double rnum2 = rnums2.getCount(cat);
@@ -187,7 +187,7 @@ public class CollinsDepEval extends AbstractEval {
     usage.append(String.format("Usage: java %s [OPTS] goldFile guessFile%n%n",CollinsDepEval.class.getName()));
     usage.append("Options:").append(nl);
     usage.append("  -v        : Verbose output").append(nl);
-    usage.append("  -l lang   : Language name " + Language.langList).append(nl);
+    usage.append("  -l lang   : Language name ").append(Language.langList).append(nl);
     usage.append("  -y num    : Max yield of gold trees").append(nl);
     usage.append("  -g num    : Max yield of guess trees").append(nl);
     return usage.toString();

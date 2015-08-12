@@ -30,7 +30,7 @@ public class CoreMapAggregator implements Function<List<? extends CoreMap>, Core
   {
     CoreMap merged = ChunkAnnotationUtils.getMergedChunk(in, start, end, aggregators);
     if (mergedKey != null) {
-      merged.set(mergedKey, new ArrayList<CoreMap>(in.subList(start, end)));
+      merged.set(mergedKey, new ArrayList<>(in.subList(start, end)));
     }
     return merged;
   }

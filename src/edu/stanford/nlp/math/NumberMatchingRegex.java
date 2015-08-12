@@ -62,7 +62,7 @@ public class NumberMatchingRegex {
      "(0[xX]" + HexDigits + "(\\.)?)|" +
      
      // 0[xX] HexDigits_opt . HexDigits BinaryExponent FloatTypeSuffix_opt
-     "(0[xX]" + HexDigits + "?(\\.)" + HexDigits + ")" +
+     "(0[xX]" + HexDigits + "?(\\.)" + HexDigits + ')' +
      
      ")[pP][+-]?" + Digits + "))" +
      "[fFdD]?))" +

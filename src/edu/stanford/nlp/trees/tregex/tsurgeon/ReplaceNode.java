@@ -21,7 +21,7 @@ class ReplaceNode extends TsurgeonPattern {
     this(oldNode, CollectionUtils.transformAsList(trees, convertAuxiliaryToHold).toArray(new TsurgeonPattern[trees.size()]));
   }
 
-  private static final Function<AuxiliaryTree, HoldTreeNode> convertAuxiliaryToHold = t -> new HoldTreeNode(t);
+  private static final Function<AuxiliaryTree, HoldTreeNode> convertAuxiliaryToHold = HoldTreeNode::new;
 
   @Override
   public TsurgeonMatcher matcher(Map<String,Tree> newNodeNames, CoindexationGenerator coindexer) {

@@ -54,11 +54,11 @@ public class PhraseTable implements Serializable
   int nPhrases = 0;
   int nStrings = 0;
 
-  transient CacheMap<String,String> normalizedCache = new CacheMap<String,String>(5000);
+  transient CacheMap<String,String> normalizedCache = new CacheMap<>(5000);
 
   public PhraseTable() {}
 
-  public PhraseTable(int initSize) { rootTree = new HashMap<String,Object>(initSize); }
+  public PhraseTable(int initSize) { rootTree = new HashMap<>(initSize); }
 
   public PhraseTable(boolean normalize, boolean caseInsensitive, boolean ignorePunctuation) {
     this.normalize = normalize;
@@ -96,7 +96,7 @@ public class PhraseTable implements Serializable
 
   public void setNormalizationCacheSize(int cacheSize)
   {
-    CacheMap<String,String> newNormalizedCache = new CacheMap<String,String>(cacheSize);
+    CacheMap<String,String> newNormalizedCache = new CacheMap<>(cacheSize);
     newNormalizedCache.putAll(normalizedCache);
     normalizedCache = newNormalizedCache;
   }
@@ -186,7 +186,7 @@ public class PhraseTable implements Serializable
       // Pick map factory to use depending on number of tags we have
       MapFactory<String,MutableDouble> mapFactory = (columns.length < 20)?
               MapFactory.<String,MutableDouble>arrayMapFactory(): MapFactory.<String,MutableDouble>linkedHashMapFactory();
-      Counter<String> counts = new ClassicCounter<String>(mapFactory);
+      Counter<String> counts = new ClassicCounter<>(mapFactory);
       for (int i = 1; i < columns.length; i++) {
         String[] tagCount = countDelimiterPattern.split(columns[i], 2);
         if (tagCount.length == 2) {
@@ -194,11 +194,11 @@ public class PhraseTable implements Serializable
             counts.setCount(tagCount[0], Double.parseDouble(tagCount[1]));
           } catch (NumberFormatException ex) {
             throw new RuntimeException("Error processing field " + i + ": '" + columns[i] +
-                    "' from (" + filename + ":" + lineno + "): " + line, ex);
+                    "' from (" + filename + ':' + lineno + "): " + line, ex);
           }
         } else {
           throw new RuntimeException("Error processing field " + i + ": '" + columns[i] +
-                  "' from + (" + filename + ":" + lineno + "): " + line);
+                  "' from + (" + filename + ':' + lineno + "): " + line);
         }
       }
       addPhrase(phrase, null, counts);
@@ -265,7 +265,7 @@ public class PhraseTable implements Serializable
   public WordList toNormalizedWordList(String phraseText)
   {
     String[] words = splitText(phraseText);
-    List<String> list = new ArrayList<String>(words.length);
+    List<String> list = new ArrayList<>(words.length);
     for (String word:words) {
       word = getNormalizedForm(word);
       if (word.length() > 0) {
@@ -284,8 +284,8 @@ public class PhraseTable implements Serializable
 
   public void addPhrases(Map<String,String> taggedPhraseTexts)
   {
-    for (String phraseText:taggedPhraseTexts.keySet()) {
-      addPhrase(phraseText, taggedPhraseTexts.get(phraseText));
+    for (Map.Entry<String, String> stringStringEntry : taggedPhraseTexts.entrySet()) {
+      addPhrase(stringStringEntry.getKey(), stringStringEntry.getValue());
     }
   }
 
@@ -325,7 +325,7 @@ public class PhraseTable implements Serializable
   private synchronized boolean addPhrase(String phraseText, String tag, WordList wordList, Object phraseData)
   {
     if (rootTree == null) {
-      rootTree = new HashMap<String,Object>();
+      rootTree = new HashMap<>();
     }
     return addPhrase(rootTree, phraseText, tag, wordList, phraseData, 0);
   }
@@ -348,7 +348,7 @@ public class PhraseTable implements Serializable
       ((List) node).add(phrase);
     } else {
       throw new RuntimeException("Unexpected class " + node.getClass() + " while adding word "
-              + wordIndex + "(" + word + ") in phrase " + phrase.getText());
+              + wordIndex + '(' + word + ") in phrase " + phrase.getText());
     }
   }
 
@@ -405,13 +405,13 @@ public class PhraseTable implements Serializable
           } else if (obj instanceof Map) {
             if (nMaps == 1) {
               throw new RuntimeException("More than one map in list while adding word "
-                      + i + "(" + word + ") in phrase " + phraseText);
+                      + i + '(' + word + ") in phrase " + phraseText);
             }
             tree = (Map<String, Object>) obj;
             nMaps++;
           } else  {
             throw new RuntimeException("Unexpected class in list " + obj.getClass() + " while adding word "
-                    + i + "(" + word + ") in phrase " + phraseText);
+                    + i + '(' + word + ") in phrase " + phraseText);
           }
         }
         if (!phraseAdded && nMaps == 0) {
@@ -436,7 +436,7 @@ public class PhraseTable implements Serializable
         }
       } else {
         throw new RuntimeException("Unexpected class in list " + node.getClass() + " while adding word "
-                + i + "(" + word + ") in phrase " + phraseText);
+                + i + '(' + word + ") in phrase " + phraseText);
       }
       if (phraseAdded) {
         break;
@@ -558,13 +558,13 @@ public class PhraseTable implements Serializable
           } else if (obj instanceof Map) {
             if (nMaps == 1) {
               throw new RuntimeException("More than one map in list while looking up word "
-                      + i + "(" + word + ") in phrase " + wordList.toString());
+                      + i + '(' + word + ") in phrase " + wordList.toString());
             }
             tree = (Map<String, Object>) obj;
             nMaps++;
           } else  {
             throw new RuntimeException("Unexpected class in list " + obj.getClass() + " while looking up word "
-                    + i + "(" + word + ") in phrase " + wordList.toString());
+                    + i + '(' + word + ") in phrase " + wordList.toString());
           }
         }
         if (nMaps == 0) {
@@ -572,7 +572,7 @@ public class PhraseTable implements Serializable
         }
       } else {
         throw new RuntimeException("Unexpected class in list " + node.getClass() + " while looking up word "
-                + i + "(" + word + ") in phrase " + wordList.toString());
+                + i + '(' + word + ") in phrase " + wordList.toString());
       }
     }
     Phrase phrase = (Phrase) tree.get(PHRASE_END);
@@ -683,10 +683,10 @@ public class PhraseTable implements Serializable
     return findMatches(tokens, tokenStart, tokenEnd, false);
   }
 
-  protected int checkWordListMatch(Phrase phrase, WordList tokens,
-                                   int tokenStart, int tokenEnd,
-                                   int checkStart,
-                                   boolean matchEnd)
+  protected static int checkWordListMatch(Phrase phrase, WordList tokens,
+                                          int tokenStart, int tokenEnd,
+                                          int checkStart,
+                                          boolean matchEnd)
   {
     if (checkStart < tokenStart) return -1;
     int i;
@@ -710,7 +710,7 @@ public class PhraseTable implements Serializable
     }
   }
 
-  public List<PhraseMatch> findNonOverlappingPhrases(List<PhraseMatch> phraseMatches)
+  public static List<PhraseMatch> findNonOverlappingPhrases(List<PhraseMatch> phraseMatches)
   {
     if (phraseMatches.size() > 1) {
       return IntervalTree.getNonOverlapping(phraseMatches, PHRASEMATCH_LENGTH_ENDPOINTS_COMPARATOR);
@@ -727,7 +727,7 @@ public class PhraseTable implements Serializable
       assert(tokenStart >= 0);
       assert(tokenEnd > tokenStart);
       int n = tokenEnd - tokenStart;
-      List<String> normalized = new ArrayList<String>(n);
+      List<String> normalized = new ArrayList<>(n);
       int[] tokenIndexMap = new int[n+1];
       int j = 0, last = 0;
       for (int i = tokenStart; i < tokenEnd; i++) {
@@ -766,8 +766,8 @@ public class PhraseTable implements Serializable
                                                     WordList tokens, int tokenStart, int tokenEnd,
                                                     boolean findAll, boolean matchEnd)
   {
-    List<PhraseMatch> matched = new ArrayList<PhraseMatch>();
-    Stack<StackEntry> todoStack = new Stack<StackEntry>();
+    List<PhraseMatch> matched = new ArrayList<>();
+    Stack<StackEntry> todoStack = new Stack<>();
     todoStack.push(new StackEntry(rootTree, tokenStart, tokenStart, tokenEnd, findAll? tokenStart+1:-1));
     while (!todoStack.isEmpty()) {
       StackEntry cur = todoStack.pop();
@@ -842,7 +842,7 @@ public class PhraseTable implements Serializable
 
   private static class PhraseTableIterator extends AbstractIterator<Phrase> {
     private PhraseTable phraseTable;
-    private Stack<Iterator<Object>> iteratorStack = new Stack<Iterator<Object>>();
+    private Stack<Iterator<Object>> iteratorStack = new Stack<>();
     private Phrase next = null;
 
     public PhraseTableIterator(PhraseTable phraseTable) {
@@ -934,7 +934,7 @@ public class PhraseTable implements Serializable
 
     public boolean addForm(String form) {
       if (alternateForms == null) {
-        alternateForms = new HashSet<String>(4);
+        alternateForms = new HashSet<>(4);
         alternateForms.add(text);
       }
       return alternateForms.add(form);
@@ -1006,7 +1006,7 @@ public class PhraseTable implements Serializable
       StringBuilder sb = new StringBuilder();
       sb.append(phrase);
       sb.append(" at (").append(tokenBegin);
-      sb.append(",").append(tokenEnd).append(")");
+      sb.append(',').append(tokenEnd).append(')');
       return sb.toString();
     }
 
@@ -1021,7 +1021,7 @@ public class PhraseTable implements Serializable
     StringBuilder sb = new StringBuilder();
     for (int i = 0; i < wordList.size(); i++) {
       if (sb.length() > 0) {
-        sb.append(" ");
+        sb.append(' ');
       }
       sb.append(wordList.getWord(i));
     }

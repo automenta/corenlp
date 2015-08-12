@@ -29,7 +29,7 @@ public class RHSFrequency {
   static {
     usage.append(String.format("Usage: java %s [OPTS] lhs tree_file \n\n",RHSFrequency.class.getName()));
     usage.append("Options:\n");
-    usage.append("  -l lang    : Select language settings from " + Language.langList + "\n");
+    usage.append("  -l lang    : Select language settings from ").append(Language.langList).append('\n');
     usage.append("  -e enc     : Encoding.\n");
   }
 
@@ -62,7 +62,7 @@ public class RHSFrequency {
         }
 
       } else {
-        rootMatch = TregexPattern.compile("@" + args[i++]);
+        rootMatch = TregexPattern.compile('@' + args[i++]);
 
         if(tb == null) {
           if(tlpp == null) {
@@ -78,19 +78,19 @@ public class RHSFrequency {
       }
     }
 
-    Counter<String> rhsCounter = new ClassicCounter<String>();
+    Counter<String> rhsCounter = new ClassicCounter<>();
     for(Tree t : tb) {
       TregexMatcher m = rootMatch.matcher(t);
       while(m.findNextMatchingNode()) {
         Tree match = m.getMatch();
         StringBuilder sb = new StringBuilder();
         for(Tree kid : match.children())
-          sb.append(kid.value()).append(" ");
+          sb.append(kid.value()).append(' ');
         rhsCounter.incrementCount(sb.toString().trim());
       }
     }
 
-    List<String> biggestKeys = new ArrayList<String>(rhsCounter.keySet());
+    List<String> biggestKeys = new ArrayList<>(rhsCounter.keySet());
     Collections.sort(biggestKeys, Counters.toComparatorDescending(rhsCounter));
 
     PrintWriter pw = tlpp.pw();

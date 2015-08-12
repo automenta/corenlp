@@ -88,7 +88,7 @@ public class CRFClassifierFloat<IN extends CoreMap> extends CRFClassifier<IN> {
       }
     }
     System.err.println("numWeights: " + initialWeights.length);
-    float[] weights = minimizer.minimize(func, (float) flags.tolerance, initialWeights);
+    float[] weights = QNMinimizer.minimize(func, (float) flags.tolerance, initialWeights);
     return ArrayMath.floatArrayToDoubleArray(weights);
   }
 } // end class CRFClassifierFloat

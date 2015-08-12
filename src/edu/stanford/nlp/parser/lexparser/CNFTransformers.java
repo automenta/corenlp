@@ -16,12 +16,49 @@ public class CNFTransformers {
 
   static class ToCNFTransformer implements TreeTransformer {
     public Tree transformTree(Tree t) {
-      if (t.isLeaf()) {
-        return t.treeFactory().newLeaf(t.label());
-      }
-      Tree[] children = t.children();
-      if (children.length > 1 || t.isPreTerminal() || t.label().value().startsWith("ROOT")) {
-        Label label = t.label();
+      while (true) {
+        if (t.isLeaf()) {
+          return t.treeFactory().newLeaf(t.label());
+        }
+        Tree[] children = t.children();
+        if (children.length > 1 || t.isPreTerminal() || t.label().value().startsWith("ROOT")) {
+          Label label = t.label();
+          Tree[] transformedChildren = new Tree[children.length];
+          for (int childIndex = 0; childIndex < children.length; childIndex++) {
+            Tree child = children[childIndex];
+            transformedChildren[childIndex] = transformTree(child);
+          }
+          return t.treeFactory().newTreeNode(label, Arrays.asList(transformedChildren));
+        }
+        Tree tree = t;
+        List<String> conjoinedList = new ArrayList<>();
+        while (tree.children().length == 1 && !tree.isPrePreTerminal()) {
+          String nodeString = tree.label().value();
+          if (!nodeString.startsWith("@")) {
+            conjoinedList.add(nodeString);
+          }
+          tree = tree.children()[0];
+        }
+        String nodeString = tree.label().value();
+        if (!nodeString.startsWith("@")) {
+          conjoinedList.add(nodeString);
+        }
+        String conjoinedLabels;
+        if (conjoinedList.size() > 1) {
+          StringBuilder conjoinedLabelsBuilder = new StringBuilder();
+          for (String s : conjoinedList) {
+            conjoinedLabelsBuilder.append('&');
+            conjoinedLabelsBuilder.append(s);
+          }
+          conjoinedLabels = conjoinedLabelsBuilder.toString();
+        } else if (conjoinedList.size() == 1) {
+          conjoinedLabels = conjoinedList.iterator().next();
+        } else {
+          t = t.children()[0];
+          continue;
+        }
+        children = tree.children();
+        Label label = t.label().labelFactory().newLabel(conjoinedLabels);
         Tree[] transformedChildren = new Tree[children.length];
         for (int childIndex = 0; childIndex < children.length; childIndex++) {
           Tree child = children[childIndex];
@@ -29,40 +66,6 @@ public class CNFTransformers {
         }
         return t.treeFactory().newTreeNode(label, Arrays.asList(transformedChildren));
       }
-      Tree tree = t;
-      List<String> conjoinedList = new ArrayList<String>();
-      while (tree.children().length == 1 && !tree.isPrePreTerminal()) {
-        String nodeString = tree.label().value();
-        if (!nodeString.startsWith("@")) {
-          conjoinedList.add(nodeString);
-        }
-        tree = tree.children()[0];
-      }
-      String nodeString = tree.label().value();
-      if (!nodeString.startsWith("@")) {
-        conjoinedList.add(nodeString);
-      }
-      String conjoinedLabels;
-      if (conjoinedList.size() > 1) {
-        StringBuilder conjoinedLabelsBuilder = new StringBuilder();
-        for (String s : conjoinedList) {
-          conjoinedLabelsBuilder.append("&");
-          conjoinedLabelsBuilder.append(s);
-        }
-        conjoinedLabels = conjoinedLabelsBuilder.toString();
-      } else if (conjoinedList.size() == 1) {
-        conjoinedLabels = conjoinedList.iterator().next();
-      } else {
-        return transformTree(t.children()[0]);
-      }
-      children = tree.children();
-      Label label = t.label().labelFactory().newLabel(conjoinedLabels);
-      Tree[] transformedChildren = new Tree[children.length];
-      for (int childIndex = 0; childIndex < children.length; childIndex++) {
-        Tree child = children[childIndex];
-        transformedChildren[childIndex] = transformTree(child);
-      }
-      return t.treeFactory().newTreeNode(label, Arrays.asList(transformedChildren));
     }
   }
 

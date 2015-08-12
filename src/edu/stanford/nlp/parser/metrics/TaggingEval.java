@@ -61,17 +61,17 @@ public class TaggingEval extends AbstractEval {
     this.lex = lex;
 
     if(doCatLevelEval) {
-      precisions = new ClassicCounter<String>();
-      recalls = new ClassicCounter<String>();
-      f1s = new ClassicCounter<String>();
+      precisions = new ClassicCounter<>();
+      recalls = new ClassicCounter<>();
+      f1s = new ClassicCounter<>();
 
-      precisions2 = new ClassicCounter<String>();
-      recalls2 = new ClassicCounter<String>();
-      pnums2 = new ClassicCounter<String>();
-      rnums2 = new ClassicCounter<String>();
+      precisions2 = new ClassicCounter<>();
+      recalls2 = new ClassicCounter<>();
+      pnums2 = new ClassicCounter<>();
+      rnums2 = new ClassicCounter<>();
 
-      percentOOV = new ClassicCounter<String>();
-      percentOOV2 = new ClassicCounter<String>();
+      percentOOV = new ClassicCounter<>();
+      percentOOV2 = new ClassicCounter<>();
     }
   }
 
@@ -140,10 +140,10 @@ public class TaggingEval extends AbstractEval {
         if(lex != null) measureOOV(guess,gold);
 
         if (pw != null && runningAverages) {
-          pw.println(cat + "\tP: " + ((int) (currentPrecision * 10000)) / 100.0 + " (sent ave " + ((int) (precisions.getCount(cat) * 10000 / num)) / 100.0 + ") (evalb " + ((int) (precisions2.getCount(cat) * 10000 / pnums2.getCount(cat))) / 100.0 + ")");
-          pw.println("\tR: " + ((int) (currentRecall * 10000)) / 100.0 + " (sent ave " + ((int) (recalls.getCount(cat) * 10000 / num)) / 100.0 + ") (evalb " + ((int) (recalls2.getCount(cat) * 10000 / rnums2.getCount(cat))) / 100.0 + ")");
+          pw.println(cat + "\tP: " + ((int) (currentPrecision * 10000)) / 100.0 + " (sent ave " + ((int) (precisions.getCount(cat) * 10000 / num)) / 100.0 + ") (evalb " + ((int) (precisions2.getCount(cat) * 10000 / pnums2.getCount(cat))) / 100.0 + ')');
+          pw.println("\tR: " + ((int) (currentRecall * 10000)) / 100.0 + " (sent ave " + ((int) (recalls.getCount(cat) * 10000 / num)) / 100.0 + ") (evalb " + ((int) (recalls2.getCount(cat) * 10000 / rnums2.getCount(cat))) / 100.0 + ')');
           double cF1 = 2.0 / (rnums2.getCount(cat) / recalls2.getCount(cat) + pnums2.getCount(cat) / precisions2.getCount(cat));
-          String emit = str + " F1: " + ((int) (currentF1 * 10000)) / 100.0 + " (sent ave " + ((int) (10000 * f1s.getCount(cat) / num)) / 100.0 + ", evalb " + ((int) (10000 * cF1)) / 100.0 + ")";
+          String emit = str + " F1: " + ((int) (currentF1 * 10000)) / 100.0 + " (sent ave " + ((int) (10000 * f1s.getCount(cat) / num)) / 100.0 + ", evalb " + ((int) (10000 * cF1)) / 100.0 + ')';
           pw.println(emit);
         }
       }
@@ -185,7 +185,7 @@ public class TaggingEval extends AbstractEval {
       cats.addAll(precisions.keySet());
       cats.addAll(recalls.keySet());
 
-      Map<Double,String> f1Map = new TreeMap<Double,String>();
+      Map<Double,String> f1Map = new TreeMap<>();
       for (String cat : cats) {
         double pnum2 = pnums2.getCount(cat);
         double rnum2 = rnums2.getCount(cat);
@@ -231,7 +231,7 @@ public class TaggingEval extends AbstractEval {
     usage.append(String.format("Usage: java %s [OPTS] gold guess\n\n",TaggingEval.class.getName()));
     usage.append("Options:\n");
     usage.append("  -v         : Verbose mode.\n");
-    usage.append("  -l lang    : Select language settings from " + Language.langList + "\n");
+    usage.append("  -l lang    : Select language settings from ").append(Language.langList).append('\n');
     usage.append("  -y num     : Skip gold trees with yields longer than num.\n");
     usage.append("  -c         : Compute LP/LR/F1 by category.\n");
     usage.append("  -e         : Input encoding.\n");
@@ -333,11 +333,11 @@ public class TaggingEval extends AbstractEval {
     int skippedGuessTrees = 0;
     while( guessItr.hasNext() && goldItr.hasNext() ) {
       Tree guessTree = guessItr.next();
-      List<Label> guessYield = guessTree.yield();
+      List<? extends Label> guessYield = guessTree.yield();
       guessLineId++;
 
       Tree goldTree = goldItr.next();
-      List<Label> goldYield = goldTree.yield();
+      List<? extends Label> goldYield = goldTree.yield();
       goldLineId++;
 
       // Check that we should evaluate this tree

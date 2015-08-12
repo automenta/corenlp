@@ -37,26 +37,26 @@ public class FTBCorrector implements TreeTransformer {
     ops = loadOps();
   }
   
-  private List<Pair<TregexPattern, TsurgeonPattern>> loadOps() {
-    List<Pair<TregexPattern,TsurgeonPattern>> ops = new ArrayList<Pair<TregexPattern,TsurgeonPattern>>();
+  private static List<Pair<TregexPattern, TsurgeonPattern>> loadOps() {
+    List<Pair<TregexPattern,TsurgeonPattern>> ops = new ArrayList<>();
     
     String line = null;
     try {
       BufferedReader br = new BufferedReader(new StringReader(editStr));
-      List<TsurgeonPattern> tsp = new ArrayList<TsurgeonPattern>();
+      List<TsurgeonPattern> tsp = new ArrayList<>();
       while ((line = br.readLine()) != null) {
         if (DEBUG) System.err.print("Pattern is " + line);
         TregexPattern matchPattern = TregexPattern.compile(line);
-        if (DEBUG) System.err.println(" [" + matchPattern + "]");
+        if (DEBUG) System.err.println(" [" + matchPattern + ']');
         tsp.clear();
         while (continuing(line = br.readLine())) {
           TsurgeonPattern p = Tsurgeon.parseOperation(line);
-          if (DEBUG) System.err.println("Operation is " + line + " [" + p + "]");
+          if (DEBUG) System.err.println("Operation is " + line + " [" + p + ']');
           tsp.add(p);
         }
         if ( ! tsp.isEmpty()) {
           TsurgeonPattern tp = Tsurgeon.collectOperations(tsp);
-          ops.add(new Pair<TregexPattern,TsurgeonPattern>(matchPattern, tp));
+          ops.add(new Pair<>(matchPattern, tp));
         }
       } // while not at end of file
     } catch (IOException ioe) {
@@ -83,58 +83,58 @@ public class FTBCorrector implements TreeTransformer {
     //Delete sentence-initial punctuation
     ("@PUNC=punc <: __ >, @SENT\n"
         + "delete punc\n"
-        + "\n") +
+        + '\n') +
     
     //Delete sentence final punctuation that is preceded by punctuation (first time)
     ("@PUNC=punc <: __ >>- @SENT $, @PUNC\n"
         + "delete punc\n"
-        + "\n") +
+        + '\n') +
    
     //Delete sentence final punctuation that is preceded by punctuation (second time)
     ("@PUNC=punc <: __ >>- @SENT $, @PUNC\n"
         + "delete punc\n"
-        + "\n") +
+        + '\n') +
     
     //Convert remaining sentence-final punctuation to either . if it is not [.!?]
     ("@PUNC <: /^[^!\\.\\?]$/=term >>- @SENT !$, @PUNC\n"
         + "relabel term /./\n" 
-        + "\n") +
+        + '\n') +
     
     //Delete medial, sentence-final punctuation
     ("@PUNC=punc <: (/^[!\\.\\?]$/ . __)\n"
         + "delete punc\n"
-        + "\n") +
+        + '\n') +
         
     //Now move the sentence-final mark under SENT
     ("@PUNC=punc <: /^[\\.!\\?]$/ >>- (@SENT <- __=sfpos) !> @SENT\n"
         + "move punc $- sfpos\n" 
-        + "\n") +
+        + '\n') +
     
     //For those trees that lack a sentence-final punc, add one.
     ("!@PUNC <: /^[^\\.!\\?]$/ >>- (@SENT <- __=loc)\n"
         + "insert (PUNC .) $- loc\n"
-        + "\n") +
+        + '\n') +
     
     //Finally, delete these punctuation marks, which I can't seem to kill otherwise...
     ("@PUNC <: /^[\\.!\\?]+$/=punc . (@PUNC <: /[\\.!\\?]/)\n"
         + "prune punc\n"
-        + "\n") +
+        + '\n') +
     
     //A bad MWADV tree in the training set
     ("@NP=bad > @MWADV\n"
         + "excise bad bad\n"
-        + "\n") +
+        + '\n') +
 
     // Not sure why this got a label of X.  Similar trees suggest it
     // should be A instead
     ("X=bad < demi\n"
         + "relabel bad A\n"
-        + "\n") +
+        + '\n') +
 
     // This also seems to be mislabeled
     ("PC=pc < D'|depuis|après\n"
         + "relabel pc P\n"
-        + "\n");
+        + '\n');
     
   /**
    * @param args
@@ -178,11 +178,7 @@ public class FTBCorrector implements TreeTransformer {
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
 
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (TregexParseException e) {
+    } catch (IOException | TregexParseException e) {
       e.printStackTrace();
     }
   }

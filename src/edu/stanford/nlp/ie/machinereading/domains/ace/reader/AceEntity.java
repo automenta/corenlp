@@ -27,7 +27,7 @@ public class AceEntity extends AceElement {
     mType = type;
     mSubtype = subtype;
     mClass = cls;
-    mMentions = new ArrayList<AceEntityMention>();
+    mMentions = new ArrayList<>();
   }
 
   public void addMention(AceEntityMention m) {
@@ -46,15 +46,11 @@ public class AceEntity extends AceElement {
   public String toXml(int offset) {
     StringBuffer buffer = new StringBuffer();
     appendOffset(buffer, offset);
-    buffer.append("<entity ID=\"" + getId() + "\" TYPE =\"" +
-		  AceToken.OTHERS.get(mType) +
-		  "\" SUBTYPE=\"" +
-		  AceToken.OTHERS.get(mSubtype) + "\" CLASS=\"" +
-		  AceToken.OTHERS.get(mClass) + "\">\n");
+    buffer.append("<entity ID=\"").append(getId()).append("\" TYPE =\"").append(AceToken.OTHERS.get(mType)).append("\" SUBTYPE=\"").append(AceToken.OTHERS.get(mSubtype)).append("\" CLASS=\"").append(AceToken.OTHERS.get(mClass)).append("\">\n");
 
     for(AceEntityMention m: mMentions){
       buffer.append(m.toXml(offset + 2));
-      buffer.append("\n");
+      buffer.append('\n');
     }
 
     appendOffset(buffer, offset);

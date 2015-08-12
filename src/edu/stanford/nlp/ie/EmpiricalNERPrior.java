@@ -86,10 +86,20 @@ public class EmpiricalNERPrior<IN extends CoreMap> extends EntityCachingAbstract
         String tag1 = classIndex.get(entity.type);
 
         // Use canonical String values, so we can henceforth just use ==
-        if (tag1.equals(LOC)) { tag1 = LOC; }
-        else if (tag1.equals(ORG)) { tag1 = ORG; }
-        else if (tag1.equals(PER)) { tag1 = PER; }
-        else if (tag1.equals(MISC)) { tag1 = MISC; }
+        switch (tag1) {
+          case LOC:
+            tag1 = LOC;
+            break;
+          case ORG:
+            tag1 = ORG;
+            break;
+          case PER:
+            tag1 = PER;
+            break;
+          case MISC:
+            tag1 = MISC;
+            break;
+        }
 
         int[] other = entities[i].otherOccurrences;
         for (int otherOccurrence : other) {
@@ -117,14 +127,19 @@ public class EmpiricalNERPrior<IN extends CoreMap> extends EntityCachingAbstract
           String tag2 = classIndex.get(otherEntity.type);
 
           // Use canonical String values, so we can henceforth just use ==
-          if (tag2.equals(LOC)) {
-            tag2 = LOC;
-          } else if (tag2.equals(ORG)) {
-            tag2 = ORG;
-          } else if (tag2.equals(PER)) {
-            tag2 = PER;
-          } else if (tag2.equals(MISC)) {
-            tag2 = MISC;
+          switch (tag2) {
+            case LOC:
+              tag2 = LOC;
+              break;
+            case ORG:
+              tag2 = ORG;
+              break;
+            case PER:
+              tag2 = PER;
+              break;
+            case MISC:
+              tag2 = MISC;
+              break;
           }
 
           // exact match??

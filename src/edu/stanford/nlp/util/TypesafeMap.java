@@ -29,6 +29,7 @@ public interface TypesafeMap {
    * none is provided.
    */
   public <VALUE> VALUE get(Class<? extends Key<VALUE>> key);
+  //public <VALUE> VALUE get(Class<?> key);
 
   /**
    * Associates the given value with the given type for future calls

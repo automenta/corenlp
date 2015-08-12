@@ -82,7 +82,7 @@ public class TimeExpression extends MatchedExpression {
     extractFunc.valueExtractor = new Function<CoreMap, Value>() {
       public Value apply(CoreMap in) {
         SUTime.Temporal t = temporalFunc.apply(in);
-        return new Expressions.PrimitiveValue<SUTime.Temporal>("Temporal", t);
+        return new Expressions.PrimitiveValue<>("Temporal", t);
       }
     };
     extractFunc.tokensAnnotationField = CoreAnnotations.NumerizedTokensAnnotation.class;
@@ -147,7 +147,7 @@ public class TimeExpression extends MatchedExpression {
   }
 
   public void setTemporal(SUTime.Temporal temporal) {
-    this.value = new Expressions.PrimitiveValue<SUTime.Temporal>("Temporal", temporal);
+    this.value = new Expressions.PrimitiveValue<>("Temporal", temporal);
   }
 
 /*  public String toString()

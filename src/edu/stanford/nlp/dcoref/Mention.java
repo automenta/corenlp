@@ -34,6 +34,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.logging.Level;
 
 import edu.stanford.nlp.classify.LogisticClassifier;
 import edu.stanford.nlp.dcoref.Dictionaries.Animacy;
@@ -171,7 +172,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
       if (spanString == null) {
         StringBuilder os = new StringBuilder();
         for(int i = 0; i < originalSpan.size(); i ++){
-          if(i > 0) os.append(" ");
+          if(i > 0) os.append(' ');
           os.append(originalSpan.get(i).get(CoreAnnotations.TextAnnotation.class));
         }
         spanString = os.toString();
@@ -247,7 +248,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
 
   private void setSingleton(LogisticClassifier<String, String> predictor, Dictionaries dict){
     double coreference_score = predictor.probabilityOf(
-        new BasicDatum<String, String>(getSingletonFeatures(dict), "1"));
+            new BasicDatum<>(getSingletonFeatures(dict), "1"));
     if(coreference_score < 0.2) this.isSingleton = true;
   }
 
@@ -256,7 +257,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
    * classifier) to decide whether the mention belongs to a singleton entity
    */
   protected ArrayList<String> getSingletonFeatures(Dictionaries dict){
-    ArrayList<String> features = new ArrayList<String>();
+    ArrayList<String> features = new ArrayList<>();
     features.add(mentionType.toString());
     features.add(nerString);
     features.add(animacy.toString());
@@ -279,7 +280,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
   }
 
   private List<String> getMentionString() {
-    List<String> mStr = new ArrayList<String>();
+    List<String> mStr = new ArrayList<>();
     for(CoreLabel l : this.originalSpan) {
       mStr.add(l.get(CoreAnnotations.TextAnnotation.class).toLowerCase());
       if(l==this.headWord) break;   // remove words after headword
@@ -302,7 +303,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
       }
 
       // find converted string with ! (e.g., "dr. martin luther king jr. boulevard" -> "dr. !")
-      List<String> convertedStr = new ArrayList<String>(2);
+      List<String> convertedStr = new ArrayList<>(2);
       convertedStr.add(mStr.get(firstNameIdx));
       convertedStr.add("!");
       if(dict.genderNumber.containsKey(convertedStr)) return dict.genderNumber.get(convertedStr);
@@ -375,7 +376,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
     preprocessedTerms = this.preprocessSearchTerm();
 
     if(dict.statesAbbreviation.containsKey(this.spanToString())) {  // states abbreviations
-      preprocessedTerms = new ArrayList<String>();
+      preprocessedTerms = new ArrayList<>();
       preprocessedTerms.add(dict.statesAbbreviation.get(this.spanToString()));
     }
 
@@ -475,7 +476,9 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
   private void setType(Dictionaries dict) {
     if (isListLike()) {
       mentionType = MentionType.LIST;
-      SieveCoreferenceSystem.logger.finer("IS LIST: " + this);
+      if (SieveCoreferenceSystem.logger.isLoggable(Level.FINER)) {
+        SieveCoreferenceSystem.logger.finer("IS LIST: " + this);
+      }
     } else if (headWord.has(CoreAnnotations.EntityTypeAnnotation.class)){    // ACE gold mention type
       if (headWord.get(CoreAnnotations.EntityTypeAnnotation.class).equals("PRO")) {
         mentionType = MentionType.PRONOMINAL;
@@ -487,7 +490,9 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
     } else {    // MUC
       if(!headWord.has(CoreAnnotations.NamedEntityTagAnnotation.class)) {   // temporary fix
         mentionType = MentionType.NOMINAL;
-        SieveCoreferenceSystem.logger.finest("no NamedEntityTagAnnotation: "+headWord);
+        if (SieveCoreferenceSystem.logger.isLoggable(Level.FINEST)) {
+          SieveCoreferenceSystem.logger.finest("no NamedEntityTagAnnotation: "+headWord);
+        }
       } else if (headWord.get(CoreAnnotations.PartOfSpeechAnnotation.class).startsWith("PRP")
           || (originalSpan.size() == 1 && headWord.get(CoreAnnotations.NamedEntityTagAnnotation.class).equals("O")
               && (dict.allPronouns.contains(headString) || dict.relativePronouns.contains(headString) ))) {
@@ -504,7 +509,9 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
     gender = Gender.UNKNOWN;
     if(genderNumberResult!=null && this.number!=Number.PLURAL){
       gender = genderNumberResult;
-      SieveCoreferenceSystem.logger.finer("[Gender number count] New gender assigned:\t" + gender + ":\t" +  headString + "\tspan:" + spanToString());
+      if (SieveCoreferenceSystem.logger.isLoggable(Level.FINER)) {
+        SieveCoreferenceSystem.logger.finer("[Gender number count] New gender assigned:\t" + gender + ":\t" +  headString + "\tspan:" + spanToString());
+      }
     }
     if (mentionType == MentionType.PRONOMINAL) {
       if (dict.malePronouns.contains(headString)) {
@@ -523,27 +530,37 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
             String name = t.word().toLowerCase();
             if(dict.maleWords.contains(name)) {
               gender = Gender.MALE;
-              SieveCoreferenceSystem.logger.finer("[Bergsma List] New gender assigned:\tMale:\t" +  name + "\tspan:" + spanToString());
+              if (SieveCoreferenceSystem.logger.isLoggable(Level.FINER)) {
+                SieveCoreferenceSystem.logger.finer("[Bergsma List] New gender assigned:\tMale:\t" +  name + "\tspan:" + spanToString());
+              }
               break;
             }
             else if(dict.femaleWords.contains(name))  {
               gender = Gender.FEMALE;
-              SieveCoreferenceSystem.logger.finer("[Bergsma List] New gender assigned:\tFemale:\t" +  name + "\tspan:" + spanToString());
+              if (SieveCoreferenceSystem.logger.isLoggable(Level.FINER)) {
+                SieveCoreferenceSystem.logger.finer("[Bergsma List] New gender assigned:\tFemale:\t" +  name + "\tspan:" + spanToString());
+              }
               break;
             }
           }
         } else {
           if(dict.maleWords.contains(headString)) {
             gender = Gender.MALE;
-            SieveCoreferenceSystem.logger.finer("[Bergsma List] New gender assigned:\tMale:\t" +  headString + "\tspan:" + spanToString());
+            if (SieveCoreferenceSystem.logger.isLoggable(Level.FINER)) {
+              SieveCoreferenceSystem.logger.finer("[Bergsma List] New gender assigned:\tMale:\t" +  headString + "\tspan:" + spanToString());
+            }
           }
           else if(dict.femaleWords.contains(headString))  {
             gender = Gender.FEMALE;
-            SieveCoreferenceSystem.logger.finer("[Bergsma List] New gender assigned:\tFemale:\t" +  headString + "\tspan:" + spanToString());
+            if (SieveCoreferenceSystem.logger.isLoggable(Level.FINER)) {
+              SieveCoreferenceSystem.logger.finer("[Bergsma List] New gender assigned:\tFemale:\t" +  headString + "\tspan:" + spanToString());
+            }
           }
           else if(dict.neutralWords.contains(headString))   {
             gender = Gender.NEUTRAL;
-            SieveCoreferenceSystem.logger.finer("[Bergsma List] New gender assigned:\tNeutral:\t" +  headString + "\tspan:" + spanToString());
+            if (SieveCoreferenceSystem.logger.isLoggable(Level.FINER)) {
+              SieveCoreferenceSystem.logger.finer("[Bergsma List] New gender assigned:\tNeutral:\t" +  headString + "\tspan:" + spanToString());
+            }
           }
         }
       }
@@ -584,11 +601,15 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
       if(number == Number.UNKNOWN){
         if(dict.singularWords.contains(headString)) {
           number = Number.SINGULAR;
-          SieveCoreferenceSystem.logger.finest("[Bergsma] Number set to:\tSINGULAR:\t" + headString);
+          if (SieveCoreferenceSystem.logger.isLoggable(Level.FINEST)) {
+            SieveCoreferenceSystem.logger.finest("[Bergsma] Number set to:\tSINGULAR:\t" + headString);
+          }
         }
         else if(dict.pluralWords.contains(headString))  {
           number = Number.PLURAL;
-          SieveCoreferenceSystem.logger.finest("[Bergsma] Number set to:\tPLURAL:\t" + headString);
+          if (SieveCoreferenceSystem.logger.isLoggable(Level.FINEST)) {
+            SieveCoreferenceSystem.logger.finest("[Bergsma] Number set to:\tPLURAL:\t" + headString);
+          }
         }
       }
 
@@ -650,11 +671,15 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
         if(animacy == Animacy.UNKNOWN)  {
           if(dict.animateWords.contains(headString))  {
             animacy = Animacy.ANIMATE;
-            SieveCoreferenceSystem.logger.finest("Assigned Dekang Lin animacy:\tANIMATE:\t" + headString);
+            if (SieveCoreferenceSystem.logger.isLoggable(Level.FINEST)) {
+              SieveCoreferenceSystem.logger.finest("Assigned Dekang Lin animacy:\tANIMATE:\t" + headString);
+            }
           }
           else if(dict.inanimateWords.contains(headString)) {
             animacy = Animacy.INANIMATE;
-            SieveCoreferenceSystem.logger.finest("Assigned Dekang Lin animacy:\tINANIMATE:\t" + headString);
+            if (SieveCoreferenceSystem.logger.isLoggable(Level.FINEST)) {
+              SieveCoreferenceSystem.logger.finest("Assigned Dekang Lin animacy:\tINANIMATE:\t" + headString);
+            }
           }
         }
       }
@@ -682,7 +707,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
       // make sure that the head of a NE is not a known suffix, e.g., Corp.
       int start = headIndex - startIndex;
       if (originalSpan.size() > 0 && start >= originalSpan.size()) {
-        throw new RuntimeException("Invalid start index " + start + "=" + headIndex + "-" + startIndex
+        throw new RuntimeException("Invalid start index " + start + '=' + headIndex + '-' + startIndex
                 + ": originalSpan=[" + StringUtils.joinWords(originalSpan, " ") + "], head=" + headWord);
       }
       while (start >= 0) {
@@ -930,7 +955,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
     for (int i = headIndex; i >=startIndex ; i--){
       String pos = sentenceWords.get(i).get(CoreAnnotations.PartOfSpeechAnnotation.class);
       if(!pos.startsWith("NNP")) break;
-      if(!ret.equals("")) ret = " "+ret;
+      if(!ret.isEmpty()) ret = ' ' +ret;
       ret = sentenceWords.get(i).get(CoreAnnotations.TextAnnotation.class)+ret;
     }
     return ret;
@@ -949,7 +974,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
     }
     if (s.equals("ROOT")) lowestNP = head;
     for (Tree t : lowestNP.getLeaves()){
-      if (!ret.equals("")) ret = ret + " ";
+      if (!ret.isEmpty()) ret = ret + ' ';
       ret = ret + ((CoreLabel) t.label()).get(CoreAnnotations.TextAnnotation.class);
     }
     if(!this.spanToString().contains(ret)) return this.sentenceWords.get(this.headIndex).get(CoreAnnotations.TextAnnotation.class);
@@ -968,7 +993,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
   }
 
   public List<String> preprocessSearchTerm (){
-    List<String> searchTerms = new ArrayList<String>();
+    List<String> searchTerms = new ArrayList<>();
     String[] terms = new String[4];
 
     terms[0] = this.stringWithoutArticle(this.removePhraseAfterHead());
@@ -990,10 +1015,10 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
       if(term.contains("[")) term = term.replace("[", "\\[");
       if(term.contains("]")) term = term.replace("]", "\\]");
       if(term.contains("^")) term = term.replace("^", "\\^");
-      if(term.equals("")) continue;
+      if(term.isEmpty()) continue;
 
-      if(term.equals("") || searchTerms.contains(term)) continue;
-      if(term.equals(terms[3]) && !terms[2].equals("")) continue;
+      if(term.isEmpty() || searchTerms.contains(term)) continue;
+      if(term.equals(terms[3]) && !terms[2].isEmpty()) continue;
       searchTerms.add(term);
     }
     return searchTerms;
@@ -1001,7 +1026,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
   public static String buildQueryText(List<String> terms) {
     String query = "";
     for (String t : terms){
-      query += t + " ";
+      query += t + ' ';
     }
     return query.trim();
   }
@@ -1019,7 +1044,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
     if(posComma!=-1 && this.headIndex < posComma){
       StringBuilder os = new StringBuilder();
       for(int i = 0; i < posComma-this.startIndex; i++){
-        if(i > 0) os.append(" ");
+        if(i > 0) os.append(' ');
         os.append(this.originalSpan.get(i).get(CoreAnnotations.TextAnnotation.class));
       }
       removed = os.toString();
@@ -1027,7 +1052,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
     if(posComma==-1 && posWH != -1 && this.headIndex < posWH){
       StringBuilder os = new StringBuilder();
       for(int i = 0; i < posWH-this.startIndex; i++){
-        if(i > 0) os.append(" ");
+        if(i > 0) os.append(' ');
         os.append(this.originalSpan.get(i).get(CoreAnnotations.TextAnnotation.class));
       }
       removed = os.toString();
@@ -1059,7 +1084,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
 
   private static Pair<IndexedWord, String> findDependentVerb(Mention m) {
     if (m.dependency.getRoots().size() == 0) {
-      return new Pair<IndexedWord, String>();
+      return new Pair<>();
     }
     // would be nice to condense this pattern, but sadly =reln
     // always uses the last relation in the sequence, not the first
@@ -1068,7 +1093,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
     while (matcher.find()) {
       return Pair.makePair(matcher.getNode("verb"), matcher.getRelnString("reln"));
     }
-    return new Pair<IndexedWord, String>();
+    return new Pair<>();
   }
 
   public boolean insideIn(Mention m){
@@ -1117,7 +1142,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
   // Returns filtered premodifiers (no determiners or numerals)
   public ArrayList<ArrayList<IndexedWord>> getPremodifiers(){
 
-    ArrayList<ArrayList<IndexedWord>> premod = new ArrayList<ArrayList<IndexedWord>>();
+    ArrayList<ArrayList<IndexedWord>> premod = new ArrayList<>();
 
     if(headIndexedWord == null) return premod;
     for(Pair<GrammaticalRelation,IndexedWord> child : dependency.childPairs(headIndexedWord)){
@@ -1127,7 +1152,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
           && !function.endsWith("det") && !function.equals("num")
           && !function.equals("rcmod") && !function.equals("infmod")
           && !function.equals("partmod") && !function.equals("punct")){
-        ArrayList<IndexedWord> phrase = new ArrayList<IndexedWord>(dependency.descendants(child.second()));
+        ArrayList<IndexedWord> phrase = new ArrayList<>(dependency.descendants(child.second()));
         Collections.sort(phrase);
         premod.add(phrase);
       }
@@ -1138,7 +1163,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
   // Returns filtered postmodifiers (no relative, -ed or -ing clauses)
   public ArrayList<ArrayList<IndexedWord>> getPostmodifiers(){
 
-    ArrayList<ArrayList<IndexedWord>> postmod = new ArrayList<ArrayList<IndexedWord>>();
+    ArrayList<ArrayList<IndexedWord>> postmod = new ArrayList<>();
 
     if(headIndexedWord == null) return postmod;
     for(Pair<GrammaticalRelation,IndexedWord> child : dependency.childPairs(headIndexedWord)){
@@ -1148,7 +1173,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
           && !function.equals("rcmod") && !function.equals("infmod")
           && !function.equals("partmod") && !function.equals("punct")
           && !(function.equals("possessive") && dependency.descendants(child.second()).size() == 1)){
-        ArrayList<IndexedWord> phrase = new ArrayList<IndexedWord>(dependency.descendants(child.second()));
+        ArrayList<IndexedWord> phrase = new ArrayList<>(dependency.descendants(child.second()));
         Collections.sort(phrase);
         postmod.add(phrase);
       }
@@ -1207,7 +1232,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
 
   public String getPattern(List<AbstractCoreLabel> pTokens){
 
-    ArrayList<String> phrase_string = new ArrayList<String>();
+    ArrayList<String> phrase_string = new ArrayList<>();
     String ne = "";
     for(AbstractCoreLabel token : pTokens){
       if(token.index() == headWord.index()){
@@ -1227,7 +1252,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
       } else if(!token.ner().equals("O")){
         if(!token.ner().equals(ne)){
           ne = token.ner();
-          phrase_string.add("<"+ne+">");
+          phrase_string.add('<' +ne+ '>');
         }
 
       } else {
@@ -1264,7 +1289,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
       }
     }
 
-    List<String> neStrings = new ArrayList<String>();
+    List<String> neStrings = new ArrayList<>();
     Set<String> hs = Generics.newHashSet();
     for (List<AbstractCoreLabel> namedEntity : namedEntities) {
       String ne_str = StringUtils.joinWords(namedEntity, " ");
@@ -1279,7 +1304,7 @@ public class Mention implements CoreAnnotation<Mention>, Serializable {
   }
 
   public List<String> getPremodifierContext() {
-    List<String> neStrings = new ArrayList<String>();
+    List<String> neStrings = new ArrayList<>();
     for (List<IndexedWord> words : getPremodifiers()) {
       neStrings.addAll(getContextHelper(words));
     }

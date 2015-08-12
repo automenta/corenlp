@@ -208,13 +208,13 @@ public class RelationTripleSegmenter {
             continue;  // We extracted an identity
           }
           if (subjectSpan.end() == objectSpan.start() - 1 &&
-              (tokens.get(subjectSpan.end()).word().matches("[\\.,:;\\('\"]") ||
-                  "CC".equals(tokens.get(subjectSpan.end()).tag()))) {
+                  (tokens.get(subjectSpan.end()).word().matches("[\\.,:;\\('\"]") ||
+                          "CC".equals(tokens.get(subjectSpan.end()).tag()))) {
             continue; // We're straddling a clause
           }
           if (objectSpan.end() == subjectSpan.start() - 1 &&
-              (tokens.get(objectSpan.end()).word().matches("[\\.,:;\\('\"]") ||
-                  "CC".equals(tokens.get(objectSpan.end()).tag()))) {
+                  (tokens.get(objectSpan.end()).word().matches("[\\.,:;\\('\"]") ||
+                          "CC".equals(tokens.get(objectSpan.end()).tag()))) {
             continue; // We're straddling a clause
           }
           // Get the relation
@@ -317,7 +317,7 @@ public class RelationTripleSegmenter {
       boolean shouldRemove = false;
       for (CoreLabel token : term) {
         if (token.get(NaturalLogicAnnotations.PolarityAnnotation.class) != null &&
-            token.get(NaturalLogicAnnotations.PolarityAnnotation.class).isDownwards() ) {
+                token.get(NaturalLogicAnnotations.PolarityAnnotation.class).isDownwards() ) {
           shouldRemove = true;
         }
       }
@@ -391,14 +391,14 @@ public class RelationTripleSegmenter {
         if (edge.getDependent() != originalRoot) {
           String relStr = edge.getRelation().toString();
           if ((relStr.startsWith("nmod:") &&
-               !"nmod:poss".equals(relStr) &&
-               !"nmod:npmod".equals(relStr)
-              ) ||
-              relStr.startsWith("acl:") || relStr.startsWith("advcl:")) {
+                  !"nmod:poss".equals(relStr) &&
+                  !"nmod:npmod".equals(relStr)
+          ) ||
+                  relStr.startsWith("acl:") || relStr.startsWith("advcl:")) {
             chunk.add(mockNode(edge.getGovernor().backingLabel(), 1,
-                    edge.getRelation().toString().substring(edge.getRelation().toString().indexOf(":") + 1).replace("tmod","at_time"),
-                    "PP"),
-                -(((double) edge.getGovernor().index()) + 0.9));
+                            edge.getRelation().toString().substring(edge.getRelation().toString().indexOf(":") + 1).replace("tmod","at_time"),
+                            "PP"),
+                    -(((double) edge.getGovernor().index()) + 0.9));
           }
           if (edge.getRelation().getShortName().equals("conj")) {
             chunk.add(mockNode(root.backingLabel(), -1, edge.getRelation().getSpecific(), "CC"), -(((double) root.index()) - 0.9));
@@ -492,7 +492,7 @@ public class RelationTripleSegmenter {
         if (((int) VERB_PATTERN_HITS.totalCount()) % 1000 == 0) {
           ArrayList<SemgrexPattern> newPatterns = new ArrayList<>(VERB_PATTERNS);
           Collections.sort(newPatterns, (x, y) ->
-                  (int) (VERB_PATTERN_HITS.getCount(y) - VERB_PATTERN_HITS.getCount(x))
+                          (int) (VERB_PATTERN_HITS.getCount(y) - VERB_PATTERN_HITS.getCount(x))
           );
           VERB_PATTERNS = newPatterns;
         }
@@ -518,7 +518,7 @@ public class RelationTripleSegmenter {
               // Add adverb modifiers
               String tag = edge.getDependent().backingLabel().tag();
               if (tag == null ||
-                  (!tag.startsWith("W") && !edge.getDependent().backingLabel().word().equalsIgnoreCase("then"))) {  // prohibit advmods like "where"
+                      (!tag.startsWith("W") && !edge.getDependent().backingLabel().word().equalsIgnoreCase("then"))) {  // prohibit advmods like "where"
                 adverbs.add(edge.getDependent());
               }
             } else if (edge.getDependent().equals(relObj)) {
@@ -581,7 +581,7 @@ public class RelationTripleSegmenter {
         // (add preposition edge)
         if (prepEdge != null) {
           verbChunk.add(mockNode(verb.backingLabel(), 1,
-              prepEdge.substring(prepEdge.indexOf(":") + 1).replace("_", " ").replace("tmod", "at_time"), "PP"), -(verb.index() + 10));
+                  prepEdge.substring(prepEdge.indexOf(":") + 1).replace("_", " ").replace("tmod", "at_time"), "PP"), -(verb.index() + 10));
         }
         // (check for additional edges)
         if (consumeAll && parse.outDegree(verb) > numKnownDependents) {
@@ -619,8 +619,8 @@ public class RelationTripleSegmenter {
         Optional<List<CoreLabel>> objectSpan = getValidObjectChunk(parse, object, objNoopArc);
         // Create relation
         if (subjectSpan.isPresent() && objectSpan.isPresent() &&
-            CollectionUtils.intersection(new HashSet<>(subjectSpan.get()), new HashSet<>(objectSpan.get())).isEmpty()
-            ) {  // ... and has a valid subject+object
+                CollectionUtils.intersection(new HashSet<>(subjectSpan.get()), new HashSet<>(objectSpan.get())).isEmpty()
+                ) {  // ... and has a valid subject+object
           // Success! Found a valid extraction.
           RelationTriple.WithTree extraction = new RelationTriple.WithTree(subjectSpan.get(), relation, objectSpan.get(), parse, confidence.orElse(1.0));
           return Optional.of(extraction);
@@ -763,7 +763,7 @@ public class RelationTripleSegmenter {
     // sometimes not _really_ its own clause
     IndexedWord root = parse.getFirstRoot();
     if ( (root.lemma() != null && root.lemma().equalsIgnoreCase("be")) ||
-         (root.lemma() == null && (root.word().equalsIgnoreCase("is") || root.word().equalsIgnoreCase("are") || root.word().equalsIgnoreCase("were") || root.word().equalsIgnoreCase("be")))) {
+            (root.lemma() == null && (root.word().equalsIgnoreCase("is") || root.word().equalsIgnoreCase("are") || root.word().equalsIgnoreCase("were") || root.word().equalsIgnoreCase("be")))) {
       // Check for the "there is" construction
       boolean foundThere = false;
       boolean tooMayArcs = false;  // an indicator for there being too much nonsense hanging off of the root

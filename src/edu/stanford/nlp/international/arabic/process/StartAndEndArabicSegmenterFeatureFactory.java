@@ -35,10 +35,10 @@ public class StartAndEndArabicSegmenterFeatureFactory<IN extends CoreLabel> exte
       String start = c.word().substring(0, 2);
       String end = c.word().substring(c.word().length() - 2);
       if (c.index() == 2) {
-        features.add(start + "_" + end + "-begin-wrap");
+        features.add(start + '_' + end + "-begin-wrap");
       }
       if (c.index() == c.word().length() - 1) {
-        features.add(start + "_" + end + "-end-wrap");
+        features.add(start + '_' + end + "-end-wrap");
       }
     }
     

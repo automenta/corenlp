@@ -171,8 +171,7 @@ public interface ClauseSplitter extends BiFunction<SemanticGraph, Boolean, Claus
             datum.setLabel(label);
             // (dump datum to debug log)
             if (datasetDumpWriter.isPresent()) {
-              datasetDumpWriter.get().println("" + label + "\t" + correct + "\t" +
-                  StringUtils.join(decision.entrySet().stream().map(entry -> "" + entry.getKey() + "->" + entry.getValue()), ";"));
+              datasetDumpWriter.get().println(label + "\t" + correct + "\t" + StringUtils.join(decision.entrySet().stream().map(entry -> entry.getKey() + "->" + entry.getValue()), ";"));
             }
             // (get datum weight)
             float weight;
@@ -203,7 +202,7 @@ public interface ClauseSplitter extends BiFunction<SemanticGraph, Boolean, Claus
           }
         }
         return true;
-      }, new LinearClassifier<>(new ClassicCounter<>()), Collections.EMPTY_MAP, featurizer, 10000);
+      }, new LinearClassifier<>(new ClassicCounter<>()), Collections.<String, List<String>>emptyMap(), featurizer, 10000);
       // Debug info
       if (numExamplesProcessed.incrementAndGet() % 100 == 0) {
         log("processed " + numExamplesProcessed + " training sentences: " + dataset.size() + " datums");
@@ -235,7 +234,7 @@ public interface ClauseSplitter extends BiFunction<SemanticGraph, Boolean, Claus
     endTrack("Training accuracy");
 
     int numFolds = 5;
-    forceTrack("" + numFolds + " fold cross-validation");
+    forceTrack(numFolds + " fold cross-validation");
     for (int fold = 0; fold < numFolds; ++fold) {
       forceTrack("Fold " + (fold + 1));
       forceTrack("Training");
@@ -247,7 +246,7 @@ public interface ClauseSplitter extends BiFunction<SemanticGraph, Boolean, Claus
       endTrack("Test");
       endTrack("Fold " + (fold + 1));
     }
-    endTrack("" + numFolds + " fold cross-validation");
+    endTrack(numFolds + " fold cross-validation");
 
 
     // Step 5: return factory
@@ -280,7 +279,7 @@ public interface ClauseSplitter extends BiFunction<SemanticGraph, Boolean, Claus
       System.err.print("Loading clause searcher from " + serializedModel + "...");
       Pair<Classifier<ClauseClassifierLabel,String>, Featurizer> data = IOUtils.readObjectFromURLOrClasspathOrFileSystem(serializedModel);
       ClauseSplitter rtn =  (tree, truth) -> new ClauseSplitterSearchProblem(tree, truth, Optional.of(data.first), Optional.of(data.second));
-      System.err.println("done [" + Redwood.formatTimeDifference(System.currentTimeMillis() - start) + "]");
+      System.err.println("done [" + Redwood.formatTimeDifference(System.currentTimeMillis() - start) + ']');
       return rtn;
     } catch (ClassNotFoundException e) {
       throw new IllegalStateException("Invalid model at path: " + serializedModel, e);

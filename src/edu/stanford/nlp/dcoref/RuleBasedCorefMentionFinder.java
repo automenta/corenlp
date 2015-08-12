@@ -54,12 +54,12 @@ public class RuleBasedCorefMentionFinder implements CorefMentionFinder {
 
   /** When mention boundaries are given */
   public List<List<Mention>> filterPredictedMentions(List<List<Mention>> allGoldMentions, Annotation doc, Dictionaries dict){
-    List<List<Mention>> predictedMentions = new ArrayList<List<Mention>>();
+    List<List<Mention>> predictedMentions = new ArrayList<>();
 
     for(int i = 0 ; i < allGoldMentions.size(); i++){
       CoreMap s = doc.get(CoreAnnotations.SentencesAnnotation.class).get(i);
       List<Mention> goldMentions = allGoldMentions.get(i);
-      List<Mention> mentions = new ArrayList<Mention>();
+      List<Mention> mentions = new ArrayList<>();
       predictedMentions.add(mentions);
       mentions.addAll(goldMentions);
       findHead(s, mentions);
@@ -86,10 +86,10 @@ public class RuleBasedCorefMentionFinder implements CorefMentionFinder {
   @Override
   public List<List<Mention>> extractPredictedMentions(Annotation doc, int maxID, Dictionaries dict) {
 //    this.maxID = _maxID;
-    List<List<Mention>> predictedMentions = new ArrayList<List<Mention>>();
+    List<List<Mention>> predictedMentions = new ArrayList<>();
     for (CoreMap s : doc.get(CoreAnnotations.SentencesAnnotation.class)) {
 
-      List<Mention> mentions = new ArrayList<Mention>();
+      List<Mention> mentions = new ArrayList<>();
       predictedMentions.add(mentions);
       Set<IntPair> mentionSpanSet = Generics.newHashSet();
       Set<IntPair> namedEntitySpanSet = Generics.newHashSet();
@@ -142,7 +142,7 @@ public class RuleBasedCorefMentionFinder implements CorefMentionFinder {
           if (beginIndex >= 0) {
             IntPair mSpan = new IntPair(beginIndex, endIndex);
             int dummyMentionId = -1;
-            Mention m = new Mention(dummyMentionId, beginIndex, endIndex, dependency, new ArrayList<CoreLabel>(sent.subList(beginIndex, endIndex)));
+            Mention m = new Mention(dummyMentionId, beginIndex, endIndex, dependency, new ArrayList<>(sent.subList(beginIndex, endIndex)));
             mentions.add(m);
             mentionSpanSet.add(mSpan);
             beginIndex = -1;
@@ -173,7 +173,7 @@ public class RuleBasedCorefMentionFinder implements CorefMentionFinder {
           // attached to the previous NER by the earlier heuristic
           if(beginIndex < endIndex && !mentionSpanSet.contains(mSpan)) {
             int dummyMentionId = -1;
-            Mention m = new Mention(dummyMentionId, beginIndex, endIndex, dependency, new ArrayList<CoreLabel>(sent.subList(beginIndex, endIndex)));
+            Mention m = new Mention(dummyMentionId, beginIndex, endIndex, dependency, new ArrayList<>(sent.subList(beginIndex, endIndex)));
             mentions.add(m);
             mentionSpanSet.add(mSpan);
             namedEntitySpanSet.add(mSpan);
@@ -188,7 +188,7 @@ public class RuleBasedCorefMentionFinder implements CorefMentionFinder {
       IntPair mSpan = new IntPair(beginIndex, sent.size());
       if(!mentionSpanSet.contains(mSpan)) {
         int dummyMentionId = -1;
-        Mention m = new Mention(dummyMentionId, beginIndex, sent.size(), dependency, new ArrayList<CoreLabel>(sent.subList(beginIndex, sent.size())));
+        Mention m = new Mention(dummyMentionId, beginIndex, sent.size(), dependency, new ArrayList<>(sent.subList(beginIndex, sent.size())));
         mentions.add(m);
         mentionSpanSet.add(mSpan);
         namedEntitySpanSet.add(mSpan);
@@ -215,7 +215,7 @@ public class RuleBasedCorefMentionFinder implements CorefMentionFinder {
       IntPair mSpan = new IntPair(beginIdx, endIdx);
       if(!mentionSpanSet.contains(mSpan) && !insideNE(mSpan, namedEntitySpanSet)) {
         int dummyMentionId = -1;
-        Mention m = new Mention(dummyMentionId, beginIdx, endIdx, dependency, new ArrayList<CoreLabel>(sent.subList(beginIdx, endIdx)), t);
+        Mention m = new Mention(dummyMentionId, beginIdx, endIdx, dependency, new ArrayList<>(sent.subList(beginIdx, endIdx)), t);
         mentions.add(m);
         mentionSpanSet.add(mSpan);
       }
@@ -248,13 +248,13 @@ public class RuleBasedCorefMentionFinder implements CorefMentionFinder {
       spanToMentionSubTree.put(new IntPair(beginIdx, endIdx), m2);
     }
 
-    for(IntPair mSpan : spanToMentionSubTree.keySet()){
-      if(!mentionSpanSet.contains(mSpan) && !insideNE(mSpan, namedEntitySpanSet)) {
+    for(Map.Entry<IntPair, Tree> intPairTreeEntry : spanToMentionSubTree.entrySet()){
+      if(!mentionSpanSet.contains(intPairTreeEntry.getKey()) && !insideNE(intPairTreeEntry.getKey(), namedEntitySpanSet)) {
         int dummyMentionId = -1;
-        Mention m = new Mention(dummyMentionId, mSpan.get(0), mSpan.get(1), dependency,
-                                new ArrayList<CoreLabel>(sent.subList(mSpan.get(0), mSpan.get(1))), spanToMentionSubTree.get(mSpan));
+        Mention m = new Mention(dummyMentionId, intPairTreeEntry.getKey().get(0), intPairTreeEntry.getKey().get(1), dependency,
+                new ArrayList<>(sent.subList(intPairTreeEntry.getKey().get(0), intPairTreeEntry.getKey().get(1))), intPairTreeEntry.getValue());
         mentions.add(m);
-        mentionSpanSet.add(mSpan);
+        mentionSpanSet.add(intPairTreeEntry.getKey());
       }
     }
   }
@@ -278,7 +278,7 @@ public class RuleBasedCorefMentionFinder implements CorefMentionFinder {
       m.headString = m.headWord.get(CoreAnnotations.TextAnnotation.class).toLowerCase(Locale.ENGLISH);
       int start = m.headIndex - m.startIndex;
       if (start < 0 || start >= m.originalSpan.size()) {
-        SieveCoreferenceSystem.logger.warning("Invalid index for head " + start + "=" + m.headIndex + "-" + m.startIndex
+        SieveCoreferenceSystem.logger.warning("Invalid index for head " + start + '=' + m.headIndex + '-' + m.startIndex
                 + ": originalSpan=[" + StringUtils.joinWords(m.originalSpan, " ") + "], head=" + m.headWord);
         SieveCoreferenceSystem.logger.warning("Setting head string to entire mention");
         m.headIndex = m.startIndex;
@@ -310,7 +310,7 @@ public class RuleBasedCorefMentionFinder implements CorefMentionFinder {
     // context, so as to make the parser work better :-)
     if (allowReparsing) {
       int approximateness = 0;
-      List<CoreLabel> extentTokens = new ArrayList<CoreLabel>();
+      List<CoreLabel> extentTokens = new ArrayList<>();
       extentTokens.add(initCoreLabel("It"));
       extentTokens.add(initCoreLabel("was"));
       final int ADDED_WORDS = 2;
@@ -392,7 +392,7 @@ public class RuleBasedCorefMentionFinder implements CorefMentionFinder {
         return findPartialSpan(kid, start);
       }
     }
-    throw new RuntimeException("Shouldn't happen: " + start + " " + root);
+    throw new RuntimeException("Shouldn't happen: " + start + ' ' + root);
   }
 
   private static Tree funkyFindLeafWithApproximateSpan(Tree root, String token, int index, int approximateness) {
@@ -410,8 +410,8 @@ public class RuleBasedCorefMentionFinder implements CorefMentionFinder {
     // this shouldn't happen
     //    throw new RuntimeException("RuleBasedCorefMentionFinder: ERROR: Failed to find head token");
     SieveCoreferenceSystem.logger.warning("RuleBasedCorefMentionFinder: Failed to find head token:\n" +
-                       "Tree is: " + root + "\n" +
-                       "token = |" + token + "|" + index + "|, approx=" + approximateness);
+                       "Tree is: " + root + '\n' +
+                       "token = |" + token + '|' + index + "|, approx=" + approximateness);
     for (Tree leaf : leaves) {
       if (token.equals(leaf.value())) {
         //System.err.println("Found something: returning " + leaf);
@@ -440,7 +440,7 @@ public class RuleBasedCorefMentionFinder implements CorefMentionFinder {
     sent.set(CoreAnnotations.TokensAnnotation.class, tokens);
     sent.set(ParserAnnotations.ConstraintAnnotation.class, constraints);
     Annotation doc = new Annotation("");
-    List<CoreMap> sents = new ArrayList<CoreMap>(1);
+    List<CoreMap> sents = new ArrayList<>(1);
     sents.add(sent);
     doc.set(CoreAnnotations.SentencesAnnotation.class, sents);
     getParser().annotate(doc);

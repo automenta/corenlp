@@ -148,7 +148,7 @@ public class Morphology implements Function {
       quotedWord = quotedWord.replaceAll("\n", "\u1CF2");
     }
     String wordtag = quotedWord + '_' + tag;
-    if (DEBUG) System.err.println("Trying to normalize |" + wordtag + "|");
+    if (DEBUG) System.err.println("Trying to normalize |" + wordtag + '|');
     try {
       lexer.setOption(1, lowercase);
       lexer.yyreset(new StringReader(wordtag));
@@ -163,7 +163,7 @@ public class Morphology implements Function {
       }
       return wordRes;
     } catch (IOException e) {
-      LOGGER.warning("Morphology.stem() had error on word " + word + "/" + tag);
+      LOGGER.warning("Morphology.stem() had error on word " + word + '/' + tag);
       return word;
     }
   }
@@ -250,7 +250,7 @@ public class Morphology implements Function {
       String[] words = verbs.split("\\s+");
       System.out.print(" private static final String[] verbStems = { ");
       for (int i = 0; i < words.length; i++) {
-        System.out.print("\"" + words[i] + "\"");
+        System.out.print('"' + words[i] + '"');
         if (i != words.length - 1) {
           System.out.print(", ");
           if (i % 5 == 0) {
@@ -271,7 +271,7 @@ public class Morphology implements Function {
           try {
             flags = Integer.parseInt(arg.substring(1));
           } catch (NumberFormatException nfe) {
-            System.err.println("Couldn't handle flag: " + arg + "\n");
+            System.err.println("Couldn't handle flag: " + arg + '\n');
             // ignore flag
           }
         } else {

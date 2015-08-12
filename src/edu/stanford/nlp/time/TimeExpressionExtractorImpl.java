@@ -3,6 +3,7 @@ package edu.stanford.nlp.time;
 import edu.stanford.nlp.ie.NumberNormalizer;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.tokensregex.*;
+import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.pipeline.ChunkAnnotationUtils;
 import edu.stanford.nlp.util.CoreMap;
 
@@ -65,6 +66,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
     this.expressionExtractor.setLogger(logger);
   }
 
+
   @Override
   public List<CoreMap> extractTimeExpressionCoreMaps(CoreMap annotation, CoreMap docAnnotation) {
     SUTime.TimeIndex timeIndex = null;
@@ -87,7 +89,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
     } else {
       timeIndex = new SUTime.TimeIndex();
     }
-    if ("".equals(docDate)) {
+    if (docDate != null && docDate.isEmpty()) {
       docDate = null;
     }
     if (timeIndex.docDate == null && docDate != null) {
@@ -96,7 +98,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
         // TODO: if docDate didn't change, we can cache the parsing of the docDate and not repeat it for every sentence
         timeIndex.docDate = SUTime.parseDateTime(docDate,true);
       } catch (Exception e) {
-        throw new RuntimeException("Could not parse date string: [" + docDate + "]", e);
+        throw new RuntimeException("Could not parse date string: [" + docDate + ']', e);
       }
     }
     String sectionDate = annotation.get(CoreAnnotations.SectionDateAnnotation.class);
@@ -105,7 +107,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
   }
 
   @Override
-  public List<CoreMap> extractTimeExpressionCoreMaps(CoreMap annotation, String docDate)
+  public List<CoreMap> extractTimeExpressionCoreMaps(Annotation annotation, String docDate)
   {
     SUTime.TimeIndex timeIndex = new SUTime.TimeIndex();
     return extractTimeExpressionCoreMaps(annotation, docDate, timeIndex);
@@ -124,7 +126,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
   private List<CoreMap> toCoreMaps(CoreMap annotation, List<TimeExpression> timeExpressions, SUTime.TimeIndex timeIndex)
   {
     if (timeExpressions == null) return null;
-    List<CoreMap> coreMaps = new ArrayList<CoreMap>(timeExpressions.size());
+    List<CoreMap> coreMaps = new ArrayList<>(timeExpressions.size());
     for (TimeExpression te:timeExpressions) {
       CoreMap cm = te.getAnnotation();
       SUTime.Temporal temporal = te.getTemporal();
@@ -172,7 +174,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
         // TODO: if docDate didn't change, we can cache the parsing of the docDate and not repeat it for every sentence
         refDate = SUTime.parseDateTime(refDateStr,true);
       } catch (Exception e) {
-        throw new RuntimeException("Could not parse date string: [" + refDateStr + "]", e);
+        throw new RuntimeException("Could not parse date string: [" + refDateStr + ']', e);
       }
     }
     return extractTimeExpressions(annotation, refDate, timeIndex);
@@ -186,7 +188,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
     }
 
     List<? extends MatchedExpression> matchedExpressions = expressionExtractor.extractExpressions(annotation);
-    List<TimeExpression> timeExpressions = new ArrayList<TimeExpression>(matchedExpressions.size());
+    List<TimeExpression> timeExpressions = new ArrayList<>(matchedExpressions.size());
     for (MatchedExpression expr : matchedExpressions) {
       // Make sure we have the correct type (instead of just MatchedExpression)
       //timeExpressions.add(TimeExpression.TimeExpressionConverter.apply(expr));
@@ -215,7 +217,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
     }
     if (options.restrictToTimex3) {
       // Keep only TIMEX3 compatible timeExpressions
-      List<TimeExpression> kept = new ArrayList<TimeExpression>(timeExpressions.size());
+      List<TimeExpression> kept = new ArrayList<>(timeExpressions.size());
       for (TimeExpression te:timeExpressions) {
         if (te.getTemporal() != null && te.getTemporal().getTimexValue() != null) {
           kept.add(te);
@@ -240,7 +242,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
     // Add back nested time expressions for ranges....
     // For now only one level of nesting...
     if (options.includeNested) {
-      List<TimeExpression> nestedTimeExpressions = new ArrayList<TimeExpression>();
+      List<TimeExpression> nestedTimeExpressions = new ArrayList<>();
       for (TimeExpression te:timeExpressions) {
         if (te.isIncludeNested())  {
           List<? extends CoreMap> children = te.getAnnotation().get(TimeExpression.ChildrenAnnotation.class);
@@ -294,7 +296,7 @@ public class TimeExpressionExtractorImpl implements TimeExpressionExtractor {
     }
   }
 
-  private SUTime.Time findReferenceDate(List<TimeExpression> timeExpressions) {
+  private static SUTime.Time findReferenceDate(List<TimeExpression> timeExpressions) {
     // Find first full date in this annotation with year, month, and day
     for (TimeExpression te:timeExpressions) {
       SUTime.Temporal t = te.getTemporal();

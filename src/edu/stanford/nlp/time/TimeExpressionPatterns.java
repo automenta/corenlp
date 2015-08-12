@@ -1,6 +1,7 @@
 package edu.stanford.nlp.time;
 
 import edu.stanford.nlp.ling.tokensregex.CoreMapExpressionExtractor;
+import edu.stanford.nlp.pipeline.Annotation;
 import edu.stanford.nlp.util.CoreMap;
 
 /**

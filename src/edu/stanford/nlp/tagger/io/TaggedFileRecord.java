@@ -72,33 +72,29 @@ public class TaggedFileRecord {
 
   public String toString() {
     StringBuilder s = new StringBuilder();
-    s.append(FORMAT + "=" + format);
-    s.append("," + ENCODING + "=" + encoding);
-    s.append("," + TAG_SEPARATOR + "=" + tagSeparator);
+    s.append(FORMAT + '=').append(format);
+    s.append(',' + ENCODING + '=').append(encoding);
+    s.append(',' + TAG_SEPARATOR + '=').append(tagSeparator);
     if (treeTransformer != null) {
-      s.append("," + TREE_TRANSFORMER + "=" +
-               treeTransformer.getClass().getName());
+      s.append(',' + TREE_TRANSFORMER + '=').append(treeTransformer.getClass().getName());
     }
     if (trf != null) {
-      s.append("," + TREE_READER + "=" +
-               trf.getClass().getName());
+      s.append(',' + TREE_READER + '=').append(trf.getClass().getName());
     }
     if (treeNormalizer != null) {
-      s.append("," + TREE_NORMALIZER + "=" +
-               treeNormalizer.getClass().getName());
+      s.append(',' + TREE_NORMALIZER + '=').append(treeNormalizer.getClass().getName());
     }
     if (treeRange != null) {
-      s.append("," + TREE_RANGE + "=" +
-               treeRange.toString().replaceAll(",", ":"));
+      s.append(',' + TREE_RANGE + '=').append(treeRange.toString().replaceAll(",", ":"));
     }
     if (treeRange != null) {
-      s.append("," + TREE_FILTER + "=" + treeFilter.getClass().toString());
+      s.append(',' + TREE_FILTER + '=').append(treeFilter.getClass().toString());
     }
     if (wordColumn != null) {
-      s.append("," + WORD_COLUMN + "=" + wordColumn);
+      s.append(',' + WORD_COLUMN + '=').append(wordColumn);
     }
     if (tagColumn != null) {
-      s.append("," + TAG_COLUMN + "=" + tagColumn);
+      s.append(',' + TAG_COLUMN + '=').append(tagColumn);
     }
     return s.toString();
   }
@@ -121,7 +117,7 @@ public class TaggedFileRecord {
   public static List<TaggedFileRecord> createRecords(Properties config,
                                                      String description) {
     String[] pieces = description.split(";");
-    List<TaggedFileRecord> records = new ArrayList<TaggedFileRecord>();
+    List<TaggedFileRecord> records = new ArrayList<>();
     for (String piece : pieces) {
       records.add(createRecord(config, piece));
     }

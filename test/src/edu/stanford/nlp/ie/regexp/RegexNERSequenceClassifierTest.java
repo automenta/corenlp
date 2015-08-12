@@ -125,20 +125,21 @@ public class RegexNERSequenceClassifierTest extends TestCase {
   }
 
   private static String listToString(List<CoreLabel> sentence) {
-    StringBuilder sb = null;
-    for (CoreLabel cl : sentence) {
-      if (sb == null) {
-        sb = new StringBuilder("[");
-      } else {
-        sb.append(", ");
-      }
-      sb.append(cl.toShortString());
-    }
-    if (sb == null) {
-      sb = new StringBuilder("[");
-    }
-    sb.append(']');
-    return sb.toString();
+    return sentence.toString();
+//    StringBuilder sb = null;
+//    for (CoreLabel cl : sentence) {
+//      if (sb == null) {
+//        sb = new StringBuilder("[");
+//      } else {
+//        sb.append(", ");
+//      }
+//      sb.append(cl.toShortString());
+//    }
+//    if (sb == null) {
+//      sb = new StringBuilder("[");
+//    }
+//    sb.append(']');
+//    return sb.toString();
   }
 
   private static List<CoreLabel> deepCopy(List<CoreLabel> in) {

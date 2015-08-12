@@ -399,7 +399,7 @@ public class TransducerGraph implements Cloneable {
 
     @Override
     public String toString() {
-      return sourceNode + " --> " + targetNode + " (" + input + " : " + output + ")";
+      return sourceNode + " --> " + targetNode + " (" + input + " : " + output + ')';
     }
 
   } // end static class Arc
@@ -462,36 +462,39 @@ public class TransducerGraph implements Cloneable {
 
     @Override
     public Object processNode(Object node) {
-      Set s = null;
-      if (node instanceof Set) {
-        s = (Set) node;
-      } else {
-        if (node instanceof Block) {
-          Block b = (Block) node;
-          s = b.getMembers();
+      while (true) {
+        Set s = null;
+        if (node instanceof Set) {
+          s = (Set) node;
         } else {
-          throw new RuntimeException("Unexpected node class");
+          if (node instanceof Block) {
+            Block b = (Block) node;
+            s = b.getMembers();
+          } else {
+            throw new RuntimeException("Unexpected node class");
+          }
         }
-      }
-      Object sampleNode = s.iterator().next();
-      if (s.size() == 1) {
-        if (sampleNode instanceof Block) {
-          return processNode(sampleNode);
-        } else {
-          return sampleNode;
+        Object sampleNode = s.iterator().next();
+        if (s.size() == 1) {
+          if (sampleNode instanceof Block) {
+            node = sampleNode;
+            continue;
+          } else {
+            return sampleNode;
+          }
         }
-      }
-      // nope there's a set of things
-      if (sampleNode instanceof String) {
-        String str = (String) sampleNode;
-        if (str.charAt(0) != '@') {
-          // passive category...
-          return tlp.basicCategory(str) + "-" + s.hashCode(); // TODO remove b/c there could be collisions
-          //          return tlp.basicCategory(str) + "-" + System.identityHashCode(s);
+        // nope there's a set of things
+        if (sampleNode instanceof String) {
+          String str = (String) sampleNode;
+          if (str.charAt(0) != '@') {
+            // passive category...
+            return tlp.basicCategory(str) + '-' + s.hashCode(); // TODO remove b/c there could be collisions
+            //          return tlp.basicCategory(str) + "-" + System.identityHashCode(s);
+          }
         }
+        return "@NodeSet-" + s.hashCode(); // TODO remove b/c there could be collisions
+        //      return sampleNode.toString();
       }
-      return "@NodeSet-" + s.hashCode(); // TODO remove b/c there could be collisions
-      //      return sampleNode.toString();
     }
   }
 
@@ -576,7 +579,7 @@ public class TransducerGraph implements Cloneable {
       mag *= 4;
     }
     double htd = ht / 10.0;
-    result.append("size = \"" + wd + "," + htd + "\";\n");
+    result.append("size = \"").append(wd).append(',').append(htd).append("\";\n");
     result.append("graph [rankdir = \"LR\"];\n");
     result.append("graph [ranksep = \"0.2\"];\n");
     for (Object node : nodes) {
@@ -586,7 +589,7 @@ public class TransducerGraph implements Cloneable {
       //      if (getEndNodes().contains(node)) {
       //        result.append("label=\"" + node.toString() + "\", style=filled, ");
       //      } else
-      result.append("label=\"" + node.toString() + "\"");
+      result.append("label=\"").append(node.toString()).append('"');
       result.append("height=\"0.3\", width=\"0.3\"");
       result.append(" ];\n");
       for (Arc arc : getArcsBySource(node)) {
@@ -614,7 +617,7 @@ public class TransducerGraph implements Cloneable {
             weight = (int) dd;
           }
           if (weight > 0) {
-            wt = ", weight = \"" + weight + "\"";
+            wt = ", weight = \"" + weight + '"';
           }
           if (dotWeightInverted && dd <= 2.0 || (!dotWeightInverted) && dd >= 20.0) {
             wt += ", style=bold";
@@ -622,7 +625,7 @@ public class TransducerGraph implements Cloneable {
         } else {
           result.append(output);
         }
-        result.append("\"");
+        result.append('"');
         result.append(wt);
         // result.append("fontsize = 14 ");
         if (arc.getInput().toString().equals("EPSILON")) {
@@ -695,7 +698,7 @@ public class TransducerGraph implements Cloneable {
     Object node = this.getStartNode();
     Set endNodes = this.getEndNodes();
     while (!endNodes.contains(node)) {
-      List<Arc> arcs = new ArrayList<Arc>(this.getArcsBySource(node));
+      List<Arc> arcs = new ArrayList<>(this.getArcsBySource(node));
       TransducerGraph.Arc arc = arcs.get(r.nextInt(arcs.size()));
       list.add(arc.getInput());
       node = arc.getTargetNode();
@@ -734,7 +737,7 @@ public class TransducerGraph implements Cloneable {
    * For testing only.
    */
   public List<Double> getPathOutputs(List<List> pathList) {
-    List<Double> outputList = new ArrayList<Double>();
+    List<Double> outputList = new ArrayList<>();
     for (List path : pathList) {
       outputList.add(new Double(getOutputOfPathInGraph(path)));
     }
@@ -861,7 +864,7 @@ public class TransducerGraph implements Cloneable {
     int pathLength = (int) (r.nextGaussian() * pathLengthVariance + pathLengthMean);
     for (int i = 0; i < numPaths; i++) {
       // make a path
-      List<String> path = new ArrayList<String>();
+      List<String> path = new ArrayList<>();
       String input;
       for (int j = 0; j < pathLength; j++) {
         input = Integer.toString(r.nextInt(numInputs));
@@ -908,9 +911,9 @@ public class TransducerGraph implements Cloneable {
         b.append("  ");
       }
       if (getEndNodes().contains(newArc.getTargetNode())) {
-        b.append(newArc + " END\n");
+        b.append(newArc).append(" END\n");
       } else {
-        b.append(newArc + "\n");
+        b.append(newArc).append("\n");
       }
       if (forward) {
         depthFirstSearchHelper(newArc.getTargetNode(), marked, level + 1, forward, b);

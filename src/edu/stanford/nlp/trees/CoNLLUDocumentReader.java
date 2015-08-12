@@ -51,12 +51,12 @@ public class CoNLLUDocumentReader implements
       if (line == null) return null;
       Function<String,IndexedWord> func = new WordProcessor();
       ObjectBank<IndexedWord> words = ObjectBank.getLineIterator(new StringReader(line), func);
-      List<IndexedWord> sorted = new ArrayList<IndexedWord>(words);
+      List<IndexedWord> sorted = new ArrayList<>(words);
       Collections.sort(sorted);
 
 
       /* Construct a semantic graph. */
-      List<TypedDependency> deps = new ArrayList<TypedDependency>(sorted.size());
+      List<TypedDependency> deps = new ArrayList<>(sorted.size());
       for (IndexedWord word : sorted) {
         lineNumberCounter++;
         GrammaticalRelation reln = GrammaticalRelation.valueOf(Language.UniversalEnglish, word.get(CoreAnnotations.CoNLLDepTypeAnnotation.class));
@@ -119,7 +119,7 @@ public class CoNLLUDocumentReader implements
    * @return A HashMap<String,String> with the feature values.
    */
   public static HashMap<String,String> parseFeatures(String featureString) {
-    HashMap<String, String> features = new HashMap<String, String>();
+    HashMap<String, String> features = new HashMap<>();
     if (! featureString.equals("_")) {
       String[] featValPairs = featureString.split("\\|");
       for (String p : featValPairs) {
@@ -138,26 +138,26 @@ public class CoNLLUDocumentReader implements
    */
 
   public static String toFeatureString(HashMap<String,String> features) {
-    StringBuffer sb = new StringBuffer();
+    StringBuilder sb = new StringBuilder();
     boolean first = true;
-    List<String> sortedKeys = new ArrayList<String>(features.keySet());
+    List<String> sortedKeys = new ArrayList<>(features.keySet());
     Collections.sort(sortedKeys, new FeatureNameComparator());
     for (String key : sortedKeys) {
       if ( ! first) {
-        sb.append("|");
+        sb.append('|');
       } else {
         first = false;
       }
 
       sb.append(key)
-        .append("=")
+        .append('=')
         .append(features.get(key));
 
     }
 
     /* Empty feature list. */
     if (first) {
-      sb.append("_");
+      sb.append('_');
     }
 
     return sb.toString();

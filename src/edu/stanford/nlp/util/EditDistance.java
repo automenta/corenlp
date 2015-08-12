@@ -35,11 +35,11 @@ public class EditDistance {
 
   // CONSTRAINT SEMIRING START
 
-  protected double best() {
+  protected static double best() {
     return 0.0;
   }
 
-  protected double worst() {
+  protected static double worst() {
     return Double.POSITIVE_INFINITY;
   }
 
@@ -47,14 +47,14 @@ public class EditDistance {
     return 1.0;
   }
 
-  protected double better(double x, double y) {
+  protected static double better(double x, double y) {
     if (x < y) {
       return x;
     }
     return y;
   }
 
-  protected double combine(double x, double y) {
+  protected static double combine(double x, double y) {
     return x + y;
   }
 

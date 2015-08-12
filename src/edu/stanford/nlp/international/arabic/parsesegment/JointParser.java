@@ -86,10 +86,6 @@ public final class JointParser {
         FileInputStream fileStream = new FileInputStream(new File("debug.2.xml"));
         inputStream = (SER_INPUT) ? new ObjectInputStream(new GZIPInputStream(fileStream)) : fileStream;
       }
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
-      System.exit(-1);
-
     } catch (IOException e) {
       e.printStackTrace();
       System.exit(-1);

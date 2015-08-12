@@ -96,10 +96,10 @@ public class QuantifiableEntityExtractor {
     List<UnitPrefix> prefixes = UnitPrefix.loadPrefixes(infile);
     PrintWriter pw = IOUtils.getPrintWriter(outfile);
     pw.println("SI_PREFIX_MAP = {");
-    List<String> items = new ArrayList<String>();
+    List<String> items = new ArrayList<>();
     for (UnitPrefix prefix:prefixes) {
       if ("SI".equals(prefix.system)) {
-        items.add("\"" + prefix.name + "\": " + prefix.getName().toUpperCase());
+        items.add('"' + prefix.name + "\": " + prefix.getName().toUpperCase());
       }
     }
     pw.println(StringUtils.join(items, ",\n"));
@@ -110,7 +110,7 @@ public class QuantifiableEntityExtractor {
     items.clear();
     for (UnitPrefix prefix:prefixes) {
       if ("SI".equals(prefix.system)) {
-        items.add("\"" + prefix.symbol + "\": " + prefix.getName().toUpperCase());
+        items.add('"' + prefix.symbol + "\": " + prefix.getName().toUpperCase());
       }
     }
     pw.println(StringUtils.join(items, ",\n"));
@@ -125,10 +125,10 @@ public class QuantifiableEntityExtractor {
 
     List<Unit> units = Units.loadUnits(unitsFiles);
     pw.println("SI_UNIT_MAP = {");
-    List<String> items = new ArrayList<String>();
+    List<String> items = new ArrayList<>();
     for (Unit unit:units) {
       if ("SI".equals(unit.prefixSystem)) {
-        items.add("\"" + unit.name + "\": " + (unit.getType() + "_" + unit.getName()).toUpperCase());
+        items.add('"' + unit.name + "\": " + (unit.getType() + '_' + unit.getName()).toUpperCase());
       }
     }
     pw.println(StringUtils.join(items, ",\n"));
@@ -140,7 +140,7 @@ public class QuantifiableEntityExtractor {
     items.clear();
     for (Unit unit:units) {
       if ("SI".equals(unit.prefixSystem)) {
-        items.add("\"" + unit.symbol + "\": " + (unit.getType() + "_" + unit.getName()).toUpperCase());
+        items.add('"' + unit.symbol + "\": " + (unit.getType() + '_' + unit.getName()).toUpperCase());
       }
     }
     pw.println(StringUtils.join(items, ",\n"));
@@ -151,7 +151,7 @@ public class QuantifiableEntityExtractor {
     pw.println("SYM_UNIT_MAP = {");
     items.clear();
     for (Unit unit:units) {
-      items.add("\"" + unit.symbol + "\": " + (unit.getType() + "_" + unit.getName()).toUpperCase());
+      items.add('"' + unit.symbol + "\": " + (unit.getType() + '_' + unit.getName()).toUpperCase());
     }
     pw.println(StringUtils.join(items, ",\n"));
     pw.println("}");

@@ -84,7 +84,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
   }
 
   public Datum<String,String> createDatum(RelationMention rel, Logger logger) {
-    Counter<String> features = new ClassicCounter<String>();
+    Counter<String> features = new ClassicCounter<>();
     if (rel.getArgs().size() != 2) {
       return null;
     }
@@ -92,7 +92,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
     addFeatures(features, rel, featureList, logger);
 
     String labelString = rel.getType();
-    return new RVFDatum<String, String>(features, labelString);
+    return new RVFDatum<>(features, labelString);
   }
 
   @Override
@@ -101,7 +101,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
   }
 
   public Datum<String,String> createDatum(RelationMention rel, String positiveLabel) {
-    Counter<String> features = new ClassicCounter<String>();
+    Counter<String> features = new ClassicCounter<>();
     if (rel.getArgs().size() != 2) {
       return null;
     }
@@ -110,7 +110,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
 
     String labelString = rel.getType();
     if(! labelString.equals(positiveLabel)) labelString = RelationMention.UNRELATED;
-    return new RVFDatum<String, String>(features, labelString);
+    return new RVFDatum<>(features, labelString);
   }
 
   public boolean addFeatures(Counter<String> features, RelationMention rel, List<String> types) {
@@ -160,7 +160,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
 
     // Checklist keeps track of which features have been handled by an if clause
     // Should be empty after all the clauses have been gone through.
-    List<String> checklist = new ArrayList<String>(types);
+    List<String> checklist = new ArrayList<>(types);
 
     // arg_type: concatenation of the entity types of the args, e.g.
     // "arg1type=Loc_and_arg2type=Org"
@@ -199,12 +199,12 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
         Collections.reverse(pathUp);
         for (Tree node : pathUp) {
           if (node != join) {
-            pathStringBuilder.append(node.label().value() + " <- ");
+            pathStringBuilder.append(node.label().value()).append(" <- ");
           }
         }
 
         for (Tree node : join.dominationPath(arg1preterm)) {
-          pathStringBuilder.append(((node == join) ? "" : " -> ") + node.label().value());
+          pathStringBuilder.append((node == join) ? "" : " -> ").append(node.label().value());
         }
         String pathString = pathStringBuilder.toString();
         if(logger != null && ! rel.getType().equals(RelationMention.UNRELATED)) logger.info("full_tree_path: " + pathString);
@@ -292,7 +292,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
     //
     // conjunction_surface_windows_POS: concatenation of windows of the args
 
-    List<EntityMention> args = new ArrayList<EntityMention>();
+    List<EntityMention> args = new ArrayList<>();
     args.add(arg0); args.add(arg1);
     for (int windowSize = 1; windowSize <= 3; windowSize++) {
 
@@ -307,16 +307,16 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
         for (int winnum = 1; winnum <= windowSize; winnum++) {
           int windex = ind - winnum;
           if (windex > 0) {
-            leftWindow[argn] = leaves.get(windex).label().value() + "_" + leftWindow[argn];
-            leftWindowPOS[argn] = leaves.get(windex).parent(tree).label().value() + "_" + leftWindowPOS[argn];
+            leftWindow[argn] = leaves.get(windex).label().value() + '_' + leftWindow[argn];
+            leftWindowPOS[argn] = leaves.get(windex).parent(tree).label().value() + '_' + leftWindowPOS[argn];
           } else {
             leftWindow[argn] = "NULL_" + leftWindow[argn];
             leftWindowPOS[argn] = "NULL_" + leftWindowPOS[argn];
           }
           windex = ind + winnum;
           if (windex < leaves.size()) {
-            rightWindow[argn] = rightWindow[argn] + "_" + leaves.get(windex).label().value();
-            rightWindowPOS[argn] = rightWindowPOS[argn] + "_" + leaves.get(windex).parent(tree).label().value();
+            rightWindow[argn] = rightWindow[argn] + '_' + leaves.get(windex).label().value();
+            rightWindowPOS[argn] = rightWindowPOS[argn] + '_' + leaves.get(windex).parent(tree).label().value();
           } else {
             rightWindow[argn] = rightWindow[argn] + "_NULL";
             rightWindowPOS[argn] = rightWindowPOS[argn] + "_NULL";
@@ -368,11 +368,11 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
         Span s = ((EntityMention) rel.getArg(i)).getHead();
         if(s.start() > 0){
           String v = tokens.get(s.start() - 1).word();
-          features.setCount("leftarg" + i + "-" + v, 1.0);
+          features.setCount("leftarg" + i + '-' + v, 1.0);
         }
         if(s.end() < tokens.size()){
           String v = tokens.get(s.end()).word();
-          features.setCount("rightarg" + i + "-" + v, 1.0);
+          features.setCount("rightarg" + i + '-' + v, 1.0);
         }
       }
     }
@@ -396,7 +396,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
 
     // entity_counts: For each type, the total number of entities of that type in the sentence (integer-valued feature)
     // entity_counts_binary: Counts of entity types as binary features.
-    Counter<String> typeCounts = new ClassicCounter<String>();
+    Counter<String> typeCounts = new ClassicCounter<>();
     if(rel.getSentence().get(MachineReadingAnnotations.EntityMentionsAnnotation.class) != null){ // may be null due to annotation errors!
       for (EntityMention arg : rel.getSentence().get(MachineReadingAnnotations.EntityMentionsAnnotation.class))
         typeCounts.incrementCount(arg.getType());
@@ -416,12 +416,12 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
     StringBuilder sbSelective = new StringBuilder();
     for (int i = Math.min(arg0.getSyntacticHeadTokenPosition(), arg1.getSyntacticHeadTokenPosition()) + 1; i < Math.max(arg0.getSyntacticHeadTokenPosition(), arg1.getSyntacticHeadTokenPosition()); i++) {
       String word = leaves.get(i).label().value();
-      sb.append(word + "_");
+      sb.append(word).append('_');
       String pos = leaves.get(i).parent(tree).label().value();
-      sbPOS.append(pos + "_");
+      sbPOS.append(pos).append('_');
       if (pos.equals("NN") || pos.equals("NNS") || pos.equals("NNP") || pos.equals("NNPS") || pos.equals("VB")
               || pos.equals("VBN") || pos.equals("VBD") || pos.equals("VBG") || pos.equals("VBP") || pos.equals("VBZ")) {
-        sbSelective.append(word + "_");
+        sbSelective.append(word).append('_');
       }
     }
     if (usingFeature(types, checklist, "surface_path")) {
@@ -453,7 +453,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
     // span_words_bigrams: bigrams of words that appear in between the two arguments
     if (usingFeature(types, checklist, "span_words_bigrams")) {
       for(int i = swStart; i < swEnd - 1; i ++){
-        features.setCount("span_bigram:" + tokens.get(i).word() + "-" + tokens.get(i + 1).word(), 1.0);
+        features.setCount("span_bigram:" + tokens.get(i).word() + '-' + tokens.get(i + 1).word(), 1.0);
       }
     }
 
@@ -538,7 +538,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
         features.setCount("arg_different_gender", 1.0);
     }
 
-    List<String> tempDepFeatures = new ArrayList<String>(dependencyFeatures);
+    List<String> tempDepFeatures = new ArrayList<>(dependencyFeatures);
     if (tempDepFeatures.removeAll(types) || types.contains("all")) { // dependencyFeatures contains at least one of the features listed in types
       addDependencyPathFeatures(features, rel, arg0, arg1, types, checklist, logger);
     }
@@ -547,7 +547,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
       throw new AssertionError("RelationFeatureFactory: features not handled: "+checklist);
 
 
-    List<String> featureList = new ArrayList<String>(features.keySet());
+    List<String> featureList = new ArrayList<>(features.keySet());
     Collections.sort(featureList);
 
 //    for (String feature : featureList) {
@@ -558,13 +558,13 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
 
   }
 
-  String sentToString(CoreMap sentence) {
-    StringBuffer os = new StringBuffer();
+  static String sentToString(CoreMap sentence) {
+    StringBuilder os = new StringBuilder();
     List<CoreLabel> tokens = sentence.get(TokensAnnotation.class);
     if(tokens != null){
       boolean first = true;
       for(CoreLabel token: tokens) {
-        if(! first) os.append(" ");
+        if(! first) os.append(' ');
         os.append(token.word());
         first = false;
       }
@@ -646,10 +646,10 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
       features.setCount("dependency_path_lowlevel:" + depLowLevel, 1.0);
     }
 
-    List<String> pathLemmas = new ArrayList<String>();
-    List<String> noArgPathLemmas = new ArrayList<String>();
+    List<String> pathLemmas = new ArrayList<>();
+    List<String> noArgPathLemmas = new ArrayList<>();
     // do not add to pathLemmas words that belong to one of the two args
-    Set<Integer> indecesToSkip = new HashSet<Integer>();
+    Set<Integer> indecesToSkip = new HashSet<>();
     for(int i = arg0.getExtentTokenStart(); i < arg0.getExtentTokenEnd(); i ++) indecesToSkip.add(i + 1);
     for(int i = arg1.getExtentTokenStart(); i < arg1.getExtentTokenEnd(); i ++) indecesToSkip.add(i + 1);
     for (IndexedWord node : pathNodes){
@@ -679,9 +679,9 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
           String lemma = Morphology.lemmaStatic(node.value(), node.tag(), true);
           String node1Path = generalizedDependencyPath(graph.getShortestUndirectedPathEdges(node, node1), node);
           String node0Path = generalizedDependencyPath(graph.getShortestUndirectedPathEdges(node0, node), node0);
-          features.setCount("dependency_paths_to_verb:" + node0Path + " " + lemma, 1.0);
-          features.setCount("dependency_paths_to_verb:" + lemma + " " + node1Path, 1.0);
-          features.setCount("dependency_paths_to_verb:" + node0Path + " " + lemma + " " + node1Path, 1.0);
+          features.setCount("dependency_paths_to_verb:" + node0Path + ' ' + lemma, 1.0);
+          features.setCount("dependency_paths_to_verb:" + lemma + ' ' + node1Path, 1.0);
+          features.setCount("dependency_paths_to_verb:" + node0Path + ' ' + lemma + ' ' + node1Path, 1.0);
         }
       }
     }
@@ -713,9 +713,9 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
           } else {
             edge1str = "<-" + generalizeRelation(edge1.getRelation());
           }
-          features.setCount("stub: " + edge0str + " " + lemma, 1.0);
+          features.setCount("stub: " + edge0str + ' ' + lemma, 1.0);
           features.setCount("stub: " + lemma + edge1str, 1.0);
-          features.setCount("stub: " + edge0str + " " + lemma + " " + edge1str, 1.0);
+          features.setCount("stub: " + edge0str + ' ' + lemma + ' ' + edge1str, 1.0);
         }
       }
     }
@@ -784,9 +784,9 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
 
         for (int elt = node; elt < node+n; elt++) {
           sb.append(pathLemmas.get(elt));
-          sb.append("_");
+          sb.append('_');
           sbPOS.append(pathNodes.get(elt).tag());
-          sbPOS.append("_");
+          sbPOS.append('_');
         }
         if (usingFeature(types, checklist, "dependency_path_word_n_grams"))
           features.setCount("dependency_path_"+n+"-gram: "+sb,1.0);
@@ -825,9 +825,9 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
           for (int elt = edge; elt < edge+n; elt++) {
             GrammaticalRelation gr = edgePath.get(elt).getRelation();
             sbRelsHi.append(generalizeRelation(gr));
-            sbRelsHi.append("_");
+            sbRelsHi.append('_');
             sbRelsLo.append(gr);
-            sbRelsLo.append("_");
+            sbRelsLo.append('_');
           }
           if (usingFeature(types, checklist, "dependency_path_edge_n_grams"))
             features.setCount("dependency_path_edge_"+n+"-gram: "+sbRelsHi,1.0);
@@ -933,7 +933,7 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
 
   public static List<String> dependencyPathAsList(List<SemanticGraphEdge> edgePath, IndexedWord node, boolean generalize) {
     if(edgePath == null) return null;
-    List<String> path = new ArrayList<String>();
+    List<String> path = new ArrayList<>();
     for (SemanticGraphEdge edge : edgePath) {
       IndexedWord nextNode;
       GrammaticalRelation relation;
@@ -960,17 +960,17 @@ public class BasicRelationFeatureFactory extends RelationFeatureFactory implemen
 
   public static String dependencyPath(List<SemanticGraphEdge> edgePath, IndexedWord node) {
     // the extra spaces are to maintain compatibility with existing relation extraction models
-    return " " + StringUtils.join(dependencyPathAsList(edgePath, node, false), "  ") + " ";
+    return ' ' + StringUtils.join(dependencyPathAsList(edgePath, node, false), "  ") + ' ';
   }
 
   public static String generalizedDependencyPath(List<SemanticGraphEdge> edgePath, IndexedWord node) {
     // the extra spaces are to maintain compatibility with existing relation extraction models
-    return " " + StringUtils.join(dependencyPathAsList(edgePath, node, true), "  ") + " ";
+    return ' ' + StringUtils.join(dependencyPathAsList(edgePath, node, true), "  ") + ' ';
   }
 
   public Set<String> getFeatures(RelationMention rel, String featureType) {
-    Counter<String> features = new ClassicCounter<String>();
-    List<String> singleton = new ArrayList<String>();
+    Counter<String> features = new ClassicCounter<>();
+    List<String> singleton = new ArrayList<>();
     singleton.add(featureType);
     addFeatures(features, rel, singleton);
     return features.keySet();

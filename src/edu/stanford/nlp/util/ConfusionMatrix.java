@@ -190,10 +190,10 @@ public class ConfusionMatrix<U> {
     int fp = 0;
     int tn = 0;
     int fn = 0;
-    for (Pair<U, U> pair : confTable.keySet()) {
-      int count = confTable.get(pair);
-      U guess = pair.first();
-      U gold = pair.second();
+    for (Map.Entry<Pair<U, U>, Integer> pairIntegerEntry : confTable.entrySet()) {
+      int count = pairIntegerEntry.getValue();
+      U guess = pairIntegerEntry.getKey().first();
+      U gold = pairIntegerEntry.getKey().second();
       boolean guessP = guess.equals(positiveLabel);
       boolean goldP = gold.equals(positiveLabel);
       if (guessP && goldP) {
@@ -378,8 +378,8 @@ public class ConfusionMatrix<U> {
         // Compute the text
         Integer value = confTable.get(Pair.makePair(guess, gold));
         if (value == null) { value = 0; }
-        String text = "Guess: " + guess.toString() + "\n" +
-            "Gold: " + gold.toString() + "\n" +
+        String text = "Guess: " + guess.toString() + '\n' +
+            "Gold: " + gold.toString() + '\n' +
             "Value: " + value;
         // Set the font
         Font bak = g2d.getFont();
@@ -459,7 +459,7 @@ public class ConfusionMatrix<U> {
               if (count == null) {
                 count = 0;
               }
-              text = "" + count;
+              text = String.valueOf(count);
               // Get color
               if (row == col) {
                 double percentGood = ((double) count) / ((double) maxDiag);

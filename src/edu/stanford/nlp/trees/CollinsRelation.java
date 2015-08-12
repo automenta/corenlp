@@ -45,7 +45,7 @@ public class CollinsRelation {
     int add = defaultPadding - s.length(); //Number of whitespace characters to add
     if(add <= 0) return s;
     
-    StringBuffer str = new StringBuffer(s);
+    StringBuilder str = new StringBuilder(s);
     
     char[] ch = new char[add];
     Arrays.fill(ch, ' ');

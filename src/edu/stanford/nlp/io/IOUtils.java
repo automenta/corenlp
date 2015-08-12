@@ -361,9 +361,7 @@ public class IOUtils {
               new GZIPInputStream(new FileInputStream(file))));
       o = ois.readObject();
       ois.close();
-    } catch (IOException e) {
-      e.printStackTrace();
-    } catch (ClassNotFoundException e) {
+    } catch (IOException | ClassNotFoundException e) {
       e.printStackTrace();
     }
     return ErasureUtils.uncheckedCast(o);
@@ -1029,7 +1027,7 @@ public class IOUtils {
    */
   public static Iterable<File> iterFilesRecursive(final File dir,
                                                   final String ext) {
-    return iterFilesRecursive(dir, Pattern.compile(Pattern.quote(ext) + "$"));
+    return iterFilesRecursive(dir, Pattern.compile(Pattern.quote(ext) + '$'));
   }
 
   /**
@@ -1045,7 +1043,7 @@ public class IOUtils {
     return new Iterable<File>() {
       public Iterator<File> iterator() {
         return new AbstractIterator<File>() {
-          private final Queue<File> files = new LinkedList<File>(Collections
+          private final Queue<File> files = new LinkedList<>(Collections
                   .singleton(dir));
           private File file = this.findNext();
 
@@ -1371,7 +1369,7 @@ public class IOUtils {
     //--Variables
     StringBuilder[] buffer = new StringBuilder[numColumns];
     buffer[0] = new StringBuilder();
-    LinkedList<String[]> lines = new LinkedList<String[]>();
+    LinkedList<String[]> lines = new LinkedList<>();
     //--State
     boolean inQuotes = false;
     boolean nextIsEscaped = false;
@@ -1394,7 +1392,7 @@ public class IOUtils {
             } else {
               columnI += 1;
               if(columnI >= numColumns){
-                throw new IllegalArgumentException("Too many columns: "+columnI+"/"+numColumns+" (offset: " + offset + ")");
+                throw new IllegalArgumentException("Too many columns: "+columnI+ '/' +numColumns+" (offset: " + offset + ')');
               }
               buffer[columnI] = new StringBuilder();
             }
@@ -1406,7 +1404,7 @@ public class IOUtils {
             } else {
               //((error checks))
               if(columnI != numColumns-1){
-                throw new IllegalArgumentException("Too few columns: "+columnI+"/"+numColumns+" (offset: " + offset + ")");
+                throw new IllegalArgumentException("Too few columns: "+columnI+ '/' +numColumns+" (offset: " + offset + ')');
               }
               //((create line))
               String[] rtn = new String[buffer.length];
@@ -1529,7 +1527,7 @@ public class IOUtils {
   {
     String bzcat = System.getProperty("bzcat", "bzcat");
     Runtime rt = Runtime.getRuntime();
-    String cmd = bzcat + " " + filename;
+    String cmd = bzcat + ' ' + filename;
     //System.err.println("getBZip2PipedInputStream: Running command: "+cmd);
     Process p = rt.exec(cmd);
     Writer errWriter = new BufferedWriter(new OutputStreamWriter(System.err));
@@ -1578,7 +1576,7 @@ public class IOUtils {
           NoSuchFieldException, NoSuchMethodException, InvocationTargetException
   {
     Pattern delimiterPattern = Pattern.compile(delimiter);
-    List<C> list = new ArrayList<C>();
+    List<C> list = new ArrayList<>();
     BufferedReader br = IOUtils.getBufferedFileReader(filename);
     String line;
     while ((line = br.readLine()) != null) {
@@ -1663,7 +1661,7 @@ public class IOUtils {
 
   public static List<String> linesFromFile(String filename,String encoding, boolean ignoreHeader) {
     try {
-      List<String> lines = new ArrayList<String>();
+      List<String> lines = new ArrayList<>();
       BufferedReader in = getBufferedReaderFromClasspathOrFileSystem(filename, encoding);
       String line;
       int i = 0;
@@ -1689,7 +1687,7 @@ public class IOUtils {
   public static File backupFile(File file) {
     int max = 1000;
     String filename = file.toString();
-    File backup = new File(filename + "~");
+    File backup = new File(filename + '~');
     if (!backup.exists()) { return backup; }
     for (int i = 1; i <= max; i++) {
       backup = new File(filename + ".~" + i + ".~");
@@ -1711,7 +1709,7 @@ public class IOUtils {
     try {
       String machineName = InetAddress.getLocalHost().getHostName().split("\\.")[0];
       String username = System.getProperty("user.name");
-      return new File("/"+machineName+"/scr1/"+username);
+      return new File('/' +machineName+"/scr1/"+username);
     } catch (Exception e) {
       return new File("./scr/"); // default scratch
     }
@@ -1940,8 +1938,8 @@ public class IOUtils {
     // Variables
     RandomAccessFile raf = new RandomAccessFile(f, "r");
     int linesRead = 0;
-    List<Byte> bytes = new ArrayList<Byte>();
-    List<String> linesReversed = new ArrayList<String>();
+    List<Byte> bytes = new ArrayList<>();
+    List<String> linesReversed = new ArrayList<>();
     // Seek to end of file
     long length = raf.length() - 1;
     raf.seek(length);
@@ -1958,7 +1956,7 @@ public class IOUtils {
           str[i] = bytes.get(str.length - i - 1);
         }
         linesReversed.add(new String(str, encoding));
-        bytes = new ArrayList<Byte>();
+        bytes = new ArrayList<>();
         linesRead += 1;
         if (linesRead == n){
           break;

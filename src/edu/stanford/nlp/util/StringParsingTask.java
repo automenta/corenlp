@@ -134,7 +134,7 @@ public abstract class StringParsingTask<E> {
     return isEOF;
   }
 
-  protected boolean isWhiteSpace(char ch) {
+  protected static boolean isWhiteSpace(char ch) {
     return (ch == ' ' || ch == '\t' || ch == '\f' || ch == '\r' || ch == '\n');
   }
 
@@ -148,11 +148,11 @@ public abstract class StringParsingTask<E> {
     return ch == '(';
   }
 
-  protected boolean isRightParen(char ch) {
+  protected static boolean isRightParen(char ch) {
     return ch == ')';
   }
 
-  protected boolean isDot(char ch) {
+  protected static boolean isDot(char ch) {
     return ch == '.';
   }
 

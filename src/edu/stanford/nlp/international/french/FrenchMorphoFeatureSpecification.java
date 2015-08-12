@@ -46,7 +46,7 @@ public class FrenchMorphoFeatureSpecification extends MorphoFeatureSpecification
     MorphoFeatures feats = new MorphoFeatures();
 
     //Usually this is the boundary symbol
-    if(spec == null || spec.equals(""))
+    if(spec == null || spec.isEmpty())
       return feats;
 
     boolean isOtherActive = isActive(MorphoFeatureType.OTHER);
@@ -261,8 +261,6 @@ public class FrenchMorphoFeatureSpecification extends MorphoFeatureSpecification
 
       br.close();
 
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
     }

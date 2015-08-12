@@ -44,8 +44,8 @@ class DescriptionPattern extends TregexPattern {
   private final Function<String, String> basicCatFunction;
 
   /** Used to detect regex expressions which can be simplified to exact matches */
-  private static final Pattern SINGLE_WORD_PATTERN = Pattern.compile("/\\^(.)\\$/" + "|" + // for example, /^:$/
-                                                                     "/\\^\\[(.)\\]\\$/" + "|" + // for example, /^[$]$/
+  private static final Pattern SINGLE_WORD_PATTERN = Pattern.compile("/\\^(.)\\$/" + '|' + // for example, /^:$/
+                                                                     "/\\^\\[(.)\\]\\$/" + '|' + // for example, /^[$]$/
                                                                      "/\\^([-a-zA-Z']+)\\$/"); // for example, /^-NONE-$/
 
   private static final Pattern MULTI_WORD_PATTERN = Pattern.compile("/\\^\\(\\?\\:((?:[-a-zA-Z|]|\\\\\\$)+)\\)\\$\\/");
@@ -53,7 +53,7 @@ class DescriptionPattern extends TregexPattern {
   private static final Pattern CASE_INSENSITIVE_PATTERN = Pattern.compile("/\\^\\(\\?i\\:((?:[-a-zA-Z|]|\\\\\\$)+)\\)\\$\\/");
 
   /** Used to detect regex expressions which can be simplified to exact matches */
-  private static final Pattern PREFIX_PATTERN = Pattern.compile("/\\^([-a-zA-Z|]+)\\/" + "|" + // for example, /^JJ/
+  private static final Pattern PREFIX_PATTERN = Pattern.compile("/\\^([-a-zA-Z|]+)\\/" + '|' + // for example, /^JJ/
                                                                 "/\\^\\(\\?\\:([-a-zA-Z|]+)\\)\\/");
 
   public DescriptionPattern(Relation rel, boolean negDesc, String desc,

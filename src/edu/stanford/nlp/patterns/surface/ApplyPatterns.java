@@ -10,7 +10,6 @@ import edu.stanford.nlp.ling.tokensregex.TokenSequencePattern;
 import edu.stanford.nlp.patterns.*;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
 import edu.stanford.nlp.util.CollectionValuedMap;
-import edu.stanford.nlp.util.Pair;
 import edu.stanford.nlp.util.Triple;
 
 /**
@@ -44,9 +43,9 @@ public class ApplyPatterns<E extends Pattern>  implements Callable<Triple<TwoDim
     // CollectionValuedMap<String, Integer> tokensMatchedPattern = new
     // CollectionValuedMap<String, Integer>();
     try{
-      Set<CandidatePhrase> alreadyLabeledPhrases = new HashSet<CandidatePhrase>();
-      TwoDimensionalCounter<CandidatePhrase, E> allFreq = new TwoDimensionalCounter<CandidatePhrase, E>();
-      CollectionValuedMap<E, Triple<String, Integer, Integer>> matchedTokensByPat = new CollectionValuedMap<E, Triple<String, Integer, Integer>>();
+      Set<CandidatePhrase> alreadyLabeledPhrases = new HashSet<>();
+      TwoDimensionalCounter<CandidatePhrase, E> allFreq = new TwoDimensionalCounter<>();
+      CollectionValuedMap<E, Triple<String, Integer, Integer>> matchedTokensByPat = new CollectionValuedMap<>();
       for (String sentid : sentids) {
         List<CoreLabel> sent = sents.get(sentid).getTokens();
         for (Entry<TokenSequencePattern, E> pEn : patterns.entrySet()) {
@@ -100,7 +99,7 @@ public class ApplyPatterns<E extends Pattern>  implements Callable<Triple<TwoDim
               l.set(PatternsAnnotations.MatchedPattern.class, true);
 
               if(!l.containsKey(PatternsAnnotations.MatchedPatterns.class) || l.get(PatternsAnnotations.MatchedPatterns.class) == null)
-                l.set(PatternsAnnotations.MatchedPatterns.class, new HashSet<Pattern>());
+                l.set(PatternsAnnotations.MatchedPatterns.class, new HashSet<>());
 
               SurfacePattern pSur = (SurfacePattern) pEn.getValue();
               assert pSur != null : "Why is " + pEn.getValue() + " not present in the index?!";
@@ -123,11 +122,11 @@ public class ApplyPatterns<E extends Pattern>  implements Callable<Triple<TwoDim
                   if (label == null
                     || l.get(constVars.getAnswerClass().get(label)) == null
                     || !l.get(constVars.getAnswerClass().get(label)).equals(
-                    label.toString())) {
+                          label)) {
                     useWordNotLabeled = true;
                   }
-                  phrase += " " + l.word();
-                  phraseLemma += " " + l.lemma();
+                  phrase += ' ' + l.word();
+                  phraseLemma += ' ' + l.lemma();
                   addedindices[i-s] = true;
                 }
               }
@@ -139,8 +138,8 @@ public class ApplyPatterns<E extends Pattern>  implements Callable<Triple<TwoDim
               }
             }
             if (!doNotUse) {
-              matchedTokensByPat.add(pEn.getValue(), new Triple<String, Integer, Integer>(
-                sentid, s, e -1 ));
+              matchedTokensByPat.add(pEn.getValue(), new Triple<>(
+                      sentid, s, e - 1));
 
               phrase = phrase.trim();
               if(!phrase.isEmpty()){
@@ -154,7 +153,7 @@ public class ApplyPatterns<E extends Pattern>  implements Callable<Triple<TwoDim
           }
         }
       }
-      return new Triple<TwoDimensionalCounter<CandidatePhrase, E>, CollectionValuedMap<E, Triple<String, Integer, Integer>>, Set<CandidatePhrase>>(allFreq, matchedTokensByPat, alreadyLabeledPhrases);
+      return new Triple<>(allFreq, matchedTokensByPat, alreadyLabeledPhrases);
     }catch(Exception e){
       e.printStackTrace();
       throw e;
@@ -168,7 +167,7 @@ public class ApplyPatterns<E extends Pattern>  implements Callable<Triple<TwoDim
       return false;
 
   }
-  boolean  containsStopWord(CoreLabel l, Set<String> commonEngWords, java.util.regex.Pattern ignoreWordRegex) {
+  static boolean  containsStopWord(CoreLabel l, Set<String> commonEngWords, java.util.regex.Pattern ignoreWordRegex) {
     // if(useWordResultCache.containsKey(l.word()))
     // return useWordResultCache.get(l.word());
 

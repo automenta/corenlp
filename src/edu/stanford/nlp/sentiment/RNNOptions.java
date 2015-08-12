@@ -102,33 +102,33 @@ public class RNNOptions implements Serializable {
   public String toString() {
     StringBuilder result = new StringBuilder();
     result.append("GENERAL OPTIONS\n");
-    result.append("randomSeed=" + randomSeed + "\n");
-    result.append("wordVectors=" + wordVectors + "\n");
-    result.append("unkWord=" + unkWord + "\n");
-    result.append("randomWordVectors=" + randomWordVectors + "\n");
-    result.append("numHid=" + numHid + "\n");
-    result.append("numClasses=" + numClasses + "\n");
-    result.append("lowercaseWordVectors=" + lowercaseWordVectors + "\n");
-    result.append("useTensors=" + useTensors + "\n");
-    result.append("simplifiedModel=" + simplifiedModel + "\n");
-    result.append("combineClassification=" + combineClassification + "\n");
-    result.append("classNames=" + StringUtils.join(classNames, ",") + "\n");
+    result.append("randomSeed=").append(randomSeed).append('\n');
+    result.append("wordVectors=").append(wordVectors).append('\n');
+    result.append("unkWord=").append(unkWord).append('\n');
+    result.append("randomWordVectors=").append(randomWordVectors).append('\n');
+    result.append("numHid=").append(numHid).append('\n');
+    result.append("numClasses=").append(numClasses).append('\n');
+    result.append("lowercaseWordVectors=").append(lowercaseWordVectors).append('\n');
+    result.append("useTensors=").append(useTensors).append('\n');
+    result.append("simplifiedModel=").append(simplifiedModel).append('\n');
+    result.append("combineClassification=").append(combineClassification).append('\n');
+    result.append("classNames=").append(StringUtils.join(classNames, ",")).append('\n');
     result.append("equivalenceClasses=");
     if (equivalenceClasses != null) {
       for (int i = 0; i < equivalenceClasses.length; ++i) {
-        if (i > 0) result.append(";");
+        if (i > 0) result.append(';');
         for (int j = 0; j < equivalenceClasses[i].length; ++j) {
-          if (j > 0) result.append(",");
+          if (j > 0) result.append(',');
           result.append(equivalenceClasses[i][j]);
         }
       }
     }
-    result.append("\n");
+    result.append('\n');
     result.append("equivalenceClassNames=");
     if (equivalenceClassNames != null) {
       result.append(StringUtils.join(equivalenceClassNames, ","));
     }
-    result.append("\n");
+    result.append('\n');
     result.append(trainOptions.toString());
     result.append(testOptions.toString());
     return result.toString();

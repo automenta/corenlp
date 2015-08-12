@@ -52,7 +52,7 @@ public class CategoryWordTagFactory implements LabelFactory {
    * @param category The category part of the label
    * @return The newly created Label
    */
-  public Label newLabel(String word, String tag, String category) {
+  public static Label newLabel(String word, String tag, String category) {
     // System.out.println("Making new CWT label: " + category + " | " +
     //		   word + " | " + tag);
     return new CategoryWordTag(category, word, tag);

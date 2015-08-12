@@ -75,25 +75,25 @@ public class CorefPrinter {
 
     for(int i = 0 ; i<sentences.size(); i++) {
       doc.append(sentenceStringWithMention(i, document, gold, printClusterID));
-      doc.append("\n");
+      doc.append('\n');
     }
     sb.append("PRINT RAW DOC START\n");
-    sb.append(document.annotation.get(CoreAnnotations.DocIDAnnotation.class)).append("\n");
+    sb.append(document.annotation.get(CoreAnnotations.DocIDAnnotation.class)).append('\n');
     if (gold) {
       sb.append("New DOC: (GOLD MENTIONS) ==================================================\n");
     } else {
       sb.append("New DOC: (Predicted Mentions) ==================================================\n");
     }
-    sb.append(doc.toString()).append("\n");
-    sb.append("PRINT RAW DOC END").append("\n");
+    sb.append(doc.toString()).append('\n');
+    sb.append("PRINT RAW DOC END").append('\n');
     return sb.toString();
   }
 
   public static String printErrorLog(Mention m, Document document, Counter<Integer> probs, int mIdx, Dictionaries dict, RFSieve sieve) throws Exception {
     StringBuilder sb = new StringBuilder();
     sb.append("\nERROR START-----------------------------------------------------------------------\n");
-    sb.append("RESOLVER TYPE: mType: "+sieve.mType +", aType: "+sieve.aType).append("\n");
-    sb.append("DOCUMENT: "+document.docInfo.get("DOC_ID")+", "+document.docInfo.get("DOC_PART")).append("\n");
+    sb.append("RESOLVER TYPE: mType: ").append(sieve.mType).append(", aType: ").append(sieve.aType).append('\n');
+    sb.append("DOCUMENT: ").append(document.docInfo.get("DOC_ID")).append(", ").append(document.docInfo.get("DOC_PART")).append('\n');
 
     List<Mention> orderedAnts = new ArrayList<>(); 
     
@@ -101,14 +101,14 @@ public class CorefPrinter {
     for(int sentDist=m.sentNum ; sentDist >= 0  ; sentDist--) {
       if(sentDist == sieve.maxSentDist) sb.append("\tstart compare from here-------------\n");
       int sentIdx = m.sentNum-sentDist;
-      sb.append("\tSENT "+sentIdx+"\t"+sentenceStringWithMention(sentIdx, document, true, true)).append("\n");
+      sb.append("\tSENT ").append(sentIdx).append('\t').append(sentenceStringWithMention(sentIdx, document, true, true)).append('\n');
     }
     
     sb.append("\nMENTION ID\n");
     for(int sentDist=m.sentNum ; sentDist >= 0  ; sentDist--) {
       if(sentDist == sieve.maxSentDist) sb.append("\tstart compare from here-------------\n");
       int sentIdx = m.sentNum-sentDist;
-      sb.append("\tSENT "+sentIdx+"\t"+sentenceStringWithMention(sentIdx, document, false, false)).append("\n");
+      sb.append("\tSENT ").append(sentIdx).append('\t').append(sentenceStringWithMention(sentIdx, document, false, false)).append('\n');
     }
 
     // get dcoref antecedents ordering
@@ -130,10 +130,8 @@ public class CorefPrinter {
         || (foundCorefAnt && Sieve.isReallyCoref(document, m.mentionID, Counters.argmax(probs))) );
     boolean barePlural = (m.originalSpan.size()==1 && m.headWord.tag().equals("NNS"));
     if(correctDecision) return "";
-    sb.append("\nMENTION: "+m.spanToString()+" ("+m.mentionID
-        +")\tperson: "+m.person+"\tsingleton? "+ (!m.hasTwin) +"\t\tisFirstMention? "+isFirstMention
-        +"\t\tfoundAnt? "+foundCorefAnt+"\t\tcorrectDecision? "+correctDecision+"\tbarePlural? "+barePlural);
-    sb.append("\n\ttype: "+m.mentionType+"\tHeadword: "+m.headWord.word()+"\tNEtype: "+m.nerString+"\tnumber: "+m.number+"\tgender: "+m.gender+"\tanimacy: "+m.animacy).append("\n");
+    sb.append("\nMENTION: ").append(m.spanToString()).append(" (").append(m.mentionID).append(")\tperson: ").append(m.person).append("\tsingleton? ").append(!m.hasTwin).append("\t\tisFirstMention? ").append(isFirstMention).append("\t\tfoundAnt? ").append(foundCorefAnt).append("\t\tcorrectDecision? ").append(correctDecision).append("\tbarePlural? ").append(barePlural);
+    sb.append("\n\ttype: ").append(m.mentionType).append("\tHeadword: ").append(m.headWord.word()).append("\tNEtype: ").append(m.nerString).append("\tnumber: ").append(m.number).append("\tgender: ").append(m.gender).append("\tanimacy: ").append(m.animacy).append('\n');
     if(m.contextParseTree!=null) sb.append(m.contextParseTree.pennString());
     
     sb.append("\n\n\t\tOracle\t\tDcoref\t\t\tRF\t\tAntecedent\n");
@@ -160,10 +158,10 @@ public class CorefPrinter {
       else if(dcorefPronounSieve.coreferent(document, mC, aC, m, ant, dict, null)) dcorefStr = "coref-pronounSieve";
       else if(dcorefSpeaker.coreferent(document, mC, aC, m, ant, dict, null)) dcorefStr = "coref-speaker";
       
-      dcorefStr += "\t"+String.valueOf(order);
+      dcorefStr += '\t' +String.valueOf(order);
       String probStr = df.format(prob);
           
-      sb.append("\t\t"+oracleStr+"\t"+dcorefStr+"\t"+probStr+"\t\t"+ant.spanToString()+" ("+ant.mentionID+")\n");
+      sb.append("\t\t").append(oracleStr).append('\t').append(dcorefStr).append('\t').append(probStr).append("\t\t").append(ant.spanToString()).append(" (").append(ant.mentionID).append(")\n");
     }
     
     sb.append("ERROR END -----------------------------------------------------------------------\n");
@@ -198,7 +196,7 @@ public class CorefPrinter {
     List<CoreLabel> t = sentence.get(CoreAnnotations.TokensAnnotation.class);
     String speaker = t.get(0).get(SpeakerAnnotation.class);
     if(NumberMatchingRegex.isDecimalInteger(speaker)) speaker = speaker + ": "+document.predictedMentionsByID.get(Integer.parseInt(speaker)).spanToString();
-    sentStr.append("\tspeaker: "+speaker+" ("+t.get(0).get(UtteranceAnnotation.class)+") ");
+    sentStr.append("\tspeaker: ").append(speaker).append(" (").append(t.get(0).get(UtteranceAnnotation.class)).append(") ");
     String[] tokens = new String[t.size()];
     for(CoreLabel c : t) {
       tokens[c.index()-1] = c.word();
@@ -207,8 +205,8 @@ public class CorefPrinter {
 //      sentStr.append("\n");
 //    }
     previousOffset = t.get(t.size()-1).get(CoreAnnotations.CharacterOffsetEndAnnotation.class);
-    Counter<Integer> startCounts = new ClassicCounter<Integer>();
-    Counter<Integer> endCounts = new ClassicCounter<Integer>();
+    Counter<Integer> startCounts = new ClassicCounter<>();
+    Counter<Integer> endCounts = new ClassicCounter<>();
     Map<Integer, Deque<Mention>> endMentions = Generics.newHashMap();
     for (Mention m : mentions) {
 //      if(!gold && (document.corefClusters.get(m.corefClusterID)==null || document.corefClusters.get(m.corefClusterID).getCorefMentions().size()<=1)) {
@@ -216,7 +214,7 @@ public class CorefPrinter {
 //      }
       startCounts.incrementCount(m.startIndex);
       endCounts.incrementCount(m.endIndex);
-      if(!endMentions.containsKey(m.endIndex)) endMentions.put(m.endIndex, new ArrayDeque<Mention>());
+      if(!endMentions.containsKey(m.endIndex)) endMentions.put(m.endIndex, new ArrayDeque<>());
       endMentions.get(m.endIndex).push(m);
     }
     for (int j = 0 ; j < tokens.length; j++){
@@ -228,10 +226,10 @@ public class CorefPrinter {
         }
       }
       for (int k = 0 ; k < startCounts.getCount(j) ; k++) {
-        if (sentStr.length() > 0 && sentStr.charAt(sentStr.length()-1) != '[') sentStr.append(" ");
-        sentStr.append("[");
+        if (sentStr.length() > 0 && sentStr.charAt(sentStr.length()-1) != '[') sentStr.append(' ');
+        sentStr.append('[');
       }
-      if (sentStr.length() > 0 && sentStr.charAt(sentStr.length()-1)!='[') sentStr.append(" ");
+      if (sentStr.length() > 0 && sentStr.charAt(sentStr.length()-1)!='[') sentStr.append(' ');
       sentStr.append(tokens[j]);
     }
     if(endMentions.containsKey(tokens.length)) {
@@ -269,7 +267,7 @@ public class CorefPrinter {
     List<List<String[]>> conllDocSentences = document.conllDoc.sentenceWordLists;
     String docID = anno.get(CoreAnnotations.DocIDAnnotation.class);
     StringBuilder sb = new StringBuilder();
-    sb.append("#begin document ").append(docID).append("\n");
+    sb.append("#begin document ").append(docID).append('\n');
     List<CoreMap> sentences = anno.get(CoreAnnotations.SentencesAnnotation.class);
     for(int sentNum = 0 ; sentNum < sentences.size() ; sentNum++){
       List<CoreLabel> sentence = sentences.get(sentNum).get(CoreAnnotations.TokensAnnotation.class);
@@ -279,9 +277,9 @@ public class CorefPrinter {
       Map<Integer,Set<Mention>> mentionBeginEnd = Generics.newHashMap();
 
       for(int i=0 ; i<sentence.size(); i++){
-        mentionBeginOnly.put(i, new LinkedHashSet<Mention>());
-        mentionEndOnly.put(i, new LinkedHashSet<Mention>());
-        mentionBeginEnd.put(i, new LinkedHashSet<Mention>());
+        mentionBeginOnly.put(i, new LinkedHashSet<>());
+        mentionEndOnly.put(i, new LinkedHashSet<>());
+        mentionBeginEnd.put(i, new LinkedHashSet<>());
       }
 
       for(Mention m : orderedMentions.get(sentNum)) {
@@ -297,38 +295,38 @@ public class CorefPrinter {
         StringBuilder sb2 = new StringBuilder();
         for(Mention m : mentionBeginOnly.get(i)){
           if (sb2.length() > 0) {
-            sb2.append("|");
+            sb2.append('|');
           }
           int corefClusterId = (gold)? m.goldCorefClusterID:m.corefClusterID;
-          sb2.append("(").append(corefClusterId);
+          sb2.append('(').append(corefClusterId);
         }
         for(Mention m : mentionBeginEnd.get(i)){
           if (sb2.length() > 0) {
-            sb2.append("|");
+            sb2.append('|');
           }
           int corefClusterId = (gold)? m.goldCorefClusterID:m.corefClusterID;
-          sb2.append("(").append(corefClusterId).append(")");
+          sb2.append('(').append(corefClusterId).append(')');
         }
         for(Mention m : mentionEndOnly.get(i)){
           if (sb2.length() > 0) {
-            sb2.append("|");
+            sb2.append('|');
           }
           int corefClusterId = (gold)? m.goldCorefClusterID:m.corefClusterID;
-          sb2.append(corefClusterId).append(")");
+          sb2.append(corefClusterId).append(')');
         }
-        if(sb2.length() == 0) sb2.append("-");
+        if(sb2.length() == 0) sb2.append('-');
 
         String[] columns = conllSentence.get(i);
         for(int j = 0 ; j < columns.length-1 ; j++){
           String column = columns[j];
-          sb.append(column).append("\t");
+          sb.append(column).append('\t');
         }
-        sb.append(sb2).append("\n");
+        sb.append(sb2).append('\n');
       }
-      sb.append("\n");
+      sb.append('\n');
     }
 
-    sb.append("#end document").append("\n");
+    sb.append("#end document").append('\n');
     //    sb.append("#end document ").append(docID).append("\n");
 
     return sb.toString();
@@ -339,25 +337,25 @@ public class CorefPrinter {
     List<CoreMap> sentences = document.annotation.get(SentencesAnnotation.class);
     sbLog.append("\nERROR START-----------------------------------------------------------------------\n");
     for(int i=0 ; i < sentences.size() ; i++) {
-      sbLog.append("\nSENT ").append(i).append(" GOLD   : ").append(CorefPrinter.sentenceStringWithMention(i, document, true, false)).append("\n");
-      sbLog.append("SENT ").append(i).append(" PREDICT: ").append(CorefPrinter.sentenceStringWithMention(i, document, false, false)).append("\n");
+      sbLog.append("\nSENT ").append(i).append(" GOLD   : ").append(CorefPrinter.sentenceStringWithMention(i, document, true, false)).append('\n');
+      sbLog.append("SENT ").append(i).append(" PREDICT: ").append(CorefPrinter.sentenceStringWithMention(i, document, false, false)).append('\n');
       
 //      for(CoreLabel cl : sentences.get(i).get(TokensAnnotation.class)) {
 //        sbLog.append(cl.word()).append("-").append(cl.get(UtteranceAnnotation.class)).append("-").append(cl.get(SpeakerAnnotation.class)).append(" ");
 //      }
       
       for(Mention p : document.predictedMentions.get(i)) {
-        sbLog.append("\n");
+        sbLog.append('\n');
         if(!p.hasTwin) sbLog.append("\tSPURIOUS");
         sbLog.append("\tmention: ").append(p.spanToString()).append("\t\t\theadword: ").append(p.headString).append("\tPOS: ").append(p.headWord.tag()).append("\tmentiontype: ").append(p.mentionType).append("\tnumber: ").append(p.number).append("\tgender: ").append(p.gender).append("\tanimacy: ").append(p.animacy).append("\tperson: ").append(p.person).append("\tNE: ").append(p.nerString);
       }
-      sbLog.append("\n");
+      sbLog.append('\n');
       
       for(Mention g : document.goldMentions.get(i)){
         if(!g.hasTwin) {
-          sbLog.append("\tmissed gold: ").append(g.spanToString()).append("\tPOS: ").append(g.headWord.tag()).append("\tmentiontype: ").append(g.mentionType).append("\theadword: ").append(g.headString).append("\tnumber: ").append(g.number).append("\tgender: ").append(g.gender).append("\tanimacy: ").append(g.animacy).append("\tperson: ").append(g.person).append("\tNE: ").append(g.nerString).append("\n");
+          sbLog.append("\tmissed gold: ").append(g.spanToString()).append("\tPOS: ").append(g.headWord.tag()).append("\tmentiontype: ").append(g.mentionType).append("\theadword: ").append(g.headString).append("\tnumber: ").append(g.number).append("\tgender: ").append(g.gender).append("\tanimacy: ").append(g.animacy).append("\tperson: ").append(g.person).append("\tNE: ").append(g.nerString).append('\n');
           if(g.sentenceWords!=null)
-            if(g.sentenceWords.size() > g.endIndex) sbLog.append("\tnextword: ").append(g.sentenceWords.get(g.endIndex)).append("\t").append(g.sentenceWords.get(g.endIndex).tag()).append("\n");
+            if(g.sentenceWords.size() > g.endIndex) sbLog.append("\tnextword: ").append(g.sentenceWords.get(g.endIndex)).append('\t').append(g.sentenceWords.get(g.endIndex).tag()).append('\n');
           if(g.contextParseTree!=null) sbLog.append(g.contextParseTree.pennString()).append("\n\n");
           else sbLog.append("\n\n");
         }
@@ -371,21 +369,21 @@ public class CorefPrinter {
   public static String printErrorLogDcoref(Mention m, Mention found, Document document, Dictionaries dict, int mIdx, String whichResolver) throws Exception {
     StringBuilder sb = new StringBuilder();
     sb.append("\nERROR START-----------------------------------------------------------------------\n");
-    sb.append("RESOLVER TYPE: ").append(whichResolver).append("\n");
-    sb.append("DOCUMENT: "+document.docInfo.get("DOC_ID")+", "+document.docInfo.get("DOC_PART")).append("\n");
+    sb.append("RESOLVER TYPE: ").append(whichResolver).append('\n');
+    sb.append("DOCUMENT: ").append(document.docInfo.get("DOC_ID")).append(", ").append(document.docInfo.get("DOC_PART")).append('\n');
 
     List<Mention> orderedAnts = new ArrayList<>(); 
     
     sb.append("\nGOLD CLUSTER ID\n");
     for(int sentDist=m.sentNum ; sentDist >= 0  ; sentDist--) {
       int sentIdx = m.sentNum-sentDist;
-      sb.append("\tSENT "+sentIdx+"\t"+sentenceStringWithMention(sentIdx, document, true, true)).append("\n");
+      sb.append("\tSENT ").append(sentIdx).append('\t').append(sentenceStringWithMention(sentIdx, document, true, true)).append('\n');
     }
     
     sb.append("\nMENTION ID\n");
     for(int sentDist=m.sentNum ; sentDist >= 0  ; sentDist--) {
       int sentIdx = m.sentNum-sentDist;
-      sb.append("\tSENT "+sentIdx+"\t"+sentenceStringWithMention(sentIdx, document, false, false)).append("\n");
+      sb.append("\tSENT ").append(sentIdx).append('\t').append(sentenceStringWithMention(sentIdx, document, false, false)).append('\n');
     }
 
     // get dcoref antecedents ordering
@@ -405,10 +403,8 @@ public class CorefPrinter {
     boolean foundCorefAnt = true;   // we're printing only mentions that found coref antecedent
     boolean correctDecision = document.isCoref(m, found);
     if(correctDecision) return "";
-    sb.append("\nMENTION: "+m.spanToString()+" ("+m.mentionID
-        +")\tperson: "+m.person+"\tsingleton? "+ (!m.hasTwin) +"\t\tisFirstMention? "+isFirstMention
-        +"\t\tfoundAnt? "+foundCorefAnt+"\t\tcorrectDecision? "+correctDecision);
-    sb.append("\n\ttype: "+m.mentionType+"\tHeadword: "+m.headWord.word()+"\tNEtype: "+m.nerString+"\tnumber: "+m.number+"\tgender: "+m.gender+"\tanimacy: "+m.animacy).append("\n");
+    sb.append("\nMENTION: ").append(m.spanToString()).append(" (").append(m.mentionID).append(")\tperson: ").append(m.person).append("\tsingleton? ").append(!m.hasTwin).append("\t\tisFirstMention? ").append(isFirstMention).append("\t\tfoundAnt? ").append(foundCorefAnt).append("\t\tcorrectDecision? ").append(correctDecision);
+    sb.append("\n\ttype: ").append(m.mentionType).append("\tHeadword: ").append(m.headWord.word()).append("\tNEtype: ").append(m.nerString).append("\tnumber: ").append(m.number).append("\tgender: ").append(m.gender).append("\tanimacy: ").append(m.animacy).append('\n');
     if(m.contextParseTree!=null) sb.append(m.contextParseTree.pennString());
     
     sb.append("\n\n\t\tOracle\t\tDcoref\t\t\tRF\t\tAntecedent\n");
@@ -435,9 +431,9 @@ public class CorefPrinter {
       else if(dcorefPronounSieve.coreferent(document, mC, aC, m, ant, dict, null)) dcorefStr = "coref-pronounSieve";
 
       
-      dcorefStr += "\t"+String.valueOf(order);
+      dcorefStr += '\t' +String.valueOf(order);
           
-      sb.append("\t\t"+oracleStr+"\t"+dcorefStr+"\t\t"+ant.spanToString()+" ("+ant.mentionID+")\n");
+      sb.append("\t\t").append(oracleStr).append('\t').append(dcorefStr).append("\t\t").append(ant.spanToString()).append(" (").append(ant.mentionID).append(")\n");
     }
     
     sb.append("ERROR END -----------------------------------------------------------------------\n");
@@ -534,7 +530,7 @@ public class CorefPrinter {
       for(String line : lines) {
         if(line.startsWith("METRIC")) sb.append(line);
         if(!line.startsWith("Identification of Mentions") && line.contains("Recall")) {
-          sb.append(line).append("\n");
+          sb.append(line).append('\n');
         }
       }
       Redwood.log(sb.toString());

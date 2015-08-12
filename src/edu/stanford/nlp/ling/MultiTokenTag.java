@@ -66,7 +66,7 @@ public class MultiTokenTag implements Serializable {
   }
 
   public String toString() {
-    return  tag.name + "/" + tag.tag +  "(" + index + "/" + tag.length + ")";
+    return  tag.name + '/' + tag.tag + '(' + index + '/' + tag.length + ')';
   }
 
   @Override

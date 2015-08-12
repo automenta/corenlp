@@ -18,10 +18,10 @@ public class BasicFeatureFactory extends FeatureFactory {
     String word = getFeatureFromCoreLabel(label, FeatureComponent.HEADWORD);
 
     features.add(conFeature + constituent);
-    features.add(wordTagFeature + word + "-" + tag);
+    features.add(wordTagFeature + word + '-' + tag);
     features.add(tagFeature + tag);
-    features.add(wordConFeature + word + "-" + constituent);
-    features.add(tagConFeature + tag + "-" + constituent);
+    features.add(wordConFeature + word + '-' + constituent);
+    features.add(tagConFeature + tag + '-' + constituent);
   }
 
   public static void addUnaryQueueFeatures(List<String> features, CoreLabel label, String wtFeature) {
@@ -33,7 +33,7 @@ public class BasicFeatureFactory extends FeatureFactory {
     String word = label.get(TreeCoreAnnotations.HeadWordLabelAnnotation.class).value();
 
     // TODO: check to see if this is slow because of the string concat
-    features.add(wtFeature + tag + "-" + word);
+    features.add(wtFeature + tag + '-' + word);
   }
 
   public static void addBinaryFeatures(List<String> features,
@@ -41,19 +41,19 @@ public class BasicFeatureFactory extends FeatureFactory {
                                        String name2, CoreLabel label2, FeatureComponent feature21, FeatureComponent feature22) {
     if (label1 == null) {
       if (label2 == null) {
-        features.add(name1 + "n" + name2 + "n");
+        features.add(name1 + 'n' + name2 + 'n');
       } else {
-        addUnaryFeature(features, name1 + "n" + name2 + feature21.shortName() + "-", label2, feature21);
-        addUnaryFeature(features, name1 + "n" + name2 + feature22.shortName() + "-", label2, feature22);
+        addUnaryFeature(features, name1 + 'n' + name2 + feature21.shortName() + '-', label2, feature21);
+        addUnaryFeature(features, name1 + 'n' + name2 + feature22.shortName() + '-', label2, feature22);
       }
     } else if (label2 == null) {
       addUnaryFeature(features, name1 + feature11.shortName() + name2 + "n-", label1, feature11);
       addUnaryFeature(features, name1 + feature12.shortName() + name2 + "n-", label1, feature12);
     } else {
-      addBinaryFeature(features, name1 + feature11.shortName() + name2 + feature21.shortName() + "-", label1, feature11, label2, feature21);
-      addBinaryFeature(features, name1 + feature11.shortName() + name2 + feature22.shortName() + "-", label1, feature11, label2, feature22);
-      addBinaryFeature(features, name1 + feature12.shortName() + name2 + feature21.shortName() + "-", label1, feature12, label2, feature21);
-      addBinaryFeature(features, name1 + feature12.shortName() + name2 + feature22.shortName() + "-", label1, feature12, label2, feature22);
+      addBinaryFeature(features, name1 + feature11.shortName() + name2 + feature21.shortName() + '-', label1, feature11, label2, feature21);
+      addBinaryFeature(features, name1 + feature11.shortName() + name2 + feature22.shortName() + '-', label1, feature11, label2, feature22);
+      addBinaryFeature(features, name1 + feature12.shortName() + name2 + feature21.shortName() + '-', label1, feature12, label2, feature21);
+      addBinaryFeature(features, name1 + feature12.shortName() + name2 + feature22.shortName() + '-', label1, feature12, label2, feature22);
     }
   }
 
@@ -65,7 +65,7 @@ public class BasicFeatureFactory extends FeatureFactory {
   public static void addBinaryFeature(List<String> features, String featureType, CoreLabel label1, FeatureComponent feature1, CoreLabel label2, FeatureComponent feature2) {
     String value1 = getFeatureFromCoreLabel(label1, feature1);
     String value2 = getFeatureFromCoreLabel(label2, feature2);
-    features.add(featureType + value1 + "-" + value2);
+    features.add(featureType + value1 + '-' + value2);
   }
 
   public static void addTrigramFeature(List<String> features, String featureType, CoreLabel label1, FeatureComponent feature1, CoreLabel label2, FeatureComponent feature2, CoreLabel label3, FeatureComponent feature3) {
@@ -73,7 +73,7 @@ public class BasicFeatureFactory extends FeatureFactory {
     String value2 = getFeatureFromCoreLabel(label2, feature2);
     String value3 = getFeatureFromCoreLabel(label3, feature3);
 
-    features.add(featureType + value1 + "-" + value2 + "-" + value3);
+    features.add(featureType + value1 + '-' + value2 + '-' + value3);
   }
 
   public static void addPositionFeatures(List<String> features, State state) {
@@ -99,20 +99,20 @@ public class BasicFeatureFactory extends FeatureFactory {
 
     String value = getFeatureFromCoreLabel(label, feature);
 
-    features.add(featureType + value + "-" + separator);
+    features.add(featureType + value + '-' + separator);
   }
 
   public static void addSeparatorFeature(List<String> features, String featureType, CoreLabel label, FeatureComponent feature, boolean between) {
     String value = getFeatureFromCoreLabel(label, feature);
 
-    features.add(featureType + value + "-" + between);
+    features.add(featureType + value + '-' + between);
   }
 
   public static void addSeparatorFeature(List<String> features, String featureType, CoreLabel label1, FeatureComponent feature1, CoreLabel label2, FeatureComponent feature2, boolean between) {
     String value1 = getFeatureFromCoreLabel(label1, feature1);
     String value2 = getFeatureFromCoreLabel(label2, feature2);
 
-    features.add(featureType + value1 + "-" + value2 + "-" + between);
+    features.add(featureType + value1 + '-' + value2 + '-' + between);
   }
 
   public static void addSeparatorFeatures(List<String> features, String name1, CoreLabel label1, String name2, CoreLabel label2, String separatorBetween, int countBetween) {
@@ -122,20 +122,20 @@ public class BasicFeatureFactory extends FeatureFactory {
 
     // 0 separators is captured by the countBetween features
     if (separatorBetween != null) {
-      String separatorBetweenName = "Sepb" + name1 + name2 + "-" + separatorBetween + "-";
-      addUnaryFeature(features, name1 + "w" + separatorBetweenName, label1, FeatureComponent.HEADWORD);
+      String separatorBetweenName = "Sepb" + name1 + name2 + '-' + separatorBetween + '-';
+      addUnaryFeature(features, name1 + 'w' + separatorBetweenName, label1, FeatureComponent.HEADWORD);
       addBinaryFeature(features, name1 + "wc" + separatorBetweenName, label1, FeatureComponent.HEADWORD, label1, FeatureComponent.VALUE);
-      addUnaryFeature(features, name2 + "w" + separatorBetweenName, label2, FeatureComponent.HEADWORD);
+      addUnaryFeature(features, name2 + 'w' + separatorBetweenName, label2, FeatureComponent.HEADWORD);
       addBinaryFeature(features, name2 + "wc" + separatorBetweenName, label2, FeatureComponent.HEADWORD, label2, FeatureComponent.VALUE);
-      addBinaryFeature(features, name1 + "c" + name2 + "c" + separatorBetweenName, label1, FeatureComponent.VALUE, label2, FeatureComponent.VALUE);
+      addBinaryFeature(features, name1 + 'c' + name2 + 'c' + separatorBetweenName, label1, FeatureComponent.VALUE, label2, FeatureComponent.VALUE);
     }
 
-    String countBetweenName = "Sepb" + name1 + name2 + "-" + countBetween + "-";
-    addUnaryFeature(features, name1 + "w" + countBetweenName, label1, FeatureComponent.HEADWORD);
+    String countBetweenName = "Sepb" + name1 + name2 + '-' + countBetween + '-';
+    addUnaryFeature(features, name1 + 'w' + countBetweenName, label1, FeatureComponent.HEADWORD);
     addBinaryFeature(features, name1 + "wc" + countBetweenName, label1, FeatureComponent.HEADWORD, label1, FeatureComponent.VALUE);
-    addUnaryFeature(features, name2 + "w" + countBetweenName, label2, FeatureComponent.HEADWORD);
+    addUnaryFeature(features, name2 + 'w' + countBetweenName, label2, FeatureComponent.HEADWORD);
     addBinaryFeature(features, name2 + "wc" + countBetweenName, label2, FeatureComponent.HEADWORD, label2, FeatureComponent.VALUE);
-    addBinaryFeature(features, name1 + "c" + name2 + "c" + countBetweenName, label1, FeatureComponent.VALUE, label2, FeatureComponent.VALUE);
+    addBinaryFeature(features, name1 + 'c' + name2 + 'c' + countBetweenName, label1, FeatureComponent.VALUE, label2, FeatureComponent.VALUE);
   }
 
   public static void addSeparatorFeatures(List<String> features, CoreLabel s0Label, CoreLabel s1Label, State.HeadPosition s0Separator, State.HeadPosition s1Separator) {
@@ -182,7 +182,7 @@ public class BasicFeatureFactory extends FeatureFactory {
    * ends of the tree.  Also adds notes about the sizes of the given
    * tree.  However, it seems somewhat slow and doesn't help accuracy.
    */
-  public void addEdgeFeatures(List<String> features, State state, String nodeName, String neighborName, Tree node, Tree neighbor) {
+  public static void addEdgeFeatures(List<String> features, State state, String nodeName, String neighborName, Tree node, Tree neighbor) {
     if (node == null) {
       return;
     }
@@ -220,7 +220,7 @@ public class BasicFeatureFactory extends FeatureFactory {
   }
 
   /** This option also does not seem to help */
-  public void addEdgeFeatures2(List<String> features, State state, String nodeName, Tree node) {
+  public static void addEdgeFeatures2(List<String> features, State state, String nodeName, Tree node) {
     if (node == null) {
       return;
     }
@@ -229,7 +229,7 @@ public class BasicFeatureFactory extends FeatureFactory {
     int right = ShiftReduceUtils.rightIndex(node);
 
     CoreLabel nodeLabel = getCoreLabel(node);
-    String nodeValue = getFeatureFromCoreLabel(nodeLabel, FeatureComponent.VALUE) + "-";
+    String nodeValue = getFeatureFromCoreLabel(nodeLabel, FeatureComponent.VALUE) + '-';
     CoreLabel leftLabel = getQueueLabel(state, left);
     CoreLabel rightLabel = getQueueLabel(state, right);
 
@@ -246,7 +246,7 @@ public class BasicFeatureFactory extends FeatureFactory {
   /**
    * Also did not seem to help
    */
-  public void addExtraTrigramFeatures(List<String> features, CoreLabel s0Label, CoreLabel s1Label, CoreLabel s2Label, CoreLabel q0Label, CoreLabel q1Label) {
+  public static void addExtraTrigramFeatures(List<String> features, CoreLabel s0Label, CoreLabel s1Label, CoreLabel s2Label, CoreLabel q0Label, CoreLabel q1Label) {
     addTrigramFeature(features, "S0wS1wS2c-", s0Label, FeatureComponent.HEADWORD, s1Label, FeatureComponent.HEADWORD, s2Label, FeatureComponent.VALUE);
     addTrigramFeature(features, "S0wS1cS2w-", s0Label, FeatureComponent.HEADWORD, s1Label, FeatureComponent.VALUE, s2Label, FeatureComponent.HEADWORD);
     addTrigramFeature(features, "S0cS1wS2w-", s0Label, FeatureComponent.VALUE, s1Label, FeatureComponent.HEADWORD, s2Label, FeatureComponent.HEADWORD);

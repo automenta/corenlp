@@ -105,9 +105,9 @@ public class TestSentence implements SequenceModel {
    */
   public ArrayList<TaggedWord> tagSentence(List<? extends HasWord> s,
                                            boolean reuseTags) {
-    this.origWords = new ArrayList<HasWord>(s);
+    this.origWords = new ArrayList<>(s);
     int sz = s.size();
-    this.sent = new ArrayList<String>(sz + 1);
+    this.sent = new ArrayList<>(sz + 1);
     for (int j = 0; j < sz; j++) {
       if (maxentTagger.wordFunction != null) {
         sent.add(maxentTagger.wordFunction.apply(s.get(j).word()));
@@ -117,7 +117,7 @@ public class TestSentence implements SequenceModel {
     }
     sent.add(Tagger.EOS_WORD);
     if (reuseTags) {
-      this.originalTags = new ArrayList<String>(sz + 1);
+      this.originalTags = new ArrayList<>(sz + 1);
       for (int j = 0; j < sz; ++j) {
         if (s.get(j) instanceof HasTag) {
           originalTags.add(((HasTag) s.get(j)).tag());
@@ -174,7 +174,7 @@ public class TestSentence implements SequenceModel {
   ArrayList<TaggedWord> getTaggedSentence() {
     final boolean hasOffset;
     hasOffset = origWords != null && origWords.size() > 0 && (origWords.get(0) instanceof HasOffset);
-    ArrayList<TaggedWord> taggedSentence = new ArrayList<TaggedWord>();
+    ArrayList<TaggedWord> taggedSentence = new ArrayList<>();
     for (int j = 0; j < size - 1; j++) {
       String tag = finalTags[j];
       TaggedWord w = new TaggedWord(sent.get(j), tag);
@@ -706,7 +706,7 @@ public class TestSentence implements SequenceModel {
   public double[] scoresOf(int[] tags, int pos) {
     if (DBG) {
       System.err.println("scoresOf(): length of tags is " + tags.length + "; position is " + pos + "; endSizePairs = " + endSizePairs + "; size is " + size + "; leftWindow is " + leftWindow());
-      System.err.println("  History h = new History(" + (endSizePairs - size) + ", " + (endSizePairs - 1) + ", " + (endSizePairs - size + pos - leftWindow()) + ")");
+      System.err.println("  History h = new History(" + (endSizePairs - size) + ", " + (endSizePairs - 1) + ", " + (endSizePairs - size + pos - leftWindow()) + ')');
     }
     history.init(endSizePairs - size, endSizePairs - 1, endSizePairs - size + pos - leftWindow());
     setHistory(pos, history, tags);

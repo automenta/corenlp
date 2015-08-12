@@ -45,9 +45,9 @@ class RandomWalk implements Serializable {
       return hiddenToSeen.get(hidden).getCount(seen) / hiddenToSeen.get(hidden).totalCount();
     } else {
       double total = 0;
-      for (Object seen1 : seenToHidden.keySet()) {
+      for (Map.Entry<Object, Counter> objectCounterEntry : seenToHidden.entrySet()) {
         for (Object hidden1 : hiddenToSeen.keySet()) {
-          double subtotal = hiddenToSeen.get(hidden).getCount(seen1) / hiddenToSeen.get(hidden).totalCount() * (seenToHidden.get(seen1).getCount(hidden1) / seenToHidden.get(seen1).totalCount());
+          double subtotal = hiddenToSeen.get(hidden).getCount(objectCounterEntry.getKey()) / hiddenToSeen.get(hidden).totalCount() * (objectCounterEntry.getValue().getCount(hidden1) / objectCounterEntry.getValue().totalCount());
           subtotal += score(hidden1, seen, steps - 1);
           total += subtotal;
         }

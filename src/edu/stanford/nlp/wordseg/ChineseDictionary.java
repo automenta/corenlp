@@ -161,7 +161,7 @@ public class ChineseDictionary {
       words_[length].add(item);
     } else {
       // insist on new String as it may save memory
-      String subItem = new String(item.substring(0,MAX_LEXICON_LENGTH));
+      String subItem = item.substring(0, MAX_LEXICON_LENGTH);
       if (cdtos_ != null) {
         subItem = cdtos_.normalization(subItem);
       }

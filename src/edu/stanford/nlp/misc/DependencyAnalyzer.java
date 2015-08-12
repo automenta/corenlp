@@ -139,7 +139,7 @@ public class DependencyAnalyzer {
 
     // The depQueue is the queue of items in the closure whose dependencies
     // have yet to be scanned.
-    LinkedList<Identifier> depQueue = new LinkedList<Identifier>();
+    LinkedList<Identifier> depQueue = new LinkedList<>();
 
     // add all the starting classes to the closure and the depQueue
     addStartingClasses(depQueue, closure, startingClassNames);
@@ -183,14 +183,12 @@ public class DependencyAnalyzer {
 
     DependencyAnalyzer da = new DependencyAnalyzer(args[0]);
 
-    ArrayList<String> startingClasses = new ArrayList<String>(args.length - 1);
-    for (int i = 1; i < args.length; ++i) {
-      startingClasses.add(args[i]);
-    }
+    ArrayList<String> startingClasses = new ArrayList<>(args.length - 1);
+    startingClasses.addAll(Arrays.asList(args).subList(1, args.length));
 
     Collection<Identifier> closure = da.transitiveClosure(startingClasses);
 
-    ArrayList<Identifier> sortedClosure = new ArrayList<Identifier>(closure);
+    ArrayList<Identifier> sortedClosure = new ArrayList<>(closure);
     Collections.sort(sortedClosure);
     Set<String> alreadyOutput = Generics.newHashSet();
     for (Identifier identifier : sortedClosure) {
@@ -210,10 +208,10 @@ public class DependencyAnalyzer {
   }
 
   public static String prependPackage(String pkgname, String classname) {
-    if( pkgname.equals("") ) {
+    if(pkgname.isEmpty()) {
       return classname;
     } else {
-      return pkgname + "." + classname;
+      return pkgname + '.' + classname;
     }
   }
 
@@ -251,7 +249,7 @@ public class DependencyAnalyzer {
         } else {
           matcher = memberLine.matcher(line);
           if (matcher.matches()) {
-            name = curClass.name + "." + matcher.group(1);
+            name = curClass.name + '.' + matcher.group(1);
             //System.err.println("Found member: " + name );
           } else {
             matcher = inDepLine.matcher(line);
@@ -294,16 +292,16 @@ public class DependencyAnalyzer {
 
     // After reading the dependencies, as a post-processing step we
     // connect all inner classes and outer classes with each other.
-    for (String className : identifiers.keySet()) {
-      Identifier classId = identifiers.get(className);
+    for (Map.Entry<String, Identifier> stringIdentifierEntry : identifiers.entrySet()) {
+      Identifier classId = stringIdentifierEntry.getValue();
       if (!classId.isClass) {
         continue;
       }
-      int baseIndex = className.indexOf("$");
+      int baseIndex = stringIdentifierEntry.getKey().indexOf('$');
       if (baseIndex < 0) {
         continue;
       }
-      String baseName = className.substring(0, baseIndex);
+      String baseName = stringIdentifierEntry.getKey().substring(0, baseIndex);
       Identifier baseId = identifiers.get(baseName);
       if (baseId == null) {
         continue;

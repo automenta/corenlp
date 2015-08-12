@@ -98,7 +98,7 @@ public class ArrayHeap<E> extends AbstractSet<E> implements Heap<E> {
   private HeapEntry<E> getEntry(E o) {
     HeapEntry<E> entry = objectToEntry.get(o);
     if (entry == null) {
-      entry = new HeapEntry<E>();
+      entry = new HeapEntry<>();
       entry.index = size();
       entry.object = o;
       indexToEntry.add(entry);
@@ -258,8 +258,8 @@ public class ArrayHeap<E> extends AbstractSet<E> implements Heap<E> {
 
   @Override
   public Iterator<E> iterator() {
-    Heap<E> tempHeap = new ArrayHeap<E>(cmp, size());
-    List<E> tempList = new ArrayList<E>(size());
+    Heap<E> tempHeap = new ArrayHeap<>(cmp, size());
+    List<E> tempList = new ArrayList<>(size());
     for (E obj : objectToEntry.keySet()) {
       tempHeap.add(obj);
     }
@@ -281,7 +281,7 @@ public class ArrayHeap<E> extends AbstractSet<E> implements Heap<E> {
 
   public void dump() {
     for (int j = 0; j < indexToEntry.size(); j++) {
-      System.err.println(" " + j + " " + ((Scored) indexToEntry.get(j).object).score());
+      System.err.println(" " + j + ' ' + ((Scored) indexToEntry.get(j).object).score());
     }
   }
 
@@ -290,7 +290,7 @@ public class ArrayHeap<E> extends AbstractSet<E> implements Heap<E> {
       if (i != 0) {
         // check ordering
         if (compare(indexToEntry.get(i), indexToEntry.get(parent(i))) < 0) {
-          System.err.println("Error in the ordering of the heap! (" + i + ")");
+          System.err.println("Error in the ordering of the heap! (" + i + ')');
           dump();
           System.exit(0);
         }
@@ -308,18 +308,18 @@ public class ArrayHeap<E> extends AbstractSet<E> implements Heap<E> {
    */
   public ArrayHeap(Comparator<? super E> cmp) {
     this.cmp = cmp;
-    indexToEntry = new ArrayList<HeapEntry<E>>();
+    indexToEntry = new ArrayList<>();
     objectToEntry = Generics.newHashMap();
   }
 
   public ArrayHeap(Comparator<? super E> cmp, int initCapacity) {
     this.cmp = cmp;
-    indexToEntry = new ArrayList<HeapEntry<E>>(initCapacity);
+    indexToEntry = new ArrayList<>(initCapacity);
     objectToEntry = Generics.newHashMap(initCapacity);
   }
 
   public List<E> asList() {
-    return new LinkedList<E>(this);
+    return new LinkedList<>(this);
   }
 
   /**
@@ -328,7 +328,7 @@ public class ArrayHeap<E> extends AbstractSet<E> implements Heap<E> {
    */
   @Override
   public String toString() {
-    ArrayList<E> result = new ArrayList<E>();
+    ArrayList<E> result = new ArrayList<>();
     for(E key : objectToEntry.keySet())
       result.add(key);
     Collections.sort(result,cmp);

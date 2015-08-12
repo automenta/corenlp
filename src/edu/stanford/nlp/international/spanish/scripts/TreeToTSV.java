@@ -63,7 +63,7 @@ public class TreeToTSV {
 
           Tree wordNode = t.firstChild();
           String word = ((CoreLabel) wordNode.label()).value();
-          sb.append(word).append("\t");
+          sb.append(word).append('\t');
  
           switch(type) {
           case 'p':
@@ -79,7 +79,7 @@ public class TreeToTSV {
             sb.append("OTROS");
             break;
           default:
-            sb.append("O");
+            sb.append('O');
           }
           sb.append(nl);
         }
@@ -89,8 +89,6 @@ public class TreeToTSV {
 
       tr.close();
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();

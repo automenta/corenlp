@@ -61,7 +61,7 @@ public class BasicEntityExtractor implements Extractor {
 
   protected EntityMentionFactory entityMentionFactory;
 
-  public final Logger logger;
+  public static final Logger logger = Logger.getLogger(BasicEntityExtractor.class.getName());
   
   protected boolean useNERTags;
   
@@ -73,7 +73,6 @@ public class BasicEntityExtractor implements Extractor {
 		  EntityMentionFactory factory, boolean useNERTags) {
     this.annotationsToSkip = annotationsToSkip;
     this.gazetteerLocation = gazetteerLocation;
-    this.logger = Logger.getLogger(BasicEntityExtractor.class.getName());
     this.useSubTypes = useSubTypes;
     this.useBIO = useBIO;
     this.entityMentionFactory = factory;
@@ -148,9 +147,11 @@ public class BasicEntityExtractor implements Extractor {
 
     // now label the sentence
     List<CoreLabel> annotatedSentence = this.classifier.classify(testSentence);
-    logger.finest("CLASSFIER OUTPUT: " + annotatedSentence);
+    if (logger.isLoggable(Level.FINEST)) {
+      logger.finest("CLASSFIER OUTPUT: " + annotatedSentence);
+    }
 
-    List<EntityMention> extractedEntities = new ArrayList<EntityMention>();
+    List<EntityMention> extractedEntities = new ArrayList<>();
     int i = 0;
 
     // variables which keep track of partially seen entities (i.e. we've seen
@@ -197,7 +198,9 @@ public class BasicEntityExtractor implements Extractor {
     sentence.set(MachineReadingAnnotations.EntityMentionsAnnotation.class, extractedEntities);
     logger.finest("EXTRACTED ENTITIES: ");
     for(EntityMention e: extractedEntities){
-      logger.finest("\t" + e);
+      if (logger.isLoggable(Level.FINEST)) {
+        logger.finest("\t" + e);
+      }
     }
 
     postprocessSentence(sentence, sentCount);
@@ -244,7 +247,7 @@ public class BasicEntityExtractor implements Extractor {
       if (end > start) {
         
         // found a match!
-        EntityMention m = entityMentionFactory.constructEntityMention(
+        EntityMention m = EntityMentionFactory.constructEntityMention(
             EntityMention.makeUniqueId(),
             sentence,
             new Span(start, end),
@@ -275,7 +278,7 @@ public class BasicEntityExtractor implements Extractor {
     if(mentions == null)
     {  
       this.logger.info("mentions are null");
-      mentions = new ArrayList<EntityMention>();
+      mentions = new ArrayList<>();
     }
 
     for (int start = 0; start < words.size(); start ++) {
@@ -296,7 +299,7 @@ public class BasicEntityExtractor implements Extractor {
         
         // found a match!
         String entityType = this.getEntityTypeForTag(lastneTag);
-        EntityMention m = entityMentionFactory.constructEntityMention(
+        EntityMention m = EntityMentionFactory.constructEntityMention(
             EntityMention.makeUniqueId(),
             sentence,
             new Span(start, end),
@@ -326,7 +329,7 @@ public class BasicEntityExtractor implements Extractor {
   public static String makeEntityMentionIdentifier(CoreMap sentence, int sentCount, int entId) {
     String docid = sentence.get(CoreAnnotations.DocIDAnnotation.class);
     if(docid == null) docid = "EntityMention";
-    String identifier = docid + "-" + entId + "-" + sentCount;
+    String identifier = docid + '-' + entId + '-' + sentCount;
     return identifier;
   }
 
@@ -340,8 +343,8 @@ public class BasicEntityExtractor implements Extractor {
       type = label.substring(2);
       subtype = null; // TODO: add support for subtypes! (needed at least in ACE)
     }
-    EntityMention entity = entityMentionFactory.constructEntityMention(identifier, sentence, span, span, type, subtype, null);
-    Counter<String> probs = new ClassicCounter<String>();
+    EntityMention entity = EntityMentionFactory.constructEntityMention(identifier, sentence, span, span, type, subtype, null);
+    Counter<String> probs = new ClassicCounter<>();
     probs.setCount(entity.getType(), 1.0);
     entity.setTypeProbabilities(probs);
     return entity;
@@ -355,14 +358,14 @@ public class BasicEntityExtractor implements Extractor {
    * This will return precision,recall and F1 measure
    */
   public void runTestSet(List<List<CoreLabel>> testSet) {
-    Counter<String> tp = new ClassicCounter<String>();
-    Counter<String> fp = new ClassicCounter<String>();
-    Counter<String> fn = new ClassicCounter<String>();
+    Counter<String> tp = new ClassicCounter<>();
+    Counter<String> fp = new ClassicCounter<>();
+    Counter<String> fn = new ClassicCounter<>();
 
-    Counter<String> actual = new ClassicCounter<String>();
+    Counter<String> actual = new ClassicCounter<>();
 
     for (List<CoreLabel> labels : testSet) {
-      List<CoreLabel> unannotatedLabels = new ArrayList<CoreLabel>();
+      List<CoreLabel> unannotatedLabels = new ArrayList<>();
       // create a new label without answer annotation
       for (CoreLabel label : labels) {
         CoreLabel newLabel = new CoreLabel();
@@ -470,10 +473,10 @@ public class BasicEntityExtractor implements Extractor {
           if(prev != null && l.equals(prev)) nl = "I-" + l;
           else nl = "B-" + l;
         }
-        String line = w + " " + t + " " + nl;
+        String line = w + ' ' + t + ' ' + nl;
         String [] toks = line.split("[ \t\n]+");
         if(toks.length != 3){
-          throw new RuntimeException("INVALID LINE: \"" + line + "\"");
+          throw new RuntimeException("INVALID LINE: \"" + line + '"');
         }
         os.printf("%s %s %s\n", w, t, nl);
         prev = l;
@@ -498,10 +501,10 @@ public class BasicEntityExtractor implements Extractor {
           if(prev != null && l.equals(prev)) nl = "I-" + l;
           else nl = "B-" + l;
         }
-        String line = w + " " + t + " " + nl;
+        String line = w + ' ' + t + ' ' + nl;
         String [] toks = line.split("[ \t\n]+");
         if(toks.length != 3){
-          throw new RuntimeException("INVALID LINE: \"" + line + "\"");
+          throw new RuntimeException("INVALID LINE: \"" + line + '"');
         }
         os.printf("%s %s %s\n", w, t, nl);
         prev = l;
@@ -524,7 +527,7 @@ public class BasicEntityExtractor implements Extractor {
       props.setProperty("gazette", this.gazetteerLocation);
       props.setProperty("sloppyGazette", "true");
     }
-    return new CRFClassifier<CoreLabel>(props);
+    return new CRFClassifier<>(props);
   }
 
   /**
@@ -604,9 +607,9 @@ public class BasicEntityExtractor implements Extractor {
       String answer = label.getString(AnswerAnnotation.class);
       String tag = label.getString(PartOfSpeechAnnotation.class);
 
-      sb.append(word).append("(").append(tag);
+      sb.append(word).append('(').append(tag);
       if (!SeqClassifierFlags.DEFAULT_BACKGROUND_SYMBOL.equals(answer)) {
-        sb.append(" ").append(answer);
+        sb.append(' ').append(answer);
       }
 
       if (printNer) {
@@ -614,7 +617,7 @@ public class BasicEntityExtractor implements Extractor {
       }
       sb.append(") ");
     }
-    sb.append("]");
+    sb.append(']');
 
     return sb.toString();
   }

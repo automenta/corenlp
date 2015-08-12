@@ -56,7 +56,7 @@ public class RFSieve extends Sieve {
   public void findCoreferentAntecedent(Mention m, int mIdx, Document document, Dictionaries dict, Properties props, StringBuilder sbLog) throws Exception {
     int sentIdx = m.sentNum;
 
-    Counter<Integer> probs = new ClassicCounter<Integer>();  
+    Counter<Integer> probs = new ClassicCounter<>();
     
     int mentionDist = 0;
     for(int sentDist=0 ; sentDist <= Math.min(this.maxSentDist, sentIdx) ; sentDist++) {
@@ -102,7 +102,7 @@ public class RFSieve extends Sieve {
     try {
       
       boolean label = (document.goldMentions==null)? false : document.isCoref(m, candidate);
-      Counter<String> features = new ClassicCounter<String>();
+      Counter<String> features = new ClassicCounter<>();
       CorefCluster mC = document.corefClusters.get(m.corefClusterID);
       CorefCluster aC = document.corefClusters.get(candidate.corefClusterID);
       
@@ -180,7 +180,7 @@ public class RFSieve extends Sieve {
         
         features.incrementCount("B-"+mRole);
         features.incrementCount("B-"+antRole);
-        features.incrementCount("B-"+antRole+"-"+mRole);
+        features.incrementCount("B-"+antRole+ '-' +mRole);
 
         if(CorefProperties.combineObjectRoles(props, sievename)) {
           // combine all objects
@@ -194,7 +194,7 @@ public class RFSieve extends Sieve {
               antRole = "A-OBJ";
               features.incrementCount("B-A-OBJ");
             }
-            features.incrementCount("B-"+antRole+"-"+mRole);
+            features.incrementCount("B-"+antRole+ '-' +mRole);
           }
         }
         
@@ -242,49 +242,49 @@ public class RFSieve extends Sieve {
 
         // shape feature from Bjorkelund & Kuhn
         StringBuilder sb = new StringBuilder();
-        List<Mention> sortedMentions = new ArrayList<Mention>(aC.corefMentions.size());
+        List<Mention> sortedMentions = new ArrayList<>(aC.corefMentions.size());
         sortedMentions.addAll(aC.corefMentions);
         Collections.sort(sortedMentions, new CorefChain.MentionComparator());
         for(Mention a : sortedMentions) {
-          sb.append(a.mentionType).append("-");
+          sb.append(a.mentionType).append('-');
         }
-        features.incrementCount("B-A-SHAPE-"+sb.toString());
+        features.incrementCount("B-A-SHAPE-"+ sb);
         
         sb = new StringBuilder();
-        sortedMentions = new ArrayList<Mention>(mC.corefMentions.size());
+        sortedMentions = new ArrayList<>(mC.corefMentions.size());
         sortedMentions.addAll(mC.corefMentions);
         Collections.sort(sortedMentions, new CorefChain.MentionComparator());
         for(Mention men : sortedMentions) {
-          sb.append(men.mentionType).append("-");
+          sb.append(men.mentionType).append('-');
         }
-        features.incrementCount("B-M-SHAPE-"+sb.toString());
+        features.incrementCount("B-M-SHAPE-"+ sb);
         
         if(CorefProperties.useConstituencyTree(props)) {
           sb = new StringBuilder();
           Tree mTree = m.contextParseTree;
           Tree mHead = mTree.getLeaves().get(m.headIndex).ancestor(1, mTree);
           for(Tree node : mTree.pathNodeToNode(mHead, mTree)){
-            sb.append(node.value()).append("-");
+            sb.append(node.value()).append('-');
             if(node.value().equals("S")) break;
           }
-          features.incrementCount("B-M-SYNPATH-"+sb.toString());
+          features.incrementCount("B-M-SYNPATH-"+ sb);
 
           sb = new StringBuilder();
           Tree aTree = candidate.contextParseTree;
           Tree aHead = aTree.getLeaves().get(candidate.headIndex).ancestor(1, aTree);
           for(Tree node : aTree.pathNodeToNode(aHead, aTree)){
-            sb.append(node.value()).append("-");
+            sb.append(node.value()).append('-');
             if(node.value().equals("S")) break;
           }
-          features.incrementCount("B-A-SYNPATH-"+sb.toString());
+          features.incrementCount("B-A-SYNPATH-"+ sb);
         }
         
         
         features.incrementCount("A-FIRSTAPPEAR", aC.representative.sentNum);
         features.incrementCount("M-FIRSTAPPEAR", mC.representative.sentNum);
         int docSize = document.predictedMentions.size();   // document size in # of sentences
-        features.incrementCount("A-FIRSTAPPEAR-NORMALIZED", aC.representative.sentNum/docSize);
-        features.incrementCount("M-FIRSTAPPEAR-NORMALIZED", mC.representative.sentNum/docSize);
+        features.incrementCount("A-FIRSTAPPEAR-NORMALIZED", aC.representative.sentNum/((double)docSize));
+        features.incrementCount("M-FIRSTAPPEAR-NORMALIZED", mC.representative.sentNum/((double)docSize));
       }
       
       ////////////////////////////////////////////////////////////////////////////////
@@ -345,11 +345,11 @@ public class RFSieve extends Sieve {
       features.incrementCount("B-M-NETYPE-"+m.nerString);
       features.incrementCount("B-A-NETYPE-"+candidate.nerString);
       
-      features.incrementCount("B-BOTH-NUMBER-"+candidate.number+"-"+m.number);
-      features.incrementCount("B-BOTH-GENDER-"+candidate.gender+"-"+m.gender);
-      features.incrementCount("B-BOTH-ANIMACY-"+candidate.animacy+"-"+m.animacy);
-      features.incrementCount("B-BOTH-PERSON-"+candidate.person+"-"+m.person);
-      features.incrementCount("B-BOTH-NETYPE-"+candidate.nerString+"-"+m.nerString);
+      features.incrementCount("B-BOTH-NUMBER-"+candidate.number+ '-' +m.number);
+      features.incrementCount("B-BOTH-GENDER-"+candidate.gender+ '-' +m.gender);
+      features.incrementCount("B-BOTH-ANIMACY-"+candidate.animacy+ '-' +m.animacy);
+      features.incrementCount("B-BOTH-PERSON-"+candidate.person+ '-' +m.person);
+      features.incrementCount("B-BOTH-NETYPE-"+candidate.nerString+ '-' +m.nerString);
       
   
       Set<Number> mcNumber = Generics.newHashSet();
@@ -486,7 +486,7 @@ public class RFSieve extends Sieve {
           if(m.headString.equals(candidate.headString)) features.incrementCount("B-HEADMATCH");
           if(Rules.entityHeadsAgree(mC, aC, m, candidate, dict)) features.incrementCount("B-HEADSAGREE");
           if(Rules.entityExactStringMatch(mC, aC, dict, document.roleSet)) features.incrementCount("B-EXACTSTRINGMATCH");
-          if(Rules.entityHaveExtraProperNoun(m, candidate, new HashSet<String>())) features.incrementCount("B-HAVE-EXTRA-PROPER-NOUN");
+          if(Rules.entityHaveExtraProperNoun(m, candidate, new HashSet<>())) features.incrementCount("B-HAVE-EXTRA-PROPER-NOUN");
           if(Rules.entityBothHaveProper(mC, aC)) features.incrementCount("B-BOTH-HAVE-PROPER");
           if(Rules.entityHaveDifferentLocation(m, candidate, dict)) features.incrementCount("B-HAVE-DIFF-LOC");
           if(Rules.entityHaveIncompatibleModifier(mC, aC)) features.incrementCount("B-HAVE-INCOMPATIBLE-MODIFIER");
@@ -727,7 +727,7 @@ public class RFSieve extends Sieve {
         features.incrementCount("WORDVECTOR-AVG-DIFF", dist/cnt);
       }
       
-      return new RVFDatum<Boolean, String>(features, label);
+      return new RVFDatum<>(features, label);
     } catch (Exception e) {
       System.err.println("Datum Extraction failed in Sieve.java while processing document: "+document.docInfo.get("DOC_ID")+" part: "+document.docInfo.get("DOC_PART"));
       throw new RuntimeException(e);

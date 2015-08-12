@@ -33,7 +33,7 @@ public class BZip2PipedOutputStream extends OutputStream
     this.filename = filename;
     OutputStream outStream = new FileOutputStream(filename);
     errWriter = new PrintWriter(new BufferedWriter(new OutputStreamWriter(err)));
-    outGobbler = new ByteStreamGobbler("Output stream gobbler: " + cmd + " " + filename,
+    outGobbler = new ByteStreamGobbler("Output stream gobbler: " + cmd + ' ' + filename,
             process.getInputStream(), outStream);
     errGobbler = new StreamGobbler(process.getErrorStream(), errWriter);
     outGobbler.start();

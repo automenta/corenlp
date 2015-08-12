@@ -260,7 +260,7 @@ public class CRFLogConditionalObjectiveFloatFunction extends AbstractCachingDiff
       for (int i = 0; i < data[m].length; i++) {
         float p = factorTables[i].conditionalLogProb(given, labels[m][i]);
         if (VERBOSE) {
-          System.err.println("P(" + labels[m][i] + "|" + Arrays.toString(given) + ")=" + p);
+          System.err.println("P(" + labels[m][i] + '|' + Arrays.toString(given) + ")=" + p);
         }
         prob += p;
         System.arraycopy(given, 1, given, 0, given.length - 1);
@@ -297,7 +297,7 @@ public class CRFLogConditionalObjectiveFloatFunction extends AbstractCachingDiff
       for (int j = 0; j < E[i].length; j++) {
         derivative[index++] = (E[i][j] - Ehat[i][j]);
         if (VERBOSE) {
-          System.err.println("deriv(" + i + "," + j + ") = " + E[i][j] + " - " + Ehat[i][j] + " = " + derivative[index - 1]);
+          System.err.println("deriv(" + i + ',' + j + ") = " + E[i][j] + " - " + Ehat[i][j] + " = " + derivative[index - 1]);
         }
       }
     }

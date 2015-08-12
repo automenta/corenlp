@@ -222,7 +222,7 @@ class Util {
 
   public static void printTreeStats(String str, List<DependencyTree> trees)
   {
-    System.err.println(Config.SEPARATOR + " " + str);
+    System.err.println(Config.SEPARATOR + ' ' + str);
     int nTrees = trees.size();
     int nonTree = 0;
     int multiRoot = 0;

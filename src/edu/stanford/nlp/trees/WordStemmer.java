@@ -18,7 +18,7 @@ public class WordStemmer implements TreeVisitor {
     processTree(t, null, new Morphology());
   }
 
-  private void processTree(Tree t, String tag, Morphology morpha) {
+  private static void processTree(Tree t, String tag, Morphology morpha) {
     if (t.isPreTerminal()) {
       tag = t.label().value();
     }

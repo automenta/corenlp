@@ -166,7 +166,7 @@ public class TokensRegexNERAnnotator implements Annotator {
   }
 
   private static Properties getProperties(String name, String mapping, boolean ignoreCase, String validPosRegex) {
-    String prefix = (name != null && !name.isEmpty())? name + ".":"";
+    String prefix = (name != null && !name.isEmpty())? name + '.' :"";
     Properties props = new Properties();
     props.setProperty(prefix + "mapping", mapping);
     props.setProperty(prefix + "ignorecase", String.valueOf(ignoreCase));
@@ -177,7 +177,7 @@ public class TokensRegexNERAnnotator implements Annotator {
   }
 
   public TokensRegexNERAnnotator(String name, Properties properties) {
-    String prefix = (name != null && !name.isEmpty())? name + ".":"";
+    String prefix = (name != null && !name.isEmpty())? name + '.' :"";
     String backgroundSymbol = properties.getProperty(prefix + "backgroundSymbol", DEFAULT_BACKGROUND_SYMBOL);
     String[] backgroundSymbols = backgroundSymbol.split("\\s*,\\s*");
     String mappingFiles = properties.getProperty(prefix + "mapping", DefaultPaths.DEFAULT_REGEXNER_RULES);
@@ -189,17 +189,17 @@ public class TokensRegexNERAnnotator implements Annotator {
     String noDefaultOverwriteLabelsProp = properties.getProperty(prefix + "noDefaultOverwriteLabels");
     this.noDefaultOverwriteLabels = (noDefaultOverwriteLabelsProp != null)
             ? Collections.unmodifiableSet(CollectionUtils.asSet(noDefaultOverwriteLabelsProp.split("\\s*,\\s*")))
-            : Collections.unmodifiableSet(new HashSet<String>());
+            : Collections.unmodifiableSet(new HashSet<>());
     this.ignoreCase = PropertiesUtils.getBool(properties, prefix + "ignorecase", false);
     this.verbose = PropertiesUtils.getBool(properties, prefix + "verbose", false);
 
-    if (validPosRegex != null && !validPosRegex.equals("")) {
+    if (validPosRegex != null && !validPosRegex.isEmpty()) {
       validPosPattern = Pattern.compile(validPosRegex);
     } else {
       validPosPattern = null;
     }
     entries = Collections.unmodifiableList(readEntries(name, noDefaultOverwriteLabels, ignoreCase, verbose, mappings));
-    IdentityHashMap<SequencePattern<CoreMap>, Entry> patternToEntry = new IdentityHashMap<SequencePattern<CoreMap>, Entry>();
+    IdentityHashMap<SequencePattern<CoreMap>, Entry> patternToEntry = new IdentityHashMap<>();
     multiPatternMatcher = createPatternMatcher(patternToEntry);
     this.patternToEntry = Collections.unmodifiableMap(patternToEntry);
     Set<String> myLabels = Generics.newHashSet();
@@ -245,14 +245,14 @@ public class TokensRegexNERAnnotator implements Annotator {
     env.setDefaultStringMatchFlags(stringMatchFlags);
     NodePattern<String> posTagPattern = (validPosPattern != null && PosMatchType.MATCH_ALL_TOKENS.equals(posMatchType))?
             new CoreMapNodePattern.StringAnnotationRegexPattern(validPosPattern):null;
-    List<TokenSequencePattern> patterns = new ArrayList<TokenSequencePattern>(entries.size());
+    List<TokenSequencePattern> patterns = new ArrayList<>(entries.size());
     for (Entry entry:entries) {
       TokenSequencePattern pattern;
       if (entry.tokensRegex != null) {
         // TODO: posTagPatterns...
         pattern = TokenSequencePattern.compile(env, entry.tokensRegex);
       } else {
-        List<SequencePattern.PatternExpr> nodePatterns = new ArrayList<SequencePattern.PatternExpr>();
+        List<SequencePattern.PatternExpr> nodePatterns = new ArrayList<>();
         for (String p:entry.regex) {
           CoreMapNodePattern c = CoreMapNodePattern.valueOf(p, patternFlags);
           if (posTagPattern != null) {
@@ -295,7 +295,7 @@ public class TokensRegexNERAnnotator implements Annotator {
         if (verbose) {
           System.err.println("Not annotating  '" + m.group(g) + "': " +
                   StringUtils.joinFields(m.groupNodes(g), CoreAnnotations.NamedEntityTagAnnotation.class)
-                  + " with " + entry.type + ", sentence is '" + StringUtils.joinWords(tokens, " ") + "'");
+                  + " with " + entry.type + ", sentence is '" + StringUtils.joinWords(tokens, " ") + '\'');
         }
       }
     }
@@ -430,8 +430,8 @@ public class TokensRegexNERAnnotator implements Annotator {
     // We leave it to TokensRegex NER to sort out the priorities and matches
     //   (typically after all the matches has been made since for some TokenRegex expression,
     //       we don't know how many tokens are matched until after the matching is done)
-    List<Entry> entries = new ArrayList<Entry>();
-    TrieMap<String,Entry> seenRegexes = new TrieMap<String,Entry>();
+    List<Entry> entries = new ArrayList<>();
+    TrieMap<String,Entry> seenRegexes = new TrieMap<>();
     Arrays.sort(mappings);
     for (String mapping:mappings) {
       BufferedReader rd = null;

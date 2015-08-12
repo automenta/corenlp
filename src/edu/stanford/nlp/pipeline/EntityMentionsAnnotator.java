@@ -41,7 +41,7 @@ public class EntityMentionsAnnotator implements Annotator {
   private final boolean doAcronyms;
 
   // TODO: Provide properties
-  public static PropertiesUtils.Property[] SUPPORTED_PROPERTIES = new PropertiesUtils.Property[]{};
+  final public static PropertiesUtils.Property[] SUPPORTED_PROPERTIES = new PropertiesUtils.Property[]{};
 
   public EntityMentionsAnnotator() {
     chunkIdentifier = new LabeledChunkIdentifier();
@@ -166,7 +166,7 @@ public class EntityMentionsAnnotator implements Annotator {
   }
 
 
-  private void addAcronyms(Annotation ann, List<CoreMap> mentions) {
+  private static void addAcronyms(Annotation ann, List<CoreMap> mentions) {
     // Find all the organizations in a document
     List<List<CoreLabel>> organizations = new ArrayList<>();
     for (CoreMap mention : mentions) {

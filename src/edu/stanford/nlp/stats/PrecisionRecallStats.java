@@ -150,7 +150,7 @@ public class PrecisionRecallStats {
   public String getPrecisionDescription(int numDigits) {
     NumberFormat nf = NumberFormat.getNumberInstance();
     nf.setMaximumFractionDigits(numDigits);
-    return nf.format(getPrecision()) + "  (" + tpCount + "/" + (tpCount + fpCount) + ")";
+    return nf.format(getPrecision()) + "  (" + tpCount + '/' + (tpCount + fpCount) + ')';
   }
 
   /**
@@ -170,7 +170,7 @@ public class PrecisionRecallStats {
   public String getRecallDescription(int numDigits) {
     NumberFormat nf = NumberFormat.getNumberInstance();
     nf.setMaximumFractionDigits(numDigits);
-    return nf.format(getRecall()) + "  (" + tpCount + "/" + (tpCount + fnCount) + ")";
+    return nf.format(getRecall()) + "  (" + tpCount + '/' + (tpCount + fnCount) + ')';
   }
 
   /**
@@ -208,13 +208,13 @@ public class PrecisionRecallStats {
    */
   @Override
   public String toString() {
-    return "PrecisionRecallStats[tp=" + getTP() + ",fp=" + getFP() + ",fn=" + getFN() + "]";
+    return "PrecisionRecallStats[tp=" + getTP() + ",fp=" + getFP() + ",fn=" + getFN() + ']';
   }
 
   public String toString(int numDigits) {
     return "PrecisionRecallStats[tp=" + getTP() + ",fp=" + getFP() + ",fn=" + getFN() +
             ",p=" + getPrecisionDescription(numDigits) + ",r=" + getRecallDescription(numDigits) +
-            ",f1=" + getF1Description(numDigits) + "]";
+            ",f1=" + getF1Description(numDigits) + ']';
   }
 
 }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -44,11 +45,11 @@ public class CharniakScoredParsesReaderWriter {
    * @param filename  - File to read parses from
    * @return iterable with list of scored parse trees
    */
-  public Iterable<List<ScoredObject<Tree>>> readScoredTrees(String filename)
+  public static Iterable<List<ScoredObject<Tree>>> readScoredTrees(String filename)
   {
     try {
       ScoredParsesIterator iter = new ScoredParsesIterator(filename);
-      return new IterableIterator<List<ScoredObject<Tree>>>(iter);
+      return new IterableIterator<>(iter);
     } catch (IOException ex) {
       throw new RuntimeException(ex);
     }
@@ -64,7 +65,7 @@ public class CharniakScoredParsesReaderWriter {
   public Iterable<List<ScoredObject<Tree>>> readScoredTrees(String inputDesc, BufferedReader br)
   {
     ScoredParsesIterator iter = new ScoredParsesIterator(inputDesc, br);
-    return new IterableIterator<List<ScoredObject<Tree>>>(iter);
+    return new IterableIterator<>(iter);
   }
 
   /**
@@ -193,24 +194,24 @@ public class CharniakScoredParsesReaderWriter {
                   if (lastSentenceId < sentenceId) {
                     StringBuilder sb = new StringBuilder("Missing sentences");
                     for (int i = lastSentenceId+1; i < sentenceId; i++) {
-                      sb.append(" ").append(i);
+                      sb.append(' ').append(i);
                     }
                     logger.warning(sb.toString());
                   } else {
                     logger.warning("sentenceIds are not increasing (last="
-                          + lastSentenceId + ", curr=" + sentenceId + ")");
+                          + lastSentenceId + ", curr=" + sentenceId + ')');
                   }
                 }
               }
               lastSentenceId = sentenceId;
-              curParses = new ArrayList<ScoredObject<Tree>>(parsesExpected);
+              curParses = new ArrayList<>(parsesExpected);
             } else {
               if (score == null) {
                 // read score
                 score = Double.parseDouble(line);
               } else {
                 // Reading a parse
-                curParse = new ScoredObject<Tree>(Trees.readTree(line), score);
+                curParse = new ScoredObject<>(Trees.readTree(line), score);
                 curParses.add(curParse);
                 curParse = null;
                 score = null;
@@ -240,8 +241,10 @@ public class CharniakScoredParsesReaderWriter {
         next = getNext();
         processed++;
         if (next == null) {
-          logger.finer("Read " + processed + " trees, from "
-                  + inputDesc + " in " + timing.toSecondsString() + " secs");
+          if (logger.isLoggable(Level.FINER)) {
+            logger.finer("Read " + processed + " trees, from "
+                    + inputDesc + " in " + timing.toSecondsString() + " secs");
+          }
           done = true;
           if (closeBufferNeeded) {
             try { br.close();  } catch (IOException ex) {};

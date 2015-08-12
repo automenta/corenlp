@@ -434,7 +434,7 @@ public class SeqClassifierFlags implements Serializable {
   public transient String serializeToText = null;
   public transient int interimOutputFreq = 0;
   public transient String initialWeights = null;
-  public transient List<String> gazettes = new ArrayList<String>();
+  public transient List<String> gazettes = new ArrayList<>();
   public transient String selfTrainFile = null;
 
   public String inputEncoding = "UTF-8"; // used for CTBSegDocumentReader as well
@@ -508,7 +508,7 @@ public class SeqClassifierFlags implements Serializable {
 
   public String readerAndWriter = "edu.stanford.nlp.sequences.ColumnDocumentReaderAndWriter";
 
-  public List<String> comboProps = new ArrayList<String>();
+  public List<String> comboProps = new ArrayList<>();
 
   public boolean usePrediction = false;
 
@@ -1359,7 +1359,7 @@ public class SeqClassifierFlags implements Serializable {
       } else if (key.equalsIgnoreCase("phraseGazettes")) {
         StringTokenizer st = new StringTokenizer(val, " ,;\t");
         if (phraseGazettes == null) {
-          phraseGazettes = new ArrayList<String>();
+          phraseGazettes = new ArrayList<>();
         }
         while (st.hasMoreTokens()) {
           phraseGazettes.add(st.nextToken());
@@ -1591,7 +1591,7 @@ public class SeqClassifierFlags implements Serializable {
         useGazettes = true;
         StringTokenizer st = new StringTokenizer(val, " ,;\t");
         if (gazettes == null) {
-          gazettes = new ArrayList<String>();
+          gazettes = new ArrayList<>();
         } // for after deserialization, as gazettes is transient
         while (st.hasMoreTokens()) {
           gazettes.add(st.nextToken());
@@ -1694,7 +1694,7 @@ public class SeqClassifierFlags implements Serializable {
         }
 
         featureFactories = new String[numFactories];
-        featureFactoriesArgs = new ArrayList<Object[]>(numFactories);
+        featureFactoriesArgs = new ArrayList<>(numFactories);
         for (int i = 0; i < numFactories; i++) {
           featureFactories[i] = getFeatureFactory(tokens[i]);
           featureFactoriesArgs.add(new Object[0]);

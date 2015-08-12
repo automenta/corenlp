@@ -145,38 +145,27 @@ public class ParserAnnotator extends SentenceAnnotator {
 
   public static String signature(String annotatorName, Properties props) {
     StringBuilder os = new StringBuilder();
-    os.append(annotatorName + ".model:" +
-            props.getProperty(annotatorName + ".model",
-                    LexicalizedParser.DEFAULT_PARSER_LOC));
-    os.append(annotatorName + ".debug:" +
-            props.getProperty(annotatorName + ".debug", "false"));
-    os.append(annotatorName + ".flags:" +
-            props.getProperty(annotatorName + ".flags", ""));
-    os.append(annotatorName + ".maxlen:" +
-            props.getProperty(annotatorName + ".maxlen", "-1"));
-    os.append(annotatorName + ".treemap:" +
-            props.getProperty(annotatorName + ".treemap", ""));
-    os.append(annotatorName + ".maxtime:" +
-            props.getProperty(annotatorName + ".maxtime", "-1"));
-    os.append(annotatorName + ".originalDependencies:" +
-            props.getProperty(annotatorName + ".originalDependencies", "false"));
-    os.append(annotatorName + ".buildgraphs:" +
-      props.getProperty(annotatorName + ".buildgraphs", "true"));
-    os.append(annotatorName + ".nthreads:" +
-              props.getProperty(annotatorName + ".nthreads", props.getProperty("nthreads", "")));
-    os.append(annotatorName + ".nosquash:" +
-      props.getProperty(annotatorName + ".nosquash", "false"));
-    os.append(annotatorName + ".extradependencies:" +
-        props.getProperty(annotatorName + ".extradependences", "NONE").toLowerCase());
+    os.append(annotatorName).append(".model:").append(props.getProperty(annotatorName + ".model",
+            LexicalizedParser.DEFAULT_PARSER_LOC));
+    os.append(annotatorName).append(".debug:").append(props.getProperty(annotatorName + ".debug", "false"));
+    os.append(annotatorName).append(".flags:").append(props.getProperty(annotatorName + ".flags", ""));
+    os.append(annotatorName).append(".maxlen:").append(props.getProperty(annotatorName + ".maxlen", "-1"));
+    os.append(annotatorName).append(".treemap:").append(props.getProperty(annotatorName + ".treemap", ""));
+    os.append(annotatorName).append(".maxtime:").append(props.getProperty(annotatorName + ".maxtime", "-1"));
+    os.append(annotatorName).append(".originalDependencies:").append(props.getProperty(annotatorName + ".originalDependencies", "false"));
+    os.append(annotatorName).append(".buildgraphs:").append(props.getProperty(annotatorName + ".buildgraphs", "true"));
+    os.append(annotatorName).append(".nthreads:").append(props.getProperty(annotatorName + ".nthreads", props.getProperty("nthreads", "")));
+    os.append(annotatorName).append(".nosquash:").append(props.getProperty(annotatorName + ".nosquash", "false"));
+    os.append(annotatorName).append(".extradependencies:").append(props.getProperty(annotatorName + ".extradependences", "NONE").toLowerCase());
     boolean usesBinary = StanfordCoreNLP.usesBinaryTrees(props);
     boolean saveBinaryTrees = PropertiesUtils.getBool(props, annotatorName + ".binaryTrees", usesBinary);
-    os.append(annotatorName + ".binaryTrees:" + saveBinaryTrees);
+    os.append(annotatorName).append(".binaryTrees:").append(saveBinaryTrees);
 
     return os.toString();
   }
 
   public static String[] convertFlagsToArray(String parserFlags) {
-    if (parserFlags == null || parserFlags.trim().equals("")) {
+    if (parserFlags == null || parserFlags.trim().isEmpty()) {
       return StringUtils.EMPTY_STRING_ARRAY;
     } else {
       return parserFlags.trim().split("\\s+");

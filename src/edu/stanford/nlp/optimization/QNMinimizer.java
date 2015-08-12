@@ -306,12 +306,12 @@ public class QNMinimizer implements Minimizer<DiffFunction>, HasEvaluators {
     // zero gradient.
 
     // for convergence test
-    private final List<Double> evals = new ArrayList<Double>();
-    private final List<Double> values = new ArrayList<Double>();
-    List<Double> gNorms = new ArrayList<Double>();
+    private final List<Double> evals = new ArrayList<>();
+    private final List<Double> values = new ArrayList<>();
+    List<Double> gNorms = new ArrayList<>();
     // List<Double> xNorms = new ArrayList<Double>();
-    private final List<Integer> funcEvals = new ArrayList<Integer>();
-    private final List<Double> time = new ArrayList<Double>();
+    private final List<Integer> funcEvals = new ArrayList<>();
+    private final List<Double> time = new ArrayList<>();
     // gNormInit: This makes it so that if for some reason
     // you try and divide by the initial norm before it's been
     // initialized you don't get a NAN but you will also never
@@ -392,7 +392,7 @@ public class QNMinimizer implements Minimizer<DiffFunction>, HasEvaluators {
     private void writeToFile(double fevals, double val, double gNorm,
         double time) {
       if (outputFile != null) {
-        outputFile.println(fevals + "," + val + "," + gNorm + "," + time);
+        outputFile.println(fevals + "," + val + ',' + gNorm + ',' + time);
       }
     }
 
@@ -427,7 +427,7 @@ public class QNMinimizer implements Minimizer<DiffFunction>, HasEvaluators {
 
       writeToFile(fevals, val, gNormLast, howLong());
 
-      say(nf.format(val) + " " + nfsec.format(howLong()) + "s");
+      say(nf.format(val) + ' ' + nfsec.format(howLong()) + 's');
 
       xLast = x;
       monitorX(x);
@@ -510,7 +510,7 @@ public class QNMinimizer implements Minimizer<DiffFunction>, HasEvaluators {
       }
 
       say(" |" + nf.format(gNormLast) + "| {" + nf.format(relNorm) + "} "
-            + nf.format(Math.abs(averageImprovement / newestVal)) + " " + (evalsSize > 0 ? evals.get(evalsSize-1).toString() : "-") + " ");
+            + nf.format(Math.abs(averageImprovement / newestVal)) + ' ' + (evalsSize > 0 ? evals.get(evalsSize-1).toString() : "-") + ' ');
       return eState.CONTINUE;
     }
 
@@ -547,25 +547,25 @@ public class QNMinimizer implements Minimizer<DiffFunction>, HasEvaluators {
     public eScaling scaleOpt = eScaling.SCALAR;
 
     public QNInfo(int size) {
-      s = new ArrayList<double[]>();
-      y = new ArrayList<double[]>();
-      rho = new ArrayList<Double>();
+      s = new ArrayList<>();
+      y = new ArrayList<>();
+      rho = new ArrayList<>();
       gamma = 1;
       mem = size;
     }
 
     public QNInfo() {
-      s = new ArrayList<double[]>();
-      y = new ArrayList<double[]>();
-      rho = new ArrayList<Double>();
+      s = new ArrayList<>();
+      y = new ArrayList<>();
+      rho = new ArrayList<>();
       gamma = 1;
       mem = maxMem;
     }
 
     public QNInfo(List<double[]> sList, List<double[]> yList) {
-      s = new ArrayList<double[]>();
-      y = new ArrayList<double[]>();
-      rho = new ArrayList<Double>();
+      s = new ArrayList<>();
+      y = new ArrayList<>();
+      rho = new ArrayList<>();
       gamma = 1;
       setHistory(sList, yList);
     }
@@ -874,8 +874,8 @@ public class QNMinimizer implements Minimizer<DiffFunction>, HasEvaluators {
     return score;
   }
 
-  public float[] minimize(DiffFloatFunction function, float functionTolerance,
-      float[] initial) {
+  public static float[] minimize(DiffFloatFunction function, float functionTolerance,
+                                 float[] initial) {
     throw new UnsupportedOperationException("Float not yet supported for QN");
   }
 
@@ -898,7 +898,7 @@ public class QNMinimizer implements Minimizer<DiffFunction>, HasEvaluators {
     say("QNMinimizer called on double function of "
         + dfunction.domainDimension() + " variables,");
     if (mem > 0) {
-      sayln(" using M = " + mem + ".");
+      sayln(" using M = " + mem + '.');
     } else {
       sayln(" using dynamic setting of M.");
     }
@@ -944,7 +944,7 @@ public class QNMinimizer implements Minimizer<DiffFunction>, HasEvaluators {
 
     if (outputToFile) {
       try {
-        String baseName = "QN_m" + mem + "_" + lsOpt.toString() + "_"
+        String baseName = "QN_m" + mem + '_' + lsOpt.toString() + '_'
             + scaleOpt.toString();
         outFile = new PrintWriter(new FileOutputStream(baseName + ".output"),
             true);
@@ -993,7 +993,7 @@ public class QNMinimizer implements Minimizer<DiffFunction>, HasEvaluators {
         its += 1;
         double newValue;
         double[] newPoint = new double[3]; // initialized in loop
-        say("Iter " + its + " evals " + fevals + " ");
+        say("Iter " + its + " evals " + fevals + ' ');
 
         // Compute the search direction
         say("<");
@@ -1159,7 +1159,7 @@ public class QNMinimizer implements Minimizer<DiffFunction>, HasEvaluators {
     }
 
     double completionTime = rec.howLong();
-    sayln("Total time spent in optimization: " + nfsec.format(completionTime) + "s");
+    sayln("Total time spent in optimization: " + nfsec.format(completionTime) + 's');
 
     if (outputToFile) {
       infoFile.println(completionTime + "; Total Time ");
@@ -1373,7 +1373,7 @@ public class QNMinimizer implements Minimizer<DiffFunction>, HasEvaluators {
       throws MaxEvaluationsExceeded {
 
     double normGradInDir = ArrayMath.innerProduct(dir, grad);
-    say("(" + nf.format(normGradInDir) + ")");
+    say('(' + nf.format(normGradInDir) + ')');
     if (normGradInDir > 0) {
       say("{WARNING--- direction of positive gradient chosen!}");
     }

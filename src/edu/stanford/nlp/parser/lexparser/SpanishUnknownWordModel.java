@@ -31,7 +31,7 @@ public class SpanishUnknownWordModel extends BaseUnknownWordModel {
   public SpanishUnknownWordModel(Options op, Lexicon lex,
                                  Index<String> wordIndex,
                                  Index<String> tagIndex) {
-    this(op, lex, wordIndex, tagIndex, new ClassicCounter<IntTaggedWord>());
+    this(op, lex, wordIndex, tagIndex, new ClassicCounter<>());
   }
 
   @Override
@@ -138,7 +138,7 @@ public class SpanishUnknownWordModel extends BaseUnknownWordModel {
     return sb.toString();
   }
 
-  private boolean isUpperCase(String s) {
+  private static boolean isUpperCase(String s) {
     for (int i = 0; i < s.length(); i++) {
       if (Character.isLowerCase(s.charAt(i)))
         return false;

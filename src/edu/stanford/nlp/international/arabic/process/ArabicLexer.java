@@ -952,7 +952,7 @@ class ArabicLexer {
    return sb.toString();
  }
  
- private boolean isLengthening(String text, int pos) {
+ private static boolean isLengthening(String text, int pos) {
    if (pos == 0) return false;
    String thisChar = String.valueOf(text.charAt(pos));
    if (!thisChar.equals(String.valueOf(text.charAt(pos - 1))))
@@ -1196,7 +1196,7 @@ class ArabicLexer {
    *
    * @param   errorCode  the code of the errormessage to display
    */
-  private void zzScanError(int errorCode) {
+  private static void zzScanError(int errorCode) {
     String message;
     try {
       message = ZZ_ERROR_MSG[errorCode];

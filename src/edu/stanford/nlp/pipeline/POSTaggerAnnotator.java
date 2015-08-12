@@ -110,7 +110,7 @@ public class POSTaggerAnnotator implements Annotator {
           doOneSentence(sentence);
         }
       } else {
-        MulticoreWrapper<CoreMap, CoreMap> wrapper = new MulticoreWrapper<CoreMap, CoreMap>(nThreads, new POSTaggerProcessor());
+        MulticoreWrapper<CoreMap, CoreMap> wrapper = new MulticoreWrapper<>(nThreads, new POSTaggerProcessor());
         for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
           wrapper.put(sentence);
           while (wrapper.peek()) {

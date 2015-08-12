@@ -47,7 +47,7 @@ public class SimpleGoodTuring {
     if (r == null) throw new IllegalArgumentException("r must not be null!");
     if (n == null) throw new IllegalArgumentException("n must not be null!");
     if (r.length != n.length) throw new IllegalArgumentException("r and n must have same size!");
-    if (r.length < MIN_INPUT) throw new IllegalArgumentException("r must have size >= " + MIN_INPUT + "!");
+    if (r.length < MIN_INPUT) throw new IllegalArgumentException("r must have size >= " + MIN_INPUT + '!');
     this.r = new int[r.length];
     this.n = new int[n.length];
     System.arraycopy(r, 0, this.r, 0, r.length); // defensive copy
@@ -193,8 +193,8 @@ public class SimpleGoodTuring {
    * values read.
    */
   private static int[][] readInput() throws Exception {
-    List<Integer> rVals = new ArrayList<Integer>();
-    List<Integer> nVals = new ArrayList<Integer>();
+    List<Integer> rVals = new ArrayList<>();
+    List<Integer> nVals = new ArrayList<>();
     BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
     String line;
     while ((line = in.readLine()) != null) {

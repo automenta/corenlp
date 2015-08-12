@@ -61,9 +61,9 @@ public class SingletonPredictor {
    * @return Dataset of feature vectors
    * @throws Exception
    */
-  public GeneralDataset<String, String> generateFeatureVectors(Properties props) throws Exception {
+  public static GeneralDataset<String, String> generateFeatureVectors(Properties props) throws Exception {
 
-    GeneralDataset<String, String> dataset = new Dataset<String, String>();    
+    GeneralDataset<String, String> dataset = new Dataset<>();
     
     Dictionaries dict = new Dictionaries(props);
     MentionExtractor mentionExtractor =
@@ -84,12 +84,12 @@ public class SingletonPredictor {
           IndexedWord head = mention.dependency.getNodeByIndexSafe(mention.headWord.index());
           if(head == null) continue;          
           ArrayList<String> feats = mention.getSingletonFeatures(dict);
-          dataset.add(new BasicDatum<String, String>(feats, "1"));
+          dataset.add(new BasicDatum<>(feats, "1"));
         }       
       }
 
       // Generate features for singletons with class label 0 
-      ArrayList<CoreLabel> gold_heads = new ArrayList<CoreLabel>();
+      ArrayList<CoreLabel> gold_heads = new ArrayList<>();
       for(Mention gold_men : document.allGoldMentions.values()){
         gold_heads.add(gold_men.headWord);
       }      
@@ -103,8 +103,8 @@ public class SingletonPredictor {
         // If the mention is in the gold set, it is not a singleton and thus ignore
         if(gold_heads.contains(predicted_men.headWord)) continue;
 
-        dataset.add(new BasicDatum<String, String>(
-            predicted_men.getSingletonFeatures(dict), "0"));             
+        dataset.add(new BasicDatum<>(
+                predicted_men.getSingletonFeatures(dict), "0"));
       }
     }
     
@@ -117,9 +117,9 @@ public class SingletonPredictor {
    * @param pDataset Dataset of features
    * @return Singleton predictor
    */
-  public LogisticClassifier<String, String> train(GeneralDataset<String, String> pDataset){
+  public static LogisticClassifier<String, String> train(GeneralDataset<String, String> pDataset){
     LogisticClassifierFactory<String, String> lcf =
-        new LogisticClassifierFactory<String, String>();
+            new LogisticClassifierFactory<>();
     LogisticClassifier<String, String> classifier = lcf.trainClassifier(pDataset);
 
     return classifier;
@@ -129,8 +129,8 @@ public class SingletonPredictor {
    * Saves the singleton predictor model to the given filename.
    * If there is an error, a RuntimeIOException is thrown.
    */
-  public void saveToSerialized(LogisticClassifier<String, String> predictor,
-                               String filename) {
+  public static void saveToSerialized(LogisticClassifier<String, String> predictor,
+                                      String filename) {
     try {
       System.err.print("Writing singleton predictor in serialized format to file " + filename + ' ');
       ObjectOutputStream out = IOUtils.writeStreamFromString(filename);
@@ -156,9 +156,9 @@ public class SingletonPredictor {
     
     SingletonPredictor predictor = new SingletonPredictor();
     
-    GeneralDataset<String, String> data = predictor.generateFeatureVectors(props);
-    LogisticClassifier<String, String> classifier = predictor.train(data);
-    predictor.saveToSerialized(classifier,
+    GeneralDataset<String, String> data = SingletonPredictor.generateFeatureVectors(props);
+    LogisticClassifier<String, String> classifier = SingletonPredictor.train(data);
+    SingletonPredictor.saveToSerialized(classifier,
                                props.getProperty("singleton.predictor.output"));      
   }
 

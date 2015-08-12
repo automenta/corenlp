@@ -236,7 +236,7 @@ public class UniversalEnglishGrammaticalRelations {
             "VP|S|SBAR|SBARQ|SINV|SQ=root < (CC|CONJP $-- !/^(?:``|-LRB-|PRN|PP|ADVP|RB)/) < (/^(?:PRN|``|''|-[LR]RB-|,|:|\\.)$/ $+ (/^S|SINV$|^(?:A|N|V|PP|PRP|J|W|R)/=target [$-- (CC|CONJP $-- (__ ># =root) !$++ (/^:|,$/ $++ =target)) | $-- (/^:|,$/ $-- (__ ># =root) [!$-- /^CC|CONJP$/ | $++ (=target < (/^,$/ $++ (__ ># =target)))])] ) )",
 
             // non-parenthetical or comma in suitable phrase with conjunction to left
-            "/^(?:ADJP|JJP|PP|QP|(?:WH)?NP(?:-TMP|-ADV)?|ADVP|UCP(?:-TMP|-ADV)?|NX|NML)$/ [ < (CC|CONJP $-- !/^(?:``|-LRB-|PRN)$/ $+ !/^(?:PRN|``|''|-[LR]RB-|,|:|\\.)$/=target) | < " + ETC_PAT_target + " | < " + FW_ETC_PAT_target + "]",
+            "/^(?:ADJP|JJP|PP|QP|(?:WH)?NP(?:-TMP|-ADV)?|ADVP|UCP(?:-TMP|-ADV)?|NX|NML)$/ [ < (CC|CONJP $-- !/^(?:``|-LRB-|PRN)$/ $+ !/^(?:PRN|``|''|-[LR]RB-|,|:|\\.)$/=target) | < " + ETC_PAT_target + " | < " + FW_ETC_PAT_target + ']',
             // non-parenthetical or comma in suitable phrase with conj then adverb to left
             "/^(?:ADJP|PP|(?:WH)?NP(?:-TMP|-ADV)?|ADVP|UCP(?:-TMP|-ADV)?|NX|NML)$/ < (CC|CONJP $-- !/^(?:``|-LRB-|PRN)$/ $+ (ADVP $+ !/^(?:PRN|``|''|-[LR]RB-|,|:|\\.)$/=target))",
             // content phrase to the right of a comma or a parenthetical
@@ -281,7 +281,7 @@ public class UniversalEnglishGrammaticalRelations {
     new GrammaticalRelation(Language.UniversalEnglish, "punct", "punctuation",
         DEPENDENT, ".*", tregexCompiler,
             "__ < /^(?:\\.|:|,|''|``|\\*|-LRB-|-RRB-|HYPH)$/=target",
-            "__ < (NFP=target !< " + WESTERN_SMILEY + " !< " + ASIAN_SMILEY + ")");
+            "__ < (NFP=target !< " + WESTERN_SMILEY + " !< " + ASIAN_SMILEY + ')');
 
 
   /**
@@ -1070,8 +1070,8 @@ public class UniversalEnglishGrammaticalRelations {
             "SBAR < (WHNP=target < WRB)", "SBARQ <, WHADVP=target", "XS < JJ=target",
             // for PP, only ones before head, or after NP, since others afterwards are pcomp
             "/(?:WH)?PP(?:-TMP|-ADV)?$/ <# (__ $-- (RB|RBR|RBS|WRB|ADVP|WHADVP=target !< " + NOT_PAT + " !< " + ETC_PAT + "))",
-            "/(?:WH)?PP(?:-TMP|-ADV)?$/ < @NP|WHNP < (RB|RBR|RBS|WRB|ADVP|WHADVP=target !< " + NOT_PAT + " !< " + ETC_PAT + ")",
-            "CONJP < (RB=target !< " + NOT_PAT + " !< " + ETC_PAT + ")");
+            "/(?:WH)?PP(?:-TMP|-ADV)?$/ < @NP|WHNP < (RB|RBR|RBS|WRB|ADVP|WHADVP=target !< " + NOT_PAT + " !< " + ETC_PAT + ')',
+            "CONJP < (RB=target !< " + NOT_PAT + " !< " + ETC_PAT + ')');
 
 
   /**
@@ -1088,12 +1088,12 @@ public class UniversalEnglishGrammaticalRelations {
     new GrammaticalRelation(Language.UniversalEnglish, "neg", "negation modifier",
         ADVERBIAL_MODIFIER,
         "VP|ADJP|S|SBAR|SINV|SQ|NP(?:-TMP|-ADV)?|FRAG|CONJP|PP|NAC|NML|NX|ADVP|WHADVP", tregexCompiler,
-            "/^(?:VP|NP(?:-TMP|-ADV)?|ADJP|SQ|S|FRAG|CONJP|PP)$/< (RB=target < " + NOT_PAT + ")",
+            "/^(?:VP|NP(?:-TMP|-ADV)?|ADJP|SQ|S|FRAG|CONJP|PP)$/< (RB=target < " + NOT_PAT + ')',
             "VP|ADJP|S|SBAR|SINV|FRAG < (ADVP=target <# (RB < " + NOT_PAT + "))",
-            "VP > SQ $-- (RB=target < " + NOT_PAT + ")",
+            "VP > SQ $-- (RB=target < " + NOT_PAT + ')',
             // the commented out parts were relevant for the "det",
             // but don't seem to matter for the "neg" relation
-            "/^(?:NP(?:-TMP|-ADV)?|NAC|NML|NX|ADJP|ADVP)$/ < (DT|RB=target < /^(?i:no)$/ " + /* !$++ CC */ " $++ /^(?:N[MNXP]|CD|JJ|JJR|FW|ADJP|QP|RB|RBR|PRP(?![$])|PRN)/ " + /* =det !$++ (/^PRP[$]|POS/ $++ =det !$++ (/''/ $++ =det)) */ ")",
+            "/^(?:NP(?:-TMP|-ADV)?|NAC|NML|NX|ADJP|ADVP)$/ < (DT|RB=target < /^(?i:no)$/ " + /* !$++ CC */ " $++ /^(?:N[MNXP]|CD|JJ|JJR|FW|ADJP|QP|RB|RBR|PRP(?![$])|PRN)/ " + /* =det !$++ (/^PRP[$]|POS/ $++ =det !$++ (/''/ $++ =det)) */ ')',
             // catches "no more", possibly others as well
             // !< CC|CONJP catches phrases such as "no more or less", which maybe should be preconj
             "ADVP|WHADVP < (RB|RBR|RBS|WRB|ADVP|WHADVP|JJ=target < /^(?i:no)$/) !< CC|CONJP");
@@ -1521,7 +1521,7 @@ public class UniversalEnglishGrammaticalRelations {
 
   // Map from English GrammaticalRelation short names to their corresponding
   // GrammaticalRelation objects
-  public static final Map<String, GrammaticalRelation> shortNameToGRel = new ConcurrentHashMap<String, GrammaticalRelation>();
+  public static final Map<String, GrammaticalRelation> shortNameToGRel = new ConcurrentHashMap<>();
   static {
     for (GrammaticalRelation gr : values()) {
       shortNameToGRel.put(gr.toString().toLowerCase(), gr);
@@ -1578,7 +1578,7 @@ public class UniversalEnglishGrammaticalRelations {
   public static GrammaticalRelation getConj(String conjunctionString) {
     GrammaticalRelation result = conjs.get(conjunctionString);
     if (result == null) {
-      synchronized(conjs) {
+     /* synchronized(conjs)*/ {
         result = conjs.get(conjunctionString);
         if (result == null) {
           result = new GrammaticalRelation(Language.UniversalEnglish, "conj", "conj_collapsed", CONJUNCT, conjunctionString);
@@ -1621,17 +1621,18 @@ public class UniversalEnglishGrammaticalRelations {
   public static GrammaticalRelation getNmod(String prepositionString) {
 
     /* Check for nmod subtypes which are not stored in the `nmods` map. */
-    if (prepositionString.equals("npmod")) {
-      return NP_ADVERBIAL_MODIFIER;
-    } else if(prepositionString.equals("tmod")) {
-      return TEMPORAL_MODIFIER;
-    } else if(prepositionString.equals("poss")) {
-      return POSSESSION_MODIFIER;
+    switch (prepositionString) {
+      case "npmod":
+        return NP_ADVERBIAL_MODIFIER;
+      case "tmod":
+        return TEMPORAL_MODIFIER;
+      case "poss":
+        return POSSESSION_MODIFIER;
     }
 
     GrammaticalRelation result = nmods.get(prepositionString);
     if (result == null) {
-      synchronized(nmods) {
+      /*synchronized(nmods)*/ {
         result = nmods.get(prepositionString);
         if (result == null) {
           result = new GrammaticalRelation(Language.UniversalEnglish, "nmod", "nmod_preposition", NOMINAL_MODIFIER, prepositionString);
@@ -1655,7 +1656,7 @@ public class UniversalEnglishGrammaticalRelations {
   public static GrammaticalRelation getAdvcl(String advclString) {
     GrammaticalRelation result = advcls.get(advclString);
     if (result == null) {
-      synchronized(advcls) {
+      /*synchronized(advcls)*/ {
         result = advcls.get(advclString);
         if (result == null) {
           result = new GrammaticalRelation(Language.UniversalEnglish, "advcl", "advcl_preposition", ADV_CLAUSE_MODIFIER, advclString);
@@ -1685,7 +1686,7 @@ public class UniversalEnglishGrammaticalRelations {
 
     GrammaticalRelation result = acls.get(aclString);
     if (result == null) {
-      synchronized(acls) {
+      /*synchronized(acls)*/ {
         result = acls.get(aclString);
         if (result == null) {
           result = new GrammaticalRelation(Language.UniversalEnglish, "acl", "acl_preposition", CLAUSAL_MODIFIER, aclString);

@@ -28,7 +28,6 @@ import edu.stanford.nlp.util.CoreMap;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.IntPair;
 import edu.stanford.nlp.util.Pair;
-import edu.stanford.nlp.util.PropertiesUtils;
 
 public class DependencyCorefMentionFinder extends CorefMentionFinder {
 
@@ -45,13 +44,13 @@ public class DependencyCorefMentionFinder extends CorefMentionFinder {
    */
   @Override
   public List<List<Mention>> findMentions(Annotation doc, Dictionaries dict, Properties props) {
-    List<List<Mention>> predictedMentions = new ArrayList<List<Mention>>();
+    List<List<Mention>> predictedMentions = new ArrayList<>();
     Set<String> neStrings = Generics.newHashSet();
     List<Set<IntPair>> mentionSpanSetList = Generics.newArrayList();
     List<CoreMap> sentences = doc.get(CoreAnnotations.SentencesAnnotation.class);
     
     for (CoreMap s : sentences) {
-      List<Mention> mentions = new ArrayList<Mention>();
+      List<Mention> mentions = new ArrayList<>();
       predictedMentions.add(mentions);
       Set<IntPair> mentionSpanSet = Generics.newHashSet();
       Set<IntPair> namedEntitySpanSet = Generics.newHashSet();
@@ -214,7 +213,7 @@ public class DependencyCorefMentionFinder extends CorefMentionFinder {
     return new IntPair(beginIdx, endIdx);
   }
   
-  private IntPair getNPSpanOld(IndexedWord headword, SemanticGraph dep, List<CoreLabel> sent) {
+  private static IntPair getNPSpanOld(IndexedWord headword, SemanticGraph dep, List<CoreLabel> sent) {
     IndexedWord cop = dep.getChildWithReln(headword, EnglishGrammaticalRelations.COPULA);
     Pair<IndexedWord, IndexedWord> leftRight = SemanticGraphUtils.leftRightMostChildVertices(headword, dep);
     
@@ -238,11 +237,11 @@ public class DependencyCorefMentionFinder extends CorefMentionFinder {
     return new IntPair(beginIdx, endIdx);
   }
 
-  private void addMention(int beginIdx, int endIdx, IndexedWord headword, List<Mention> mentions, Set<IntPair> mentionSpanSet, Set<IntPair> namedEntitySpanSet, List<CoreLabel> sent, SemanticGraph basic, SemanticGraph collapsed) {
+  private static void addMention(int beginIdx, int endIdx, IndexedWord headword, List<Mention> mentions, Set<IntPair> mentionSpanSet, Set<IntPair> namedEntitySpanSet, List<CoreLabel> sent, SemanticGraph basic, SemanticGraph collapsed) {
     IntPair mSpan = new IntPair(beginIdx, endIdx);
     if(!mentionSpanSet.contains(mSpan) && (!insideNE(mSpan, namedEntitySpanSet)) ) {
       int dummyMentionId = -1;
-      Mention m = new Mention(dummyMentionId, beginIdx, endIdx, sent, basic, collapsed, new ArrayList<CoreLabel>(sent.subList(beginIdx, endIdx)));
+      Mention m = new Mention(dummyMentionId, beginIdx, endIdx, sent, basic, collapsed, new ArrayList<>(sent.subList(beginIdx, endIdx)));
       m.headIndex = headword.index()-1;
       m.headWord = sent.get(m.headIndex);
       m.headString = m.headWord.word().toLowerCase(Locale.ENGLISH);
@@ -268,7 +267,7 @@ public class DependencyCorefMentionFinder extends CorefMentionFinder {
     IntPair mSpan = new IntPair(beginIdx, endIdx);
     if(!mentionSpanSet.contains(mSpan) && (!insideNE(mSpan, namedEntitySpanSet)) ) {
       int dummyMentionId = -1;
-      Mention m = new Mention(dummyMentionId, beginIdx, endIdx, sent, basic, collapsed, new ArrayList<CoreLabel>(sent.subList(beginIdx, endIdx)));
+      Mention m = new Mention(dummyMentionId, beginIdx, endIdx, sent, basic, collapsed, new ArrayList<>(sent.subList(beginIdx, endIdx)));
       m.headIndex = headword.index()-1;
       m.headWord = sent.get(m.headIndex);
       m.headString = m.headWord.word().toLowerCase(Locale.ENGLISH);

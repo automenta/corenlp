@@ -40,7 +40,7 @@ public class FiveDimensionalMap <K1, K2, K3, K4, K5, V> implements Serializable 
   public FourDimensionalMap<K2, K3, K4, K5, V> getFourDimensionalMap(K1 key1) {
     FourDimensionalMap<K2, K3, K4, K5, V> m = map.get(key1);
     if (m==null) {
-      m = new FourDimensionalMap<K2, K3, K4, K5, V>();
+      m = new FourDimensionalMap<>();
       map.put(key1, m);
     }
     return m;
@@ -68,8 +68,8 @@ public class FiveDimensionalMap <K1, K2, K3, K4, K5, V> implements Serializable 
   
   public Set<K3> thirdKeySet() {
     Set<K3> keys = Generics.newHashSet();
-    for (K1 k1 : map.keySet()) {
-      FourDimensionalMap<K2,K3,K4,K5,V> m4 = map.get(k1);
+    for (Map.Entry<K1, FourDimensionalMap<K2, K3, K4, K5, V>> k1FourDimensionalMapEntry : map.entrySet()) {
+      FourDimensionalMap<K2,K3,K4,K5,V> m4 = k1FourDimensionalMapEntry.getValue();
       for (K2 k2 : m4.firstKeySet()) {
         keys.addAll(m4.get(k2).firstKeySet());
       }
@@ -79,8 +79,8 @@ public class FiveDimensionalMap <K1, K2, K3, K4, K5, V> implements Serializable 
   
   public Set<K4> fourthKeySet() {
     Set<K4> keys = Generics.newHashSet();
-    for (K1 k1 : map.keySet()) {
-      FourDimensionalMap<K2,K3,K4,K5,V> m4 = map.get(k1);
+    for (Map.Entry<K1, FourDimensionalMap<K2, K3, K4, K5, V>> k1FourDimensionalMapEntry : map.entrySet()) {
+      FourDimensionalMap<K2,K3,K4,K5,V> m4 = k1FourDimensionalMapEntry.getValue();
       for (K2 k2 : m4.firstKeySet()) {
         ThreeDimensionalMap<K3,K4,K5,V> m3 = m4.get(k2);
         for (K3 k3 : m3.firstKeySet()) {
@@ -93,8 +93,8 @@ public class FiveDimensionalMap <K1, K2, K3, K4, K5, V> implements Serializable 
 
   public Set<K5> fifthKeySet() {
     Set<K5> keys = Generics.newHashSet();
-    for (K1 k1 : map.keySet()) {
-      FourDimensionalMap<K2,K3,K4,K5,V> m4 = map.get(k1);
+    for (Map.Entry<K1, FourDimensionalMap<K2, K3, K4, K5, V>> k1FourDimensionalMapEntry : map.entrySet()) {
+      FourDimensionalMap<K2,K3,K4,K5,V> m4 = k1FourDimensionalMapEntry.getValue();
       for (K2 k2 : m4.firstKeySet()) {
         ThreeDimensionalMap<K3,K4,K5,V> m3 = m4.get(k2);
         for (K3 k3 : m3.firstKeySet()) {

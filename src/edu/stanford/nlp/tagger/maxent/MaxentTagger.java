@@ -453,15 +453,15 @@ public class MaxentTagger extends Tagger implements ListProcessor<List<? extends
       arch = config.getArch();
       openClassTags = config.getOpenClassTags();
       closedClassTags = config.getClosedClassTags();
-      if (!config.getWordFunction().equals("")) {
+      if (!config.getWordFunction().isEmpty()) {
         wordFunction =
           ReflectionLoading.loadByReflection(config.getWordFunction());
       }
 
-      if (((openClassTags.length > 0) && !lang.equals("")) || ((closedClassTags.length > 0) && !lang.equals("")) || ((closedClassTags.length > 0) && (openClassTags.length > 0))) {
+      if (((openClassTags.length > 0) && !lang.isEmpty()) || ((closedClassTags.length > 0) && !lang.isEmpty()) || ((closedClassTags.length > 0) && (openClassTags.length > 0))) {
         throw new RuntimeException("At least two of lang (\"" + lang + "\"), openClassTags (length " + openClassTags.length + ": " + Arrays.toString(openClassTags) + ")," +
             "and closedClassTags (length " + closedClassTags.length + ": " + Arrays.toString(closedClassTags) + ") specified---you must choose one!");
-      } else if ((openClassTags.length == 0) && lang.equals("") && (closedClassTags.length == 0) && ! config.getLearnClosedClassTags()) {
+      } else if ((openClassTags.length == 0) && lang.isEmpty() && (closedClassTags.length == 0) && ! config.getLearnClosedClassTags()) {
         System.err.println("warning: no language set, no open-class tags specified, and no closed-class tags specified; assuming ALL tags are open class tags");
       }
     }
@@ -566,7 +566,7 @@ public class MaxentTagger extends Tagger implements ListProcessor<List<? extends
       }
     } else if (tokenize) {
       if (invertible) {
-        if (tokenizerOptions.equals("")) {
+        if (tokenizerOptions.isEmpty()) {
           tokenizerOptions = "invertible=true";
         } else if (!tokenizerOptions.matches("(^|.*,)invertible=true")) {
           tokenizerOptions += ",invertible=true";
@@ -865,9 +865,7 @@ public class MaxentTagger extends Tagger implements ListProcessor<List<? extends
         System.err.println(" prob read ");
       }
       if (printLoading) t.done();
-    } catch (IOException e) {
-      throw new RuntimeIOException("Unrecoverable error while loading a tagger model", e);
-    } catch (ClassNotFoundException e) {
+    } catch (IOException | ClassNotFoundException e) {
       throw new RuntimeIOException("Unrecoverable error while loading a tagger model", e);
     }
   }
@@ -887,7 +885,7 @@ public class MaxentTagger extends Tagger implements ListProcessor<List<? extends
           if (association >= 0) {
             FeatureKey fk = new FeatureKey(i, featureValue, tags.getTag(j));
             out.println((fk.num < extractors.size() ? extractors.get(fk.num) : extractorsRare.get(fk.num - extractors.size()))
-                    + " " + fk.val + " " + fk.tag + ": " + nf.format(getLambdaSolve().lambda[association]));
+                    + " " + fk.val + ' ' + fk.tag + ": " + nf.format(getLambdaSolve().lambda[association]));
           }
         }
       }
@@ -1272,7 +1270,7 @@ public class MaxentTagger extends Tagger implements ListProcessor<List<? extends
 
       // TODO: there is another almost identical block of code elsewhere.  Refactor
       if (config.getNThreads() != 1) {
-        MulticoreWrapper<List<? extends HasWord>, List<? extends HasWord>> wrapper = new MulticoreWrapper<List<? extends HasWord>, List<? extends HasWord>>(config.getNThreads(), new SentenceTaggingProcessor(tagger, outputLemmas));
+        MulticoreWrapper<List<? extends HasWord>, List<? extends HasWord>> wrapper = new MulticoreWrapper<>(config.getNThreads(), new SentenceTaggingProcessor(tagger, outputLemmas));
         for (List<? extends HasWord> sentence : sentences) {
           wrapper.put(sentence);
           while (wrapper.peek()) {
@@ -1312,7 +1310,7 @@ public class MaxentTagger extends Tagger implements ListProcessor<List<? extends
                                            hw.getClass());
       }
       String tag = ((HasTag) hw).tag();
-      sb.append("  <word wid=\"").append(wordIndex).append("\" pos=\"").append(XMLUtils.escapeAttributeXML(tag)).append("\"");
+      sb.append("  <word wid=\"").append(wordIndex).append("\" pos=\"").append(XMLUtils.escapeAttributeXML(tag)).append('"');
       if (outputLemmas && hasCoreLabels) {
         if (!(hw instanceof CoreLabel)) {
           throw new IllegalArgumentException("You mixed CoreLabels with " +
@@ -1325,7 +1323,7 @@ public class MaxentTagger extends Tagger implements ListProcessor<List<? extends
           sb.append(" lemma=\"").append(XMLUtils.escapeElementXML(lemma)).append('\"');
         }
       }
-      sb.append(">").append(XMLUtils.escapeElementXML(word)).append("</word>\n");
+      sb.append('>').append(XMLUtils.escapeElementXML(word)).append("</word>\n");
       ++wordIndex;
     }
     sb.append("</sentence>\n");
@@ -1345,19 +1343,19 @@ public class MaxentTagger extends Tagger implements ListProcessor<List<? extends
         }
         CoreLabel label = (CoreLabel) hw;
         sb.append(label.word());
-        sb.append("\t");
+        sb.append('\t');
         sb.append(label.originalText());
-        sb.append("\t");
+        sb.append('\t');
         if (outputLemmas) {
           sb.append(label.lemma());
-          sb.append("\t");
+          sb.append('\t');
         }
         sb.append(label.tag());
-        sb.append("\t");
+        sb.append('\t');
         sb.append(label.beginPosition());
-        sb.append("\t");
+        sb.append('\t');
         sb.append(label.endPosition());
-        sb.append("\n");
+        sb.append('\n');
       }
       sb.append('\n');
       return sb.toString();
@@ -1409,19 +1407,19 @@ public class MaxentTagger extends Tagger implements ListProcessor<List<? extends
     OutputStyle outputStyle =
       OutputStyle.fromShortName(config.getOutputFormat());
 
-    TransformXML<String> txml = new TransformXML<String>();
+    TransformXML<String> txml = new TransformXML<>();
     switch(outputStyle) {
     case XML:
     case INLINE_XML:
       txml.transformXML(xmlTags, new TaggerWrapper(this),
                         input, writer,
-                        new TransformXML.NoEscapingSAXInterface<String>());
+              new TransformXML.NoEscapingSAXInterface<>());
       break;
     case SLASH_TAGS:
     case TSV:
       txml.transformXML(xmlTags, new TaggerWrapper(this),
                         input, writer,
-                        new TransformXML.SAXInterface<String>());
+              new TransformXML.SAXInterface<>());
       break;
     default:
       throw new RuntimeException("Unexpected format " + outputStyle);
@@ -1432,19 +1430,19 @@ public class MaxentTagger extends Tagger implements ListProcessor<List<? extends
     OutputStyle outputStyle =
       OutputStyle.fromShortName(config.getOutputFormat());
 
-    TransformXML<String> txml = new TransformXML<String>();
+    TransformXML<String> txml = new TransformXML<>();
     switch(outputStyle) {
     case XML:
     case INLINE_XML:
       txml.transformXML(xmlTags, new TaggerWrapper(this),
                         input, writer,
-                        new TransformXML.NoEscapingSAXInterface<String>());
+              new TransformXML.NoEscapingSAXInterface<>());
       break;
     case SLASH_TAGS:
     case TSV:
       txml.transformXML(xmlTags, new TaggerWrapper(this),
                         input, writer,
-                        new TransformXML.SAXInterface<String>());
+              new TransformXML.SAXInterface<>());
       break;
     default:
       throw new RuntimeException("Unexpected format " + outputStyle);
@@ -1635,8 +1633,8 @@ public class MaxentTagger extends Tagger implements ListProcessor<List<? extends
     }
 
     // this uses NER codebase technology to read/write SGML-ish files
-    PlainTextDocumentReaderAndWriter<CoreLabel> readerAndWriter = new PlainTextDocumentReaderAndWriter<CoreLabel>();
-    ObjectBank<List<CoreLabel>> ob = new ObjectBank<List<CoreLabel>>(new ReaderIteratorFactory(reader), readerAndWriter);
+    PlainTextDocumentReaderAndWriter<CoreLabel> readerAndWriter = new PlainTextDocumentReaderAndWriter<>();
+    ObjectBank<List<CoreLabel>> ob = new ObjectBank<>(new ReaderIteratorFactory(reader), readerAndWriter);
     PrintWriter pw = new PrintWriter(writer);
     for (List<CoreLabel> sentence : ob) {
       List<CoreLabel> s = Generics.newArrayList();
@@ -1684,7 +1682,7 @@ public class MaxentTagger extends Tagger implements ListProcessor<List<? extends
 
 
     if (config.getNThreads() != 1) {
-      MulticoreWrapper<List<? extends HasWord>, List<? extends HasWord>> wrapper = new MulticoreWrapper<List<? extends HasWord>, List<? extends HasWord>>(config.getNThreads(), new SentenceTaggingProcessor(this, outputLemmas));
+      MulticoreWrapper<List<? extends HasWord>, List<? extends HasWord>> wrapper = new MulticoreWrapper<>(config.getNThreads(), new SentenceTaggingProcessor(this, outputLemmas));
       for (List<X> sentence : document) {
         wrapper.put(sentence);
         while (wrapper.peek()) {

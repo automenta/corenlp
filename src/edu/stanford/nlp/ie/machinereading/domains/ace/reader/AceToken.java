@@ -181,7 +181,7 @@ public class AceToken {
       ArrayList<String> tokens = SimpleTokenize.tokenize(line);
       if (tokens.size() > 0) {
         Integer key = WORDS.get(tokens.get(0));
-        ArrayList<Integer> value = new ArrayList<Integer>();
+        ArrayList<Integer> value = new ArrayList<>();
 
         for (int i = 0; i < tokens.size() && i < PROXIMITY_CLASS_SIZE; i++) {
           Integer word = WORDS.get(tokens.get(i));
@@ -388,7 +388,7 @@ public class AceToken {
 
   private static int[] extractSuffixes(String word) {
     String lower = word.toLowerCase();
-    ArrayList<Integer> suffixes = new ArrayList<Integer>();
+    ArrayList<Integer> suffixes = new ArrayList<>();
     for (int i = 2; i <= 4; i++) {
       if (lower.length() >= i) {
         try {
@@ -483,10 +483,10 @@ public class AceToken {
   public String display() {
     if (mByteOffset != null) {
       return "['" + WORDS.get(mWord) + "', " + OTHERS.get(mPos) + ", " + mByteOffset.start() + ", "
-          + mByteOffset.end() + "]";
+          + mByteOffset.end() + ']';
     }
 
-    return "['" + WORDS.get(mWord) + "', " + OTHERS.get(mPos) + "]";
+    return "['" + WORDS.get(mWord) + "', " + OTHERS.get(mPos) + ']';
   }
 
   public String toString() {

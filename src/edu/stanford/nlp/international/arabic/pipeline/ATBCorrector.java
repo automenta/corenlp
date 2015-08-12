@@ -34,26 +34,26 @@ public class ATBCorrector implements TreeTransformer {
     ops = loadOps();
   }
   
-  private List<Pair<TregexPattern, TsurgeonPattern>> loadOps() {
-    List<Pair<TregexPattern,TsurgeonPattern>> ops = new ArrayList<Pair<TregexPattern,TsurgeonPattern>>();
+  private static List<Pair<TregexPattern, TsurgeonPattern>> loadOps() {
+    List<Pair<TregexPattern,TsurgeonPattern>> ops = new ArrayList<>();
     
     String line = null;
     try {
       BufferedReader br = new BufferedReader(new StringReader(editStr));
-      List<TsurgeonPattern> tsp = new ArrayList<TsurgeonPattern>();
+      List<TsurgeonPattern> tsp = new ArrayList<>();
       while ((line = br.readLine()) != null) {
         if (DEBUG) System.err.print("Pattern is " + line);
         TregexPattern matchPattern = TregexPattern.compile(line);
-        if (DEBUG) System.err.println(" [" + matchPattern + "]");
+        if (DEBUG) System.err.println(" [" + matchPattern + ']');
         tsp.clear();
         while (continuing(line = br.readLine())) {
           TsurgeonPattern p = Tsurgeon.parseOperation(line);
-          if (DEBUG) System.err.println("Operation is " + line + " [" + p + "]");
+          if (DEBUG) System.err.println("Operation is " + line + " [" + p + ']');
           tsp.add(p);
         }
         if ( ! tsp.isEmpty()) {
           TsurgeonPattern tp = Tsurgeon.collectOperations(tsp);
-          ops.add(new Pair<TregexPattern,TsurgeonPattern>(matchPattern, tp));
+          ops.add(new Pair<>(matchPattern, tp));
         }
       } // while not at end of file
     } catch (IOException ioe) {
@@ -80,28 +80,28 @@ public class ATBCorrector implements TreeTransformer {
     //Delete sentence-initial punctuation
     ("@PUNC=punc <: __ >>, (/^S/ > @ROOT) \n"
         + "prune punc\n"
-        + "\n") +
+        + '\n') +
 
     //Delete sentence-initial punctuation (again)
     ("@PUNC=punc <: __ >>, (/^S/ > @ROOT) \n"
         + "prune punc\n"
-        + "\n") +
+        + '\n') +
 
     //Delete sentence final punctuation that is preceded by punctuation (first time)
     ("@PUNC=punc >>- (/^S/ > @ROOT) <: __ $, @PUNC \n"
         + "prune punc\n"
-        + "\n") +
+        + '\n') +
    
     //Delete sentence final punctuation that is preceded by punctuation (second time)
     ("@PUNC=punc >>- (/^S/ > @ROOT) <: __ $, @PUNC \n"
         + "prune punc\n"
-        + "\n") +
+        + '\n') +
     
     //Convert remaining sentence-final punctuation to . if it is not [.!?]
     ("@PUNC=pos >>- (/^S/ > @ROOT) <: /[^\\.\\?!]/=term !$, @PUNC \n"
         + "relabel pos PUNC\n"
         + "relabel term /./\n" 
-        + "\n") +
+        + '\n') +
     
     //Delete medial, sentence-final punctuation
 //    ("@PUNC=punc <: /[!\\.\\?]+/ $. __\n"
@@ -111,7 +111,7 @@ public class ATBCorrector implements TreeTransformer {
     //Now move the sentence-final mark under the top-level node
     ("@PUNC=punc <: /^[\\.!\\?]+$/ >>- (/^S/ > @ROOT <- __=sfpos) !> (/^S/ > @ROOT)\n"
         + "move punc $- sfpos\n" 
-        + "\n");
+        + '\n');
     
     //For those trees that lack a sentence-final punc, add one.
 //    ("/^[^\\.!\\?]$/ >>- (__ > @ROOT <- __=loc) <: __\n"
@@ -149,8 +149,6 @@ public class ATBCorrector implements TreeTransformer {
     } catch (UnsupportedEncodingException e) {
       e.printStackTrace();
 
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
     }

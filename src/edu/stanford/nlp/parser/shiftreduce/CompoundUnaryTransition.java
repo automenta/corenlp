@@ -135,7 +135,7 @@ public class CompoundUnaryTransition implements Transition {
 
   @Override
   public String toString() {
-    return "CompoundUnary" + (isRoot ? "*" : "") + "(" + Arrays.asList(labels).toString() + ")";
+    return "CompoundUnary" + (isRoot ? "*" : "") + '(' + Arrays.asList(labels).toString() + ')';
   }
 
   private static final long serialVersionUID = 1;

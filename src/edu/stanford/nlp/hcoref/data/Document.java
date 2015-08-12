@@ -26,12 +26,6 @@
 
 package edu.stanford.nlp.hcoref.data;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import edu.stanford.nlp.hcoref.docreader.CoNLLDocumentReader;
 import edu.stanford.nlp.ling.CoreAnnotations.SentencesAnnotation;
 import edu.stanford.nlp.pipeline.Annotation;
@@ -40,6 +34,9 @@ import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.IntTuple;
 import edu.stanford.nlp.util.Pair;
+
+import java.io.Serializable;
+import java.util.*;
 
 public class Document implements Serializable {
 
@@ -119,9 +116,9 @@ public class Document implements Serializable {
    *  the key is the value of the variable 'speakers' */
   public Map<String, SpeakerInfo> speakerInfoMap = Generics.newHashMap();
   
-  public Counter<String> properNouns = new ClassicCounter<String>();
-  public Counter<String> phraseCounter = new ClassicCounter<String>();
-  public Counter<String> headwordCounter = new ClassicCounter<String>();
+  public Counter<String> properNouns = new ClassicCounter<>();
+  public Counter<String> phraseCounter = new ClassicCounter<>();
+  public Counter<String> headwordCounter = new ClassicCounter<>();
 
   /** Additional information about the document. Can be used as features */
   public Map<String, String> docInfo;
@@ -154,7 +151,7 @@ public class Document implements Serializable {
     this.predictedMentions = mentions;
     this.goldMentions = input.goldMentions;
     this.docInfo = input.docInfo;
-    this.numSentences = input.annotation.get(SentencesAnnotation.class).size();
+    this.numSentences = ((Collection)input.annotation.get(SentencesAnnotation.class)).size();
     this.conllDoc = input.conllDoc;   // null if it's not conll input
   }
 
@@ -168,7 +165,7 @@ public class Document implements Serializable {
   // Update incompatibles for two clusters that are about to be merged
   public void mergeIncompatibles(CorefCluster to, CorefCluster from) {
     List<Pair<Pair<Integer,Integer>, Pair<Integer,Integer>>> replacements =
-            new ArrayList<Pair<Pair<Integer,Integer>, Pair<Integer,Integer>>>();
+            new ArrayList<>();
     for (Pair<Integer, Integer> p:incompatibleClusters) {
       Integer other = null;
       if (p.first == from.clusterID) {
@@ -189,13 +186,13 @@ public class Document implements Serializable {
   }
   public void mergeAcronymCache(CorefCluster to, CorefCluster from) {
     Map<Pair<Integer, Integer>, Boolean> replacements = Generics.newHashMap();
-    for(Pair<Integer, Integer> p : acronymCache.keySet()) {
-      if(acronymCache.get(p)) {
+    for(Map.Entry<Pair<Integer, Integer>, Boolean> pairBooleanEntry : acronymCache.entrySet()) {
+      if(pairBooleanEntry.getValue()) {
         Integer other = null;
-        if(p.first==from.clusterID){
-          other = p.second;
-        } else if(p.second==from.clusterID) {
-          other = p.first;
+        if(pairBooleanEntry.getKey().first==from.clusterID){
+          other = pairBooleanEntry.getKey().second;
+        } else if(pairBooleanEntry.getKey().second==from.clusterID) {
+          other = pairBooleanEntry.getKey().first;
         }
         if(other != null && other != to.clusterID) {
           int cid1 = Math.min(other, to.clusterID);
@@ -204,8 +201,8 @@ public class Document implements Serializable {
         }
       }
     }
-    for(Pair<Integer, Integer> p : replacements.keySet()) {
-      acronymCache.put(p, replacements.get(p));
+    for(Map.Entry<Pair<Integer, Integer>, Boolean> pairBooleanEntry : replacements.entrySet()) {
+      acronymCache.put(pairBooleanEntry.getKey(), pairBooleanEntry.getValue());
     }
   }
 
@@ -254,7 +251,7 @@ public class Document implements Serializable {
   /** Extract gold coref link information */
   protected void extractGoldLinks() {
     //    List<List<Mention>> orderedMentionsBySentence = this.getOrderedMentions();
-    List<Pair<IntTuple, IntTuple>> links = new ArrayList<Pair<IntTuple,IntTuple>>();
+    List<Pair<IntTuple, IntTuple>> links = new ArrayList<>();
 
     // position of each mention in the input matrix, by id
     Map<Integer, IntTuple> positions = Generics.newHashMap();
@@ -268,7 +265,7 @@ public class Document implements Serializable {
         pos.set(0, i);
         pos.set(1, j);
         positions.put(id, pos);
-        antecedents.put(id, new ArrayList<IntTuple>());
+        antecedents.put(id, new ArrayList<>());
       }
     }
 
@@ -304,14 +301,14 @@ public class Document implements Serializable {
               IntTuple missed = new IntTuple(2);
               missed.set(0, k);
               missed.set(1, l);
-              if (links.contains(new Pair<IntTuple, IntTuple>(missed, dst))) {
+              if (links.contains(new Pair<>(missed, dst))) {
                 antecedents.get(id).add(missed);
-                links.add(new Pair<IntTuple, IntTuple>(src, missed));
+                links.add(new Pair<>(src, missed));
               }
             }
           }
 
-          links.add(new Pair<IntTuple, IntTuple>(src, dst));
+          links.add(new Pair<>(src, dst));
 
           assert (antecedents.get(id) != null);
           antecedents.get(id).add(dst);
@@ -320,7 +317,7 @@ public class Document implements Serializable {
           assert (ants != null);
           for (IntTuple ant : ants) {
             antecedents.get(id).add(ant);
-            links.add(new Pair<IntTuple, IntTuple>(src, ant));
+            links.add(new Pair<>(src, ant));
           }
         }
       }

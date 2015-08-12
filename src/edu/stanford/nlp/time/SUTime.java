@@ -153,9 +153,9 @@ public class SUTime {
 
   // Index of time id to temporal object
   public static class TimeIndex {
-    Index<TimeExpression> temporalExprIndex = new HashIndex<TimeExpression>();
-    Index<Temporal> temporalIndex = new HashIndex<Temporal>();
-    Index<Temporal> temporalFuncIndex = new HashIndex<Temporal>();
+    Index<TimeExpression> temporalExprIndex = new HashIndex<>();
+    Index<Temporal> temporalIndex = new HashIndex<>();
+    Index<Temporal> temporalFuncIndex = new HashIndex<>();
 
     SUTime.Time docDate;
 
@@ -387,7 +387,7 @@ public class SUTime {
     }
 
     public Map<String, String> getTimexAttributes(TimeIndex timeIndex) {
-      Map<String, String> map = new LinkedHashMap<String, String>();
+      Map<String, String> map = new LinkedHashMap<>();
       map.put(TimexAttr.tid.name(), getTidString(timeIndex));
       // NOTE: GUTime used "VAL" instead of TIMEX3 standard "value"
       // NOTE: attributes are case sensitive, GUTIME used mostly upper case
@@ -894,7 +894,7 @@ public class SUTime {
       return t;
     }
 
-    public Temporal create(Expressions.CompositeValue compositeValue)
+    public static Temporal create(Expressions.CompositeValue compositeValue)
     {
       StandardTemporalType temporalType = compositeValue.get("type");
       String label = compositeValue.get("label");
@@ -1419,7 +1419,7 @@ public class SUTime {
     // Time operations
     public boolean contains(Time t) {
       // Check if this time contains other time
-      return getRange().contains(t.getRange());
+      return Range.contains(t.getRange());
     }
 
     // public boolean isBefore(Time t);
@@ -1785,7 +1785,7 @@ public class SUTime {
       return bd;
     }
 
-    private Range getIntersectedRange(CompositePartialTime cpt, Range r, Duration d) {
+    private static Range getIntersectedRange(CompositePartialTime cpt, Range r, Duration d) {
       Time beginTime = r.beginTime();
       Time endTime = r.endTime();
       if (beginTime != TIME_UNKNOWN && endTime != TIME_UNKNOWN) {
@@ -2302,14 +2302,14 @@ public class SUTime {
         sb.append(base.toFormattedString(flags));
       }
       if (duration != null) {
-        sb.append(":");
+        sb.append(':');
         sb.append(duration.toFormattedString(flags));
       }
       if (range != null) {
         sb.append(" IN ");
         sb.append(range.toFormattedString(flags));
       }
-      sb.append(")");
+      sb.append(')');
       return sb.toString();
     }
 
@@ -2411,11 +2411,11 @@ public class SUTime {
       }
       if (tempOp != null) {
         if (sb.length() > 0) {
-          sb.append(" ");
+          sb.append(' ');
         }
         sb.append(tempOp);
         if (tempArg != null) {
-          sb.append(" ").append(tempArg.toFormattedString(flags));
+          sb.append(' ').append(tempArg.toFormattedString(flags));
         }
       }
       return sb.toString();
@@ -3024,7 +3024,7 @@ public class SUTime {
       if (JodaTimeUtils.hasField(base, DateTimeFieldType.year())
          && JodaTimeUtils.hasField(base, DateTimeFieldType.monthOfYear())
          && JodaTimeUtils.hasField(base, DateTimeFieldType.dayOfWeek())) {
-        List<Temporal> list = new ArrayList<Temporal>();
+        List<Temporal> list = new ArrayList<>();
         Partial pt = new Partial();
         pt = JodaTimeUtils.setField(pt, DateTimeFieldType.year(), base.get(DateTimeFieldType.year()));
         pt = JodaTimeUtils.setField(pt, DateTimeFieldType.monthOfYear(), base.get(DateTimeFieldType.monthOfYear()));
@@ -3295,20 +3295,20 @@ public class SUTime {
       // TODO: is the right way to print this object?
       StringBuilder os = new StringBuilder();
       if (era == ERA_BC) {
-        os.append("-");
+        os.append('-');
       } else if (era == ERA_AD) {
-        os.append("+");
+        os.append('+');
       }
       if (year >= 0)
         os.append(year);
       else
         os.append("XXXX");
-      os.append("-");
+      os.append('-');
       if (month >= 0)
         os.append(month);
       else
         os.append("XX");
-      os.append("-");
+      os.append('-');
       if (day >= 0)
         os.append(day);
       else
@@ -3661,7 +3661,7 @@ public class SUTime {
 
     @Override
     public Time intersect(Time t) {
-      if (t.getRange().contains(this.getRange())) {
+      if (Range.contains(this.getRange())) {
         return this;
       } else {
         return null;
@@ -3674,7 +3674,7 @@ public class SUTime {
         return this;
       if (other == TIME_UNKNOWN)
         return this;
-      if (other.getRange().contains(this.getRange())) {
+      if (Range.contains(this.getRange())) {
         return this;
       } else {
         return null;
@@ -4212,7 +4212,7 @@ public class SUTime {
       StringBuilder sb = new StringBuilder();
       if (minDuration != null)
         sb.append(minDuration.toFormattedString(flags));
-      sb.append("/");
+      sb.append('/');
       if (maxDuration != null)
         sb.append(maxDuration.toFormattedString(flags));
       return sb.toString();
@@ -4398,26 +4398,26 @@ public class SUTime {
         String durationStr = (duration != null) ? duration.toFormattedString(flags) : null;
         if ((flags & FORMAT_ISO) != 0) {
           if (beginStr != null && endStr != null) {
-            return beginStr + "/" + endStr;
+            return beginStr + '/' + endStr;
           } else if (beginStr != null && durationStr != null) {
-            return beginStr + "/" + durationStr;
+            return beginStr + '/' + durationStr;
           } else if (durationStr != null && endStr != null) {
-            return durationStr + "/" + endStr;
+            return durationStr + '/' + endStr;
           }
         }
         return durationStr;
       } else {
         StringBuilder sb = new StringBuilder();
-        sb.append("(");
+        sb.append('(');
         if (begin != null)
           sb.append(begin);
-        sb.append(",");
+        sb.append(',');
         if (end != null)
           sb.append(end);
-        sb.append(",");
+        sb.append(',');
         if (duration != null)
           sb.append(duration);
-        sb.append(")");
+        sb.append(')');
         return sb.toString();
       }
     }
@@ -4550,7 +4550,7 @@ public class SUTime {
       return null;
     }
 
-    public boolean contains(Range r) {
+    public static boolean contains(Range r) {
       return false;
     }
 
@@ -4652,7 +4652,7 @@ public class SUTime {
         // TODO: is there timex3 standard?
         return null;
       }
-      return "{" + StringUtils.join(temporals, ", ") + "}";
+      return '{' + StringUtils.join(temporals, ", ") + '}';
     }
 
     @Override

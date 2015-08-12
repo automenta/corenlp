@@ -35,7 +35,7 @@ public class DumpMatrices {
 
   public static void dumpMatrix(String filename, SimpleMatrix matrix) throws IOException {
     String matrixString = matrix.toString();
-    int newLine = matrixString.indexOf("\n");
+    int newLine = matrixString.indexOf('\n');
     if (newLine >= 0) {
       matrixString = matrixString.substring(newLine + 1);
     }
@@ -78,14 +78,14 @@ public class DumpMatrices {
     String binaryWDir = outputDir + File.separator + "binaryW";
     FileSystem.mkdirOrFail(binaryWDir);
     for (TwoDimensionalMap.Entry<String, String, SimpleMatrix> entry : model.binaryTransform) {
-      String filename = binaryWDir + File.separator + entry.getFirstKey() + "_" + entry.getSecondKey() + ".txt";
+      String filename = binaryWDir + File.separator + entry.getFirstKey() + '_' + entry.getSecondKey() + ".txt";
       dumpMatrix(filename, entry.getValue());
     }
 
     String binaryScoreDir = outputDir + File.separator + "binaryScore";
     FileSystem.mkdirOrFail(binaryScoreDir);
     for (TwoDimensionalMap.Entry<String, String, SimpleMatrix> entry : model.binaryScore) {
-      String filename = binaryScoreDir + File.separator + entry.getFirstKey() + "_" + entry.getSecondKey() + ".txt";
+      String filename = binaryScoreDir + File.separator + entry.getFirstKey() + '_' + entry.getSecondKey() + ".txt";
       dumpMatrix(filename, entry.getValue());
     }
 

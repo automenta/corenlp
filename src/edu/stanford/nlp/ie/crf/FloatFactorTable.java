@@ -39,9 +39,9 @@ public class FloatFactorTable {
       sb.append(Arrays.toString(toArray(i)));
       sb.append(": ");
       sb.append(prob(toArray(i)));
-      sb.append("\n");
+      sb.append('\n');
     }
-    sb.append("}");
+    sb.append('}');
     return sb.toString();
   }
 
@@ -51,9 +51,9 @@ public class FloatFactorTable {
       sb.append(toString(toArray(i), classIndex));
       sb.append(": ");
       sb.append(getValue(i));
-      sb.append("\n");
+      sb.append('\n');
     }
-    sb.append("}");
+    sb.append('}');
     return sb.toString();
   }
 
@@ -64,13 +64,13 @@ public class FloatFactorTable {
       sb.append(Arrays.toString(toArray(i)));
       sb.append(": ");
       sb.append(getValue(i));
-      sb.append("\n");
+      sb.append('\n');
     }
-    sb.append("}");
+    sb.append('}');
     return sb.toString();
   }
 
-  private String toString(int[] array, Index classIndex) {
+  private static String toString(int[] array, Index classIndex) {
     List l = new ArrayList();
     for (int i = 0; i < array.length; i++) {
       l.add(classIndex.get(array[i]));
@@ -371,7 +371,7 @@ public class FloatFactorTable {
         float t = 0;
         for (int k = 0; k < 6; k++) {
           t += Math.exp(ft.conditionalLogProb(b, k));
-          System.err.println(k + "|" + i + "," + j + " : " + Math.exp(ft.conditionalLogProb(b, k)));
+          System.err.println(k + "|" + i + ',' + j + " : " + Math.exp(ft.conditionalLogProb(b, k)));
         }
         System.out.println(t);
       }

@@ -409,29 +409,34 @@ public enum NaturalLogicRelation {
 
   /**
    * Returns the natural logic relation corresponding to the given dependency arc being inserted into a sentence.
+   *
    * @param dependencyLabel The label we are checking the relation for.
-   * @param isSubject Whether this is on the subject side of a relation (e.g., for CONJ_OR edges)
+   * @param isSubject       Whether this is on the subject side of a relation (e.g., for CONJ_OR edges)
    */
   public static NaturalLogicRelation forDependencyInsertion(String dependencyLabel, boolean isSubject) {
-    if (!isSubject) {
-      switch (dependencyLabel) {
-        // 'or' in the object position behaves as and.
-        case "conj:or":
-        case "conj:nor":
-          return forDependencyInsertion("conj:and", false);
+    while (true) {
+      if (!isSubject) {
+        switch (dependencyLabel) {
+          // 'or' in the object position behaves as and.
+          case "conj:or":
+          case "conj:nor":
+            dependencyLabel = "conj:and";
+            isSubject = false;
+            continue;
+        }
       }
-    }
-    NaturalLogicRelation rel = insertArcToNaturalLogicRelation.get(dependencyLabel.toLowerCase());
-    if (rel != null) {
-      return rel;
-    } else {
-//      System.err.println("Unknown dependency arc for NaturalLogicRelation: " + dependencyLabel);
-      if (dependencyLabel.startsWith("nmod:")) {
-        return NaturalLogicRelation.REVERSE_ENTAILMENT;
-      } else if (dependencyLabel.startsWith("conj:")) {
-        return NaturalLogicRelation.REVERSE_ENTAILMENT;
+      NaturalLogicRelation rel = insertArcToNaturalLogicRelation.get(dependencyLabel.toLowerCase());
+      if (rel != null) {
+        return rel;
       } else {
-        return NaturalLogicRelation.INDEPENDENCE;
+//      System.err.println("Unknown dependency arc for NaturalLogicRelation: " + dependencyLabel);
+        if (dependencyLabel.startsWith("nmod:")) {
+          return NaturalLogicRelation.REVERSE_ENTAILMENT;
+        } else if (dependencyLabel.startsWith("conj:")) {
+          return NaturalLogicRelation.REVERSE_ENTAILMENT;
+        } else {
+          return NaturalLogicRelation.INDEPENDENCE;
+        }
       }
     }
   }

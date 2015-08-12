@@ -69,7 +69,7 @@ public class Experiments {
   /**
    * v may hold the actual Experiments, i.e. Objects of type Experiments
    */
-  private ArrayList<Experiments> v = new ArrayList<Experiments>();
+  private ArrayList<Experiments> v = new ArrayList<>();
 
   /**
    * Maximum ySize.
@@ -120,7 +120,7 @@ public class Experiments {
   }
 
   public Index<IntPair> createIndex() {
-    Index<IntPair> index = new HashIndex<IntPair>();
+    Index<IntPair> index = new HashIndex<>();
     for (int x = 0; x < px.length; x++) {
       int numberY = numY(x);
       for (int y = 0; y < numberY; y++) {
@@ -358,7 +358,7 @@ public class Experiments {
   public double ptildeXY(int x, int y) {
     for (int j = 0; j < dim; j++) {
       if (y == pxy[x][j] % ySize) {
-        return (pxy[x][j] / ySize) / (double) size();
+        return (pxy[x][j] / (double)ySize) / (double) size();
       }
     }
     return 0.0;

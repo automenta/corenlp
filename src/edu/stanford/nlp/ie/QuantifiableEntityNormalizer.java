@@ -126,7 +126,7 @@ public class QuantifiableEntityNormalizer {
     moneyMultipliers2.put("[0-9](m)(?:[^a-zA-Z]|$)", 1000000);
     moneyMultipliers2.put("[0-9](b)(?:[^a-zA-Z]|$)", 1000000000);
 
-    wordsToValues = new ClassicCounter<String>();
+    wordsToValues = new ClassicCounter<>();
     wordsToValues.setCount("zero", 0.0);
     wordsToValues.setCount("one", 1.0);
     wordsToValues.setCount("two", 2.0);
@@ -163,7 +163,7 @@ public class QuantifiableEntityNormalizer {
     wordsToValues.setCount("trillion", 1000000000000.0);
     wordsToValues.setCount("dozen", 12.0);
 
-    ordinalsToValues = new ClassicCounter<String>();
+    ordinalsToValues = new ClassicCounter<>();
     ordinalsToValues.setCount("zeroth", 0.0);
     ordinalsToValues.setCount("first", 1.0);
     ordinalsToValues.setCount("second", 2.0);
@@ -277,7 +277,7 @@ public class QuantifiableEntityNormalizer {
       }
     }
 
-    List<CoreLabel> s = new ArrayList<CoreLabel>();
+    List<CoreLabel> s = new ArrayList<>();
     String lastEntity = BACKGROUND_SYMBOL;
     StringBuilder entityStringCollector = null;
 
@@ -418,10 +418,10 @@ public class QuantifiableEntityNormalizer {
   private static final String dateRangeBeforeOneWord = "before|until";
   private static final List<Pair<String, String>> dateRangeBeforePairedOneWord;
   static {
-    dateRangeBeforePairedOneWord = new ArrayList<Pair<String,String>>();
-    dateRangeBeforePairedOneWord.add(new Pair<String, String>("between", "and"));
-    dateRangeBeforePairedOneWord.add(new Pair<String, String>("from", "to"));
-    dateRangeBeforePairedOneWord.add(new Pair<String, String>("from", "-"));
+    dateRangeBeforePairedOneWord = new ArrayList<>();
+    dateRangeBeforePairedOneWord.add(new Pair<>("between", "and"));
+    dateRangeBeforePairedOneWord.add(new Pair<>("from", "to"));
+    dateRangeBeforePairedOneWord.add(new Pair<>("from", "-"));
   }
 
   private static final String datePrepositionAfterWord = "in|of";
@@ -525,7 +525,7 @@ public class QuantifiableEntityNormalizer {
     int sz = list.size();
     E next = (afterIndex < sz) ? list.get(afterIndex) : null;
     E next2 = (afterIndex + 1 < sz) ? list.get(afterIndex + 1) : null;
-    List<E> toRemove = new ArrayList<E>();
+    List<E> toRemove = new ArrayList<>();
 
     String curNER = (firstDate == null ? "" : firstDate.get(CoreAnnotations.NamedEntityTagAnnotation.class));
     if(curNER == null) curNER = "";
@@ -563,7 +563,7 @@ public class QuantifiableEntityNormalizer {
               }
               next.set(CoreAnnotations.NormalizedNamedEntityTagAnnotation.class, rangeString);
               if (concatenate) {
-                List<E> numberWords = new ArrayList<E>();
+                List<E> numberWords = new ArrayList<>();
                 numberWords.add(firstDate);
                 numberWords.add(next);
                 numberWords.add(next2);
@@ -669,7 +669,7 @@ public class QuantifiableEntityNormalizer {
       // group 1 is hours, group 2 is minutes and maybe seconds; group 3 is am/pm
       StringBuilder sb = new StringBuilder();
       sb.append(m.group(1));
-      if (m.group(2) == null || "".equals(m.group(2))) {
+      if (m.group(2) == null || m.group(2).isEmpty()) {
         sb.append(":00");
       } else {
         sb.append(m.group(2));
@@ -686,7 +686,7 @@ public class QuantifiableEntityNormalizer {
         // sb.append("pm");
       }
       if (DEBUG2) {
-        err.println("normalizedTimeString new str: " + sb.toString());
+        err.println("normalizedTimeString new str: " + sb);
       }
       return sb.toString();
     } else if (DEBUG) {
@@ -730,15 +730,15 @@ public class QuantifiableEntityNormalizer {
 
     // do currency words
     char currencySign = '$';
-    for (String currencyWord : currencyWords.keySet()) {
-      if (StringUtils.find(s, currencyWord)) {
-        if (DEBUG2) { err.println("Found units: " + currencyWord); }
-        if (currencyWord.equals("pence|penny") || currencyWord.equals("cents?") || currencyWord.equals("\u00A2")) {
+    for (Map.Entry<String, Character> stringCharacterEntry : currencyWords.entrySet()) {
+      if (StringUtils.find(s, stringCharacterEntry.getKey())) {
+        if (DEBUG2) { err.println("Found units: " + stringCharacterEntry.getKey()); }
+        if (stringCharacterEntry.getKey().equals("pence|penny") || stringCharacterEntry.getKey().equals("cents?") || stringCharacterEntry.getKey().equals("\u00A2")) {
           multiplier *= 0.01;
         }
         // if(DEBUG){err.println("Quantifiable: Found "+ currencyWord);}
-        s = s.replaceAll(currencyWord, "");
-        currencySign = currencyWords.get(currencyWord);
+        s = s.replaceAll(stringCharacterEntry.getKey(), "");
+        currencySign = stringCharacterEntry.getValue();
       }
     }
 
@@ -790,21 +790,21 @@ public class QuantifiableEntityNormalizer {
 
     // get multipliers like "billion"
     boolean foundMultiplier = false;
-    for (String moneyTag : moneyMultipliers.keySet()) {
-      if (s.contains(moneyTag)) {
+    for (Map.Entry<String, Double> stringDoubleEntry : moneyMultipliers.entrySet()) {
+      if (s.contains(stringDoubleEntry.getKey())) {
         // if (DEBUG) {err.println("Quantifiable: Found "+ moneyTag);}
         //special case check: m can mean either meters or million - if nextWord is high or long, we assume meters - this is a huge and bad hack!!!
-        if(moneyTag.equals("m") && (nextWord.equals("high") || nextWord.equals("long") )) continue;
-        s = s.replaceAll(moneyTag, "");
-        multiplier *= moneyMultipliers.get(moneyTag);
+        if(stringDoubleEntry.getKey().equals("m") && (nextWord.equals("high") || nextWord.equals("long") )) continue;
+        s = s.replaceAll(stringDoubleEntry.getKey(), "");
+        multiplier *= stringDoubleEntry.getValue();
         foundMultiplier = true;
       }
     }
-    for (String moneyTag : moneyMultipliers2.keySet()) {
-      Matcher m = Pattern.compile(moneyTag).matcher(s);
+    for (Map.Entry<String, Integer> stringIntegerEntry : moneyMultipliers2.entrySet()) {
+      Matcher m = Pattern.compile(stringIntegerEntry.getKey()).matcher(s);
       if (m.find()) {
         // if(DEBUG){err.println("Quantifiable: Found "+ moneyTag);}
-        multiplier *= moneyMultipliers2.get(moneyTag);
+        multiplier *= stringIntegerEntry.getValue();
         foundMultiplier = true;
         int start = m.start(1);
         int end = m.end(1);
@@ -815,11 +815,11 @@ public class QuantifiableEntityNormalizer {
     }
     if(!foundMultiplier) {
       EditDistance ed = new EditDistance();
-      for (String moneyTag : moneyMultipliers.keySet()) {
+      for (Map.Entry<String, Double> stringDoubleEntry : moneyMultipliers.entrySet()) {
         if(isOneSubstitutionMatch(origSSplit[origSSplit.length - 1],
-                                  moneyTag, ed)) {
-          s = s.replaceAll(moneyTag, "");
-          multiplier *= moneyMultipliers.get(moneyTag);
+                stringDoubleEntry.getKey(), ed)) {
+          s = s.replaceAll(stringDoubleEntry.getKey(), "");
+          multiplier *= stringDoubleEntry.getValue();
         }
       }
     }
@@ -872,10 +872,10 @@ public class QuantifiableEntityNormalizer {
       }
       try {
         double d = 0.0;
-        if (m.group(2) != null && ! m.group(2).equals("")) {
+        if (m.group(2) != null && !m.group(2).isEmpty()) {
           d = Double.parseDouble(m.group(2));
         }
-        if (m.group(3) != null && ! m.group(3).equals("")) {
+        if (m.group(3) != null && !m.group(3).isEmpty()) {
           d += Double.parseDouble(m.group(3));
         }
         if (d == 0.0 && multiplier != 1.0) {
@@ -1321,7 +1321,7 @@ public class QuantifiableEntityNormalizer {
    * @param concatenate true if quantities should be concatenated into one label, false otherwise
    */
   public static <E extends CoreMap> void addNormalizedQuantitiesToEntities(List<E> list, boolean concatenate, boolean usesSUTime) {
-    List<E> toRemove = new ArrayList<E>(); // list for storing those objects we're going to remove at the end (e.g., if concatenate, we replace 3 November with 3_November, have to remove one of the originals)
+    List<E> toRemove = new ArrayList<>(); // list for storing those objects we're going to remove at the end (e.g., if concatenate, we replace 3 November with 3_November, have to remove one of the originals)
 
     // Goes through tokens and tries to fix up NER annotations
     fixupNerBeforeNormalization(list);
@@ -1330,7 +1330,7 @@ public class QuantifiableEntityNormalizer {
     String prevNerTag = BACKGROUND_SYMBOL;
     String timeModifier = "";
     int beforeIndex = -1;
-    ArrayList<E> collector = new ArrayList<E>();
+    ArrayList<E> collector = new ArrayList<>();
     for (int i = 0, sz = list.size(); i <= sz; i++) {
       E wi = null;
       String currNerTag = null;
@@ -1345,7 +1345,7 @@ public class QuantifiableEntityNormalizer {
 
         currNerTag = wi.get(CoreAnnotations.NamedEntityTagAnnotation.class);
         if ("TIME".equals(currNerTag)) {
-          if (timeModifier.equals("")) {
+          if (timeModifier.isEmpty()) {
             timeModifier = detectTimeOfDayModifier(list, i-1, i+1);
           }
         }
@@ -1391,7 +1391,7 @@ public class QuantifiableEntityNormalizer {
             break;
         }
 
-        collector = new ArrayList<E>();
+        collector = new ArrayList<>();
         timeModifier = "";
       }
 
@@ -1408,7 +1408,7 @@ public class QuantifiableEntityNormalizer {
     if (concatenate) {
       list.removeAll(toRemove);
     }
-    List<E> moreRemoves = new ArrayList<E>();
+    List<E> moreRemoves = new ArrayList<>();
     for (int i = 0, sz = list.size(); i < sz; i++) {
       E wi = list.get(i);
       moreRemoves.addAll(detectTwoSidedRangeModifier(wi, list, i-1, i+1, concatenate));
@@ -1447,7 +1447,7 @@ public class QuantifiableEntityNormalizer {
         }
 
         //repairs mistagged multipliers after a numeric quantity
-        if (!curWord.equals("") && (moneyMultipliers.containsKey(curWord) ||
+        if (!curWord.isEmpty() && (moneyMultipliers.containsKey(curWord) ||
                 (getOneSubstitutionMatch(curWord, moneyMultipliers.keySet()) != null)) &&
                 prevNerTag != null && (prevNerTag.equals("MONEY") || prevNerTag.equals("NUMBER"))) {
           wi.set(CoreAnnotations.NamedEntityTagAnnotation.class, prevNerTag);
@@ -1516,12 +1516,12 @@ public class QuantifiableEntityNormalizer {
   public static <E extends CoreLabel> List<E> applySpecializedNER(List<E> l) {
     int sz = l.size();
     // copy l
-    List<CoreLabel> copyL = new ArrayList<CoreLabel>(sz);
+    List<CoreLabel> copyL = new ArrayList<>(sz);
     for (int i = 0; i < sz; i++) {
       if (DEBUG2) {
         if (i == 1) {
           String tag = l.get(i).get(CoreAnnotations.PartOfSpeechAnnotation.class);
-          if (tag == null || tag.equals("")) {
+          if (tag == null || tag.isEmpty()) {
             err.println("Quantifiable: error! tag is " + tag);
           }
         }

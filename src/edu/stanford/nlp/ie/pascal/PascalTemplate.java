@@ -43,7 +43,7 @@ public class PascalTemplate {
   private static final Index<String> fieldIndices;
 
   static {
-    fieldIndices = new HashIndex<String>();
+    fieldIndices = new HashIndex<>();
     for (String field : fields) {
       fieldIndices.add(field);
     }
@@ -270,7 +270,7 @@ public class PascalTemplate {
     for (int i = 0; i < values.length; i++) {
       if (values[i] != null) {
         if (!(values[i].equalsIgnoreCase("NULL"))) {
-          str = str.concat(fields[i] + " : " + values[i] + "\n");
+          str = str.concat(fields[i] + " : " + values[i] + '\n');
         }
       }
     }

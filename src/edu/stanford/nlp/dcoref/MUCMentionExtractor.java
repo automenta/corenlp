@@ -85,11 +85,11 @@ public class MUCMentionExtractor extends MentionExtractor {
 
   @Override
   public Document nextDoc() throws Exception {
-    List<List<CoreLabel>> allWords = new ArrayList<List<CoreLabel>>();
-    List<Tree> allTrees = new ArrayList<Tree>();
-    List<List<Mention>> allGoldMentions = new ArrayList<List<Mention>>();
+    List<List<CoreLabel>> allWords = new ArrayList<>();
+    List<Tree> allTrees = new ArrayList<>();
+    List<List<Mention>> allGoldMentions = new ArrayList<>();
     List<List<Mention>> allPredictedMentions;
-    List<CoreMap> allSentences = new ArrayList<CoreMap>();
+    List<CoreMap> allSentences = new ArrayList<>();
     Annotation docAnno = new Annotation("");
 
     Pattern docPattern = Pattern.compile("<DOC>(.*?)</DOC>", Pattern.DOTALL+Pattern.CASE_INSENSITIVE);
@@ -118,7 +118,7 @@ public class MUCMentionExtractor extends MentionExtractor {
         if (i > 0 && w.word().equals("$")) {
           if(!words.get(i-1).word().endsWith("PRP") && !words.get(i-1).word().endsWith("WP"))
             continue;
-          words.get(i-1).set(CoreAnnotations.TextAnnotation.class, words.get(i-1).word()+"$");
+          words.get(i-1).set(CoreAnnotations.TextAnnotation.class, words.get(i-1).word()+ '$');
           words.remove(i);
           i--;
         } else if (w.word().equals("\\/")) {
@@ -131,10 +131,10 @@ public class MUCMentionExtractor extends MentionExtractor {
       }
       // END FIXING TOKENIZATION PROBLEMS
 
-      List<CoreLabel> sentence = new ArrayList<CoreLabel>();
+      List<CoreLabel> sentence = new ArrayList<>();
       // MUC accepts embedded coref mentions, so we need to keep a stack for the mentions currently open
-      Stack<Mention> stack = new Stack<Mention>();
-      List<Mention> mentions = new ArrayList<Mention>();
+      Stack<Mention> stack = new Stack<>();
+      List<Mention> mentions = new ArrayList<>();
 
       allWords.add(sentence);
       allGoldMentions.add(mentions);
@@ -220,7 +220,7 @@ public class MUCMentionExtractor extends MentionExtractor {
         CoreLabel w = sentence.get(i);
         w.set(CoreAnnotations.IndexAnnotation.class, i+1);
         w.set(CoreAnnotations.UtteranceAnnotation.class, 0);
-        if(i>0) textContent.append(" ");
+        if(i>0) textContent.append(' ');
         textContent.append(w.getString(CoreAnnotations.TextAnnotation.class));
       }
       CoreMap sentCoreMap = new Annotation(textContent.toString());

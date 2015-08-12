@@ -233,7 +233,7 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
       String trueTagStr = null;
       if (sentence.get(start) instanceof HasTag) {
         trueTagStr = ((HasTag) sentence.get(start)).tag();
-        if ("".equals(trueTagStr)) {
+        if (trueTagStr != null && trueTagStr.isEmpty()) {
           trueTagStr = null;
         }
       }
@@ -242,7 +242,7 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
       String wordContextStr = null;
       if(sentence.get(start) instanceof HasContext) {
         wordContextStr = ((HasContext) sentence.get(start)).originalText();
-        if("".equals(wordContextStr))
+        if(wordContextStr != null && wordContextStr.isEmpty())
           wordContextStr = null;
       }
 
@@ -264,7 +264,7 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
             iScoreHSum[start][dg.tagBin(tag)][start] = 0.0f;
             iScoreHSum[start][dg.tagBin(tag)][start+1] = 0.0f;
           }
-          if (DEBUG) System.err.println("DepParser accepted tagging: " + wordIndex.get(tagging.word)+"|"+tagIndex.get(tagging.tag) + ", got score " + score);
+          if (DEBUG) System.err.println("DepParser accepted tagging: " + wordIndex.get(tagging.word)+ '|' +tagIndex.get(tagging.tag) + ", got score " + score);
         }
       }
     }
@@ -331,7 +331,7 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
               headScore[binDist][hWord][hTag][aWord][aTag] = (float) dg.scoreTB(words[hWord], hTag, words[aWord], aTag, leftHeaded, headDistance);
               //hit++;
               if (DEBUG) {
-                System.err.println("Dep score head -> dep: " + wordIndex.get(words[hWord]) + "/" + tagIndex.get(hTag) + "[" + hWord + "] -> " + wordIndex.get(words[aWord]) + "/" + tagIndex.get(aTag) + "[" + aWord + "] split [" + split + "] = " + headScore[binDist][hWord][hTag][aWord][aTag]);
+                System.err.println("Dep score head -> dep: " + wordIndex.get(words[hWord]) + '/' + tagIndex.get(hTag) + '[' + hWord + "] -> " + wordIndex.get(words[aWord]) + '/' + tagIndex.get(aTag) + '[' + aWord + "] split [" + split + "] = " + headScore[binDist][hWord][hTag][aWord][aTag]);
               }
               // skip other splits with same binDist
               while (split + 1 < end && binDistance[hWord][split + 1] == binDist) {
@@ -387,8 +387,8 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
                 }
                 float score = iScoreH[endHead][endTag][split] + argLeftScore + iScoreH[argHead][argTag][split] + depScore + stopLeftScore + headStop[argHead][argTag][split];
                 if (DEBUG_MORE) {
-                  System.err.println("Left extend " + wordIndex.get(words[endHead]) + "/" + tagIndex.get(endTag) + "[" + endHead + "] -> " + wordIndex.get(words[argHead]) + "/" + tagIndex.get(argTag) + "[" + argHead + "](" + start + "," + split + ")");
-                  System.err.println("  " + score + " = SUM " + iScoreH[endHead][endTag][split] + " " + argLeftScore + " " + iScoreH[argHead][argTag][split] + " " + depScore + " " + headStop[argHead][argTag][start] + " " + headStop[argHead][argTag][split]);
+                  System.err.println("Left extend " + wordIndex.get(words[endHead]) + '/' + tagIndex.get(endTag) + '[' + endHead + "] -> " + wordIndex.get(words[argHead]) + '/' + tagIndex.get(argTag) + '[' + argHead + "](" + start + ',' + split + ')');
+                  System.err.println("  " + score + " = SUM " + iScoreH[endHead][endTag][split] + ' ' + argLeftScore + ' ' + iScoreH[argHead][argTag][split] + ' ' + depScore + ' ' + headStop[argHead][argTag][start] + ' ' + headStop[argHead][argTag][split]);
                 }
                 if (score > bestScore) {
                   bestScore = score;
@@ -442,8 +442,8 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
                 }
                 float score = iScoreH[startHead][startTag][split] + iScoreH[argHead][argTag][split] + argRightScore + depScore + stopRightScore + headStop[argHead][argTag][split];
                 if (DEBUG_MORE) {
-                  System.err.println("Right extend " + wordIndex.get(words[startHead]) + "/" + tagIndex.get(startTag) + "[" + startHead + "] -> " + wordIndex.get(words[argHead]) + "/" + tagIndex.get(argTag) + "[" + argHead + "](" + split + "," + end + ")");
-                  System.err.println("  " + score + " = SUM " + iScoreH[startHead][startTag][split] + " " + iScoreH[argHead][argTag][split] + " " + argRightScore + " " + depScore + " " + headStop[argHead][argTag][end] + " " + headStop[argHead][argTag][split]);
+                  System.err.println("Right extend " + wordIndex.get(words[startHead]) + '/' + tagIndex.get(startTag) + '[' + startHead + "] -> " + wordIndex.get(words[argHead]) + '/' + tagIndex.get(argTag) + '[' + argHead + "](" + split + ',' + end + ')');
+                  System.err.println("  " + score + " = SUM " + iScoreH[startHead][startTag][split] + ' ' + iScoreH[argHead][argTag][split] + ' ' + argRightScore + ' ' + depScore + ' ' + headStop[argHead][argTag][end] + ' ' + headStop[argHead][argTag][split]);
                 }
                 if (score > bestScore) {
                   bestScore = score;
@@ -611,7 +611,7 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
     System.out.println("---- headScore matrix (head x dep, best tags) ----");
     System.out.print(StringUtils.padOrTrim("", 6));
     for (int i = 0; i < words.length; i++) {
-      System.out.print(" " + StringUtils.padOrTrim(wordIndex.get(words[i]), 2));
+      System.out.print(' ' + StringUtils.padOrTrim(wordIndex.get(words[i]), 2));
     }
     System.out.println();
     for (int hWord = 0; hWord < words.length; hWord++) {
@@ -645,10 +645,10 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
           }
         }
         if (Float.isInfinite(biggest)) {
-          System.out.print(" " + StringUtils.padOrTrim("in", 2));
+          System.out.print(' ' + StringUtils.padOrTrim("in", 2));
         } else {
           int score = Math.round(Math.abs(headScore[bigBD][hWord][dg.tagBin(bigHTag)][aWord][dg.tagBin(bigATag)]));
-          System.out.print(" " + StringUtils.padOrTrim(Integer.toString(score), 2));
+          System.out.print(' ' + StringUtils.padOrTrim(Integer.toString(score), 2));
         }
       }
       System.out.println();
@@ -670,7 +670,7 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
    */
   private Tree extractBestParse(int start, int end, int hWord, int hTag) {
     if (DEBUG) {
-      System.err.println("Span "+start+" to "+end+" word "+wordIndex.get(words[hWord])+"/"+hWord+" tag "+tagIndex.get(hTag)+"/"+hTag+" score "+iScore(start, end, hWord, hTag));
+      System.err.println("Span "+start+" to "+end+" word "+wordIndex.get(words[hWord])+ '/' +hWord+" tag "+tagIndex.get(hTag)+ '/' +hTag+" score "+iScore(start, end, hWord, hTag));
     }
     String headWordStr = wordIndex.get(words[hWord]);
     String headTagStr = tagIndex.get(hTag);
@@ -683,7 +683,7 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
       return tf.newTreeNode(headLabel, Collections.singletonList(leaf));
     }
     // find backtrace
-    List<Tree> children = new ArrayList<Tree>();
+    List<Tree> children = new ArrayList<>();
     double bestScore = iScore(start, end, hWord, hTag);
     for (int split = start + 1; split < end; split++) {
       int binD = binDistance[hWord][split];
@@ -694,7 +694,7 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
               if (DEBUG) {
                 String argWordStr = wordIndex.get(words[aWord]);
                 String argTagStr = tagIndex.get(aTag);
-                System.err.println(headWordStr+"|"+headTagStr+" -> "+argWordStr+"|"+argTagStr+" "+bestScore);
+                System.err.println(headWordStr+ '|' +headTagStr+" -> "+argWordStr+ '|' +argTagStr+ ' ' +bestScore);
               }
               // build it
               children.add(extractBestParse(start, split, hWord, hTag));
@@ -710,7 +710,7 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
               if (DEBUG) {
                 String argWordStr = wordIndex.get(words[aWord]);
                 String argTagStr = tagIndex.get(aTag);
-                System.err.println(headWordStr+"|"+headTagStr+" -> "+argWordStr+"|"+argTagStr+" "+bestScore);
+                System.err.println(headWordStr+ '|' +headTagStr+" -> "+argWordStr+ '|' +argTagStr+ ' ' +bestScore);
               }
               children.add(extractBestParse(start, split, aWord, aTag));
               children.add(extractBestParse(split, end, hWord, hTag));
@@ -729,7 +729,7 @@ public class ExhaustiveDependencyParser implements Scorer, KBestViterbiParser {
     if (tree.isLeaf() || tree.isPreTerminal()) {
       return tree;
     }
-    List<Tree> newChildren = new ArrayList<Tree>();
+    List<Tree> newChildren = new ArrayList<>();
     Tree[] children = tree.children();
     for (Tree child : children) {
       Tree newChild = flatten(child);

@@ -27,9 +27,7 @@
 package edu.stanford.nlp.dcoref;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -97,8 +95,8 @@ public class CoNLLMentionExtractor extends MentionExtractor {
 
   @Override
   public Document nextDoc() throws Exception {
-    List<List<CoreLabel>> allWords = new ArrayList<List<CoreLabel>>();
-    List<Tree> allTrees = new ArrayList<Tree>();
+    List<List<CoreLabel>> allWords = new ArrayList<>();
+    List<Tree> allTrees = new ArrayList<>();
 
     CoNLL2011DocumentReader.Document conllDoc = reader.getNextDocument();
     if (conllDoc == null) {
@@ -178,9 +176,9 @@ public class CoNLLMentionExtractor extends MentionExtractor {
   }
 
   public static List<List<Mention>> makeCopy(List<List<Mention>> mentions) {
-    List<List<Mention>> copy = new ArrayList<List<Mention>>(mentions.size());
+    List<List<Mention>> copy = new ArrayList<>(mentions.size());
     for (List<Mention> sm:mentions) {
-      List<Mention> sm2 = new ArrayList<Mention>(sm.size());
+      List<Mention> sm2 = new ArrayList<>(sm.size());
       for (Mention m:sm) {
         Mention m2 = new Mention();
         m2.goldCorefClusterID = m.goldCorefClusterID;
@@ -207,20 +205,26 @@ public class CoNLLMentionExtractor extends MentionExtractor {
       List<Pair<Integer,Integer>> goldMentionsSpans = extractSpans(goldMentionsSent);
 
       for (Pair<Integer,Integer> mentionSpan: goldMentionsSpans){
-        logger.finer("RECALL ERROR\n");
-        logger.finer(coreMap + "\n");
-        for (int x=mentionSpan.first;x<mentionSpan.second;x++){
-          logger.finer(words.get(x).value() + " ");
+        if (logger.isLoggable(Level.FINER)) {
+          logger.finer("RECALL ERROR\n");
+          logger.finer(coreMap + "\n");
         }
-        logger.finer("\n"+tree + "\n");
+        for (int x=mentionSpan.first;x<mentionSpan.second;x++){
+          if (logger.isLoggable(Level.FINER)) {
+            logger.finer(words.get(x).value() + " ");
+          }
+        }
+        if (logger.isLoggable(Level.FINER)) {
+          logger.finer("\n"+tree + "\n");
+        }
       }
     }
   }
 
   private static List<Pair<Integer,Integer>> extractSpans(List<Mention> listOfMentions) {
-    List<Pair<Integer,Integer>> mentionSpans = new ArrayList<Pair<Integer,Integer>>();
+    List<Pair<Integer,Integer>> mentionSpans = new ArrayList<>();
     for (Mention mention: listOfMentions){
-      Pair<Integer,Integer> mentionSpan = new Pair<Integer,Integer>(mention.startIndex,mention.endIndex);
+      Pair<Integer,Integer> mentionSpan = new Pair<>(mention.startIndex, mention.endIndex);
       mentionSpans.add(mentionSpan);
     }
     return mentionSpans;
@@ -228,10 +232,10 @@ public class CoNLLMentionExtractor extends MentionExtractor {
 
   public List<List<Mention>> extractGoldMentions(CoNLL2011DocumentReader.Document conllDoc) {
     List<CoreMap> sentences = conllDoc.getAnnotation().get(CoreAnnotations.SentencesAnnotation.class);
-    List<List<Mention>> allGoldMentions = new ArrayList<List<Mention>>();
+    List<List<Mention>> allGoldMentions = new ArrayList<>();
     CollectionValuedMap<String,CoreMap> corefChainMap = conllDoc.getCorefChainMap();
     for (int i = 0; i < sentences.size(); i++) {
-      allGoldMentions.add(new ArrayList<Mention>());
+      allGoldMentions.add(new ArrayList<>());
     }
     int maxCorefClusterId = -1;
     for (String corefIdStr:corefChainMap.keySet()) {
@@ -241,10 +245,10 @@ public class CoNLLMentionExtractor extends MentionExtractor {
       }
     }
     int newMentionID = maxCorefClusterId + 1;
-    for (String corefIdStr:corefChainMap.keySet()) {
-      int id = Integer.parseInt(corefIdStr);
+    for (Map.Entry<String, Collection<CoreMap>> stringCollectionEntry : corefChainMap.entrySet()) {
+      int id = Integer.parseInt(stringCollectionEntry.getKey());
       int clusterMentionCnt = 0;
-      for (CoreMap m:corefChainMap.get(corefIdStr)) {
+      for (CoreMap m: stringCollectionEntry.getValue()) {
         clusterMentionCnt++;
         Mention mention = new Mention();
 

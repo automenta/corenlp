@@ -60,7 +60,7 @@ public class TokensRegexAnnotator implements Annotator {
   }
 
   public TokensRegexAnnotator(String name, Properties props) {
-    String prefix = (name == null)? "":name + ".";
+    String prefix = (name == null)? "":name + '.';
     String[] files  = PropertiesUtils.getStringArray(props, prefix + "rules");
     if (files == null || files.length == 0) {
       throw new RuntimeException("No rules specified for TokensRegexAnnotator " + name + ", check " + prefix + "rules property");
@@ -77,7 +77,7 @@ public class TokensRegexAnnotator implements Annotator {
       options.matchedExpressionsAnnotationKey = EnvLookup.lookupAnnotationKeyWithClassname(env, matchedExpressionsAnnotationKeyName);
       if (options.matchedExpressionsAnnotationKey == null) {
         String propName = prefix + "matchedExpressionsAnnotationKey";
-        throw new RuntimeException("Cannot determine annotation key for " + propName + "=" + matchedExpressionsAnnotationKeyName);
+        throw new RuntimeException("Cannot determine annotation key for " + propName + '=' + matchedExpressionsAnnotationKeyName);
       }
     }
   }
@@ -129,7 +129,7 @@ public class TokensRegexAnnotator implements Annotator {
     }
     List<CoreMap> allMatched;
     if (annotation.containsKey(CoreAnnotations.SentencesAnnotation.class)) {
-      allMatched = new ArrayList<CoreMap>();
+      allMatched = new ArrayList<>();
       List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
       for (CoreMap sentence : sentences) {
         List<CoreMap> matched = extract(sentence);

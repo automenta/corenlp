@@ -277,7 +277,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
       int label = docLabels[i];
       double p = cliqueTree.condLogProbGivenPrevious(i, label, given);
       if (VERBOSE) {
-        System.err.println("P(" + label + "|" + ArrayMath.toString(given) + ")=" + p);
+        System.err.println("P(" + label + '|' + ArrayMath.toString(given) + ")=" + p);
       }
       prob += p;
       System.arraycopy(given, 1, given, 0, given.length - 1);
@@ -301,7 +301,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
     @Override
     public Pair<Integer, Double> process(Pair<Integer, List<Integer>> threadIDAndDocIndices) {
       int tID = threadIDAndDocIndices.first();
-      if (tID < 0 || tID >= multiThreadGrad) throw new IllegalArgumentException("threadID must be with in range 0 <= tID < multiThreadGrad(="+multiThreadGrad+")");
+      if (tID < 0 || tID >= multiThreadGrad) throw new IllegalArgumentException("threadID must be with in range 0 <= tID < multiThreadGrad(="+multiThreadGrad+ ')');
       List<Integer> docIDs = threadIDAndDocIndices.second();
       double[][] partE; // initialized below
       double[][] partEhat = null; // initialized below
@@ -325,7 +325,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
         else
           probSum += expectedCountsAndValueForADoc(partE, docIndex);
       }
-      return new Pair<Integer, Double>(tID, probSum);
+      return new Pair<>(tID, probSum);
     }
 
     @Override
@@ -342,7 +342,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
 
   protected double regularGradientAndValue() {
     int totalLen = data.length;
-    List<Integer> docIDs = new ArrayList<Integer>(totalLen);
+    List<Integer> docIDs = new ArrayList<>(totalLen);
     for (int m=0; m < totalLen; m++) docIDs.add(m);
 
     return multiThreadGradient(docIDs, false);
@@ -355,7 +355,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
     }
   }
 
-  protected double newMultithreadGradient(List<Integer> docIDs, boolean calculateEmpirical) {
+  protected static double newMultithreadGradient(List<Integer> docIDs, boolean calculateEmpirical) {
     double objective = 0.0;
     return objective;
   }
@@ -380,7 +380,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
 
     // TODO: this is a huge amount of machinery for no discernable reason
     MulticoreWrapper<Pair<Integer, List<Integer>>, Pair<Integer, Double>> wrapper =
-      new MulticoreWrapper<Pair<Integer, List<Integer>>, Pair<Integer, Double>>(multiThreadGrad, (calculateEmpirical ? expectedAndEmpiricalThreadProcessor : expectedThreadProcessor) );
+            new MulticoreWrapper<>(multiThreadGrad, (calculateEmpirical ? expectedAndEmpiricalThreadProcessor : expectedThreadProcessor));
 
     int totalLen = docIDs.size();
     int partLen = totalLen / multiThreadGrad;
@@ -391,7 +391,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
         endIndex = totalLen;
       // TODO: let's not construct a sub-list of DocIDs, unnecessary object creation, can calculate directly from ThreadID
       List<Integer> subList = docIDs.subList(currIndex, endIndex);
-      wrapper.put(new Pair<Integer, List<Integer>>(part, subList));
+      wrapper.put(new Pair<>(part, subList));
       currIndex = endIndex;
     }
     wrapper.join();
@@ -446,7 +446,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
         // because we minimize -L(\theta)
         derivative[index] = (E[i][j] - Ehat[i][j]);
         if (VERBOSE) {
-          System.err.println("deriv(" + i + "," + j + ") = " + E[i][j] + " - " + Ehat[i][j] + " = " + derivative[index]);
+          System.err.println("deriv(" + i + ',' + j + ") = " + E[i][j] + " - " + Ehat[i][j] + " = " + derivative[index]);
         }
         index++;
       }
@@ -475,7 +475,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
     // double[][] E = empty2D();
 
     // iterate over all the documents
-    List<Integer> docIDs = new ArrayList<Integer>(batch.length);
+    List<Integer> docIDs = new ArrayList<>(batch.length);
     for (int m=0; m < batch.length; m++) docIDs.add(batch[m]);
     prob = multiThreadGradient(docIDs, false); 
 
@@ -493,7 +493,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
         // but since we minimize -L(\theta), the gradient is -(empirical-expected)
         derivative[index++] = (E[i][j] - batchScale*Ehat[i][j]);
         if (VERBOSE) {
-          System.err.println("deriv(" + i + "," + j + ") = " + E[i][j] + " - " + Ehat[i][j] + " = " + derivative[index - 1]);
+          System.err.println("deriv(" + i + ',' + j + ") = " + E[i][j] + " - " + Ehat[i][j] + " = " + derivative[index - 1]);
         }
       }
     }
@@ -541,7 +541,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
     // so we adjust by + gScale(empirical count - expected count)
 
     // iterate over all the documents
-    List<Integer> docIDs = new ArrayList<Integer>(batch.length);
+    List<Integer> docIDs = new ArrayList<>(batch.length);
     for (int m=0; m < batch.length; m++) docIDs.add(batch[m]);
     prob = multiThreadGradient(docIDs, true); 
 
@@ -579,7 +579,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
     setWeights(weights);
 
     // iterate over all the documents
-    List<Integer> docIDs = new ArrayList<Integer>(batch.length);
+    List<Integer> docIDs = new ArrayList<>(batch.length);
     for (int m=0; m < batch.length; m++) docIDs.add(batch[m]);
     multiThreadGradient(docIDs, true); 
 
@@ -754,7 +754,7 @@ public class CRFLogConditionalObjectiveFunction extends AbstractStochasticCachin
       }
     }
 
-    return new Pair<double[][][], double[][][]>(prevGivenCurr, nextGivenCurr);
+    return new Pair<>(prevGivenCurr, nextGivenCurr);
   }
 
   protected static void combine2DArr(double[][] combineInto, double[][] toBeCombined, double scale) {

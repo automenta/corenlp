@@ -1,14 +1,6 @@
 package edu.stanford.nlp.hcoref;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import edu.stanford.nlp.classify.LogisticClassifier;
 import edu.stanford.nlp.hcoref.data.CorefCluster;
@@ -122,9 +114,9 @@ public class Preprocessor {
   }
 
   private static List<Mention> mentionReorderingBySpan(List<Mention> mentionsInSent) {
-    TreeSet<Mention> ordering = new TreeSet<Mention>(new Comparator<Mention>(){
+    TreeSet<Mention> ordering = new TreeSet<>(new Comparator<Mention>() {
       public int compare(Mention m1, Mention m2) {
-        return (m1.appearEarlierThan(m2))? -1 : (m2.appearEarlierThan(m1))? 1 : 0;
+        return (m1.appearEarlierThan(m2)) ? -1 : (m2.appearEarlierThan(m1)) ? 1 : 0;
       }
     });
     ordering.addAll(mentionsInSent);
@@ -185,19 +177,19 @@ public class Preprocessor {
       // For CoNLL training there are some documents with gold mentions with the same position offsets
       // See /scr/nlp/data/conll-2011/v2/data/train/data/english/annotations/nw/wsj/09/wsj_0990.v2_auto_conll
       //  (Packwood - Roth)
-      CollectionValuedMap<IntPair, Mention> goldMentionPositions = new CollectionValuedMap<IntPair, Mention>();
+      CollectionValuedMap<IntPair, Mention> goldMentionPositions = new CollectionValuedMap<>();
       for(Mention g : golds) {
         IntPair ip = new IntPair(g.startIndex, g.endIndex);
         if (goldMentionPositions.containsKey(ip)) {
           StringBuilder existingMentions = new StringBuilder();
           for (Mention eg: goldMentionPositions.get(ip)) {
             if (existingMentions.length() > 0) {
-              existingMentions.append(",");
+              existingMentions.append(',');
             }
             existingMentions.append(eg.mentionID);
           }
           Redwood.log("debug-preprocessor", "WARNING: gold mentions with the same offsets: " + ip
-                  + " mentions=" + g.mentionID + "," + existingMentions + ", " + g.spanToString());
+                  + " mentions=" + g.mentionID + ',' + existingMentions + ", " + g.spanToString());
         }
         //assert(!goldMentionPositions.containsKey(ip));
         goldMentionPositions.add(new IntPair(g.startIndex, g.endIndex), g);
@@ -227,12 +219,12 @@ public class Preprocessor {
       for(Mention g : golds) {
         goldMentionPositions.put(new IntPair(g.startIndex, g.endIndex), g);
         if(!goldMentionHeadPositions.containsKey(g.headIndex)) {
-          goldMentionHeadPositions.put(g.headIndex, new LinkedList<Mention>());
+          goldMentionHeadPositions.put(g.headIndex, new LinkedList<>());
         }
         goldMentionHeadPositions.get(g.headIndex).add(g);
       }
 
-      List<Mention> remains = new ArrayList<Mention>();
+      List<Mention> remains = new ArrayList<>();
       for (Mention p : predicts) {
         IntPair pos = new IntPair(p.startIndex, p.endIndex);
         if(goldMentionPositions.containsKey(pos)) {
@@ -373,7 +365,7 @@ public class Preprocessor {
   private static void initializeClusters(Document doc) {
     for (List<Mention> predicted : doc.predictedMentions) {
       for (Mention p : predicted) {
-        doc.corefClusters.put(p.mentionID, new CorefCluster(p.mentionID, Generics.newHashSet(Arrays.asList(p))));
+        doc.corefClusters.put(p.mentionID, new CorefCluster(p.mentionID, Generics.newHashSet(Collections.singletonList(p))));
         p.corefClusterID = p.mentionID;
       }
     }
@@ -443,7 +435,7 @@ public class Preprocessor {
     if(debug) {
       for(CoreMap sent : doc.annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
         for(CoreLabel cl : sent.get(TokensAnnotation.class)) {
-          System.err.print("   "+cl.word()+"-"+cl.get(UtteranceAnnotation.class)+"-"+cl.get(SpeakerAnnotation.class));
+          System.err.print("   "+cl.word()+ '-' +cl.get(UtteranceAnnotation.class)+ '-' +cl.get(SpeakerAnnotation.class));
         }
       }
       
@@ -510,9 +502,9 @@ public class Preprocessor {
         doc.speakers.put(utter, Integer.toString(speakerID));
       }
     }
-    for(String speaker : speakerConversion.keySet()) {
-      doc.speakerInfoMap.put( Integer.toString(speakerConversion.get(speaker)), doc.speakerInfoMap.get(speaker));
-      doc.speakerInfoMap.remove(speaker);
+    for(Map.Entry<String, Integer> stringIntegerEntry : speakerConversion.entrySet()) {
+      doc.speakerInfoMap.put( Integer.toString(stringIntegerEntry.getValue()), doc.speakerInfoMap.get(stringIntegerEntry.getKey()));
+      doc.speakerInfoMap.remove(stringIntegerEntry.getKey());
     }
     
     // fix SpeakerAnnotation
@@ -529,7 +521,7 @@ public class Preprocessor {
       if(debug) System.err.println("DD: "+speaker);
       if (NumberMatchingRegex.isDecimalInteger(speaker)) {
         int speakerMentionID = Integer.parseInt(speaker);
-        doc.speakerPairs.add(new Pair<Integer, Integer>(m.mentionID, speakerMentionID));
+        doc.speakerPairs.add(new Pair<>(m.mentionID, speakerMentionID));
       }
     }
     
@@ -590,7 +582,7 @@ public class Preprocessor {
       if(quoteStart) l.set(CoreAnnotations.UtteranceAnnotation.class, outsideQuoteUtterance);   // quote start got outside utterance idx 
       
       boolean noSpeakerInfo = !l.containsKey(CoreAnnotations.SpeakerAnnotation.class)
-      || l.get(CoreAnnotations.SpeakerAnnotation.class).equals("")
+      || l.get(SpeakerAnnotation.class).isEmpty()
       || l.get(CoreAnnotations.SpeakerAnnotation.class).startsWith("PER");
       
       if(noSpeakerInfo || insideQuotation){
@@ -731,7 +723,7 @@ public class Preprocessor {
         }
       }
     }
-    List<CoreMap> paragraph = new ArrayList<CoreMap>();
+    List<CoreMap> paragraph = new ArrayList<>();
     int paragraphUtterIndex = 0;
     String nextParagraphSpeaker = "";
     int paragraphOffset = 0;
@@ -742,7 +734,7 @@ public class Preprocessor {
         nextParagraphSpeaker = findParagraphSpeaker(doc, paragraph, paragraphUtterIndex, nextParagraphSpeaker, paragraphOffset, dict);
         paragraphUtterIndex = currentUtter;
         paragraphOffset += paragraph.size();
-        paragraph = new ArrayList<CoreMap>();
+        paragraph = new ArrayList<>();
       }
     }
     findParagraphSpeaker(doc, paragraph, paragraphUtterIndex, nextParagraphSpeaker, paragraphOffset, dict);
@@ -751,7 +743,7 @@ public class Preprocessor {
   private static String findParagraphSpeaker(Document doc, List<CoreMap> paragraph,
       int paragraphUtterIndex, String nextParagraphSpeaker, int paragraphOffset, Dictionaries dict) {
     if(!doc.speakers.containsKey(paragraphUtterIndex)) {
-      if(!nextParagraphSpeaker.equals("")) {
+      if(!nextParagraphSpeaker.isEmpty()) {
         doc.speakers.put(paragraphUtterIndex, nextParagraphSpeaker);
       } else {  // find the speaker of this paragraph (John, nbc news)
         CoreMap lastSent = paragraph.get(paragraph.size()-1);
@@ -774,7 +766,7 @@ public class Preprocessor {
             }
           }
         }
-        if(!hasVerb && !speaker.equals("")) {
+        if(!hasVerb && !speaker.isEmpty()) {
           doc.speakers.put(paragraphUtterIndex, speaker);
         }
       }
@@ -858,16 +850,21 @@ public class Preprocessor {
         }
         for(Pair<Integer, Integer> foundPair: foundPairs){
           if((foundPair.first == m1.headIndex && foundPair.second == m2.headIndex)){
-            if(flag.equals("APPOSITION")) {
-              if(foundPair.first != foundPair.second || m2.insideIn(m1)) {
-                m2.addApposition(m1);
-              }
+            switch (flag) {
+              case "APPOSITION":
+                if (foundPair.first != foundPair.second || m2.insideIn(m1)) {
+                  m2.addApposition(m1);
+                }
+                break;
+              case "PREDICATE_NOMINATIVE":
+                m2.addPredicateNominatives(m1);
+                break;
+              case "RELATIVE_PRONOUN":
+                m2.addRelativePronoun(m1);
+                break;
+              default:
+                throw new RuntimeException("check flag in markMentionRelation (dcoref/MentionExtractor.java)");
             }
-            else if(flag.equals("PREDICATE_NOMINATIVE")) {
-              m2.addPredicateNominatives(m1);
-            }
-            else if(flag.equals("RELATIVE_PRONOUN")) m2.addRelativePronoun(m1);
-            else throw new RuntimeException("check flag in markMentionRelation (dcoref/MentionExtractor.java)");
           }
         }
       }

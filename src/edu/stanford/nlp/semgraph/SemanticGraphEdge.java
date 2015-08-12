@@ -53,7 +53,7 @@ public class SemanticGraphEdge
   @Override
   public String toString() {
     if (!printOnlyRelation) {
-      return getSource() + " -> " + getTarget() + " (" + getRelation() + ")";
+      return getSource() + " -> " + getTarget() + " (" + getRelation() + ')';
     } else {
       return getRelation().toString();
     }

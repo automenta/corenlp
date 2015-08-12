@@ -24,9 +24,9 @@ public class BoundedCostOrderedMap<K,V> extends AbstractMap<K,V> {
    * Priority queue on the keys - note that the priority queue only orders on the cost,
    * We can't control the ordering of keys with the same cost
    */
-  PriorityQueue<K> priorityQueue = new BinaryHeapPriorityQueue<K>();
+  PriorityQueue<K> priorityQueue = new BinaryHeapPriorityQueue<>();
   /** Map of keys to their values */
-  Map<K,V> valueMap = new HashMap<K,V>();
+  Map<K,V> valueMap = new HashMap<>();
   /** Cost function on the values */
   Function<V,Double> costFunction;
 
@@ -94,8 +94,8 @@ public class BoundedCostOrderedMap<K,V> extends AbstractMap<K,V> {
 
   @Override
   public void putAll(Map<? extends K, ? extends V> m) {
-    for (K key:m.keySet()) {
-      put(key, m.get(key));
+    for (Entry<? extends K, ? extends V> entry : m.entrySet()) {
+      put(entry.getKey(), entry.getValue());
     }
   }
 
@@ -116,7 +116,7 @@ public class BoundedCostOrderedMap<K,V> extends AbstractMap<K,V> {
   }
 
   public List<V> valuesList() {
-    List<V> list = new ArrayList<V>();
+    List<V> list = new ArrayList<>();
     for (K k: priorityQueue.toSortedList()) {
       list.add(valueMap.get(k));
     }

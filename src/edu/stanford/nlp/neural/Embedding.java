@@ -258,7 +258,7 @@ public class Embedding {
       if (wordVectors.containsKey("<unk>")) { unkStr = "<unk>"; }
 
       // set UNKNOWN_WORD
-      if (!unkStr.equals("")){
+      if (!unkStr.isEmpty()){
         wordVectors.put(UNKNOWN_WORD, wordVectors.get(unkStr));
       } else {
         throw new RuntimeException("! wordVectors used to initialize Embedding doesn't contain any recognized form of " + UNKNOWN_WORD);

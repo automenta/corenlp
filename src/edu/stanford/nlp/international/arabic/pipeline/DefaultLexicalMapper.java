@@ -25,35 +25,35 @@ public class DefaultLexicalMapper implements Mapper, Serializable {
 
   private static final long serialVersionUID = -3798804368296999785L;
 
-  private final Pattern utf8ArabicChart = Pattern.compile("[\u0600-\u06FF]");
+  private final static Pattern utf8ArabicChart = Pattern.compile("[\u0600-\u06FF]");
 
   //Buckwalter patterns
-  private final String bwAlefChar = "A"; //U+0627
-  private final Pattern bwDiacritics = Pattern.compile("F|N|K|a|u|i|\\~|o");
-  private final Pattern bwTatweel = Pattern.compile("_");
-  private final Pattern bwAlef = Pattern.compile("\\{|\\||>|<");
-  private final Pattern bwQuran = Pattern.compile("`");
-  private final Pattern bwNullAnaphoraMarker = Pattern.compile("\\[nll\\]");
+  private final static String bwAlefChar = "A"; //U+0627
+  private final static Pattern bwDiacritics = Pattern.compile("F|N|K|a|u|i|\\~|o");
+  private final static Pattern bwTatweel = Pattern.compile("_");
+  private final static Pattern bwAlef = Pattern.compile("\\{|\\||>|<");
+  private final static Pattern bwQuran = Pattern.compile("`");
+  private final static Pattern bwNullAnaphoraMarker = Pattern.compile("\\[nll\\]");
 
-  public final Pattern latinPunc = Pattern.compile("([\u0021-\u002F\u003A-\u0040\\u005B-\u0060\u007B-\u007E\u00A1-\u00BF\u00F7\u2010-\u2027\u2030-\u205E\u20A0-\u20BA])+");
-  public final Pattern arabicPunc = Pattern.compile("([\u00AB\u00BB\u0609-\u060D\u061B-\u061F\u066A\u066C-\u066D\u06D4])+");
+  public final static Pattern latinPunc = Pattern.compile("([\u0021-\u002F\u003A-\u0040\\u005B-\u0060\u007B-\u007E\u00A1-\u00BF\u00F7\u2010-\u2027\u2030-\u205E\u20A0-\u20BA])+");
+  public final static Pattern arabicPunc = Pattern.compile("([\u00AB\u00BB\u0609-\u060D\u061B-\u061F\u066A\u066C-\u066D\u06D4])+");
 
-  public final Pattern arabicDigit = Pattern.compile("([\u06F0-\u06F9\u0660-\u0669])+");
+  public final static Pattern arabicDigit = Pattern.compile("([\u06F0-\u06F9\u0660-\u0669])+");
 
   //TODO Extend coverage to entire Arabic code chart
   //Obviously Buckwalter is a lossful conversion, but no assumptions should be made about
   //UTF-8 input from "the wild"
-  private final Pattern utf8Diacritics = Pattern.compile("َ|ً|ُ|ٌ|ِ|ٍ|ّ|ْ|\u0670");
-  private final Pattern utf8Tatweel = Pattern.compile("ـ");
-  private final Pattern utf8Alef = Pattern.compile("ا|إ|أ|آ|\u0671");
-  private final Pattern utf8Quran = Pattern.compile("[\u0615-\u061A\u06D6-\u06E5]");
-  private final Pattern utf8ProDrop = Pattern.compile("\\[نلل\\]");
+  private final static Pattern utf8Diacritics = Pattern.compile("َ|ً|ُ|ٌ|ِ|ٍ|ّ|ْ|\u0670");
+  private final static Pattern utf8Tatweel = Pattern.compile("ـ");
+  private final static Pattern utf8Alef = Pattern.compile("ا|إ|أ|آ|\u0671");
+  private final static Pattern utf8Quran = Pattern.compile("[\u0615-\u061A\u06D6-\u06E5]");
+  private final static Pattern utf8ProDrop = Pattern.compile("\\[نلل\\]");
 
   //Patterns to fix segmentation issues observed in the ATB
   public final Pattern segmentationMarker = Pattern.compile("^-+|-+$");
-  private final Pattern morphemeBoundary = Pattern.compile("\\+");
+  private final static Pattern morphemeBoundary = Pattern.compile("\\+");
 
-  private final Pattern hasDigit = Pattern.compile("\\d+");
+  private final static Pattern hasDigit = Pattern.compile("\\d+");
 
   // Process the vocalized section for parsing
   private boolean useATBVocalizedSectionMapping = false;

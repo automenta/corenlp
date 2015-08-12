@@ -21,6 +21,8 @@ import java.util.zip.GZIPOutputStream;
  */
 public class MetaClass {
 
+  public static final String[] EMPTY = new String[]{};
+
   public static class ClassCreationException extends RuntimeException {
 
     private static final long serialVersionUID = -5980065992461870357L;
@@ -173,11 +175,11 @@ public class MetaClass {
       this.constructor = (Constructor<T>) argmin(potentials, distances, 0);
       if (this.constructor == null) {
         StringBuilder b = new StringBuilder();
-        b.append(classname).append("(");
+        b.append(classname).append('(');
         for (Class<?> c : params) {
           b.append(c.getName()).append(", ");
         }
-        String target = b.substring(0, params.length==0 ? b.length() : b.length() - 2) + ")";
+        String target = b.substring(0, params.length==0 ? b.length() : b.length() - 2) + ')';
         throw new ConstructorNotFoundException(
             "No constructor found to match: " + target);
       }
@@ -249,12 +251,12 @@ public class MetaClass {
     @Override
     public String toString() {
       StringBuilder b = new StringBuilder();
-      b.append(cl.getName()).append("(");
+      b.append(cl.getName()).append('(');
       for (Class<?> cl : classParams) {
-        b.append(" ").append(cl.getName()).append(",");
+        b.append(' ').append(cl.getName()).append(',');
       }
       b.replace(b.length() - 1, b.length(), " ");
-      b.append(")");
+      b.append(')');
       return b.toString();
     }
 
@@ -316,7 +318,7 @@ public class MetaClass {
    */
   public <E> ClassFactory<E> createFactory(Class<?>... classes) {
     try {
-      return new ClassFactory<E>(classname, classes);
+      return new ClassFactory<>(classname, classes);
     } catch (ClassCreationException e){
       throw e;
     } catch (Exception e) {
@@ -336,7 +338,7 @@ public class MetaClass {
    */
   public <E> ClassFactory<E> createFactory(String... classes) {
     try {
-      return new ClassFactory<E>(classname, classes);
+      return new ClassFactory<>(classname, classes);
     } catch (ClassCreationException e){
       throw e;
     } catch (Exception e) {
@@ -356,7 +358,7 @@ public class MetaClass {
    */
   public <E> ClassFactory<E> createFactory(Object... objects) {
     try {
-      return new ClassFactory<E>(classname, objects);
+      return new ClassFactory<>(classname, objects);
     } catch (ClassCreationException e){
       throw e;
     } catch (Exception e) {
@@ -457,22 +459,25 @@ public class MetaClass {
 
   /**
    * Utility method for cast
+   *
    * @param type The type to cast into a class
    * @return The class corresponding to the passed in type
    */
-  private static Class <?> type2class(Type type){
-		if(type instanceof Class <?>){
-			return (Class <?>) type;	//base case
-		}else if(type instanceof ParameterizedType){
-			return type2class( ((ParameterizedType) type).getRawType() );
-		}else if(type instanceof TypeVariable<?>){
-			return type2class( ((TypeVariable<?>) type).getBounds()[0] );
-		}else if(type instanceof WildcardType){
-			return type2class( ((WildcardType) type).getUpperBounds()[0] );
-		}else{
-			throw new IllegalArgumentException("Cannot convert type to class: " + type);
-		}
-	}
+  private static Class<?> type2class(Type type) {
+    while (true) {
+      if (type instanceof Class<?>) {
+        return (Class<?>) type;    //base case
+      } else if (type instanceof ParameterizedType) {
+        type = ((ParameterizedType) type).getRawType();
+      } else if (type instanceof TypeVariable<?>) {
+        type = ((TypeVariable<?>) type).getBounds()[0];
+      } else if (type instanceof WildcardType) {
+        type = ((WildcardType) type).getUpperBounds()[0];
+      } else {
+        throw new IllegalArgumentException("Cannot convert type to class: " + type);
+      }
+    }
+  }
 
   /**
    * Decode an array encoded as a String. This entails a comma separated value enclosed in brackets
@@ -481,13 +486,13 @@ public class MetaClass {
    * @return A String array corresponding to the encoded array
    */
 	private static String[] decodeArray(String encoded){
-    if (encoded.length() == 0) return new String[]{};
+    if (encoded.length() == 0) return EMPTY;
 		char[] chars = encoded.trim().toCharArray();
 
 		//--Parse the String
 		//(state)
 		char quoteCloseChar = (char) 0;
-		List<StringBuilder> terms = new LinkedList<StringBuilder>();
+		List<StringBuilder> terms = new LinkedList<>();
 		StringBuilder current = new StringBuilder();
 		//(start/stop overhead)
 		int start = 0; int end = chars.length;
@@ -546,13 +551,13 @@ public class MetaClass {
    * @return A String map corresponding to the encoded map
    */
   private static Map<String, String> decodeMap(String encoded){
-    if (encoded.length() == 0) return new HashMap<String, String>();
+    if (encoded.length() == 0) return new HashMap<>();
     char[] chars = encoded.trim().toCharArray();
 
     //--Parse the String
     //(state)
     char quoteCloseChar = (char) 0;
-    Map<String, String> map = new HashMap<String, String>();
+    Map<String, String> map = new HashMap<>();
     String key = "";
     String value = "";
     boolean onKey = true;
@@ -653,16 +658,16 @@ public class MetaClass {
     }else if(Integer.class.isAssignableFrom(clazz) || int.class.isAssignableFrom(clazz)){
       //(case: integer)
       try {
-        return (E) new Integer(Integer.parseInt(value));
+        return (E) Integer.valueOf(Integer.parseInt(value));
       } catch (NumberFormatException e) {
-        return (E) new Integer((int) Double.parseDouble(value));
+        return (E) Integer.valueOf((int) Double.parseDouble(value));
       }
     }else if(Long.class.isAssignableFrom(clazz) || long.class.isAssignableFrom(clazz)){
       //(case: long)
       try {
-        return (E) new Long(Long.parseLong(value));
+        return (E) Long.valueOf(Long.parseLong(value));
       } catch (NumberFormatException e) {
-        return (E) new Long((long) Double.parseDouble(value));
+        return (E) Long.valueOf((long) Double.parseDouble(value));
       }
     }else if(Float.class.isAssignableFrom(clazz) || float.class.isAssignableFrom(clazz)){
       //(case: float)
@@ -675,16 +680,16 @@ public class MetaClass {
     }else if(Short.class.isAssignableFrom(clazz) || short.class.isAssignableFrom(clazz)){
       //(case: short)
       try {
-        return (E) new Short(Short.parseShort(value));
+        return (E) Short.valueOf(Short.parseShort(value));
       } catch (NumberFormatException e) {
-        return (E) new Short((short) Double.parseDouble(value));
+        return (E) Short.valueOf((short) Double.parseDouble(value));
       }
     }else if(Byte.class.isAssignableFrom(clazz) || byte.class.isAssignableFrom(clazz)){
       //(case: byte)
       try {
-        return (E) new Byte(Byte.parseByte(value));
+        return (E) Byte.valueOf(Byte.parseByte(value));
       } catch (NumberFormatException e) {
-        return (E) new Byte((byte) Double.parseDouble(value));
+        return (E) Byte.valueOf((byte) Double.parseDouble(value));
       }
     }else if(Character.class.isAssignableFrom(clazz) || char.class.isAssignableFrom(clazz)){
       //(case: char)
@@ -830,10 +835,7 @@ public class MetaClass {
         // (case: can parse from string)
         Method decode = clazz.getMethod("fromString", String.class);
         return (E) decode.invoke(MetaClass.create(clazz), value);
-      } catch (NoSuchMethodException e) {  // Silent errors for misc failures
-      } catch (InvocationTargetException e) {
-      } catch (IllegalAccessException e) {
-      } catch (ClassCastException e) {
+      } catch (NoSuchMethodException | ClassCastException | IllegalAccessException | InvocationTargetException e) {  // Silent errors for misc failures
       }
 
       // Pass 2: Guess what the object could be
@@ -906,7 +908,7 @@ public class MetaClass {
     return argmin;
   }
 
-  private static final HashMap<Class, MetaClass> abstractToConcreteCollectionMap = new HashMap<Class, MetaClass>();
+  private static final HashMap<Class, MetaClass> abstractToConcreteCollectionMap = new HashMap<>();
   static {
     abstractToConcreteCollectionMap.put(Collection.class, MetaClass.create(ArrayList.class));
     abstractToConcreteCollectionMap.put(List.class, MetaClass.create(ArrayList.class));

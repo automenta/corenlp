@@ -41,14 +41,14 @@ public class EvalbByCat extends AbstractEval {
     super(str, runningAverages);
 
     evalb = new Evalb(str, false);
-    precisions = new ClassicCounter<Label>();
-    recalls = new ClassicCounter<Label>();
-    f1s = new ClassicCounter<Label>();
+    precisions = new ClassicCounter<>();
+    recalls = new ClassicCounter<>();
+    f1s = new ClassicCounter<>();
 
-    precisions2 = new ClassicCounter<Label>();
-    recalls2 = new ClassicCounter<Label>();
-    pnums2 = new ClassicCounter<Label>();
-    rnums2 = new ClassicCounter<Label>();
+    precisions2 = new ClassicCounter<>();
+    recalls2 = new ClassicCounter<>();
+    pnums2 = new ClassicCounter<>();
+    rnums2 = new ClassicCounter<>();
   }
   
   public EvalbByCat(String str, boolean runningAverages, String labelRegex) {
@@ -115,10 +115,10 @@ public class EvalbByCat extends AbstractEval {
       rnums2.incrementCount(cat, thisGoldDeps.size());
 
       if (pw != null && runningAverages) {
-        pw.println(cat + "\tP: " + ((int) (currentPrecision * 10000)) / 100.0 + " (sent ave " + ((int) (precisions.getCount(cat) * 10000 / num)) / 100.0 + ") (evalb " + ((int) (precisions2.getCount(cat) * 10000 / pnums2.getCount(cat))) / 100.0 + ")");
-        pw.println("\tR: " + ((int) (currentRecall * 10000)) / 100.0 + " (sent ave " + ((int) (recalls.getCount(cat) * 10000 / num)) / 100.0 + ") (evalb " + ((int) (recalls2.getCount(cat) * 10000 / rnums2.getCount(cat))) / 100.0 + ")");
+        pw.println(cat + "\tP: " + ((int) (currentPrecision * 10000)) / 100.0 + " (sent ave " + ((int) (precisions.getCount(cat) * 10000 / num)) / 100.0 + ") (evalb " + ((int) (precisions2.getCount(cat) * 10000 / pnums2.getCount(cat))) / 100.0 + ')');
+        pw.println("\tR: " + ((int) (currentRecall * 10000)) / 100.0 + " (sent ave " + ((int) (recalls.getCount(cat) * 10000 / num)) / 100.0 + ") (evalb " + ((int) (recalls2.getCount(cat) * 10000 / rnums2.getCount(cat))) / 100.0 + ')');
         double cF1 = 2.0 / (rnums2.getCount(cat) / recalls2.getCount(cat) + pnums2.getCount(cat) / precisions2.getCount(cat));
-        String emit = str + " F1: " + ((int) (currentF1 * 10000)) / 100.0 + " (sent ave " + ((int) (10000 * f1s.getCount(cat) / num)) / 100.0 + ", evalb " + ((int) (10000 * cF1)) / 100.0 + ")";
+        String emit = str + " F1: " + ((int) (currentF1 * 10000)) / 100.0 + " (sent ave " + ((int) (10000 * f1s.getCount(cat) / num)) / 100.0 + ", evalb " + ((int) (10000 * cF1)) / 100.0 + ')';
         pw.println(emit);
       }
     }
@@ -150,7 +150,7 @@ public class EvalbByCat extends AbstractEval {
     final Set<Label> cats = getEvalLabelSet(precisions.keySet());
     final Random rand = new Random();
 
-    Map<Double,Label> f1Map = new TreeMap<Double,Label>();
+    Map<Double,Label> f1Map = new TreeMap<>();
     for (Label cat : cats) {
       double pnum2 = pnums2.getCount(cat);
       double rnum2 = rnums2.getCount(cat);

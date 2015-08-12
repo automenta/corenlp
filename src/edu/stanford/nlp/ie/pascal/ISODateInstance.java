@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 public class ISODateInstance {
 
   private static final boolean DEBUG = false;
-  private ArrayList<String> tokens = new ArrayList<String>();//each token contains some piece of the date, from our input.
+  private ArrayList<String> tokens = new ArrayList<>();//each token contains some piece of the date, from our input.
 
   public static final String OPEN_RANGE_AFTER = "A";
   public static final String OPEN_RANGE_BEFORE = "B";
@@ -304,9 +304,9 @@ public class ISODateInstance {
 
   static {
     //Add entries to the relative datemap
-    relativeDateMap.put("today", new Pair<DateField, Integer>(DateField.DAY, 0));
-    relativeDateMap.put("tomorrow", new Pair<DateField, Integer>(DateField.DAY, 1));
-    relativeDateMap.put("yesterday", new Pair<DateField, Integer>(DateField.DAY, -1));
+    relativeDateMap.put("today", new Pair<>(DateField.DAY, 0));
+    relativeDateMap.put("tomorrow", new Pair<>(DateField.DAY, 1));
+    relativeDateMap.put("yesterday", new Pair<>(DateField.DAY, -1));
 
 
   }
@@ -423,7 +423,7 @@ public class ISODateInstance {
     for (String curIndicator : rangeIndicators) {
       String[] dates = inputDate.split(curIndicator);
       if (dates.length == 2) {
-        return new Pair<String, String>(dates[0], dates[1]);
+        return new Pair<>(dates[0], dates[1]);
       }
     }
     return null;
@@ -755,9 +755,9 @@ public class ISODateInstance {
       return this.isoDate.equals(other.isoDate);
     }
     String start = this.getStartDate();
-    if (!start.equals("")) {//we have a start date, need to make sure other is after it
+    if (!start.isEmpty()) {//we have a start date, need to make sure other is after it
       String startOther = other.getStartDate();
-      if (startOther.equals("")) {
+      if (startOther.isEmpty()) {
         return false;//incompatible
       } else {
         if (!isAfter(startOther, start)) {
@@ -767,9 +767,9 @@ public class ISODateInstance {
     }
     //now we've found out that the start date is appropriate, check the end date
     String end = this.getEndDate();
-    if (!end.equals("")) {
+    if (!end.isEmpty()) {
       String endOther = other.getEndDate();
-      if (endOther.equals("")) {
+      if (endOther.isEmpty()) {
         return false;
       } else {
         if (!isAfter(end, endOther)) {
@@ -874,7 +874,7 @@ public class ISODateInstance {
   //These methods are taken directly from or modified slightly from {@link DateInstance}
 
   private void tokenizeDate(String inputDate) {
-    tokens = new ArrayList<String>();
+    tokens = new ArrayList<>();
     Pattern pat = Pattern.compile("[-]");
     if (inputDate == null) {
       System.out.println("Null input date");
@@ -978,13 +978,13 @@ public class ISODateInstance {
       extract = m2.group(1);
     } else {
       extract = foundMiscYearPattern(inputDate);
-      if (extract == null || extract.equals("")) {
+      if (extract == null || extract.isEmpty()) {
         isoDate = "****";
         return false;
       }
     }
 
-    if ( ! "".equals(extract)) {
+    if (extract != null && !extract.isEmpty()) {
       if (extract.charAt(0) == '\'') {
         extract = extract.substring(1);
       }
@@ -1026,19 +1026,19 @@ public class ISODateInstance {
       if (inputDate.endsWith("A.D. ")) {
         inputDate = inputDate.substring(0, inputDate.length()-5);
         if(DEBUG) {
-          System.out.println("inputDate: |" + inputDate + "|");
+          System.out.println("inputDate: |" + inputDate + '|');
         }
       }
       if (inputDate.startsWith("late")) {
         inputDate = inputDate.substring(5, inputDate.length());
         if(DEBUG) {
-          System.out.println("inputDate: |" + inputDate + "|");
+          System.out.println("inputDate: |" + inputDate + '|');
         }
       }
       if (inputDate.startsWith("early")) {
         inputDate = inputDate.substring(6, inputDate.length());
         if(DEBUG) {
-          System.out.println("inputDate: |" + inputDate + "|");
+          System.out.println("inputDate: |" + inputDate + '|');
         }
       }
       if (Character.isDigit(inputDate.charAt(0))) {
@@ -1079,7 +1079,7 @@ public class ISODateInstance {
       if (m.find()) {
         extract = m.group(0);
       }
-      if ( ! "".equals(extract)) {
+      if (extract != null && !extract.isEmpty()) {
         if (!foundMonth) {
           if (DEBUG) {
             System.err.println("month extracted: " + extract);
@@ -1106,10 +1106,10 @@ public class ISODateInstance {
         extract = Integer.toString(Double.valueOf(QuantifiableEntityNormalizer.ordinalsToValues.getCount(extract)).intValue());
       }
       extract = extract.replaceAll("[^0-9]", "");
-      if (!extract.equals("")) {
+      if (!extract.isEmpty()) {
         try {
           Long i = Long.parseLong(extract);
-          if (i.intValue() < 32l && i.intValue() > 0l) {
+          if (i.intValue() < 32L && i.intValue() > 0L) {
             if (isoDate.length() < 6) {//should already have year and month
               if (isoDate.length() != 4)//throw new RuntimeException("Error extracting dates; should have had month and year but didn't");
               {

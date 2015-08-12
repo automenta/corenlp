@@ -27,7 +27,7 @@ class PathExtractor extends AbstractTreeExtractor<Map<String, List<List<String>>
   private List<List<String>> getList(String key) {
     List<List<String>> result = allPaths.get(key);
     if (result == null) {
-      result = new ArrayList<List<String>>();
+      result = new ArrayList<>();
       allPaths.put(key, result);
     }
     return result;
@@ -40,7 +40,7 @@ class PathExtractor extends AbstractTreeExtractor<Map<String, List<List<String>>
     if (children.length == 1) {
       return;
     }
-    List<String> path = new ArrayList<String>();
+    List<String> path = new ArrayList<>();
 
     // determine which is the head
     int headLoc = -1;
@@ -54,25 +54,25 @@ class PathExtractor extends AbstractTreeExtractor<Map<String, List<List<String>>
     if (headLoc == 0) {
       // we are finishing on the right
       for (int i = headLoc + 1; i < children.length - 1; i++) {
-        path.add(children[i].label().value() + ">");
+        path.add(children[i].label().value() + '>');
       }
       if (op.trainOptions.markFinalStates) {
-        path.add(children[children.length - 1].label().value() + "]");
+        path.add(children[children.length - 1].label().value() + ']');
       } else {
-        path.add(children[children.length - 1].label().value() + ">");
+        path.add(children[children.length - 1].label().value() + '>');
       }
     } else {
       // we are finishing on the left
       for (int i = headLoc + 1; i < children.length; i++) {
-        path.add(children[i].label().value() + ">");
+        path.add(children[i].label().value() + '>');
       }
       for (int i = headLoc - 1; i > 0; i--) {
-        path.add(children[i].label().value() + "<");
+        path.add(children[i].label().value() + '<');
       }
       if (op.trainOptions.markFinalStates) {
-        path.add(children[0].label().value() + "[");
+        path.add(children[0].label().value() + '[');
       } else {
-        path.add(children[0].label().value() + "<");
+        path.add(children[0].label().value() + '<');
       }
     }
     path.add(END); // add epsilon at the end

@@ -30,7 +30,7 @@ public class affDict {
 
 
   
-  private Set<String> readDict(String filename)  {
+  private static Set<String> readDict(String filename)  {
     Set<String> a = Generics.newHashSet();
    
     //System.err.println("XM:::readDict(filename: " + filename + ")");

@@ -94,7 +94,7 @@ public class ExactBestSequenceFinder implements BestSequenceFinder {
           if (DEBUG) { System.err.println("scores: " + Arrays.toString(scores)); }
           // fill in the relevant windowScores
           for (int t = 0; t < tagNum[pos]; t++) {
-            if (DEBUG) { System.err.println("Setting value of windowScore[" + pos + "][" + product + "+" + t + "*" + shift + "] = " + scores[t]); }
+            if (DEBUG) { System.err.println("Setting value of windowScore[" + pos + "][" + product + '+' + t + '*' + shift + "] = " + scores[t]); }
             windowScore[pos][product + t * shift] = scores[t];
           }
         }
@@ -178,6 +178,6 @@ public class ExactBestSequenceFinder implements BestSequenceFinder {
       bestCurrentProduct = trace[pos + 1][bestNextProduct];
       tempTags[pos - leftWindow] = tags[pos - leftWindow][bestCurrentProduct / (productSizes[pos] / tagNum[pos - leftWindow])];
     }
-    return new Pair<int[], Double>(tempTags, bestFinalScore);
+    return new Pair<>(tempTags, bestFinalScore);
   }
 }

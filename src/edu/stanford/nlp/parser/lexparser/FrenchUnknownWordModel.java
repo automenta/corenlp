@@ -32,7 +32,7 @@ public class FrenchUnknownWordModel extends BaseUnknownWordModel {
   public FrenchUnknownWordModel(Options op, Lexicon lex,
                                 Index<String> wordIndex,
                                 Index<String> tagIndex) {
-    this(op, lex, wordIndex, tagIndex, new ClassicCounter<IntTaggedWord>());
+    this(op, lex, wordIndex, tagIndex, new ClassicCounter<>());
   }
 
   @Override
@@ -107,8 +107,8 @@ public class FrenchUnknownWordModel extends BaseUnknownWordModel {
         String hasDigit = FrenchUnknownWordSignatures.hasDigit(word);
         String isDigit = FrenchUnknownWordSignatures.isDigit(word);
 
-        if( ! hasDigit.equals("")) {
-          if(isDigit.equals("")) {
+        if(!hasDigit.isEmpty()) {
+          if(isDigit.isEmpty()) {
             sb.append(hasDigit);
           } else {
             sb.append(isDigit);
@@ -123,7 +123,7 @@ public class FrenchUnknownWordModel extends BaseUnknownWordModel {
         sb.append(FrenchUnknownWordSignatures.isAllCaps(word));
 
         if(loc > 0) {
-          if(FrenchUnknownWordSignatures.isAllCaps(word).equals(""))
+          if(FrenchUnknownWordSignatures.isAllCaps(word).isEmpty())
             sb.append(FrenchUnknownWordSignatures.isCapitalized(word));
         }
 

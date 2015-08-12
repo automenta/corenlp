@@ -103,7 +103,7 @@ public class TreeAnnotator implements TreeTransformer {
 
       if ( ! trainOptions.noTagSplit) {
         if (trainOptions.tagPA) {
-          String test = cat + "^" + baseParentStr;
+          String test = cat + '^' + baseParentStr;
           if (!trainOptions.tagSelectiveSplit || trainOptions.splitters.contains(test)) {
             cat = test;
           }
@@ -172,8 +172,8 @@ public class TreeAnnotator implements TreeTransformer {
       List<String> leftSis = listBasicCategories(SisterAnnotationStats.leftSisterLabels(t, parent));
       List<String> rightSis = listBasicCategories(SisterAnnotationStats.rightSisterLabels(t, parent));
 
-      List<String> leftAnn = new ArrayList<String>();
-      List<String> rightAnn = new ArrayList<String>();
+      List<String> leftAnn = new ArrayList<>();
+      List<String> rightAnn = new ArrayList<>();
 
       for (String s : leftSis) {
         //s = baseCat+"=l="+tlpParams.treebankLanguagePack().basicCategory(s);
@@ -190,26 +190,26 @@ public class TreeAnnotator implements TreeTransformer {
       for (String annCat : trainOptions.sisterSplitters) {
         //System.out.println("annotated test string " + annCat);
         if (leftAnn.contains(annCat) || rightAnn.contains(annCat)) {
-          cat = cat + annCat.replaceAll("^" + baseCat, "");
+          cat = cat + annCat.replaceAll('^' + baseCat, "");
           break;
         }
       }
     }
 
     if (trainOptions.PA && !trainOptions.smoothing && baseParentStr.length() > 0) {
-      String cat2 = baseCat + "^" + baseParentStr;
+      String cat2 = baseCat + '^' + baseParentStr;
       if (!trainOptions.selectiveSplit || trainOptions.splitters.contains(cat2)) {
-        cat = cat + "^" + baseParentStr;
+        cat = cat + '^' + baseParentStr;
       }
     }
     if (trainOptions.gPA && !trainOptions.smoothing && grandParentStr.length() > 0) {
       if (trainOptions.selectiveSplit) {
-        String cat2 = baseCat + "^" + baseParentStr + "~" + baseGrandParentStr;
+        String cat2 = baseCat + '^' + baseParentStr + '~' + baseGrandParentStr;
         if (cat.contains("^") && trainOptions.splitters.contains(cat2)) {
-          cat = cat + "~" + baseGrandParentStr;
+          cat = cat + '~' + baseGrandParentStr;
         }
       } else {
-        cat = cat + "~" + baseGrandParentStr;
+        cat = cat + '~' + baseGrandParentStr;
       }
     }
     if (trainOptions.markUnary > 0) {
@@ -246,7 +246,7 @@ public class TreeAnnotator implements TreeTransformer {
 
 
   private List<String> listBasicCategories(List<String> l) {
-    List<String> l1 = new ArrayList<String>();
+    List<String> l1 = new ArrayList<>();
     for (String str : l) {
       l1.add(tlpParams.treebankLanguagePack().basicCategory(str));
     }

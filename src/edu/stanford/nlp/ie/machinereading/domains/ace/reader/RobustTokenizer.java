@@ -171,21 +171,21 @@ public class RobustTokenizer<T extends Word> extends AbstractTokenizer<Word> {
 
   // the complete pattern
   public final static String RECOGNISED_PATTERN 
-  = block(block(TIME) + "|" +
-      block(DOMAIN_EMAIL) + "|" +
-      block(EMAIL) + "|" +
-      block(URL) + "|" +
+  = block(block(TIME) + '|' +
+      block(DOMAIN_EMAIL) + '|' +
+      block(EMAIL) + '|' +
+      block(URL) + '|' +
       // block(SMALL_URL) + "|" +
-      block(ACRONYM) + "|" + 
-      block(DATE) + "|" + 
-      block(PHONE_PART) + "|" + // must be before WORD, otherwise it's broken into multiple tokens
-      block(WORD) + "|" +
-      block(PUNC) + "|" + 
-      block(LIST_BULLET) + "|" + 
-      block(PAREN) + "|" + 
-      block(SGML) + "|" + 
-      block(HTMLCODE) + "|" + 
-      block(UNDERSCORESEQ) + "|" + 
+      block(ACRONYM) + '|' +
+      block(DATE) + '|' +
+      block(PHONE_PART) + '|' + // must be before WORD, otherwise it's broken into multiple tokens
+      block(WORD) + '|' +
+      block(PUNC) + '|' +
+      block(LIST_BULLET) + '|' +
+      block(PAREN) + '|' +
+      block(SGML) + '|' +
+      block(HTMLCODE) + '|' +
+      block(UNDERSCORESEQ) + '|' +
       block(ANY));
 
   /** The overall token pattern */
@@ -234,111 +234,111 @@ public class RobustTokenizer<T extends Word> extends AbstractTokenizer<Word> {
 
   /** any in the set */ 
   public static String range(String s){
-    return block("[" + s + "]");
+    return block('[' + s + ']');
   }
 
 
   /** zero or one */
   public static String zeroOrOne(String s){
-    return block(block(s) + "?");
+    return block(block(s) + '?');
   }
 
   /** zero or more */
   public static String zeroOrMore(String s){
-    return block(block(s) + "*");
+    return block(block(s) + '*');
   }
 
   /** one or more */
   public static String oneOrMore(String s){
-    return block(block(s) + "+");
+    return block(block(s) + '+');
   }
 
   /** parens */
   public static String block(String s){
-    return "(" + s + ")";
+    return '(' + s + ')';
   }
 
   /** any of the two */
   public static String or(String s1, String s2){
-    return block(block(s1) + "|" + block(s2));
+    return block(block(s1) + '|' + block(s2));
   }
 
   /** any of the three */
   public static String or(String s1, String s2, String s3){
-    return block(block(s1) + "|" + block(s2) + "|" + block(s3));
+    return block(block(s1) + '|' + block(s2) + '|' + block(s3));
   }
 
   /** any of the four */
   public static String or(String s1, String s2, String s3, String s4){
-    return block(block(s1) + "|" + block(s2) + "|" + block(s3) + "|" + block(s4));
+    return block(block(s1) + '|' + block(s2) + '|' + block(s3) + '|' + block(s4));
   }
 
   /** any of the five */
   public static String or(String s1, String s2, String s3, String s4, String s5){
-    return block(block(s1) + "|" + block(s2) + "|" + block(s3) + "|" + 
-        block(s4) + "|" + block(s5));
+    return block(block(s1) + '|' + block(s2) + '|' + block(s3) + '|' +
+        block(s4) + '|' + block(s5));
   }
 
   /** any of the six */
   public static String or(String s1, String s2, String s3, 
       String s4, String s5, String s6){
-    return block(block(s1) + "|" + block(s2) + "|" + block(s3) + "|" + 
-        block(s4) + "|" + block(s5) + "|" + block(s6));
+    return block(block(s1) + '|' + block(s2) + '|' + block(s3) + '|' +
+        block(s4) + '|' + block(s5) + '|' + block(s6));
   }
 
   /** any of the seven */
   public static String or(String s1, String s2, String s3, 
       String s4, String s5, String s6, String s7){
-    return block(block(s1) + "|" + block(s2) + "|" + block(s3) + "|" + 
-        block(s4) + "|" + block(s5) + "|" + block(s6) + "|" + block(s7));
+    return block(block(s1) + '|' + block(s2) + '|' + block(s3) + '|' +
+        block(s4) + '|' + block(s5) + '|' + block(s6) + '|' + block(s7));
   }
 
   /** any of the eight */
   public static String or(String s1, String s2, String s3, String s4, 
       String s5, String s6, String s7, String s8){
-    return block(block(s1) + "|" + block(s2) + "|" + block(s3) + "|" + 
-        block(s4) + "|" + block(s5) + "|" + block(s6) + "|" + 
-        block(s7) + "|" + block(s8));
+    return block(block(s1) + '|' + block(s2) + '|' + block(s3) + '|' +
+        block(s4) + '|' + block(s5) + '|' + block(s6) + '|' +
+        block(s7) + '|' + block(s8));
   }
 
   /** any of the nine */
   public static String or(String s1, String s2, String s3, String s4, 
       String s5, String s6, String s7, String s8, String s9){
-    return block(block(s1) + "|" + block(s2) + "|" + block(s3) + "|" + 
-        block(s4) + "|" + block(s5) + "|" + block(s6) + "|" + 
-        block(s7) + "|" + block(s8) + "|" + block(s9));
+    return block(block(s1) + '|' + block(s2) + '|' + block(s3) + '|' +
+        block(s4) + '|' + block(s5) + '|' + block(s6) + '|' +
+        block(s7) + '|' + block(s8) + '|' + block(s9));
   }
 
   public static String or(String s1, String s2, String s3, String s4, 
       String s5, String s6, String s7, String s8, 
       String s9, String s10){
-    return block(block(s1) + "|" + block(s2) + "|" + block(s3) + "|" + 
-        block(s4) + "|" + block(s5) + "|" + block(s6) + "|" + 
-        block(s7) + "|" + block(s8) + "|" + block(s9) + "|" +
+    return block(block(s1) + '|' + block(s2) + '|' + block(s3) + '|' +
+        block(s4) + '|' + block(s5) + '|' + block(s6) + '|' +
+        block(s7) + '|' + block(s8) + '|' + block(s9) + '|' +
         block(s10));
   }
 
   public static String or(String s1, String s2, String s3, String s4, 
       String s5, String s6, String s7, String s8, 
       String s9, String s10, String s11){
-    return block(block(s1) + "|" + block(s2) + "|" + block(s3) + "|" + 
-        block(s4) + "|" + block(s5) + "|" + block(s6) + "|" + 
-        block(s7) + "|" + block(s8) + "|" + block(s9) + "|" +
-        block(s10) + "|" + block(s11));
+    return block(block(s1) + '|' + block(s2) + '|' + block(s3) + '|' +
+        block(s4) + '|' + block(s5) + '|' + block(s6) + '|' +
+        block(s7) + '|' + block(s8) + '|' + block(s9) + '|' +
+        block(s10) + '|' + block(s11));
   }
 
   public static String or(String s1, String s2, String s3, String s4, 
       String s5, String s6, String s7, String s8, 
       String s9, String s10, String s11, String s12){
-    return block(block(s1) + "|" + block(s2) + "|" + block(s3) + "|" + 
-        block(s4) + "|" + block(s5) + "|" + block(s6) + "|" + 
-        block(s7) + "|" + block(s8) + "|" + block(s9) + "|" +
-        block(s10) + "|" + block(s11) + "|" + block(s12));
+    return block(block(s1) + '|' + block(s2) + '|' + block(s3) + '|' +
+        block(s4) + '|' + block(s5) + '|' + block(s6) + '|' +
+        block(s7) + '|' + block(s8) + '|' + block(s9) + '|' +
+        block(s10) + '|' + block(s11) + '|' + block(s12));
   }
 
   /** not */
   public static String rangeNot(String s){
-    return range(block("^" + s));
+    return range(block('^' + s));
   }
 
   private static int hasApostropheBlock(String s) {
@@ -358,7 +358,7 @@ public class RobustTokenizer<T extends Word> extends AbstractTokenizer<Word> {
   private static <T extends WordToken> String concatenate(List<T> tokens,
       int start,
       int end) {
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
 
     for(; start < end; start ++){
       buffer.append(((WordToken) tokens.get(start)).getWord());
@@ -406,7 +406,7 @@ public class RobustTokenizer<T extends Word> extends AbstractTokenizer<Word> {
     return match.find(0);
   }
 
-  public int countNewLines(String s, int start, int end) {
+  public static int countNewLines(String s, int start, int end) {
     int count = 0;
     for(int i = start; i < end; i ++) {
       if(s.charAt(i) == '\n') count ++;
@@ -437,7 +437,7 @@ public class RobustTokenizer<T extends Word> extends AbstractTokenizer<Word> {
    * @return List of WordTokens
    */
   public List<WordToken> tokenizeToWordTokens() {
-    List<WordToken> result = new ArrayList<WordToken>();
+    List<WordToken> result = new ArrayList<>();
 
     //
     // replace illegal characters with SPACE
@@ -521,7 +521,7 @@ public class RobustTokenizer<T extends Word> extends AbstractTokenizer<Word> {
     //
     // Merge known abreviations
     //
-    List<WordToken> resultWithAbs = new ArrayList<WordToken>();
+    List<WordToken> resultWithAbs = new ArrayList<>();
     for(int i = 0; i < result.size(); i ++){
       // where the mw ends
       int end = result.size();
@@ -566,20 +566,20 @@ public class RobustTokenizer<T extends Word> extends AbstractTokenizer<Word> {
    * Redefine this method to implement additional domain-specific tokenization rules
    * @param tokens
    */
-  protected List<WordToken> postprocess(List<WordToken> tokens) { return tokens; };
+  protected static List<WordToken> postprocess(List<WordToken> tokens) { return tokens; };
 
   /** 
    * Tokenizes and adds blank spaces were needed between each token 
    */
   public String tokenizeText() throws java.io.IOException{
     List<WordToken> tokenList = tokenizeToWordTokens();
-    StringBuffer strBuffer = new StringBuffer();
+    StringBuilder strBuffer = new StringBuilder();
     Iterator<WordToken> iter = tokenList.iterator();
     if (iter.hasNext()){
       strBuffer.append(iter.next());
     }
     while(iter.hasNext()){
-      strBuffer.append(" ");
+      strBuffer.append(' ');
       strBuffer.append(iter.next());
     }
     return strBuffer.toString().replaceAll("\\s\\s+", " ");                
@@ -591,7 +591,7 @@ public class RobustTokenizer<T extends Word> extends AbstractTokenizer<Word> {
 
     private static List<String> normalizeCase(boolean caseInsensitive, List<String> words) {
       if(! caseInsensitive) return words;
-      List<String> normWords = new ArrayList<String>();
+      List<String> normWords = new ArrayList<>();
       for(String word: words) normWords.add(word.toLowerCase());
       return normWords;
     }
@@ -1072,14 +1072,14 @@ public class RobustTokenizer<T extends Word> extends AbstractTokenizer<Word> {
     }
 
     public String toString() {
-      StringBuffer buffer = new StringBuffer();
-      buffer.append("[");
+      StringBuilder buffer = new StringBuilder();
+      buffer.append('[');
       buffer.append(mWord);
       buffer.append(", ");
       buffer.append(mStart);
       buffer.append(", ");
       buffer.append(mEnd);
-      buffer.append("]");
+      buffer.append(']');
       return buffer.toString();
     }
 
@@ -1132,11 +1132,11 @@ public class RobustTokenizer<T extends Word> extends AbstractTokenizer<Word> {
     // read the whole file in a buffer
     // XXX: for sure there are more efficient ways of reading a file...
     int ch;
-    StringBuffer buffer = new StringBuffer();
+    StringBuilder buffer = new StringBuilder();
     while((ch = is.read()) != -1) buffer.append((char) ch);
     
     // create the tokenizer object
-    RobustTokenizer<Word> t = new RobustTokenizer<Word>(buffer.toString());
+    RobustTokenizer<Word> t = new RobustTokenizer<>(buffer.toString());
 
     List<Word> tokens = t.tokenize();
     for(int i = 0; i < tokens.size(); i ++){

@@ -5,7 +5,6 @@ import edu.stanford.nlp.trees.DiskTreebank;
 import edu.stanford.nlp.trees.HeadFinder;
 import edu.stanford.nlp.trees.ModCollinsHeadFinder;
 import edu.stanford.nlp.trees.Tree;
-import edu.stanford.nlp.trees.TreeVisitor;
 import edu.stanford.nlp.trees.Treebank;
 
 /**
@@ -27,7 +26,7 @@ public class NoPunctuationHeadFinder extends ModCollinsHeadFinder {
    *          part of speech tag
    * @return whether the tag is (typically) assigned to punctuation
    */
-  private boolean isPunctuationLabel(String label) {
+  private static boolean isPunctuationLabel(String label) {
     return !Character.isLetter(label.charAt(0))
         && !(label.equals("$") || label.equals("%"));
   }

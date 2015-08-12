@@ -195,7 +195,7 @@ public class LabeledScoredTreeNode extends Tree {
     StringBuilder buff = new StringBuilder();
     buff.append(super.nodeString());
     if ( ! Double.isNaN(score)) {
-      buff.append(" [").append(nf.format(-score)).append("]");
+      buff.append(" [").append(nf.format(-score)).append(']');
     }
     return buff.toString();
   }

@@ -43,9 +43,7 @@ public class Stemmer implements Function<Word,Word> {
   private void add(char ch) {
     if (i == b.length) {
       char[] new_b = new char[i + INC];
-      for (int c = 0; c < i; c++) {
-        new_b[c] = b[c];
-      }
+        System.arraycopy(b, 0, new_b, 0, i);
       b = new_b;
     }
     b[i++] = ch;

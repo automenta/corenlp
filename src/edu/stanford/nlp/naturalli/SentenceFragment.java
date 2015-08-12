@@ -105,9 +105,9 @@ public class SentenceFragment {
       for (SemanticGraphEdge edge : parseTree.incomingEdgeIterable(new IndexedWord(word))) {
         String rel = edge.getRelation().toString();
         if (rel.contains(":") && !rel.endsWith("npmod")) {
-          addedConnective = rel.substring(rel.indexOf(":") + 1);
+          addedConnective = rel.substring(rel.indexOf(':') + 1);
         } else if (rel.contains("_")) {
-          addedConnective = rel.substring(rel.indexOf("_") + 1);
+          addedConnective = rel.substring(rel.indexOf('_') + 1);
         }
       }
       if (addedConnective != null) {

@@ -43,7 +43,7 @@ public class FourDimensionalMap <K1, K2, K3, K4, V> implements Serializable {
   public ThreeDimensionalMap<K2, K3, K4, V> getThreeDimensionalMap(K1 key1) {
     ThreeDimensionalMap<K2, K3, K4, V> m = map.get(key1);
     if (m==null) {
-      m = new ThreeDimensionalMap<K2, K3, K4, V>();
+      m = new ThreeDimensionalMap<>();
       map.put(key1, m);
     }
     return m;
@@ -71,8 +71,8 @@ public class FourDimensionalMap <K1, K2, K3, K4, V> implements Serializable {
   
   public Set<K3> thirdKeySet() {
     Set<K3> keys = Generics.newHashSet();
-    for (K1 k1 : map.keySet()) {
-      ThreeDimensionalMap<K2,K3,K4,V> m3 = map.get(k1);
+    for (Map.Entry<K1, ThreeDimensionalMap<K2, K3, K4, V>> k1ThreeDimensionalMapEntry : map.entrySet()) {
+      ThreeDimensionalMap<K2,K3,K4,V> m3 = k1ThreeDimensionalMapEntry.getValue();
       for (K2 k2 : m3.firstKeySet()) {
         keys.addAll(m3.get(k2).firstKeySet());
       }
@@ -82,8 +82,8 @@ public class FourDimensionalMap <K1, K2, K3, K4, V> implements Serializable {
   
   public Set<K4> fourthKeySet() {
     Set<K4> keys = Generics.newHashSet();
-    for (K1 k1 : map.keySet()) {
-      ThreeDimensionalMap<K2,K3,K4,V> m3 = map.get(k1);
+    for (Map.Entry<K1, ThreeDimensionalMap<K2, K3, K4, V>> k1ThreeDimensionalMapEntry : map.entrySet()) {
+      ThreeDimensionalMap<K2,K3,K4,V> m3 = k1ThreeDimensionalMapEntry.getValue();
       for (K2 k2 : m3.firstKeySet()) {
         TwoDimensionalMap<K3,K4,V> m2 = m3.get(k2);
         for (K3 k3 : m2.firstKeySet()) {

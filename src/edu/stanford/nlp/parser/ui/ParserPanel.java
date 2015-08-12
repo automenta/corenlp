@@ -218,7 +218,7 @@ public class ParserPanel extends JPanel {
    * is SEEK_FORWARD, finds the nearest delimiter after start.  Else, if it is
    * SEEK_BACK, finds the nearest delimiter before start.
    */
-  private int nearestDelimiter(String text, int start, int seekDir) {
+  private static int nearestDelimiter(String text, int start, int seekDir) {
     if (seekDir != SEEK_BACK && seekDir != SEEK_FORWARD) {
       throw new IllegalArgumentException("Unknown seek direction " +
                                          seekDir);
@@ -227,7 +227,7 @@ public class ParserPanel extends JPanel {
     DocumentPreprocessor processor = new DocumentPreprocessor(reader);
     TokenizerFactory<? extends HasWord> tf = tlp.getTokenizerFactory();
     processor.setTokenizerFactory(tf);
-    List<Integer> boundaries = new ArrayList<Integer>();
+    List<Integer> boundaries = new ArrayList<>();
     for (List<HasWord> sentence : processor) {
       if (sentence.size() == 0)
         continue;
@@ -363,11 +363,11 @@ public class ParserPanel extends JPanel {
 
     String urlOrFile = filename;
     // if file can't be found locally, try prepending http:// and looking on web
-    if (!file.exists() && filename.indexOf("://") == -1) {
+    if (!file.exists() && !filename.contains("://")) {
       urlOrFile = "http://" + filename;
     }
     // else prepend file:// to handle local html file urls
-    else if (filename.indexOf("://") == -1) {
+    else if (!filename.contains("://")) {
       urlOrFile = "file://" + filename;
     }
 
@@ -378,14 +378,14 @@ public class ParserPanel extends JPanel {
     try {
       if (urlOrFile.startsWith("http://") || urlOrFile.endsWith(".htm") || urlOrFile.endsWith(".html")) {
         // strip tags from html documents
-        Document<Object, Word, Word> docPre = new BasicDocument<Object>().init(new URL(urlOrFile));
-        DocumentProcessor<Word, Word, Object, Word> noTags = new StripTagsProcessor<Object, Word>();
+        Document<Object, Word, Word> docPre = new BasicDocument<>().init(new URL(urlOrFile));
+        DocumentProcessor<Word, Word, Object, Word> noTags = new StripTagsProcessor<>();
         doc = noTags.processDocument(docPre);
       } else {
-        doc = new BasicDocument<Object>(this.getTokenizerFactory()).init(new InputStreamReader(new FileInputStream(filename), encoding));
+        doc = new BasicDocument<>(ParserPanel.getTokenizerFactory()).init(new InputStreamReader(new FileInputStream(filename), encoding));
       }
     } catch (Exception e) {
-      JOptionPane.showMessageDialog(this, "Could not load file " + filename + "\n" + e, null, JOptionPane.ERROR_MESSAGE);
+      JOptionPane.showMessageDialog(this, "Could not load file " + filename + '\n' + e, null, JOptionPane.ERROR_MESSAGE);
       e.printStackTrace();
       setStatus("Error loading document");
       return;
@@ -413,7 +413,7 @@ public class ParserPanel extends JPanel {
   // TreebankLanguagePack returns a TokenizerFactory<? extends HasWord>
   // which isn't close enough in the type system, but is probably okay in practice
   @SuppressWarnings("unchecked")
-  private TokenizerFactory<Word> getTokenizerFactory() {
+  private static TokenizerFactory<Word> getTokenizerFactory() {
     return (TokenizerFactory<Word>)tlp.getTokenizerFactory();
   }
 
@@ -441,7 +441,7 @@ public class ParserPanel extends JPanel {
    * the specified filename.
    */
   public void saveOutput(String filename) {
-    if (filename == null || filename.equals("")) {
+    if (filename == null || filename.isEmpty()) {
       return;
     }
 
@@ -450,7 +450,7 @@ public class ParserPanel extends JPanel {
     DocumentPreprocessor processor = new DocumentPreprocessor(reader);
     TokenizerFactory<? extends HasWord> tf = tlp.getTokenizerFactory();
     processor.setTokenizerFactory(tf);
-    List<List<HasWord>> sentences = new ArrayList<List<HasWord>>();
+    List<List<HasWord>> sentences = new ArrayList<>();
     for (List<HasWord> sentence : processor) {
       sentences.add(sentence);
     }
@@ -532,7 +532,7 @@ public class ParserPanel extends JPanel {
         ow.close();
         fos.close();
       } catch (IOException e) {
-        JOptionPane.showMessageDialog(ParserPanel.this, "Could not save file " + filename + "\n" + e, null, JOptionPane.ERROR_MESSAGE);
+        JOptionPane.showMessageDialog(ParserPanel.this, "Could not save file " + filename + '\n' + e, null, JOptionPane.ERROR_MESSAGE);
         e.printStackTrace();
         setStatus("Error saving parsed document");
       }
@@ -822,20 +822,20 @@ public class ParserPanel extends JPanel {
 
     loadFileButton.setText("Load File");
     loadFileButton.setToolTipText("Load a data file.");
-    loadFileButton.addActionListener(evt -> loadFileButtonActionPerformed(evt));
+    loadFileButton.addActionListener(this::loadFileButtonActionPerformed);
 
     loadButtonPanel.add(loadFileButton);
 
     loadParserButton.setText("Load Parser");
     loadParserButton.setToolTipText("Load a serialized parser.");
-    loadParserButton.addActionListener(evt -> loadParserButtonActionPerformed(evt));
+    loadParserButton.addActionListener(this::loadParserButtonActionPerformed);
 
     loadButtonPanel.add(loadParserButton);
 
     saveOutputButton.setText("Save Output");
     saveOutputButton.setToolTipText("Save the processed output.");
     saveOutputButton.setEnabled(false);
-    saveOutputButton.addActionListener(evt -> saveOutputButtonActionPerformed(evt));
+    saveOutputButton.addActionListener(this::saveOutputButtonActionPerformed);
 
     loadButtonPanel.add(saveOutputButton);
 
@@ -845,34 +845,34 @@ public class ParserPanel extends JPanel {
 
     backButton.setToolTipText("Scroll backward one sentence.");
     backButton.setEnabled(false);
-    backButton.addActionListener(evt -> backButtonActionPerformed(evt));
+    backButton.addActionListener(this::backButtonActionPerformed);
 
     buttonPanel.add(backButton);
 
     forwardButton.setToolTipText("Scroll forward one sentence.");
     forwardButton.setEnabled(false);
-    forwardButton.addActionListener(evt -> forwardButtonActionPerformed(evt));
+    forwardButton.addActionListener(this::forwardButtonActionPerformed);
 
     buttonPanel.add(forwardButton);
 
     parseButton.setText("Parse");
     parseButton.setToolTipText("Parse selected sentence.");
     parseButton.setEnabled(false);
-    parseButton.addActionListener(evt -> parseButtonActionPerformed(evt));
+    parseButton.addActionListener(this::parseButtonActionPerformed);
 
     buttonPanel.add(parseButton);
 
     parseNextButton.setText("Parse >");
     parseNextButton.setToolTipText("Parse selected sentence and then scrolls forward one sentence.");
     parseNextButton.setEnabled(false);
-    parseNextButton.addActionListener(evt -> parseNextButtonActionPerformed(evt));
+    parseNextButton.addActionListener(this::parseNextButtonActionPerformed);
 
     buttonPanel.add(parseNextButton);
 
     clearButton.setText("Clear");
     clearButton.setToolTipText("Clears parse tree.");
     clearButton.setEnabled(false);
-    clearButton.addActionListener(evt -> clearButtonActionPerformed(evt));
+    clearButton.addActionListener(this::clearButtonActionPerformed);
 
     buttonPanel.add(clearButton);
 

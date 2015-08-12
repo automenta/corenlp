@@ -11,6 +11,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,21 +45,27 @@ public class ChunkAnnotationUtils {
       int sentBeginToken = sentence.get(CoreAnnotations.TokenBeginAnnotation.class);
       int sentEndToken = sentence.get(CoreAnnotations.TokenEndAnnotation.class);
       String docTextSpan = docText.substring(sentBeginChar, sentEndChar);
-      List<CoreLabel> docTokenSpan = new ArrayList<CoreLabel>(docTokens.subList(sentBeginToken, sentEndToken));
-      logger.finer("Checking Document " + docId + " span (" + sentBeginChar + "," + sentEndChar + ") ");
+      List<CoreLabel> docTokenSpan = new ArrayList<>(docTokens.subList(sentBeginToken, sentEndToken));
+      if (logger.isLoggable(Level.FINER)) {
+        logger.finer("Checking Document " + docId + " span (" + sentBeginChar + "," + sentEndChar + ") ");
+      }
       if (!docTextSpan.equals(sentText) ) {
         okay = false;
-        logger.finer("WARNING: Document " + docId + " span does not match sentence");
-        logger.finer("DocSpanText: " + docTextSpan);
-        logger.finer("SentenceText: " + sentText);
+        if (logger.isLoggable(Level.FINER)) {
+          logger.finer("WARNING: Document " + docId + " span does not match sentence");
+          logger.finer("DocSpanText: " + docTextSpan);
+          logger.finer("SentenceText: " + sentText);
+        }
       }
       String sentTokenStr = getTokenText(sentTokens, CoreAnnotations.TextAnnotation.class);
       String docTokenStr = getTokenText(docTokenSpan, CoreAnnotations.TextAnnotation.class);
       if (!docTokenStr.equals(sentTokenStr) ) {
         okay = false;
-        logger.finer("WARNING: Document " + docId + " tokens does not match sentence");
-        logger.finer("DocSpanTokens: " + docTokenStr);
-        logger.finer("SentenceTokens: " + sentTokenStr);
+        if (logger.isLoggable(Level.FINER)) {
+          logger.finer("WARNING: Document " + docId + " tokens does not match sentence");
+          logger.finer("DocSpanTokens: " + docTokenStr);
+          logger.finer("SentenceTokens: " + sentTokenStr);
+        }
       }
     }
     return okay;
@@ -121,7 +128,7 @@ public class ChunkAnnotationUtils {
     // First identify any tokens that need to be fixed
     String text = docAnnotation.get(CoreAnnotations.TextAnnotation.class);
     List<CoreLabel> tokens = docAnnotation.get(CoreAnnotations.TokensAnnotation.class);
-    List<CoreLabel> output = new ArrayList<CoreLabel>(tokens.size());
+    List<CoreLabel> output = new ArrayList<>(tokens.size());
     int i = 0;
     CoreLabel token = tokens.get(i);
     for (IntPair offsets:chunkCharOffsets) {
@@ -188,7 +195,7 @@ public class ChunkAnnotationUtils {
    * @param chunkIndexEnd - Index of last chunk to merge (exclusive)
    * @return new merged chunk
    */
-  public static CoreMap getMergedChunk(List<? extends CoreMap> chunkList, String origText,
+  public static Annotation getMergedChunk(List<? extends CoreMap> chunkList, String origText,
                                        int chunkIndexStart, int chunkIndexEnd)
   {
     CoreMap firstChunk = chunkList.get(chunkIndexStart);
@@ -199,13 +206,13 @@ public class ChunkAnnotationUtils {
     int lastTokenIndex = lastChunk.get(CoreAnnotations.TokenEndAnnotation.class);
 
     String chunkText = origText.substring(firstCharOffset, lastCharOffset);
-    CoreMap newChunk = new Annotation(chunkText);
+    Annotation newChunk = new Annotation(chunkText);
 
     newChunk.set(CoreAnnotations.CharacterOffsetBeginAnnotation.class, firstCharOffset);
     newChunk.set(CoreAnnotations.CharacterOffsetEndAnnotation.class, lastCharOffset);
     newChunk.set(CoreAnnotations.TokenBeginAnnotation.class, firstTokenIndex);
     newChunk.set(CoreAnnotations.TokenEndAnnotation.class, lastTokenIndex);
-    List<CoreLabel> tokens = new ArrayList<CoreLabel>(lastTokenIndex-firstTokenIndex);
+    List<CoreLabel> tokens = new ArrayList<>(lastTokenIndex - firstTokenIndex);
     for (int i = chunkIndexStart; i < chunkIndexEnd; i++) {
       CoreMap chunk = chunkList.get(i);
       tokens.addAll(chunk.get(CoreAnnotations.TokensAnnotation.class));
@@ -415,7 +422,9 @@ public class ChunkAnnotationUtils {
               if (c != null) {
                 doMerge = !Character.isUpperCase(c);
                 if (!doMerge) {
-                  logger.finer("No merge: c is '" + c + "'");
+                  if (logger.isLoggable(Level.FINER)) {
+                    logger.finer("No merge: c is '" + c + "'");
+                  }
                 }
               } else {
                 logger.finer("No merge: no char");
@@ -490,7 +499,7 @@ public class ChunkAnnotationUtils {
   public static void annotateChunk(CoreMap chunk,
                                    List<CoreLabel> tokens, int tokenStartIndex, int tokenEndIndex,  int totalTokenOffset)
   {
-    List<CoreLabel> chunkTokens = new ArrayList<CoreLabel>(tokens.subList(tokenStartIndex, tokenEndIndex));
+    List<CoreLabel> chunkTokens = new ArrayList<>(tokens.subList(tokenStartIndex, tokenEndIndex));
     chunk.set(CoreAnnotations.CharacterOffsetBeginAnnotation.class,
             chunkTokens.get(0).get(CoreAnnotations.CharacterOffsetBeginAnnotation.class));
     chunk.set(CoreAnnotations.CharacterOffsetEndAnnotation.class,
@@ -522,7 +531,7 @@ public class ChunkAnnotationUtils {
    * @param chunk - CoreMap to be annotated
    * @param tokenTextKey - Key to use to find the token text
    */
-  public static void annotateChunkText(CoreMap chunk, Class tokenTextKey)
+  public static void annotateChunkText(Annotation chunk, Class tokenTextKey)
   {
     List<CoreLabel> chunkTokens = chunk.get(CoreAnnotations.TokensAnnotation.class);
     String text = getTokenText(chunkTokens, tokenTextKey);
@@ -548,36 +557,46 @@ public class ChunkAnnotationUtils {
     if (!hasCharacterOffsets(chunk)) return false;
     Integer annoBeginCharOffset = origAnnotation.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class);
     if (annoBeginCharOffset == null) { annoBeginCharOffset = 0; }
-    int chunkBeginCharOffset = chunk.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class) - annoBeginCharOffset;
-    int chunkEndCharOffset = chunk.get(CoreAnnotations.CharacterOffsetEndAnnotation.class) - annoBeginCharOffset;
+    int chunkBeginCharOffset = (int)chunk.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class) - annoBeginCharOffset;
+    int chunkEndCharOffset = (int)chunk.get(CoreAnnotations.CharacterOffsetEndAnnotation.class) - annoBeginCharOffset;
     if (chunkBeginCharOffset < 0) {
-      logger.fine("Adjusting begin char offset from " + chunkBeginCharOffset + " to 0");
-      logger.fine("Chunk begin offset: " + chunk.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class) +
-        ", Source text begin offset " + annoBeginCharOffset);
+      if (logger.isLoggable(Level.FINE)) {
+        logger.fine("Adjusting begin char offset from " + chunkBeginCharOffset + " to 0");
+        logger.fine("Chunk begin offset: " + chunk.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class) +
+          ", Source text begin offset " + annoBeginCharOffset);
+      }
       chunkBeginCharOffset = 0;
     }
     if (chunkBeginCharOffset > annoText.length()) {
-      logger.fine("Adjusting begin char offset from " + chunkBeginCharOffset + " to " + annoText.length());
-      logger.fine("Chunk begin offset: " + chunk.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class) +
-        ", Source text begin offset " + annoBeginCharOffset);
+      if (logger.isLoggable(Level.FINE)) {
+        logger.fine("Adjusting begin char offset from " + chunkBeginCharOffset + " to " + annoText.length());
+        logger.fine("Chunk begin offset: " + chunk.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class) +
+          ", Source text begin offset " + annoBeginCharOffset);
+      }
       chunkBeginCharOffset = annoText.length();
     }
     if (chunkEndCharOffset < 0) {
-      logger.fine("Adjusting end char offset from " + chunkEndCharOffset + " to 0");
-      logger.fine("Chunk end offset: " + chunk.get(CoreAnnotations.CharacterOffsetEndAnnotation.class) +
-        ", Source text begin offset " + annoBeginCharOffset);
+      if (logger.isLoggable(Level.FINE)) {
+        logger.fine("Adjusting end char offset from " + chunkEndCharOffset + " to 0");
+        logger.fine("Chunk end offset: " + chunk.get(CoreAnnotations.CharacterOffsetEndAnnotation.class) +
+          ", Source text begin offset " + annoBeginCharOffset);
+      }
       chunkEndCharOffset = 0;
     }
     if (chunkEndCharOffset > annoText.length()) {
-      logger.fine("Adjusting end char offset from " + chunkEndCharOffset + " to " + annoText.length());
-      logger.fine("Chunk end offset: " + chunk.get(CoreAnnotations.CharacterOffsetEndAnnotation.class) +
-        ", Source text begin offset " + annoBeginCharOffset);
+      if (logger.isLoggable(Level.FINE)) {
+        logger.fine("Adjusting end char offset from " + chunkEndCharOffset + " to " + annoText.length());
+        logger.fine("Chunk end offset: " + chunk.get(CoreAnnotations.CharacterOffsetEndAnnotation.class) +
+          ", Source text begin offset " + annoBeginCharOffset);
+      }
       chunkEndCharOffset = annoText.length();
     }
     if (chunkEndCharOffset < chunkBeginCharOffset) {
-      logger.fine("Adjusting end char offset from " + chunkEndCharOffset + " to " + chunkBeginCharOffset);
-      logger.fine("Chunk end offset: " + chunk.get(CoreAnnotations.CharacterOffsetEndAnnotation.class) +
-        ", Source text begin offset " + annoBeginCharOffset);
+      if (logger.isLoggable(Level.FINE)) {
+        logger.fine("Adjusting end char offset from " + chunkEndCharOffset + " to " + chunkBeginCharOffset);
+        logger.fine("Chunk end offset: " + chunk.get(CoreAnnotations.CharacterOffsetEndAnnotation.class) +
+          ", Source text begin offset " + annoBeginCharOffset);
+      }
       chunkEndCharOffset = chunkBeginCharOffset;
     }
     String chunkText = annoText.substring(chunkBeginCharOffset, chunkEndCharOffset);
@@ -753,7 +772,7 @@ public class ChunkAnnotationUtils {
           Class tokenChunkKey, Class tokenLabelKey, boolean allowPartialTokens)
   {
     String annoText = annotation.get(CoreAnnotations.TextAnnotation.class);
-    List<CoreMap> chunks = new ArrayList<CoreMap>(charOffsets.size());
+    List<CoreMap> chunks = new ArrayList<>(charOffsets.size());
     List<CoreLabel> annoTokens = annotation.get(CoreAnnotations.TokensAnnotation.class);
     Integer annoCharBegin = annotation.get(CoreAnnotations.CharacterOffsetBeginAnnotation.class);
     if (annoCharBegin == null) { annoCharBegin = 0; }
@@ -791,7 +810,7 @@ public class ChunkAnnotationUtils {
       }
       int tokenEnd = j;
 
-      List<CoreLabel> chunkTokens = new ArrayList<CoreLabel>(annoTokens.subList(tokenBegin, tokenEnd));
+      List<CoreLabel> chunkTokens = new ArrayList<>(annoTokens.subList(tokenBegin, tokenEnd));
       String chunkText = annoText.substring(beginRelCharOffset, endRelCharOffset);
       Annotation chunk = new Annotation(chunkText);
       chunk.set(CoreAnnotations.CharacterOffsetBeginAnnotation.class, beginCharOffset);
@@ -804,7 +823,7 @@ public class ChunkAnnotationUtils {
       if (j >= annoTokens.size()) break;
     }
     if (chunks.size() != charOffsets.size()) {
-      logger.warning("WARNING: Only " + chunks.size() + "/" + charOffsets.size()
+      logger.warning("WARNING: Only " + chunks.size() + '/' + charOffsets.size()
               + " chunks found.  Check if offsets are sorted/nonoverlapping");
     }
     return chunks;
@@ -819,10 +838,10 @@ public class ChunkAnnotationUtils {
 
   public static void annotateChunk(CoreMap chunk, Map<String,String> attributes)
   {
-    for (String attr:attributes.keySet()) {
-      String value = attributes.get(attr);
-      AnnotationLookup.KeyLookup lookup = AnnotationLookup.getCoreKey(attr);
-      if (attr != null) {
+    for (Map.Entry<String, String> stringStringEntry : attributes.entrySet()) {
+      String value = stringStringEntry.getValue();
+      AnnotationLookup.KeyLookup lookup = AnnotationLookup.getCoreKey(stringStringEntry.getKey());
+      if (stringStringEntry.getKey() != null) {
         if (value != null)  {
           try {
             Class valueClass = AnnotationLookup.getValueType(lookup.coreKey);
@@ -835,13 +854,13 @@ public class ChunkAnnotationUtils {
               }
             }
           } catch (Exception ex) {
-            throw new RuntimeException("Unable to annotate attribute " + attr, ex);
+            throw new RuntimeException("Unable to annotate attribute " + stringStringEntry.getKey(), ex);
           }
         } else {
           chunk.set(lookup.coreKey, null);
         }
       } else {
-        throw new UnsupportedOperationException("Unknown attributes: " + attr);
+        throw new UnsupportedOperationException("Unknown attributes: " + stringStringEntry.getKey());
       }
     }
   }
@@ -887,7 +906,7 @@ public class ChunkAnnotationUtils {
   public static <T extends CoreMap> List<T> splitCoreMap(Pattern p, boolean includeMatched,
                                                          CoreMap cm, CoreTokenFactory<T> factory)
   {
-    List<T> res = new ArrayList<T>();
+    List<T> res = new ArrayList<>();
     String text = cm.get(CoreAnnotations.TextAnnotation.class);
     Matcher m = p.matcher(text);
     int index = 0;

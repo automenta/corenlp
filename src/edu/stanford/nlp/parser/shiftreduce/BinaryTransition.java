@@ -218,9 +218,9 @@ public class BinaryTransition implements Transition {
   public String toString() {
     switch(side) {
     case LEFT:
-      return "LeftBinary(" + label + ")";
+      return "LeftBinary(" + label + ')';
     case RIGHT:
-      return "RightBinary(" + label + ")";
+      return "RightBinary(" + label + ')';
     default:
       throw new IllegalArgumentException("Unknown side " + side);
     }

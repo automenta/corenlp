@@ -93,7 +93,7 @@ public class IOBUtils {
                                             Character segMarker,
                                             boolean applyRewriteRules,
                                             boolean stripRewrites) {
-    List<CoreLabel> iobList = new ArrayList<CoreLabel>(tokenList.size()*7 + tokenList.size());
+    List<CoreLabel> iobList = new ArrayList<>(tokenList.size() * 7 + tokenList.size());
     final String strSegMarker = String.valueOf(segMarker);
 
     boolean addWhitespace = false;
@@ -209,7 +209,7 @@ public class IOBUtils {
         lastLabel = RewriteSymbol;
       } else if (rawToken.endsWith("ة-")) {
         assert token.endsWith("ة");
-        token = token.substring(0, token.length() - 1) + "ت";
+        token = token.substring(0, token.length() - 1) + 'ت';
         lastLabel = RewriteSymbol;
       }
 
@@ -238,10 +238,10 @@ public class IOBUtils {
       if (rawToken.endsWith("ى-")) {
         if (features.getValue(MorphoFeatureType.TENSE) != null) {
           // verb: ى becomes ا
-          token = token.substring(0, token.length() - 1) + "ا";
+          token = token.substring(0, token.length() - 1) + 'ا';
         } else {
           // assume preposition:
-          token = token.substring(0, token.length() - 1) + "ي";
+          token = token.substring(0, token.length() - 1) + 'ي';
         }
         if (!stripRewrites)
           lastLabel = RewriteSymbol;
@@ -388,7 +388,7 @@ public class IOBUtils {
         token = "#sm#";
       String label = labeledChar.get(CoreAnnotations.AnswerAnnotation.class);
       if (token.equals(BoundaryChar)) {
-        sb.append(" ");
+        sb.append(' ');
 
       } else if (label.equals(BeginSymbol)) {
         if (lastLabel.equals(ContinuationSymbol) || lastLabel.equals(BeginSymbol) ||
@@ -397,7 +397,7 @@ public class IOBUtils {
             sb.append(prefixMarker);
           }
           if (addSpace) {
-            sb.append(" ");
+            sb.append(' ');
           }
           if (addSuffixMarker && (!addSpace || addSuffixMarker(i, labeledSequence))) {
             sb.append(suffixMarker);
@@ -410,7 +410,7 @@ public class IOBUtils {
 
       } else if (label.equals(NosegSymbol)) {
         if ( ! lastLabel.equals(BoundarySymbol) && addSpace) {
-          sb.append(" ");
+          sb.append(' ');
         }
         sb.append(token);
 
@@ -421,9 +421,7 @@ public class IOBUtils {
             sb.append(applyRewrites ? "ة" : token);
             break;
           case "ل":
-            sb.append((addPrefixMarker ? prefixMarker : "") +
-                (addSpace ? " " : "") +
-                (applyRewrites ? "ال" : "ل"));
+            sb.append(addPrefixMarker ? prefixMarker : "").append(addSpace ? " " : "").append(applyRewrites ? "ال" : "ل");
             break;
           case "ي":
           case "ا":

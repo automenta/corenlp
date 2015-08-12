@@ -394,7 +394,7 @@ public class SGDWithAdaGradAndFOBOS<T extends DiffFunction> implements Minimizer
             objDelta = objVal-oldObjVal;
             oldObjVal = objVal;
             if (values == null)
-              values = new ArrayList<Double>();
+              values = new ArrayList<>();
             values.add(objVal);
           } else {
             func.calculateStochasticGradient(x, bSize);
@@ -423,7 +423,7 @@ public class SGDWithAdaGradAndFOBOS<T extends DiffFunction> implements Minimizer
           if (f instanceof HasRegularizerParamRange) {
             paramRange = ((HasRegularizerParamRange)f).getRegularizerParamRange(x);
           } else {
-            paramRange = new HashSet<Integer>();
+            paramRange = new HashSet<>();
             for (int i = 0; i < x.length; i++)
               paramRange.add(i);
           }
@@ -540,9 +540,7 @@ public class SGDWithAdaGradAndFOBOS<T extends DiffFunction> implements Minimizer
         }
 
         // update gradient and lastX
-        for (int index = 0; index < x.length; index++) {
-          prevGrad[index] = gradients[index];
-        }
+        System.arraycopy(gradients, 0, prevGrad, 0, x.length);
 
         // if (hessSampleSize > 0) {
         //   approxHessian();

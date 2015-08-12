@@ -79,16 +79,16 @@ public class FileBackedCache<KEY extends Serializable, T> implements Map<KEY, T>
   public final int maxFiles;
 
   /** The implementation of the mapping */
-  private final Map<KEY, SoftReference<T>> mapping = new ConcurrentHashMap<KEY, SoftReference<T>>();
+  private final Map<KEY, SoftReference<T>> mapping = new ConcurrentHashMap<>();
 
   /** A reaper for soft references, to save memory on storing the keys */
-  private final ReferenceQueue<T> reaper = new ReferenceQueue<T>();
+  private final ReferenceQueue<T> reaper = new ReferenceQueue<>();
 
   /**
    * A file canonicalizer, so that we can synchronize on blocks -- static, as it should work between instances.
    * In particular, an exception is thrown if the JVM attempts to take out two locks on a file.
    */
-  private static final Interner<File> canonicalFile = new Interner<File>();
+  private static final Interner<File> canonicalFile = new Interner<>();
   /** A map indicating whether the JVM holds a file lock on the given file */
   private static final IdentityHashMap<File, FileSemaphore> fileLocks = Generics.newIdentityHashMap();
 
@@ -319,27 +319,33 @@ public class FileBackedCache<KEY extends Serializable, T> implements Map<KEY, T>
   @SuppressWarnings({"SuspiciousMethodCalls", "unchecked"})
   @Override
   public T get(Object key) {
-    SoftReference<T> likelyReferenceOrNull = mapping.get(key);
-    T referenceOrNull = likelyReferenceOrNull == null ? null : likelyReferenceOrNull.get();
-    if (likelyReferenceOrNull == null) {
-      // Case: We don't know about this element being in the cache
-      if (!tryFile(key)) { return null; }  // Case: there's no hope of finding this element
-      Collection<Pair<KEY, T>> elemsRead = readBlock(key);  // Read the block for this key
-      for (Pair<KEY, T> pair : elemsRead) {
-        if (pair.first.equals(key)) { return pair.second; }
-      }
-      return null;
-    } else if (referenceOrNull == null) {
-      // Case: This element once was in the cache
-      mapping.remove(key);
-      return get(key);  // try again
-    } else {
-      if (referenceOrNull instanceof Collection) {
-        return (T) Collections.unmodifiableCollection((Collection) referenceOrNull);
-      } else if (referenceOrNull instanceof Map) {
-        return (T) Collections.unmodifiableMap((Map) referenceOrNull);
+    while (true) {
+      SoftReference<T> likelyReferenceOrNull = mapping.get(key);
+      T referenceOrNull = likelyReferenceOrNull == null ? null : likelyReferenceOrNull.get();
+      if (likelyReferenceOrNull == null) {
+        // Case: We don't know about this element being in the cache
+        if (!tryFile(key)) {
+          return null;
+        }  // Case: there's no hope of finding this element
+        Collection<Pair<KEY, T>> elemsRead = readBlock(key);  // Read the block for this key
+        for (Pair<KEY, T> pair : elemsRead) {
+          if (pair.first.equals(key)) {
+            return pair.second;
+          }
+        }
+        return null;
+      } else if (referenceOrNull == null) {
+        // Case: This element once was in the cache
+        mapping.remove(key);
+
       } else {
-        return referenceOrNull;
+        if (referenceOrNull instanceof Collection) {
+          return (T) Collections.unmodifiableCollection((Collection) referenceOrNull);
+        } else if (referenceOrNull instanceof Map) {
+          return (T) Collections.unmodifiableMap((Map) referenceOrNull);
+        } else {
+          return referenceOrNull;
+        }
       }
     }
   }
@@ -356,7 +362,7 @@ public class FileBackedCache<KEY extends Serializable, T> implements Map<KEY, T>
       return existing;
     } else {
       // In-memory
-      SoftReference<T> ref = new SoftReference<T>(value, this.reaper);
+      SoftReference<T> ref = new SoftReference<>(value, this.reaper);
       mapping.put(key, ref);
       // On Disk
       if (existing == null) {
@@ -710,7 +716,7 @@ public class FileBackedCache<KEY extends Serializable, T> implements Map<KEY, T>
         haveClosed = true;
         // Add elements
         for (Pair<KEY, T> elem : read) {
-          SoftReference<T> ref = new SoftReference<T>(elem.second, this.reaper);
+          SoftReference<T> ref = new SoftReference<>(elem.second, this.reaper);
           mapping.put(elem.first, ref);
         }
         return read;
@@ -782,9 +788,13 @@ public class FileBackedCache<KEY extends Serializable, T> implements Map<KEY, T>
   }
 
   private static RuntimeException throwSafe(Throwable e) {
-    if (e instanceof RuntimeException) return (RuntimeException) e;
-    else if (e.getCause() == null) return new RuntimeException(e);
-    else return throwSafe(e.getCause());
+    while (true) {
+      if (e instanceof RuntimeException) return (RuntimeException) e;
+      else if (e.getCause() == null) return new RuntimeException(e);
+      else {
+        e = e.getCause();
+      }
+    }
   }
 
   private static void robustCreateFile(File candidate) throws IOException {
@@ -887,8 +897,11 @@ public class FileBackedCache<KEY extends Serializable, T> implements Map<KEY, T>
   protected Pair<? extends InputStream, CloseAction> newInputStream(File f) throws IOException {
     final FileSemaphore lock = acquireFileLock(f);
     final ObjectInputStream rtn = new ObjectInputStream(new GZIPInputStream(new BufferedInputStream(new FileInputStream(f))));
-    return new Pair<ObjectInputStream, CloseAction>(rtn,
-        () -> { lock.release(); rtn.close();  });
+    return new Pair<>(rtn,
+            () -> {
+              lock.release();
+              rtn.close();
+            });
   }
 
   /**
@@ -908,8 +921,12 @@ public class FileBackedCache<KEY extends Serializable, T> implements Map<KEY, T>
     final ObjectOutputStream rtn = isAppend
         ? new AppendingObjectOutputStream(new GZIPOutputStream(new BufferedOutputStream(stream)))
         : new ObjectOutputStream(new GZIPOutputStream(new BufferedOutputStream(stream)));
-    return new Pair<ObjectOutputStream, CloseAction>(rtn,
-        () -> { rtn.flush(); lock.release(); rtn.close(); });
+    return new Pair<>(rtn,
+            () -> {
+              rtn.flush();
+              lock.release();
+              rtn.close();
+            });
   }
 
   /**
@@ -974,7 +991,7 @@ public class FileBackedCache<KEY extends Serializable, T> implements Map<KEY, T>
           if (!combinedMapping.containsKey(fileToWriteTo)) { combinedMapping.put(fileToWriteTo, Generics.<KEY,T>newHashMap()); }
           combinedMapping.get(fileToWriteTo).put(entry.getKey(), entry.getValue());
         }
-        log("[" + new DecimalFormat("0000").format(i) + "/" + constituents.length + "] read " + constituent.cacheDir + " [" + (Runtime.getRuntime().freeMemory() / 1000000) + "MB free memory]");
+        log('[' + new DecimalFormat("0000").format(i) + '/' + constituents.length + "] read " + constituent.cacheDir + " [" + (Runtime.getRuntime().freeMemory() / 1000000) + "MB free memory]");
         constituent.clear();
       }
       // Accumulate destination

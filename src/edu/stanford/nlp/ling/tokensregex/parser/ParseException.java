@@ -89,7 +89,7 @@ public class ParseException extends Exception {
                            int[][] expectedTokenSequences,
                            String[] tokenImage) {
     String eol = System.getProperty("line.separator", "\n");
-    StringBuffer expected = new StringBuffer();
+    StringBuilder expected = new StringBuilder();
     int maxSize = 0;
     for (int i = 0; i < expectedTokenSequences.length; i++) {
       if (maxSize < expectedTokenSequences[i].length) {
@@ -111,14 +111,14 @@ public class ParseException extends Exception {
         retval += tokenImage[0];
         break;
       }
-      retval += " " + tokenImage[tok.kind];
+      retval += ' ' + tokenImage[tok.kind];
       retval += " \"";
       retval += add_escapes(tok.image);
       retval += " \"";
       tok = tok.next;
     }
     retval += "\" at line " + currentToken.next.beginLine + ", column " + currentToken.next.beginColumn;
-    retval += "." + eol;
+    retval += '.' + eol;
     if (expectedTokenSequences.length == 1) {
       retval += "Was expecting:" + eol + "    ";
     } else {
@@ -139,7 +139,7 @@ public class ParseException extends Exception {
    * string literal.
    */
   static String add_escapes(String str) {
-      StringBuffer retval = new StringBuffer();
+      StringBuilder retval = new StringBuilder();
       char ch;
       for (int i = 0; i < str.length(); i++) {
         switch (str.charAt(i))
@@ -173,7 +173,7 @@ public class ParseException extends Exception {
            default:
               if ((ch = str.charAt(i)) < 0x20 || ch > 0x7e) {
                  String s = "0000" + Integer.toString(ch, 16);
-                 retval.append("\\u" + s.substring(s.length() - 4, s.length()));
+                 retval.append("\\u").append(s.substring(s.length() - 4, s.length()));
               } else {
                  retval.append(ch);
               }

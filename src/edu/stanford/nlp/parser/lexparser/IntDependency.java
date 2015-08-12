@@ -43,11 +43,11 @@ public class IntDependency implements Serializable {
 
   @Override
   public String toString() {
-    return "\"" + StringUtils.escapeString(head.toString(), charsToEscape, '\\') + "\" -> \"" + StringUtils.escapeString(arg.toString(), charsToEscape, '\\') + "\" " + (leftHeaded ? LEFT : RIGHT) + " " + distance;
+    return '"' + StringUtils.escapeString(head.toString(), charsToEscape, '\\') + "\" -> \"" + StringUtils.escapeString(arg.toString(), charsToEscape, '\\') + "\" " + (leftHeaded ? LEFT : RIGHT) + ' ' + distance;
   }
 
   public String toString(Index<String> wordIndex, Index<String> tagIndex) {
-    return "\"" + StringUtils.escapeString(head.toString(wordIndex, tagIndex), charsToEscape, '\\') + "\" -> \"" + StringUtils.escapeString(arg.toString(wordIndex, tagIndex), charsToEscape, '\\') + "\" " + (leftHeaded ? LEFT : RIGHT) + " " + distance;
+    return '"' + StringUtils.escapeString(head.toString(wordIndex, tagIndex), charsToEscape, '\\') + "\" -> \"" + StringUtils.escapeString(arg.toString(wordIndex, tagIndex), charsToEscape, '\\') + "\" " + (leftHeaded ? LEFT : RIGHT) + ' ' + distance;
   }
 
   public IntDependency(IntTaggedWord head, IntTaggedWord arg, boolean leftHeaded, int distance) {

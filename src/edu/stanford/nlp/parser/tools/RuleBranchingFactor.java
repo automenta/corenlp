@@ -27,10 +27,10 @@ public class RuleBranchingFactor {
 
   private static String treeToRuleString(Tree tree) {
     StringBuilder sb = new StringBuilder();
-    sb.append(tree.value()).append(":").append(tree.firstChild().value());
+    sb.append(tree.value()).append(':').append(tree.firstChild().value());
     for (int i = 1; i < tree.numChildren(); ++i) {
       Tree kid = tree.children()[i];
-      sb.append("-").append(kid.value());
+      sb.append('-').append(kid.value());
     }
     return sb.toString();
   }
@@ -43,7 +43,7 @@ public class RuleBranchingFactor {
     String nl = System.getProperty("line.separator");
     sb.append(String.format("Usage: java %s [OPTS] tree_file%s%s",CountTrees.class.getName(),nl,nl));
     sb.append("Options:\n");
-    sb.append("  -l lang    : Select language settings from " + Language.langList).append(nl);
+    sb.append("  -l lang    : Select language settings from ").append(Language.langList).append(nl);
     sb.append("  -e enc     : Encoding.").append(nl);
     usage = sb.toString();
   }
@@ -63,7 +63,7 @@ public class RuleBranchingFactor {
     // Process command-line options
     Properties options = StringUtils.argsToProperties(args, optionArgDefinitions);
     String fileName = options.getProperty("");
-    if (fileName == null || fileName.equals("")) {
+    if (fileName == null || fileName.isEmpty()) {
       System.out.println(usage);
       System.exit(-1);
     }
@@ -77,8 +77,8 @@ public class RuleBranchingFactor {
     tb.loadPath(fileName);
 
     // Statistics
-    Counter<String> binaryRuleTypes = new ClassicCounter<String>(20000);
-    List<Integer> branchingFactors = new ArrayList<Integer>(20000);
+    Counter<String> binaryRuleTypes = new ClassicCounter<>(20000);
+    List<Integer> branchingFactors = new ArrayList<>(20000);
     int nTrees = 0;
     int nUnaryRules = 0;
     int nBinaryRules = 0;

@@ -82,7 +82,7 @@ public class CountClosedTags {
   private CountClosedTags(Properties props) {
     String tagList = props.getProperty(CLOSED_TAGS_PROPERTY);
     if (tagList != null) {
-      closedTags = new TreeSet<String>();
+      closedTags = new TreeSet<>();
       String[] pieces = tagList.split("\\s+");
       Collections.addAll(closedTags, pieces);
     } else {
@@ -123,7 +123,7 @@ public class CountClosedTags {
       String tag = taggedWord.tag();
       if (closedTags == null || closedTags.contains(tag)) {
         if (!tagWordMap.containsKey(tag)) {
-          tagWordMap.put(tag, new TreeSet<String>());
+          tagWordMap.put(tag, new TreeSet<>());
         }
         tagWordMap.get(tag).add(word);
       }
@@ -167,8 +167,8 @@ public class CountClosedTags {
    * Print out the results found
    */
   void report() {
-    List<String> successfulTags = new ArrayList<String>();
-    Set<String> tags = new TreeSet<String>();
+    List<String> successfulTags = new ArrayList<>();
+    Set<String> tags = new TreeSet<>();
     tags.addAll(allWords.keySet());
     tags.addAll(trainingWords.keySet());
     if (closedTags != null)
@@ -180,21 +180,21 @@ public class CountClosedTags {
                       allWords.get(tag).size() : 0);
       if (numTraining == numTotal && numTraining > 0)
         successfulTags.add(tag);
-      System.out.println(tag + " " + numTraining + " " + numTotal);
+      System.out.println(tag + ' ' + numTraining + ' ' + numTotal);
       if (printWords) {
         Set<String> trainingSet = trainingWords.get(tag);
         if (trainingSet == null)
           trainingSet = Collections.emptySet();
         Set<String> allSet = allWords.get(tag);
         for (String word : trainingSet) {
-          System.out.print(" " + word);
+          System.out.print(' ' + word);
         }
         if (trainingSet.size() < allSet.size()) {
           System.out.println();
           System.out.print(" *");
           for (String word : allWords.get(tag)) {
             if (!trainingSet.contains(word)) {
-              System.out.print(" " + word);
+              System.out.print(' ' + word);
             }
           }
         }
@@ -220,7 +220,7 @@ public class CountClosedTags {
                                       TaggerConfig.TAG_SEPARATOR_PROPERTY));
 
   private static void help(String error) {
-    if (error != null && !error.equals("")) {
+    if (error != null && !error.isEmpty()) {
       System.err.println(error);
     }
     System.exit(2);

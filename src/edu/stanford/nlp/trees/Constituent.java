@@ -109,7 +109,7 @@ public abstract class Constituent implements Labeled, Scored, Label {
     } else {
       sb = new StringBuffer();
     }
-    sb.append("(").append(start()).append(",").append(end()).append(")");
+    sb.append('(').append(start()).append(',').append(end()).append(')');
     return sb.toString();
   }
 
@@ -291,7 +291,7 @@ public abstract class Constituent implements Labeled, Scored, Label {
     for (int wordNum = start(), end = end(); wordNum <= end; wordNum++) {
       sb.append(s.get(wordNum));
       if (wordNum != end) {
-        sb.append(" ");
+        sb.append(' ');
       }
     }
     return sb.toString();

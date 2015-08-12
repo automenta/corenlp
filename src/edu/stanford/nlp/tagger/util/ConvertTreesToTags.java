@@ -72,7 +72,7 @@ public class ConvertTreesToTags {
     String treeFilter = "";
     boolean noTags = false;
     boolean noSpaces = false;
-    List<String> inputFilenames = new ArrayList<String>();
+    List<String> inputFilenames = new ArrayList<>();
     for (int i = 0; i < args.length; ++i) {
       if ((args[i].equalsIgnoreCase("-output") ||
            args[i].equalsIgnoreCase("--output")) &&
@@ -114,7 +114,7 @@ public class ConvertTreesToTags {
         inputFilenames.add(args[i]);
       }
     }
-    if (outputFilename.equals("")) {
+    if (outputFilename.isEmpty()) {
       System.err.println("Must specify an output filename, -output");
       System.exit(2);
     }
@@ -128,18 +128,18 @@ public class ConvertTreesToTags {
     BufferedWriter bout = new BufferedWriter(osw);
     Properties props = new Properties();
     for (String filename : inputFilenames) {
-      String description = (TaggedFileRecord.FORMAT + "=" +
-                            TaggedFileRecord.Format.TREES + "," + filename);
-      if (!treeRange.equals("")) {
-        description = (TaggedFileRecord.TREE_RANGE + "=" + treeRange +
-                       "," + description);
+      String description = (TaggedFileRecord.FORMAT + '=' +
+                            TaggedFileRecord.Format.TREES + ',' + filename);
+      if (!treeRange.isEmpty()) {
+        description = (TaggedFileRecord.TREE_RANGE + '=' + treeRange +
+                ',' + description);
       }
-      if (!treeFilter.equals("")) {
-        description = (TaggedFileRecord.TREE_FILTER + "=" + treeFilter +
-                       "," + description);
+      if (!treeFilter.isEmpty()) {
+        description = (TaggedFileRecord.TREE_FILTER + '=' + treeFilter +
+                ',' + description);
       }
-      description = (TaggedFileRecord.ENCODING + "=" + inputEncoding +
-                     "," + description);
+      description = (TaggedFileRecord.ENCODING + '=' + inputEncoding +
+              ',' + description);
       TaggedFileRecord record =
         TaggedFileRecord.createRecord(props, description);
       for (List<TaggedWord> sentence : record.reader()) {

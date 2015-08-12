@@ -31,7 +31,7 @@ public class AceEventMention extends AceMention {
   public String toString() {
     return "AceEventMention [mAnchor=" + mAnchor + ", mParent=" + mParent
         + ", mRolesToArguments=" + mRolesToArguments + ", mExtent=" + mExtent
-        + ", mId=" + mId + "]";
+        + ", mId=" + mId + ']';
   }
 
   public Collection<AceEventMentionArgument> getArgs() {

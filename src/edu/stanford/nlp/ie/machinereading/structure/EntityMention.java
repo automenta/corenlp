@@ -217,7 +217,7 @@ public class EntityMention extends ExtractionObject {
     	  lastEnd = 0;
     	}
        */
-      if(i > headTokenSpan.start()) sb.append(" ");
+      if(i > headTokenSpan.start()) sb.append(' ');
 
       sb.append(token.word());
 
@@ -236,11 +236,11 @@ public class EntityMention extends ExtractionObject {
     + (headTokenSpan != null ? ", hstart=" + headTokenSpan.start() + ", hend=" + headTokenSpan.end() : "")
     + (extentTokenSpan != null ? ", estart=" + extentTokenSpan.start() + ", eend=" + extentTokenSpan.end() : "")
     + (syntacticHeadTokenPosition >= 0 ? ", headPosition=" + syntacticHeadTokenPosition : "")
-    + (headTokenSpan != null ? ", value=\"" + getValue() + "\"" : "") 
-    + (normalizedName != null ? ", normalizedName=\"" + normalizedName + "\"" : "")
+    + (headTokenSpan != null ? ", value=\"" + getValue() + '"' : "")
+    + (normalizedName != null ? ", normalizedName=\"" + normalizedName + '"' : "")
     + ", corefID=" + corefID
     + (typeProbabilities != null ? ", probs=" + probsToString() : "")
-    + "]";
+    + ']';
   }
 
   @Override

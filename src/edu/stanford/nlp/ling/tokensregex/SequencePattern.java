@@ -146,7 +146,7 @@ public class SequencePattern<T> implements Serializable {
     }
     SequencePattern.PatternExpr transformedPattern = this.patternExpr.transform(transformer);
     // TODO: Make string unique by indicating this pattern was transformed
-    return new SequencePattern<T2>(this.patternStr, transformedPattern, null);
+    return new SequencePattern<>(this.patternStr, transformedPattern, null);
   }
 
   public String pattern() {
@@ -190,7 +190,7 @@ public class SequencePattern<T> implements Serializable {
   {
     try {
       Pair<PatternExpr, SequenceMatchAction<T>> p = env.parser.parseSequenceWithAction(env, string);
-      return new SequencePattern<T>(string, p.first(), p.second());
+      return new SequencePattern<>(string, p.first(), p.second());
     } catch (Exception ex) {
       throw new RuntimeException("Error compiling " + string + " using environment " + env);
     }
@@ -199,16 +199,16 @@ public class SequencePattern<T> implements Serializable {
 
   protected static <T> SequencePattern<T> compile(SequencePattern.PatternExpr nodeSequencePattern)
   {
-    return new SequencePattern<T>(nodeSequencePattern);
+    return new SequencePattern<>(nodeSequencePattern);
   }
 
   public SequenceMatcher<T> getMatcher(List<? extends T> tokens) {
-    return new SequenceMatcher<T>(this, tokens);
+    return new SequenceMatcher<>(this, tokens);
   }
 
   public <OUT> OUT findNodePattern(Function<NodePattern<T>, OUT> filter) {
-    Queue<State> todo = new LinkedList<State>();
-    Set<State> seen = new HashSet<State>();
+    Queue<State> todo = new LinkedList<>();
+    Set<State> seen = new HashSet<>();
     todo.add(root);
     seen.add(root);
     while (!todo.isEmpty()) {
@@ -228,9 +228,9 @@ public class SequencePattern<T> implements Serializable {
   }
 
   public <OUT> Collection<OUT> findNodePatterns(Function<NodePattern<T>, OUT> filter) {
-    List<OUT> outList = new ArrayList<OUT>();
-    Queue<State> todo = new LinkedList<State>();
-    Set<State> seen = new HashSet<State>();
+    List<OUT> outList = new ArrayList<>();
+    Queue<State> todo = new LinkedList<>();
+    Set<State> seen = new HashSet<>();
     todo.add(root);
     seen.add(root);
     while (!todo.isEmpty()) {
@@ -509,7 +509,7 @@ public class SequencePattern<T> implements Serializable {
     @Override
     protected PatternExpr copy()
     {
-      List<PatternExpr> newPatterns = new ArrayList<PatternExpr>(patterns.size());
+      List<PatternExpr> newPatterns = new ArrayList<>(patterns.size());
       for (PatternExpr p:patterns) {
         newPatterns.add(p.copy());
       }
@@ -518,7 +518,7 @@ public class SequencePattern<T> implements Serializable {
 
     @Override
     public PatternExpr optimize() {
-      List<PatternExpr> newPatterns = new ArrayList<PatternExpr>(patterns.size());
+      List<PatternExpr> newPatterns = new ArrayList<>(patterns.size());
       for (PatternExpr p:patterns) {
         newPatterns.add(p.optimize());
       }
@@ -527,7 +527,7 @@ public class SequencePattern<T> implements Serializable {
 
     @Override
     protected PatternExpr transform(NodePatternTransformer transformer) {
-      List<PatternExpr> newPatterns = new ArrayList<PatternExpr>(patterns.size());
+      List<PatternExpr> newPatterns = new ArrayList<>(patterns.size());
       for (PatternExpr p:patterns) {
         newPatterns.add(p.transform(transformer));
       }
@@ -895,7 +895,7 @@ public class SequencePattern<T> implements Serializable {
     @Override
     protected PatternExpr copy()
     {
-      List<PatternExpr> newPatterns = new ArrayList<PatternExpr>(patterns.size());
+      List<PatternExpr> newPatterns = new ArrayList<>(patterns.size());
       for (PatternExpr p:patterns) {
         newPatterns.add(p.copy());
       }
@@ -905,7 +905,7 @@ public class SequencePattern<T> implements Serializable {
     @Override
     protected PatternExpr transform(NodePatternTransformer transformer)
     {
-      List<PatternExpr> newPatterns = new ArrayList<PatternExpr>(patterns.size());
+      List<PatternExpr> newPatterns = new ArrayList<>(patterns.size());
       for (PatternExpr p:patterns) {
         newPatterns.add(p.transform(transformer));
       }
@@ -923,7 +923,7 @@ public class SequencePattern<T> implements Serializable {
     {
       if (patterns.size() <= OPTIMIZE_MIN_SIZE) {
         // Not enough patterns for fancy optimization
-        List<PatternExpr> newPatterns = new ArrayList<PatternExpr>(patterns.size());
+        List<PatternExpr> newPatterns = new ArrayList<>(patterns.size());
         for (PatternExpr p:patterns) {
           newPatterns.add(p.optimize());
         }
@@ -942,12 +942,12 @@ public class SequencePattern<T> implements Serializable {
 
     private PatternExpr optimizeOrStringSeqs() {
       // Try to collapse OR of NodePattern with just strings into a StringInSetAnnotationPattern
-      List<PatternExpr> opts = new ArrayList<PatternExpr>(patterns.size());
+      List<PatternExpr> opts = new ArrayList<>(patterns.size());
       // Map from annotation key (Class), ignoreCase (Boolean) to set of patterns/strings
       Map<Pair<Class,Boolean>, Pair<Collection<PatternExpr>, Set<String>>> stringPatterns =
-              new HashMap<Pair<Class,Boolean>, Pair<Collection<PatternExpr>, Set<String>>>();
+              new HashMap<>();
       Map<Pair<Class,Boolean>, Pair<Collection<PatternExpr>, Set<List<String>>>> stringSeqPatterns =
-              new HashMap<Pair<Class,Boolean>, Pair<Collection<PatternExpr>, Set<List<String>>>>();
+              new HashMap<>();
       // Go through patterns and get candidates for optimization
       for (PatternExpr p:patterns) {
         PatternExpr opt = p.optimize();
@@ -962,7 +962,7 @@ public class SequencePattern<T> implements Serializable {
             Pair<Class,Boolean> key = Pair.makePair(pair.first, ignoreCase);
             Pair<Collection<PatternExpr>, Set<String>> saved = stringPatterns.get(key);
             if (saved == null) {
-              saved = new Pair<Collection<PatternExpr>, Set<String>>(new ArrayList<PatternExpr>(), new HashSet<String>());
+              saved = new Pair<>(new ArrayList<>(), new HashSet<>());
               stringPatterns.put(key, saved);
             }
             saved.first.add(opt);
@@ -988,7 +988,7 @@ public class SequencePattern<T> implements Serializable {
                   }
                 } else {
                   key = Pair.makePair(pair.first, pair.second.ignoreCase());
-                  strings = new ArrayList<String>();
+                  strings = new ArrayList<>();
                 }
                 strings.add(pair.second.target);
               } else {
@@ -999,7 +999,7 @@ public class SequencePattern<T> implements Serializable {
             if (isStringSeq) {
               Pair<Collection<PatternExpr>, Set<List<String>>> saved = stringSeqPatterns.get(key);
               if (saved == null) {
-                saved = new Pair<Collection<PatternExpr>, Set<List<String>>>(new ArrayList<PatternExpr>(), new HashSet<List<String>>());
+                saved = new Pair<>(new ArrayList<>(), new HashSet<>());
                 stringSeqPatterns.put(key, saved);
               }
               saved.first.add(opt);
@@ -1011,8 +1011,8 @@ public class SequencePattern<T> implements Serializable {
 
       // Go over our maps and see if any of these strings should be optimized away
       // Keep track of things we have optimized away
-      Map<PatternExpr, Boolean> alreadyOptimized = new IdentityHashMap<PatternExpr, Boolean>();
-      List<PatternExpr> finalOptimizedPatterns = new ArrayList<PatternExpr>(patterns.size());
+      Map<PatternExpr, Boolean> alreadyOptimized = new IdentityHashMap<>();
+      List<PatternExpr> finalOptimizedPatterns = new ArrayList<>(patterns.size());
       // optimize strings
       for (Map.Entry<Pair<Class, Boolean>, Pair<Collection<PatternExpr>, Set<String>>> entry : stringPatterns.entrySet()) {
         Pair<Collection<PatternExpr>, Set<String>> saved = entry.getValue();
@@ -1129,7 +1129,7 @@ public class SequencePattern<T> implements Serializable {
     @Override
     protected PatternExpr copy()
     {
-      List<PatternExpr> newPatterns = new ArrayList<PatternExpr>(patterns.size());
+      List<PatternExpr> newPatterns = new ArrayList<>(patterns.size());
       for (PatternExpr p:patterns) {
         newPatterns.add(p.copy());
       }
@@ -1139,7 +1139,7 @@ public class SequencePattern<T> implements Serializable {
     @Override
     protected PatternExpr optimize()
     {
-      List<PatternExpr> newPatterns = new ArrayList<PatternExpr>(patterns.size());
+      List<PatternExpr> newPatterns = new ArrayList<>(patterns.size());
       for (PatternExpr p:patterns) {
         newPatterns.add(p.optimize());
       }
@@ -1149,7 +1149,7 @@ public class SequencePattern<T> implements Serializable {
     @Override
     protected PatternExpr transform(NodePatternTransformer transformer)
     {
-      List<PatternExpr> newPatterns = new ArrayList<PatternExpr>(patterns.size());
+      List<PatternExpr> newPatterns = new ArrayList<>(patterns.size());
       for (PatternExpr p:patterns) {
         newPatterns.add(p.transform(transformer));
       }
@@ -1259,7 +1259,7 @@ public class SequencePattern<T> implements Serializable {
      */
     protected void add(State nextState) {
       if (next == null) {
-        next = new LinkedHashSet<State>();
+        next = new LinkedHashSet<>();
       }
       next.add(nextState);
     }
@@ -1529,7 +1529,7 @@ public class SequencePattern<T> implements Serializable {
       if (matcher.matches(node, matchedStates.elements().get(matchedGroup.matchBegin+matchedNodes))) {
         matchedNodes++;
         matchedStates.getBranchStates().setMatchStateInfo(bid, this,
-                new Pair<SequenceMatcher.MatchedGroup, Integer>(matchedGroup, matchedNodes));
+                new Pair<>(matchedGroup, matchedNodes));
         int len = matchedGroup.matchEnd - matchedGroup.matchBegin;
         if (len == matchedNodes) {
           matchedStates.addStates(bid, next);
@@ -1677,9 +1677,9 @@ public class SequencePattern<T> implements Serializable {
     private void addChildBid(int i, int bid, int pos)
     {
       if (reachableChildBids[i] == null) {
-        reachableChildBids[i] = new ArraySet<Pair<Integer,Integer>>();
+        reachableChildBids[i] = new ArraySet<>();
       }
-      reachableChildBids[i].add(new Pair<Integer,Integer>(bid,pos) );
+      reachableChildBids[i].add(new Pair<>(bid, pos) );
     }
 
     private boolean isAllChildMatched()
@@ -1941,7 +1941,7 @@ public class SequencePattern<T> implements Serializable {
 
     protected Frag(State start) {
       this.start = start;
-      this.out = new LinkedHashSet<State> ();
+      this.out = new LinkedHashSet<>();
       start.updateOutStates(out);
     }
 
@@ -1952,14 +1952,14 @@ public class SequencePattern<T> implements Serializable {
 
     protected void add(State outState) {
       if (out == null) {
-        out = new LinkedHashSet<State>();
+        out = new LinkedHashSet<>();
       }
       out.add(outState);
     }
 
     protected void add(Collection<State> outStates) {
       if (out == null) {
-        out = new LinkedHashSet<State>();
+        out = new LinkedHashSet<>();
       }
       out.addAll(outStates);
     }
@@ -1979,7 +1979,7 @@ public class SequencePattern<T> implements Serializable {
       for (State s:out) {
         s.add(state);
       }
-      out = new LinkedHashSet<State>();
+      out = new LinkedHashSet<>();
       state.updateOutStates(out);
 /*      if (state.next != null) {
         out.addAll(state.next);

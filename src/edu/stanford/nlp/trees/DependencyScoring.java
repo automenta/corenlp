@@ -41,15 +41,15 @@ public class DependencyScoring {
       depSet.add(new TypedDependencyStringEquality(dep.reln(), dep.gov(), dep.dep()));
     }
 
-    List<Set<TypedDependency>> l = new ArrayList<Set<TypedDependency>>(2);
+    List<Set<TypedDependency>> l = new ArrayList<>(2);
     l.add(depSet);
     l.add(unlabeledDepSet);
     return l;
   }
 
   public DependencyScoring(List<Collection<TypedDependency>> goldDeps, boolean ignorePunc) {
-    this.goldDeps = new ArrayList<Set<TypedDependency>>(goldDeps.size());
-    this.goldDepsUnlabeled = new ArrayList<Set<TypedDependency>>(goldDeps.size());
+    this.goldDeps = new ArrayList<>(goldDeps.size());
+    this.goldDepsUnlabeled = new ArrayList<>(goldDeps.size());
     this.ignorePunc = ignorePunc;
 
     for (Collection<TypedDependency> depCollection : goldDeps) {
@@ -64,7 +64,7 @@ public class DependencyScoring {
   }
 
   private static void removeHeadsAssignedToPunc(Set<TypedDependency> depSet) {
-    List<TypedDependency> deps = new ArrayList<TypedDependency>(depSet);
+    List<TypedDependency> deps = new ArrayList<>(depSet);
     for (TypedDependency dep : deps) {
       if (langIndependentPuncCheck(dep.dep().word())) {
         if (VERBOSE) {
@@ -106,7 +106,7 @@ public class DependencyScoring {
   }
 
   public static List<Collection<TypedDependency>> convertStringEquality(List<Collection<TypedDependency>> deps){
-    List<Collection<TypedDependency>> convertedDeps = new ArrayList<Collection<TypedDependency>>();
+    List<Collection<TypedDependency>> convertedDeps = new ArrayList<>();
     for(Collection<TypedDependency> depSet : deps){
       Collection<TypedDependency> converted = Generics.newHashSet();
       for(TypedDependency dep : depSet){
@@ -157,7 +157,7 @@ public class DependencyScoring {
   static protected List<Collection<TypedDependency>> readDepsCoNLLX(String filename) throws IOException {
 	  List<GrammaticalStructure> gss = GrammaticalStructure.readCoNLLXGrammaticalStructureCollection(filename,
                   new fakeShortNameToGRel(), new GraphLessGrammaticalStructureFactory());
-	  List<Collection<TypedDependency>> readDeps = new ArrayList<Collection<TypedDependency>>(gss.size());
+	  List<Collection<TypedDependency>> readDeps = new ArrayList<>(gss.size());
 	  for (GrammaticalStructure gs : gss) {
 	    Collection<TypedDependency> deps = gs.typedDependencies();
 	    readDeps.add(deps);
@@ -174,24 +174,24 @@ public class DependencyScoring {
    */
   static protected List<Collection<TypedDependency>> readDeps(String filename) throws IOException {
     LineNumberReader breader = new LineNumberReader(new FileReader(filename));
-    List<Collection<TypedDependency>> readDeps = new ArrayList<Collection<TypedDependency>>();
-    Collection<TypedDependency> deps = new ArrayList<TypedDependency>();
+    List<Collection<TypedDependency>> readDeps = new ArrayList<>();
+    Collection<TypedDependency> deps = new ArrayList<>();
     for (String line = breader.readLine(); line != null; line = breader.readLine()) {
       if (line.equals("null(-0,-0)") || line.equals("null(-1,-1)")) {
          readDeps.add(deps);
-         deps = new ArrayList<TypedDependency>();
+         deps = new ArrayList<>();
          continue; // relex parse error
       }
       try {
-      if (line.equals("")) {
+      if (line.isEmpty()) {
          if (deps.size() != 0) {
           //System.out.println(deps);
           readDeps.add(deps);
-          deps = new ArrayList<TypedDependency>();
+          deps = new ArrayList<>();
         }
         continue;
       }
-      int firstParen = line.indexOf("(");
+      int firstParen = line.indexOf('(');
       int commaSpace = line.indexOf(", ");
       String depName = line.substring(0, firstParen);
       String govName = line.substring(firstParen + 1, commaSpace);
@@ -210,7 +210,7 @@ public class DependencyScoring {
         grel = EnglishGrammaticalRelations.getConj(conj);
       }
       if (grel == null) {
-        throw new RuntimeException("Unknown grammatical relation '" + depName+"'");
+        throw new RuntimeException("Unknown grammatical relation '" + depName+ '\'');
       }
 
       //Word govWord = new Word(govName.substring(0, govDash));
@@ -254,8 +254,8 @@ public class DependencyScoring {
     int labelCnt = 0;
     int labelCorrect = 0;
 
-    ClassicCounter<String> unlabeledErrorCounts = new ClassicCounter<String>();
-    ClassicCounter<String> labeledErrorCounts = new ClassicCounter<String>();
+    ClassicCounter<String> unlabeledErrorCounts = new ClassicCounter<>();
+    ClassicCounter<String> labeledErrorCounts = new ClassicCounter<>();
     //System.out.println("Gold size: "+ goldDeps.size() + " System size: "+system.size());
     for (int i = 0; i < system.size(); i++) {
       List<Set<TypedDependency>> l = toSets(system.get(i));
@@ -295,14 +295,14 @@ public class DependencyScoring {
             prefixLabeled = childCorrectWithLabel.get(sChild)+", ";
             prefixUnlabeled = childCorrectWithOutLabel.get(sChild)+", ";
           }
-          childCorrectWithLabel.put(sChild, prefixLabeled + goldDep.reln()+"("+goldDep.gov().toString().replaceFirst("-[^-]*$", "")+", "+sChild+")");
-          childCorrectWithOutLabel.put(sChild, prefixUnlabeled + "dep("+goldDep.gov().toString().replaceFirst("-[^-]*$", "")+", "+sChild+")");
+          childCorrectWithLabel.put(sChild, prefixLabeled + goldDep.reln()+ '(' +goldDep.gov().toString().replaceFirst("-[^-]*$", "")+", "+sChild+ ')');
+          childCorrectWithOutLabel.put(sChild, prefixUnlabeled + "dep("+goldDep.gov().toString().replaceFirst("-[^-]*$", "")+", "+sChild+ ')');
       }
 
       for (TypedDependency labeledError: errl.get(0)) {
           String sChild = labeledError.dep().toString().replaceFirst("-[^-]*$", "");
           String sGov   = labeledError.gov().toString().replaceFirst("-[^-]*$", "");
-          labeledErrorCounts.incrementCount(labeledError.reln().toString()+"("+sGov+", "+sChild+") <= "+childCorrectWithLabel.get(sChild));
+          labeledErrorCounts.incrementCount(labeledError.reln().toString()+ '(' +sGov+", "+sChild+") <= "+childCorrectWithLabel.get(sChild));
       }
       for (TypedDependency unlabeledError: errl.get(1)) {
           String sChild = unlabeledError.dep().toString().replaceFirst("-[^-]*$", "");
@@ -334,8 +334,8 @@ public class DependencyScoring {
       this.correctUnlabeledAttachment = correctUnlabeledAttachment;
       this.labelCnt = labelCnt;
       this.labelCorrect = labelCorrect;
-      this.unlabeledErrorCounts = new ClassicCounter<String>(unlabeledErrorCounts);
-      this.labeledErrorCounts = new ClassicCounter<String>(labeledErrorCounts);
+      this.unlabeledErrorCounts = new ClassicCounter<>(unlabeledErrorCounts);
+      this.labeledErrorCounts = new ClassicCounter<>(labeledErrorCounts);
     }
 
     public String toString() {
@@ -352,15 +352,15 @@ public class DependencyScoring {
        StringBuilder sbuild = new StringBuilder();
 
        if (json) {
-         sbuild.append("{");
+         sbuild.append('{');
          sbuild.append(String.format("'LAS' : %.3f, ", las));
          sbuild.append(String.format("'UAS' : %.3f, ", uas));
-         sbuild.append("}");
+         sbuild.append('}');
        } else {
-         sbuild.append(String.format("|| Labeled Attachment Score   ||"));
+         sbuild.append("|| Labeled Attachment Score   ||");
          sbuild.append(String.format(" %.3f (%d/%d) ||\n", las, correctAttachment, goldCnt));
 
-         sbuild.append(String.format("|| Unlabeled Attachment Score ||"));
+         sbuild.append("|| Unlabeled Attachment Score ||");
          sbuild.append(String.format(" %.3f (%d/%d) ||\n", uas, correctUnlabeledAttachment, goldCnt));
        }
 
@@ -386,7 +386,7 @@ public class DependencyScoring {
       StringBuilder sbuild = new StringBuilder();
 
       if (json) {
-         sbuild.append("{");
+         sbuild.append('{');
          sbuild.append(String.format("'LF1' : %.3f, ", lf));
          sbuild.append(String.format("'LP' : %.3f, ", lp));
          sbuild.append(String.format("'LR' : %.3f, ", lr));
@@ -395,19 +395,19 @@ public class DependencyScoring {
          sbuild.append(String.format("'UP' : %.3f, ", ulp));
          sbuild.append(String.format("'UR' : %.3f, ", ulr));
 
-         sbuild.append("}");
+         sbuild.append('}');
       } else {
-         sbuild.append(String.format("|| Labeled Attachment   || F ||  P ||  R ||\n"));
+         sbuild.append("|| Labeled Attachment   || F ||  P ||  R ||\n");
          sbuild.append(String.format("||                      || %.3f || %.3f (%d/%d) || %.3f (%d/%d)||\n",
              lf, lp, correctAttachment, parserCnt, lr, correctAttachment, goldCnt));
-         sbuild.append(String.format("|| Unlabeled Attachment || F ||  P ||  R ||\n"));
+         sbuild.append("|| Unlabeled Attachment || F ||  P ||  R ||\n");
          sbuild.append(String.format("||                     || %.3f || %.3f (%d/%d) || %.3f (%d/%d)||\n",
              ulf, ulp, correctUnlabeledAttachment, parserCnt, ulr, correctUnlabeledAttachment, goldCnt));
 
          if (verbose) {
            sbuild.append("\nLabeled Attachment Error Counts\n");
            sbuild.append(Counters.toSortedString(labeledErrorCounts, Integer.MAX_VALUE, "\t%2$f\t%1$s", "\n"));
-           sbuild.append("\n");
+           sbuild.append('\n');
            sbuild.append("\nUnlabeled Attachment Error Counts\n");
            sbuild.append(Counters.toSortedString(unlabeledErrorCounts, Integer.MAX_VALUE, "\t%2$f\t%1$s", "\n"));
          }

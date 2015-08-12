@@ -34,7 +34,7 @@ public class FindTreebankTree {
     String tagSeparator = "_";
     String encoding = "utf-8";
     String fileRegex = "";
-    List<String> paths = new ArrayList<String>();
+    List<String> paths = new ArrayList<>();
     for (int i = 0; i < args.length; ++i) {
       if ((args[i].equalsIgnoreCase("-tagSeparator") ||
            args[i].equalsIgnoreCase("--tagSeparator")) &&
@@ -51,7 +51,7 @@ public class FindTreebankTree {
                  i + 1 < args.length) {
         fileRegex = args[i + 1];
         ++i;
-      } else if (needle.equals("")) {
+      } else if (needle.isEmpty()) {
         needle = args[i].trim();
       } else {
         paths.add(args[i]);
@@ -63,7 +63,7 @@ public class FindTreebankTree {
     // If the user specified a regex, here we make a filter using that
     // regex.  We just use an anonymous class for the filter
     FileFilter filter = null;
-    if (!fileRegex.equals("")) {
+    if (!fileRegex.isEmpty()) {
       final Pattern filePattern = Pattern.compile(fileRegex);
       filter = pathname -> (pathname.isDirectory() ||
               filePattern.matcher(pathname.getName()).matches());

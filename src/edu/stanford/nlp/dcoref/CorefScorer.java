@@ -2,6 +2,7 @@ package edu.stanford.nlp.dcoref;
 
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -79,16 +80,24 @@ public abstract class CorefScorer {
     String F1F1 = nf2.format(f1*100);
 
     if (printF1First) {
-      String str = "F1 = "+F1+", P = "+P+" ("+(int) precisionNumSum+"/"+(int) precisionDenSum+"), R = "+R+" ("+(int) recallNumSum+"/"+(int) recallDenSum+")";
+      String str = "F1 = "+F1+", P = "+P+" ("+(int) precisionNumSum+ '/' +(int) precisionDenSum+"), R = "+R+" ("+(int) recallNumSum+ '/' +(int) recallDenSum+ ')';
       if(scoreType == ScoreType.Pairwise){
-        logger.fine("Pairwise "+str);
+        if (logger.isLoggable(Level.FINE)) {
+          logger.fine("Pairwise "+str);
+        }
       } else if(scoreType == ScoreType.BCubed){
-        logger.fine("B cubed  "+str);
+        if (logger.isLoggable(Level.FINE)) {
+          logger.fine("B cubed  "+str);
+        }
       } else {
-        logger.fine("MUC      "+str);
+        if (logger.isLoggable(Level.FINE)) {
+          logger.fine("MUC      "+str);
+        }
       }
     } else {
-      logger.fine("& "+PP+" & "+RR + " & "+F1F1);
+      if (logger.isLoggable(Level.FINE)) {
+        logger.fine("& "+PP+" & "+RR + " & "+F1F1);
+      }
     }
   }
 

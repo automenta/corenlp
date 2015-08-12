@@ -203,7 +203,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
    * @see #replaceAllExtended(java.util.List)
    */
   public List<T> replaceAllExtended(List<MatchReplacement<T>> replacement) {
-    List<T> res = new ArrayList<T>();
+    List<T> res = new ArrayList<>();
     FindType oldFindType = findType;
     findType = FindType.FIND_NONOVERLAPPING;
     int index = 0;
@@ -230,7 +230,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
    * @see #replaceAllExtended(java.util.List)
    */
   public List<T> replaceFirstExtended(List<MatchReplacement<T>> replacement) {
-    List<T> res = new ArrayList<T>();
+    List<T> res = new ArrayList<>();
     FindType oldFindType = findType;
     findType = FindType.FIND_NONOVERLAPPING;
     int index = 0;
@@ -257,7 +257,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
    * @see #replaceFirstExtended(java.util.List)
    */
   public List<T> replaceAll(List<T> replacement) {
-    List<T> res = new ArrayList<T>();
+    List<T> res = new ArrayList<>();
     FindType oldFindType = findType;
     findType = FindType.FIND_NONOVERLAPPING;
     int index = 0;
@@ -282,7 +282,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
    * @see #replaceFirstExtended(java.util.List)
    */
   public List<T> replaceFirst(List<T> replacement) {
-    List<T> res = new ArrayList<T>();
+    List<T> res = new ArrayList<>();
     FindType oldFindType = findType;
     findType = FindType.FIND_NONOVERLAPPING;
     int index = 0;
@@ -422,7 +422,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
         throw new UnsupportedOperationException();
       }
     };
-    return new IterableIterator<SequenceMatchResult<T>>(iter);
+    return new IterableIterator<>(iter);
   }
 
   /**
@@ -484,7 +484,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
   protected boolean findMatchStartBacktracking(int start, boolean matchAllTokens)
   {
     boolean matchAll = true;
-    Stack<MatchedStates> todo = new Stack<MatchedStates>();
+    Stack<MatchedStates> todo = new Stack<>();
     MatchedStates cStates = getStartStates();
     cStates.curPosition = start-1;
     todo.push(cStates);
@@ -706,7 +706,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
   /** Returns a non-null MatchedStates, which has a non-empty states list inside. */
   private MatchedStates<T> getStartStates()
   {
-    return new MatchedStates<T>(this, pattern.root);
+    return new MatchedStates<>(this, pattern.root);
   }
 
   /**
@@ -746,23 +746,23 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
       this.parent = parent;
       if (parent != null) {
         if (parent.matchedGroups != null) {
-          matchedGroups = new LinkedHashMap<Integer,MatchedGroup>(parent.matchedGroups);
+          matchedGroups = new LinkedHashMap<>(parent.matchedGroups);
         }
         if (parent.matchedResults != null) {
-          matchedResults = new LinkedHashMap<Integer,Object>(parent.matchedResults);
+          matchedResults = new LinkedHashMap<>(parent.matchedResults);
         }
         /*        if (parent.matchStateCount != null) {
     matchStateCount = new LinkedHashMap<SequencePattern.State, Pair<Integer,Boolean>>(parent.matchStateCount);
   }      */
         if (parent.matchStateInfo != null) {
-          matchStateInfo = new LinkedHashMap<SequencePattern.State, Object>(parent.matchStateInfo);
+          matchStateInfo = new LinkedHashMap<>(parent.matchStateInfo);
         }
         if (parent.bidsToCollapse != null) {
-          bidsToCollapse = new ArraySet<Integer>(parent.bidsToCollapse.size());
+          bidsToCollapse = new ArraySet<>(parent.bidsToCollapse.size());
           bidsToCollapse.addAll(parent.bidsToCollapse);
         }
         if (parent.collapsedBids != null) {
-          collapsedBids = new ArraySet<Integer>(parent.collapsedBids.size());
+          collapsedBids = new ArraySet<>(parent.collapsedBids.size());
           collapsedBids.addAll(parent.collapsedBids);
         }
       }
@@ -773,9 +773,9 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
       if (matchStateInfo != null) {
         // TODO: Make values of matchStateInfo more organized (implement some interface) so we don't
         // need this kind of specialized code
-        for (SequencePattern.State s:matchStateInfo.keySet()) {
-          if (s instanceof SequencePattern.ConjStartState) {
-            SequencePattern.ConjMatchStateInfo info = (SequencePattern.ConjMatchStateInfo) matchStateInfo.get(s);
+        for (Map.Entry<SequencePattern.State, Object> stateObjectEntry : matchStateInfo.entrySet()) {
+          if (stateObjectEntry.getKey() instanceof SequencePattern.ConjStartState) {
+            SequencePattern.ConjMatchStateInfo info = (SequencePattern.ConjMatchStateInfo) stateObjectEntry.getValue();
             info.updateKeepBids(bids);
           }
         }
@@ -785,7 +785,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
     private void addBidsToCollapse(int[] bids)
     {
       if (bidsToCollapse == null) {
-        bidsToCollapse = new ArraySet<Integer>(bids.length);
+        bidsToCollapse = new ArraySet<>(bids.length);
       }
       for (int b:bids) {
         if (b != bid) {
@@ -796,9 +796,9 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
 
     private void addMatchedGroups(Map<Integer,MatchedGroup> g)
     {
-      for (Integer k:g.keySet()) {
-        if (!matchedGroups.containsKey(k)) {
-          matchedGroups.put(k, g.get(k));
+      for (Map.Entry<Integer, MatchedGroup> integerMatchedGroupEntry : g.entrySet()) {
+        if (!matchedGroups.containsKey(integerMatchedGroupEntry.getKey())) {
+          matchedGroups.put(integerMatchedGroupEntry.getKey(), integerMatchedGroupEntry.getValue());
         }
       }
     }
@@ -806,9 +806,9 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
     private void addMatchedResults(Map<Integer,Object> res)
     {
       if (res != null) {
-        for (Integer k:res.keySet()) {
-          if (!matchedResults.containsKey(k)) {
-            matchedResults.put(k, res.get(k));
+        for (Map.Entry<Integer, Object> integerObjectEntry : res.entrySet()) {
+          if (!matchedResults.containsKey(integerObjectEntry.getKey())) {
+            matchedResults.put(integerObjectEntry.getKey(), integerObjectEntry.getValue());
           }
         }
       }
@@ -870,7 +870,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
     // The activeMatchedStates is only kept to determine what branch states are still needed
     // It's okay if it overly conservative and has more states than needed,
     // And while ideally a set, it's okay to have duplicates (esp if it is a bit faster for normal cases).
-    Collection<MatchedStates> activeMatchedStates = new ArrayList<MatchedStates>();//= Generics.newHashSet();
+    Collection<MatchedStates> activeMatchedStates = new ArrayList<>();//= Generics.newHashSet();
 
     /**
      * Links specified MatchedStates to us (list of MatchedStates
@@ -977,7 +977,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
      */
     private List<Integer> getParents(int bid)
     {
-      List<Integer> pids = new ArrayList<Integer>();
+      List<Integer> pids = new ArrayList<>();
       Pair<Integer,Integer> p = bidIndex.get(bid);
       while (p != null && p.first() >= 0) {
         pids.add(p.first());
@@ -1041,7 +1041,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
         return null;
       }
       if (add && bs.matchedGroups == null) {
-        bs.matchedGroups = new LinkedHashMap<Integer,MatchedGroup>();
+        bs.matchedGroups = new LinkedHashMap<>();
       }
       return bs.matchedGroups;
     }
@@ -1064,7 +1064,9 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
         if (mg != null) {
           // This is possible if we have patterns like "( ... )+" in which case multiple nodes can match as the subgroup
           // We will match the first occurrence and use that as the subgroup  (Java uses the last match as the subgroup)
-          logger.fine("Setting matchBegin=" + curPosition + ": Capture group " + captureGroupId + " already exists: " + mg);
+          if (logger.isLoggable(Level.FINE)) {
+            logger.fine("Setting matchBegin=" + curPosition + ": Capture group " + captureGroupId + " already exists: " + mg);
+          }
         }
         matchedGroups.put(captureGroupId, new MatchedGroup(curPosition, -1, null));
       }
@@ -1107,7 +1109,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
         return null;
       }
       if (add && bs.matchedResults == null) {
-        bs.matchedResults = new LinkedHashMap<Integer,Object>();
+        bs.matchedResults = new LinkedHashMap<>();
       }
       return bs.matchedResults;
     }
@@ -1142,11 +1144,11 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
       if (nextTotal == 1) {
         return bid;
       } else {
-        Pair<Integer,Integer> p = new Pair<Integer,Integer>(bid, nextBranchIndex);
+        Pair<Integer,Integer> p = new Pair<>(bid, nextBranchIndex);
         int i = bidIndex.indexOf(p);
         if (i < 0) {
           for (int j = 0; j < nextTotal; j++) {
-            bidIndex.add(new Pair<Integer,Integer>(bid, j+1));
+            bidIndex.add(new Pair<>(bid, j + 1));
           }
           i = bidIndex.indexOf(p);
         }
@@ -1161,7 +1163,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
         return null;
       }
       if (add && bs.matchStateInfo == null) {
-        bs.matchStateInfo = new LinkedHashMap<SequencePattern.State,Object>();
+        bs.matchStateInfo = new LinkedHashMap<>();
       }
       return bs.matchStateInfo;
     }
@@ -1192,9 +1194,9 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
       Map<SequencePattern.State,Object> matchStateCount = getMatchStateInfo(bid, true);
       Pair<Integer,Boolean> p = (Pair<Integer,Boolean>) matchStateCount.get(node);
       if (p == null) {
-        matchStateCount.put(node, new Pair<Integer,Boolean>(1,false));
+        matchStateCount.put(node, new Pair<>(1, false));
       } else {
-        matchStateCount.put(node, new Pair<Integer,Boolean>(p.first() + 1,false));
+        matchStateCount.put(node, new Pair<>(p.first() + 1, false));
       }
     }
 
@@ -1206,7 +1208,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
       Pair<Integer,Boolean> p = (Pair<Integer,Boolean>) matchStateCount.get(node);
       if (p != null) {
         int v = p.first();
-        matchStateCount.put(node, new Pair<Integer,Boolean>(v,true));
+        matchStateCount.put(node, new Pair<>(v, true));
         return v;
       } else {
         return 0;
@@ -1253,7 +1255,9 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
               bs.addMatchedGroups(cbs.matchedGroups);
               bs.addMatchedResults(cbs.matchedResults);
             } else {
-              logger.finest("Unable to find state info for bid=" + cbid);
+              if (logger.isLoggable(Level.FINEST)) {
+                logger.finest("Unable to find state info for bid=" + cbid);
+              }
             }
           }
         }
@@ -1300,8 +1304,8 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
 
     private MatchedStates(SequenceMatcher<T> matcher, BranchStates branchStates) {
       this.matcher = matcher;
-      states = new ArrayList<State>();
-      oldStates = new ArrayList<State>();
+      states = new ArrayList<>();
+      oldStates = new ArrayList<>();
       this.branchStates = branchStates;
       branchStates.link(this);
     }
@@ -1319,20 +1323,19 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
      */
     protected MatchedStates split(int branchLimit)
     {
-      Set<Integer> curBidSet = new HashSet<Integer>();//Generics.newHashSet();
+      Set<Integer> curBidSet = new HashSet<>();//Generics.newHashSet();
       for (State state:states) {
         curBidSet.add(state.bid);
       }
-      List<Integer> bids = new ArrayList<Integer>(curBidSet);
+      List<Integer> bids = new ArrayList<>(curBidSet);
       Collections.sort(bids, (o1, o2) -> {
         int res = compareMatches(o1, o2);
         return res;
       });
 
-      MatchedStates<T> newStates = new MatchedStates<T>(matcher, branchStates);
+      MatchedStates<T> newStates = new MatchedStates<>(matcher, branchStates);
       int v = Math.min(branchLimit, (bids.size()+1)/2);
-      Set<Integer> keepBidSet = new HashSet<Integer>();//Generics.newHashSet();
-      keepBidSet.addAll(bids.subList(0, v));
+      Set<Integer> keepBidSet = new HashSet<>(bids.subList(0, v));//Generics.newHashSet();
       swapAndClear();
       for (State s:oldStates) {
         if (keepBidSet.contains(s.bid)) {
@@ -1447,7 +1450,7 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
      */
     private Collection<Integer> getMatchIndices()
     {
-      Set<Integer> allMatchIndices = new HashSet<Integer>();// Generics.newHashSet();
+      Set<Integer> allMatchIndices = new HashSet<>();// Generics.newHashSet();
       for (int i = 0; i < states.size(); i++) {
         State state = states.get(i);
         if (state.tstate.equals(SequencePattern.MATCH_STATE)) {
@@ -1505,8 +1508,8 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
           branchStates.mergeBranchStates(bs);
           Map<Integer,MatchedGroup> matchedGroups = bs.matchedGroups;
           if (matchedGroups != null) {
-            for (int group:matchedGroups.keySet()) {
-              matcher.matchedGroups[group] = matchedGroups.get(group);
+            for (Map.Entry<Integer, MatchedGroup> integerMatchedGroupEntry : matchedGroups.entrySet()) {
+              matcher.matchedGroups[integerMatchedGroupEntry.getKey()] = integerMatchedGroupEntry.getValue();
             }
           }
           Map<Integer,Object> matchedResults = bs.matchedResults;
@@ -1514,8 +1517,8 @@ public class SequenceMatcher<T> extends BasicSequenceMatchResult<T> {
             if (matcher.matchedResults == null) {
               matcher.matchedResults = new Object[matcher.elements().size()];
             }
-            for (int index:matchedResults.keySet()) {
-              matcher.matchedResults[index] = matchedResults.get(index);
+            for (Map.Entry<Integer, Object> integerObjectEntry : matchedResults.entrySet()) {
+              matcher.matchedResults[integerObjectEntry.getKey()] = integerObjectEntry.getValue();
             }
           }
         }

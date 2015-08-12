@@ -192,11 +192,11 @@ public class UnlabeledAttachmentEval extends AbstractEval {
     int skippedGuessTrees = 0;
     while( guessItr.hasNext() && goldItr.hasNext() ) {
       Tree guessTree = guessItr.next();
-      List<Label> guessYield = guessTree.yield();
+      List<? extends Label> guessYield = guessTree.yield();
       guessLineId++;
 
       Tree goldTree = goldItr.next();
-      List<Label> goldYield = goldTree.yield();
+      List<? extends Label> goldYield = goldTree.yield();
       goldLineId++;
 
       // Check that we should evaluate this tree

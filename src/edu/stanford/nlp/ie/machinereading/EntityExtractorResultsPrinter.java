@@ -51,9 +51,9 @@ public class EntityExtractorResultsPrinter extends ResultsPrinter {
 	    List<CoreMap> extractorOutput) {
 		ResultsPrinter.align(goldStandard, extractorOutput);
 
-		Counter<String> correct = new ClassicCounter<String>();
-		Counter<String> predicted = new ClassicCounter<String>();
-		Counter<String> gold = new ClassicCounter<String>();
+		Counter<String> correct = new ClassicCounter<>();
+		Counter<String> predicted = new ClassicCounter<>();
+		Counter<String> gold = new ClassicCounter<>();
 
 		for (int i = 0; i < goldStandard.size(); i++) {
 			CoreMap goldSent = goldStandard.get(i);
@@ -66,11 +66,11 @@ public class EntityExtractorResultsPrinter extends ResultsPrinter {
 				System.err.println(sysSent.get(CoreAnnotations.TokensAnnotation.class));
 			}
 
-			HashSet<String> matchedGolds = new HashSet<String>();
+			HashSet<String> matchedGolds = new HashSet<>();
 			List<EntityMention> goldEntities = goldSent
 			    .get(MachineReadingAnnotations.EntityMentionsAnnotation.class);
 			if (goldEntities == null) {
-				goldEntities = new ArrayList<EntityMention>();
+				goldEntities = new ArrayList<>();
 			}
 
 			for (EntityMention m : goldEntities) {
@@ -83,7 +83,7 @@ public class EntityExtractorResultsPrinter extends ResultsPrinter {
 			List<EntityMention> sysEntities = sysSent
 			    .get(MachineReadingAnnotations.EntityMentionsAnnotation.class);
 			if (sysEntities == null) {
-				sysEntities = new ArrayList<EntityMention>();
+				sysEntities = new ArrayList<>();
 			}
 			for (EntityMention m : sysEntities) {
 				String label = makeLabel(m);
@@ -135,7 +135,7 @@ public class EntityExtractorResultsPrinter extends ResultsPrinter {
 		double totalCorrect = 0;
 		double totalPredicted = 0;
 		pw.println("Label\tCorrect\tPredict\tActual\tPrecn\tRecall\tF");
-		List<String> labels = new ArrayList<String>(gold.keySet());
+		List<String> labels = new ArrayList<>(gold.keySet());
 		Collections.sort(labels);
 		for (String label : labels) {
 			if (excludedClasses != null && excludedClasses.contains(label))
@@ -147,10 +147,10 @@ public class EntityExtractorResultsPrinter extends ResultsPrinter {
 			double recall = numCorrect / trueCount;
 			double f = (precision + recall > 0) ? 2 * precision * recall
 			    / (precision + recall) : 0.0;
-			pw.println(StringUtils.padOrTrim(label, 21) + "\t" + numCorrect + "\t"
-			    + numPredicted + "\t" + trueCount + "\t"
-			    + FORMATTER.format(precision * 100) + "\t"
-			    + FORMATTER.format(100 * recall) + "\t" + FORMATTER.format(100 * f));
+			pw.println(StringUtils.padOrTrim(label, 21) + '\t' + numCorrect + '\t'
+			    + numPredicted + '\t' + trueCount + '\t'
+			    + FORMATTER.format(precision * 100) + '\t'
+			    + FORMATTER.format(100 * recall) + '\t' + FORMATTER.format(100 * f));
 			totalCount += trueCount;
 			totalCorrect += numCorrect;
 			totalPredicted += numPredicted;
@@ -160,15 +160,15 @@ public class EntityExtractorResultsPrinter extends ResultsPrinter {
 		double recall = totalCorrect / totalCount;
 		double f = (totalPredicted > 0 && totalCorrect > 0) ? 2 * precision
 		    * recall / (precision + recall) : 0.0;
-		pw.println("Total\t" + totalCorrect + "\t" + totalPredicted + "\t"
-		    + totalCount + "\t" + FORMATTER.format(100 * precision) + "\t"
-		    + FORMATTER.format(100 * recall) + "\t" + FORMATTER.format(100 * f));		
+		pw.println("Total\t" + totalCorrect + '\t' + totalPredicted + '\t'
+		    + totalCount + '\t' + FORMATTER.format(100 * precision) + '\t'
+		    + FORMATTER.format(100 * recall) + '\t' + FORMATTER.format(100 * f));
 	}
 
 	private String makeLabel(EntityMention m) {
 		String label = m.getType();
 		if (useSubTypes && m.getSubType() != null)
-			label += "-" + m.getSubType();
+			label += '-' + m.getSubType();
 		return label;
 	}
 	

@@ -113,13 +113,13 @@ public class CategoryWordTag extends StringLabel implements HasCategory, HasWord
       if ((word() == null || tag() == null) || !printWordTag || (suppressTerminalDetails && (word().equals(category()) || tag().equals(category())))) {
         return category();
       } else {
-        return category() + "[" + word() + "/" + tag() + "]";
+        return category() + '[' + word() + '/' + tag() + ']';
       }
     } else {
       if (tag() == null) {
         return word();
       } else {
-        return word() + "/" + tag();
+        return word() + '/' + tag();
       }
     }
   }
@@ -134,7 +134,7 @@ public class CategoryWordTag extends StringLabel implements HasCategory, HasWord
    */
   public String toString(String mode) {
     if ("full".equals(mode)) {
-        return category() + "[" + word() + "/" + tag() + "]";
+        return category() + '[' + word() + '/' + tag() + ']';
     }
     return toString();
   }

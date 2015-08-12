@@ -29,26 +29,26 @@ public class MWETreeVisitor implements TreeVisitor {
     ops = loadOps();
   }
   
-  private List<Pair<TregexPattern, TsurgeonPattern>> loadOps() {
-    List<Pair<TregexPattern,TsurgeonPattern>> ops = new ArrayList<Pair<TregexPattern,TsurgeonPattern>>();
+  private static List<Pair<TregexPattern, TsurgeonPattern>> loadOps() {
+    List<Pair<TregexPattern,TsurgeonPattern>> ops = new ArrayList<>();
     
     String line = null;
     try {
       BufferedReader br = new BufferedReader(new StringReader(editStr));
-      List<TsurgeonPattern> tsp = new ArrayList<TsurgeonPattern>();
+      List<TsurgeonPattern> tsp = new ArrayList<>();
       while ((line = br.readLine()) != null) {
         if (DEBUG) System.err.print("Pattern is " + line);
         TregexPattern matchPattern = TregexPattern.compile(line);
-        if (DEBUG) System.err.println(" [" + matchPattern + "]");
+        if (DEBUG) System.err.println(" [" + matchPattern + ']');
         tsp.clear();
         while (continuing(line = br.readLine())) {
           TsurgeonPattern p = Tsurgeon.parseOperation(line);
-          if (DEBUG) System.err.println("Operation is " + line + " [" + p + "]");
+          if (DEBUG) System.err.println("Operation is " + line + " [" + p + ']');
           tsp.add(p);
         }
         if ( ! tsp.isEmpty()) {
           TsurgeonPattern tp = Tsurgeon.collectOperations(tsp);
-          ops.add(new Pair<TregexPattern,TsurgeonPattern>(matchPattern, tp));
+          ops.add(new Pair<>(matchPattern, tp));
         }
       } // while not at end of file
     } catch (IOException ioe) {
@@ -76,6 +76,6 @@ public class MWETreeVisitor implements TreeVisitor {
     ("@VP=vp < /PP-CLR/=pp\n"
         + "relabel vp MWV\n"
         + "relabel pp MWP\n"
-        + "\n");
+        + '\n');
 
 }

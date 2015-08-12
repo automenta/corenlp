@@ -40,7 +40,7 @@ public class State implements Scored {
    * with CoreLabels and have HeadWord and HeadTag annotations set.
    */
   public State(List<Tree> sentence) {
-    this(new TreeShapedStack<Tree>(), new TreeShapedStack<Transition>(), findSeparators(sentence), sentence, 0, 0.0, false);
+    this(new TreeShapedStack<>(), new TreeShapedStack<>(), findSeparators(sentence), sentence, 0, 0.0, false);
   }
 
   State(TreeShapedStack<Tree> stack, TreeShapedStack<Transition> transitions, TreeMap<Integer, String> separators,
@@ -236,12 +236,12 @@ public class State implements Scored {
   public String toString() {
     StringBuilder result = new StringBuilder();
     result.append("State summary\n");
-    result.append("  Tokens: " + sentence + "\n");
-    result.append("  Token position: " + tokenPosition + "\n");
-    result.append("  Current stack contents: " + stack.toString("\n") + "\n");
-    result.append("  Component transitions: " + transitions + "\n");
-    result.append("  Score: " + score + "\n");
-    result.append("  " + ((finished) ? "" : "not ") + "finished\n");
+    result.append("  Tokens: ").append(sentence).append('\n');
+    result.append("  Token position: ").append(tokenPosition).append('\n');
+    result.append("  Current stack contents: ").append(stack.toString("\n")).append('\n');
+    result.append("  Component transitions: ").append(transitions).append('\n');
+    result.append("  Score: ").append(score).append('\n');
+    result.append("  ").append((finished) ? "" : "not ").append("finished\n");
     return result.toString();
   }
 

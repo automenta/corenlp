@@ -68,29 +68,29 @@ public class PatternToken implements Serializable {
   public String toStringToWrite() {
     String s = "X";
     if (useTag)
-      s += ":" + tag;
+      s += ':' + tag;
     if (useNER)
-      s += ":" + nerTag;
+      s += ':' + nerTag;
     if (useTargetParserParentRestriction)
-      s += ":" + grandparentParseTag;
+      s += ':' + grandparentParseTag;
     // if(notAllowedClasses !=null && notAllowedClasses.size() > 0){
     // s+= ":!(";
     // s+= StringUtils.join(notAllowedClasses,"|")+")";
     // }
     if (numWordsCompound > 1)
-      s += "{" + numWordsCompound + "}";
+      s += "{" + numWordsCompound + '}';
     return s;
   }
 
   String getTokenStr(List<String> notAllowedClasses) {
     String str = " (?$term ";
-    List<String> restrictions = new ArrayList<String>();
+    List<String> restrictions = new ArrayList<>();
     if (useTag) {
       restrictions.add("{tag:/" + tag + ".*/}");
     }
 
     if (useNER) {
-      restrictions.add("{ner:" + nerTag + "}");
+      restrictions.add("{ner:" + nerTag + '}');
     }
 
     if (useTargetParserParentRestriction) {
@@ -99,10 +99,10 @@ public class PatternToken implements Serializable {
 
     if (notAllowedClasses != null && notAllowedClasses.size() > 0) {
       for (String na : notAllowedClasses)
-        restrictions.add("!{" + na + ":" + na +"}");
+        restrictions.add("!{" + na + ':' + na + '}');
     }
-    str += "[" + StringUtils.join(restrictions, " & ") + "]{1,"
-        + numWordsCompound + "}";
+    str += '[' + StringUtils.join(restrictions, " & ") + "]{1,"
+        + numWordsCompound + '}';
 
     str += ")";
 

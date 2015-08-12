@@ -41,10 +41,10 @@ public class LibSVMReaderAndWriter implements DocumentReaderAndWriter<CoreLabel>
   private class ColumnDocParser implements Function<String,List<CoreLabel>> {
     public List<CoreLabel> apply(String doc) {
 
-      if (num % 1000 == 0) { System.err.print("["+num+"]"); }
+      if (num % 1000 == 0) { System.err.print("["+num+ ']'); }
       num++;
       
-      List<CoreLabel> words = new ArrayList<CoreLabel>();
+      List<CoreLabel> words = new ArrayList<>();
       
       String[] lines = doc.split("\n");
       
@@ -71,7 +71,7 @@ public class LibSVMReaderAndWriter implements DocumentReaderAndWriter<CoreLabel>
     for (CoreLabel wi : doc) {
       String answer = wi.get(CoreAnnotations.AnswerAnnotation.class);
       String goldAnswer = wi.get(CoreAnnotations.GoldAnswerAnnotation.class);
-      out.println(goldAnswer + "\t" + answer);
+      out.println(goldAnswer + '\t' + answer);
     }
     out.println();
   }

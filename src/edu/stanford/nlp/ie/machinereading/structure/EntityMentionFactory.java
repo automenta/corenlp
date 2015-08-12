@@ -18,14 +18,14 @@ public class EntityMentionFactory implements Serializable {
 	   * @param subtype
 	   * @param mentionType
 	   */
-	  public EntityMention constructEntityMention(
+	  public static EntityMention constructEntityMention(
 			  String objectId,
-		      CoreMap sentence,
-		      Span extentSpan,
-		      Span headSpan,
-		      String type,
-		      String subtype,
-		      String mentionType) {
+			  CoreMap sentence,
+			  Span extentSpan,
+			  Span headSpan,
+			  String type,
+			  String subtype,
+			  String mentionType) {
 		  return new EntityMention(objectId, sentence, extentSpan, headSpan, type, subtype, mentionType);
 	  }
 }

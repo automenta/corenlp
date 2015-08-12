@@ -8,7 +8,6 @@ import java.util.PriorityQueue;
 
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.Sentence;
-import edu.stanford.nlp.neural.rnn.RNNCoreAnnotations;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.util.Generics;
 
@@ -61,7 +60,7 @@ public class TopNGramRecord {
   /**
    * Remove everything but the skeleton, the predictions, and the labels
    */
-  private Tree simplifyTree(Tree tree) {
+  private static Tree simplifyTree(Tree tree) {
     CoreLabel newLabel = new CoreLabel();
     newLabel.set(RNNCoreAnnotations.Predictions.class, RNNCoreAnnotations.getPredictions(tree));
     newLabel.setValue(tree.label().value());
@@ -104,12 +103,12 @@ public class TopNGramRecord {
     if (queue != null) {
       return queue;
     }
-    queue = new PriorityQueue<Tree>(ngramCount + 1, scoreComparator(prediction));
+    queue = new PriorityQueue<>(ngramCount + 1, scoreComparator(prediction));
     ngrams.put(size, queue);
     return queue;
   }
 
-  private Comparator<Tree> scoreComparator(final int prediction) { 
+  private static Comparator<Tree> scoreComparator(final int prediction) {
     return (tree1, tree2) -> {
       double score1 = RNNCoreAnnotations.getPredictions(tree1).get(prediction);
       double score2 = RNNCoreAnnotations.getPredictions(tree2).get(prediction);
@@ -126,15 +125,15 @@ public class TopNGramRecord {
   public String toString() {
     StringBuilder result = new StringBuilder();
     for (int prediction = 0; prediction < numClasses; ++prediction) {
-      result.append("Best scores for class " + prediction + "\n");
+      result.append("Best scores for class ").append(prediction).append('\n');
       Map<Integer, PriorityQueue<Tree>> ngrams = classToNGrams.get(prediction);
       for (Map.Entry<Integer, PriorityQueue<Tree>> entry : ngrams.entrySet()) {
         List<Tree> trees = Generics.newArrayList(entry.getValue());
         Collections.sort(trees, scoreComparator(prediction));
-        result.append("  Len " + entry.getKey() + "\n");
+        result.append("  Len ").append(entry.getKey()).append('\n');
         for (int i = trees.size() - 1; i >= 0; i--) {
           Tree tree = trees.get(i);
-          result.append("    " + Sentence.listToString(tree.yield()) + "  [" + RNNCoreAnnotations.getPredictions(tree).get(prediction) + "]\n");
+          result.append("    ").append(Sentence.listToString(tree.yield())).append("  [").append(RNNCoreAnnotations.getPredictions(tree).get(prediction)).append("]\n");
         }
       }
     }

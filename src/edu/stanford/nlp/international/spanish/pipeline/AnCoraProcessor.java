@@ -67,7 +67,7 @@ public class AnCoraProcessor {
         ("unigramTagger")));
       unigramTagger = (TwoDimensionalCounter<String, String>) ois.readObject();
     } else {
-      unigramTagger = new TwoDimensionalCounter<String, String>();
+      unigramTagger = new TwoDimensionalCounter<>();
     }
   }
 
@@ -96,7 +96,7 @@ public class AnCoraProcessor {
 
     final SpanishXMLTreeReaderFactory trf = new SpanishXMLTreeReaderFactory(true, true, ner, false);
 
-    List<Tree> trees = new ArrayList<Tree>();
+    List<Tree> trees = new ArrayList<>();
     for (File file : inputFiles) {
       Pair<TwoDimensionalCounter<String, String>, List<Tree>> ret = processTreeFile(file, trf,
                                                                                     encoding);
@@ -115,14 +115,14 @@ public class AnCoraProcessor {
   private static Pair<TwoDimensionalCounter<String, String>, List<Tree>> processTreeFile(
     File file, SpanishXMLTreeReaderFactory trf, String encoding) {
 
-    TwoDimensionalCounter<String, String> tagger = new TwoDimensionalCounter<String, String>();
+    TwoDimensionalCounter<String, String> tagger = new TwoDimensionalCounter<>();
 
     try {
       Reader in = new BufferedReader(new InputStreamReader(new FileInputStream(file),
                                                            encoding));
       TreeReader tr = trf.newTreeReader(file.getPath(), in);
 
-      List<Tree> trees = new ArrayList<Tree>();
+      List<Tree> trees = new ArrayList<>();
       Tree t, splitPoint;
 
       while ((t = tr.readTree()) != null) {
@@ -143,7 +143,7 @@ public class AnCoraProcessor {
 
       tr.close();
 
-      return new Pair<TwoDimensionalCounter<String, String>, List<Tree>>(tagger, trees);
+      return new Pair<>(tagger, trees);
     } catch (IOException e) {
       e.printStackTrace();
       return null;
@@ -185,7 +185,7 @@ public class AnCoraProcessor {
    */
   static Pair<Tree, Tree> split(Tree t, Tree splitPoint) {
     if (splitPoint == null)
-      return new Pair<Tree, Tree>(t, null);
+      return new Pair<>(t, null);
 
     Tree left = t.prune(new LeftOfFilter(splitPoint, t));
     Tree right = t.prune(new RightOfExclusiveFilter(splitPoint, t));
@@ -193,7 +193,7 @@ public class AnCoraProcessor {
     left = splittingNormalizer.normalizeWholeTree(left, splittingTreeFactory);
     right = splittingNormalizer.normalizeWholeTree(right, splittingTreeFactory);
 
-    return new Pair<Tree, Tree>(left, right);
+    return new Pair<>(left, right);
   }
 
   /**
@@ -227,9 +227,13 @@ public class AnCoraProcessor {
       return Trees.rightEdge(rightmostDescendant, root) <= Trees.leftEdge(reference, root);
     }
 
-    private Tree getRightmostDescendant(Tree t) {
-      if (t.isLeaf()) return t;
-      else return getRightmostDescendant(t.children()[t.children().length - 1]);
+    private static Tree getRightmostDescendant(Tree t) {
+      while (true) {
+        if (t.isLeaf()) return t;
+        else {
+          t = t.children()[t.children().length - 1];
+        }
+      }
     }
   }
 
@@ -279,24 +283,30 @@ public class AnCoraProcessor {
     /**
      * Get the right sibling of the given node, or some node which is
      * the right sibling of an ancestor of the given node.
-     *
+     * <p>
      * If no such node can be found, this method returns {@code null}.
      */
-    private Tree getRightSiblingOrRightAncestor(Tree t, Tree root) {
-      Tree parent = t.parent(root);
-      if (parent == null) return null;
+    private static Tree getRightSiblingOrRightAncestor(Tree t, Tree root) {
+      while (true) {
+        Tree parent = t.parent(root);
+        if (parent == null) return null;
 
-      int idxWithinParent = parent.objectIndexOf(t);
-      if (idxWithinParent < parent.numChildren() - 1)
-        // Easy case: just return the immediate right sibling
-        return parent.getChild(idxWithinParent + 1);
+        int idxWithinParent = parent.objectIndexOf(t);
+        if (idxWithinParent < parent.numChildren() - 1)
+          // Easy case: just return the immediate right sibling
+          return parent.getChild(idxWithinParent + 1);
 
-      return getRightSiblingOrRightAncestor(parent, root);
+        t = parent;
+      }
     }
 
-    private Tree getLeftmostDescendant(Tree t) {
-      if (t.isLeaf()) return t;
-      else return getLeftmostDescendant(t.children()[0]);
+    private static Tree getLeftmostDescendant(Tree t) {
+      while (true) {
+        if (t.isLeaf()) return t;
+        else {
+          t = t.children()[0];
+        }
+      }
     }
   }
 
@@ -346,7 +356,7 @@ public class AnCoraProcessor {
 
     @Override
     public Collection<Tree> process(Collection<Tree> coll) {
-      List<Tree> ret = new ArrayList<Tree>();
+      List<Tree> ret = new ArrayList<>();
 
       // Apparently TsurgeonPatterns are not thread safe
       MultiWordTreeExpander expander = new MultiWordTreeExpander();
@@ -394,13 +404,13 @@ public class AnCoraProcessor {
 
     int availableProcessors = Runtime.getRuntime().availableProcessors();
     MulticoreWrapper<Collection<Tree>, Collection<Tree>> wrapper =
-      new MulticoreWrapper<Collection<Tree>, Collection<Tree>>(availableProcessors, processor,
-                                                               false);
+            new MulticoreWrapper<>(availableProcessors, processor,
+                    false);
 
     // Chunk our work so that parallelization is actually worth it
     int numChunks = availableProcessors * 20;
     List<Collection<Tree>> chunked = CollectionUtils.partitionIntoFolds(trees, numChunks);
-    List<Tree> ret = new ArrayList<Tree>();
+    List<Tree> ret = new ArrayList<>();
 
     for (final Collection<Tree> coll : chunked) {
       wrapper.put(coll);
@@ -427,7 +437,7 @@ public class AnCoraProcessor {
       "        want each step to benefit from a complete tagger.)\n" +
       "    -ner: Add NER-specific information to trees\n";
 
-  private static final Map<String, Integer> argOptionDefs = new HashMap<String, Integer>();
+  private static final Map<String, Integer> argOptionDefs = new HashMap<>();
   static {
     argOptionDefs.put("unigramTagger", 1);
     argOptionDefs.put("ner", 0);
@@ -440,7 +450,7 @@ public class AnCoraProcessor {
 
     Properties options = StringUtils.argsToProperties(args, argOptionDefs);
     String[] remainingArgs = options.getProperty("").split(" ");
-    List<File> fileList = new ArrayList<File>();
+    List<File> fileList = new ArrayList<>();
     for (String arg : remainingArgs)
       fileList.add(new File(arg));
 

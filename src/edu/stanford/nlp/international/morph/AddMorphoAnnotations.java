@@ -65,9 +65,7 @@ public final class AddMorphoAnnotations {
         } else {
           fileReader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName), "UTF-8"));
         }
-      } catch (UnsupportedEncodingException e) {
-        e.printStackTrace();
-      } catch (FileNotFoundException e) {
+      } catch (UnsupportedEncodingException | FileNotFoundException e) {
         e.printStackTrace();
       }
       primeNext();
@@ -81,7 +79,7 @@ public final class AddMorphoAnnotations {
               nextYield = null;
             } else {
               List<CoreLabel> mLabeledLeaves = tree.taggedLabeledYield();
-              nextYield = new ArrayList<String>(mLabeledLeaves.size());
+              nextYield = new ArrayList<>(mLabeledLeaves.size());
               for (CoreLabel label : mLabeledLeaves) {
                 nextYield.add(label.tag());
               }
@@ -199,8 +197,6 @@ public final class AddMorphoAnnotations {
       System.err.printf("Processed %d trees%n",nTrees);
       
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();

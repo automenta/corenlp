@@ -27,11 +27,11 @@ public abstract class OutputHandler extends LogRecordHandler{
    * A list of tracks which have been started but not yet printed as no
    * log messages are in them yet.
    */
-  protected LinkedList<Record> queuedTracks = new LinkedList<Record>();
+  protected LinkedList<Record> queuedTracks = new LinkedList<>();
   /**
    * Information about the current and higher level tracks
    */
-  protected Stack<TrackInfo> trackStack = new Stack<TrackInfo>();
+  protected Stack<TrackInfo> trackStack = new Stack<>();
   /**
    * The current track info; used to avoid trackStack.peek() calls
    */
@@ -214,11 +214,11 @@ public abstract class OutputHandler extends LogRecordHandler{
       }
       //(write margin)
       for(int i=0; i<leftMargin; i++){
-        b.append(" ");
+        b.append(' ');
       }
       //(write name)
       writeContent(signal.depth,signal.content,b);
-      if(signal.content.toString().length() > 0){ b.append(" "); }
+      if(signal.content.toString().length() > 0){ b.append(' '); }
       //(print)
       print(null, this.style(new StringBuilder(), b.toString(), trackColor, trackStyle).toString() );
       this.missingOpenBracket = true;  //only set to false if actually updated track state
@@ -238,7 +238,7 @@ public abstract class OutputHandler extends LogRecordHandler{
     String[] content;
     if (record.content instanceof Throwable) {
       //(vars)
-      List<String> lines = new ArrayList<String>();
+      List<String> lines = new ArrayList<>();
       StackTraceElement[] trace = null;
       StackTraceElement topTraceElement= null;
       //(root message)
@@ -299,7 +299,7 @@ public abstract class OutputHandler extends LogRecordHandler{
     Color color = Color.NONE;
     Style style = Style.NONE;
     //(get channels)
-    ArrayList<Object> printableChannels = new ArrayList<Object>();
+    ArrayList<Object> printableChannels = new ArrayList<>();
     for(Object chan : record.channels()){
       if(chan instanceof Color){ color = (Color) chan; }
       else if(chan instanceof Style){ style = (Style) chan; }
@@ -308,7 +308,7 @@ public abstract class OutputHandler extends LogRecordHandler{
     //--Write Channels
     if(leftMargin > 2) {	//don't print if not enough space
       //((print channels)
-      b.append("["); cursorPos += 1;
+      b.append('['); cursorPos += 1;
       Object lastChan = null;
       boolean wasAnyChannelPrinted = false;
       for(int i=0; i<printableChannels.size(); i++) {
@@ -320,7 +320,7 @@ public abstract class OutputHandler extends LogRecordHandler{
         if(toPrint.length() > leftMargin-1){ toPrint = toPrint.substring(0,leftMargin-2); }
         if(cursorPos+toPrint.length() >= leftMargin){
           //(case: doesn't fit)
-          while(cursorPos < leftMargin){ b.append(" "); cursorPos += 1; }
+          while(cursorPos < leftMargin){ b.append(' '); cursorPos += 1; }
           if(contentLinesPrinted < content.length){
             writeContent(record.depth, style(new StringBuilder(),content[contentLinesPrinted],color,style).toString(), b);
             contentLinesPrinted += 1;
@@ -335,7 +335,7 @@ public abstract class OutputHandler extends LogRecordHandler{
         cursorPos += toPrint.length();
       }
       if (wasAnyChannelPrinted) {
-        b.append("]");
+        b.append(']');
         cursorPos += 1;
       } else {
         b.setLength(b.length() - 1);  // remove leading "["
@@ -345,21 +345,21 @@ public abstract class OutputHandler extends LogRecordHandler{
     //--Content
     //(write content)
     while(contentLinesPrinted < content.length) {
-      while(cursorPos < leftMargin){ b.append(" "); cursorPos += 1; }
+      while(cursorPos < leftMargin){ b.append(' '); cursorPos += 1; }
       writeContent(record.depth, style(new StringBuilder(),content[contentLinesPrinted],color,style).toString(), b);
       contentLinesPrinted += 1;
-      if(contentLinesPrinted < content.length){ b.append("\n"); cursorPos = 0; }
+      if(contentLinesPrinted < content.length){ b.append('\n'); cursorPos = 0; }
     }
     //(print)
     if (b.length() == 0 || b.charAt(b.length() - 1) != '\n') {
-      b.append("\n");
+      b.append('\n');
     }
     print(record.channels(), b.toString());
     //--Continue
     if(info != null){
       info.numElementsPrinted += 1;
     }
-    ArrayList<Record> rtn = new ArrayList<Record>();
+    ArrayList<Record> rtn = new ArrayList<>();
     rtn.add(record);
     return rtn;
   }

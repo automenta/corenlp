@@ -18,20 +18,14 @@ import org.xml.sax.SAXException;
 import edu.stanford.nlp.io.ReaderInputStream;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
-import edu.stanford.nlp.ling.HasCategory;
-import edu.stanford.nlp.ling.HasContext;
-import edu.stanford.nlp.ling.HasIndex;
 import edu.stanford.nlp.ling.HasLemma;
 import edu.stanford.nlp.ling.HasTag;
 import edu.stanford.nlp.ling.HasWord;
-import edu.stanford.nlp.ling.Label;
-import edu.stanford.nlp.ling.Sentence;
 import edu.stanford.nlp.trees.LabeledScoredTreeFactory;
 import edu.stanford.nlp.trees.Tree;
 import edu.stanford.nlp.trees.TreeFactory;
 import edu.stanford.nlp.trees.TreeNormalizer;
 import edu.stanford.nlp.trees.TreeReader;
-import edu.stanford.nlp.trees.TreeReaderFactory;
 import edu.stanford.nlp.trees.TreebankLanguagePack;
 import edu.stanford.nlp.util.Generics;
 import edu.stanford.nlp.util.PropertiesUtils;
@@ -155,11 +149,11 @@ public class SpanishXMLTreeReader implements TreeReader {
     return t;
   }
 
-  private boolean isWordNode(Element node) {
+  private static boolean isWordNode(Element node) {
     return node.hasAttribute(ATTR_WORD) && !node.hasChildNodes();
   }
 
-  private boolean isEllipticNode(Element node) {
+  private static boolean isEllipticNode(Element node) {
     return node.hasAttribute(ATTR_ELLIPTIC);
   }
 
@@ -178,16 +172,20 @@ public class SpanishXMLTreeReader implements TreeReader {
       // character of their POS tags, but still have a proper named
       // entity annotation in the `ne` attribute. Fix this:
       char annotation = '0';
-      if (namedAttribute.equals("location")) {
-        annotation = 'l';
-      } else if (namedAttribute.equals("person")) {
-        annotation = 'p';
-      } else if (namedAttribute.equals("organization")) {
-        annotation = 'o';
+      switch (namedAttribute) {
+        case "location":
+          annotation = 'l';
+          break;
+        case "person":
+          annotation = 'p';
+          break;
+        case "organization":
+          annotation = 'o';
+          break;
       }
 
       pos = pos.substring(0, 6) + annotation;
-    } else if (pos.equals("")) {
+    } else if (pos.isEmpty()) {
       // Make up for some missing part-of-speech tags
       String word = getWord(node);
       if (word.equals("."))
@@ -200,12 +198,13 @@ public class SpanishXMLTreeReader implements TreeReader {
       }
 
       String tagName = node.getTagName();
-      if (tagName.equals("i")) {
-        return "i";
-      } else if (tagName.equals("r")) {
-        return "rg";
-      } else if (tagName.equals("z")) {
-        return "z0";
+      switch (tagName) {
+        case "i":
+          return "i";
+        case "r":
+          return "rg";
+        case "z":
+          return "z0";
       }
 
       // Handle icky issues related to "que"
@@ -259,16 +258,18 @@ public class SpanishXMLTreeReader implements TreeReader {
       }
 
       if (node.hasAttribute(ATTR_PUNCT)) {
-        if (word.equals("\""))
-          return "fe";
-        else if (word.equals("'"))
-          return "fz";
-        else if (word.equals("-"))
-          return "fg";
-        else if (word.equals("("))
-          return "fpa";
-        else if (word.equals(")"))
-          return "fpt";
+        switch (word) {
+          case "\"":
+            return "fe";
+          case "'":
+            return "fz";
+          case "-":
+            return "fg";
+          case "(":
+            return "fpa";
+          case ")":
+            return "fpt";
+        }
 
         return "fz";
       }
@@ -277,9 +278,9 @@ public class SpanishXMLTreeReader implements TreeReader {
     return pos;
   }
 
-  private String getWord(Element node) {
+  private static String getWord(Element node) {
     String word = node.getAttribute(ATTR_WORD);
-    if (word.equals(""))
+    if (word.isEmpty())
       return SpanishTreeNormalizer.EMPTY_LEAF_VALUE;
 
     return word.trim();
@@ -293,7 +294,7 @@ public class SpanishXMLTreeReader implements TreeReader {
     } else if (isEllipticNode(eRoot)) {
       return buildEllipticNode(eRoot);
     } else {
-      List<Tree> kids = new ArrayList<Tree>();
+      List<Tree> kids = new ArrayList<>();
       for (Node childNode = eRoot.getFirstChild(); childNode != null;
            childNode = childNode.getNextSibling()) {
         if (childNode.getNodeType() != Node.ELEMENT_NODE) continue;
@@ -329,7 +330,7 @@ public class SpanishXMLTreeReader implements TreeReader {
     if (leafNode.label() instanceof HasLemma && lemma != null)
       ((HasLemma) leafNode.label()).setLemma(lemma);
 
-    List<Tree> kids = new ArrayList<Tree>();
+    List<Tree> kids = new ArrayList<>();
     kids.add(leafNode);
 
     Tree t = treeFactory.newTreeNode(posStr, kids);
@@ -345,7 +346,7 @@ public class SpanishXMLTreeReader implements TreeReader {
     Element eRoot = (Element) root;
     String constituentStr = eRoot.getNodeName();
 
-    List<Tree> kids = new ArrayList<Tree>();
+    List<Tree> kids = new ArrayList<>();
     Tree leafNode = treeFactory.newLeaf(SpanishTreeNormalizer.EMPTY_LEAF_VALUE);
     if (leafNode.label() instanceof HasWord)
       ((HasWord) leafNode.label()).setWord(SpanishTreeNormalizer.EMPTY_LEAF_VALUE);
@@ -411,7 +412,7 @@ public class SpanishXMLTreeReader implements TreeReader {
     StringBuilder sb = new StringBuilder();
     List<Tree> leaves = tree.getLeaves();
     for (Tree leaf : leaves)
-      sb.append(((CoreLabel) leaf.label()).value()).append(" ");
+      sb.append(((CoreLabel) leaf.label()).value()).append(' ');
 
     return sb.toString();
   }
@@ -487,7 +488,7 @@ public class SpanishXMLTreeReader implements TreeReader {
     final boolean detailedAnnotations = PropertiesUtils.getBool(options, "detailedAnnotations", false);
 
     String[] remainingArgs = options.getProperty("").split(" ");
-    List<File> fileList = new ArrayList<File>();
+    List<File> fileList = new ArrayList<>();
     for(int i = 0; i < remainingArgs.length; i++)
       fileList.add(new File(remainingArgs[i]));
 
@@ -503,8 +504,6 @@ public class SpanishXMLTreeReader implements TreeReader {
               TreeReader tr = trf.newTreeReader(file.getPath(), in);
               process(file, tr, posPattern, wordPattern, plainPrint);
               tr.close();
-            } catch (FileNotFoundException e) {
-              e.printStackTrace();
             } catch (IOException e) {
               e.printStackTrace();
             }

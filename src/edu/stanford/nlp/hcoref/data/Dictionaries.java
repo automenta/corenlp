@@ -108,8 +108,8 @@ public class Dictionaries {
 
   public final Map<List<String>, Gender> genderNumber = Generics.newHashMap();
 
-  public final ArrayList<Counter<Pair<String, String>>> corefDict = new ArrayList<Counter<Pair<String, String>>>(4);
-  public final Counter<Pair<String, String>> corefDictPMI = new ClassicCounter<Pair<String, String>>();
+  public final ArrayList<Counter<Pair<String, String>>> corefDict = new ArrayList<>(4);
+  public final Counter<Pair<String, String>> corefDictPMI = new ClassicCounter<>();
   public final Map<String,Counter<String>> NE_signatures = Generics.newHashMap();
 
   private void readWordLists(Locale lang) {
@@ -205,7 +205,7 @@ public class Dictionaries {
   public Map<String, float[]> vectors = Generics.newHashMap();
 
   public Map<String, String> strToEntity = Generics.newHashMap();
-  public Counter<String> dictScore = new ClassicCounter<String>();
+  public Counter<String> dictScore = new ClassicCounter<>();
   
   private void setPronouns() {
     for(String s: animatePronouns){
@@ -465,7 +465,7 @@ public class Dictionaries {
       ArrayList<Counter<Pair<String, String>>> dict) {
 
     for(int i = 0; i < 4; i++){
-      dict.add(new ClassicCounter<Pair<String, String>>());
+      dict.add(new ClassicCounter<>());
 
       BufferedReader reader = null;
       try {
@@ -475,7 +475,7 @@ public class Dictionaries {
 
         while(reader.ready()) {
           String[] split = reader.readLine().split("\t");
-          dict.get(i).setCount(new Pair<String, String>(split[0], split[1]), Double.parseDouble(split[2]));
+          dict.get(i).setCount(new Pair<>(split[0], split[1]), Double.parseDouble(split[2]));
         }
 
       } catch (IOException e) {
@@ -496,7 +496,7 @@ public class Dictionaries {
 
         while(reader.ready()) {
           String[] split = reader.readLine().split("\t");
-          dict.setCount(new Pair<String, String>(split[0], split[1]), Double.parseDouble(split[3]));
+          dict.setCount(new Pair<>(split[0], split[1]), Double.parseDouble(split[3]));
         }
 
       } catch (IOException e) {
@@ -513,7 +513,7 @@ public class Dictionaries {
 
       while(reader.ready()) {
         String[] split = reader.readLine().split("\t");
-        Counter<String> cntr = new ClassicCounter<String>();
+        Counter<String> cntr = new ClassicCounter<>();
         sigs.put(split[0], cntr);
         for (int i = 1; i < split.length; i=i+2) {
           cntr.setCount(split[i], Double.parseDouble(split[i+1]));
@@ -597,47 +597,35 @@ public class Dictionaries {
 
   public static String signature(Properties props) {
     StringBuilder os = new StringBuilder();
-    os.append(CorefProperties.DEMONYM_PROP + ":" +
-            props.getProperty(CorefProperties.DEMONYM_PROP,
-                    DefaultPaths.DEFAULT_DCOREF_DEMONYM));
-    os.append(CorefProperties.ANIMATE_PROP + ":" +
-            props.getProperty(CorefProperties.ANIMATE_PROP,
-                    DefaultPaths.DEFAULT_DCOREF_ANIMATE));
-    os.append(CorefProperties.INANIMATE_PROP + ":" +
-            props.getProperty(CorefProperties.INANIMATE_PROP,
-                    DefaultPaths.DEFAULT_DCOREF_INANIMATE));
+    os.append(CorefProperties.DEMONYM_PROP + ':').append(props.getProperty(CorefProperties.DEMONYM_PROP,
+            DefaultPaths.DEFAULT_DCOREF_DEMONYM));
+    os.append(CorefProperties.ANIMATE_PROP + ':').append(props.getProperty(CorefProperties.ANIMATE_PROP,
+            DefaultPaths.DEFAULT_DCOREF_ANIMATE));
+    os.append(CorefProperties.INANIMATE_PROP + ':').append(props.getProperty(CorefProperties.INANIMATE_PROP,
+            DefaultPaths.DEFAULT_DCOREF_INANIMATE));
     if(props.containsKey(CorefProperties.MALE_PROP)) {
-      os.append(CorefProperties.MALE_PROP + ":" +
-            props.getProperty(CorefProperties.MALE_PROP));
+      os.append(CorefProperties.MALE_PROP + ':').append(props.getProperty(CorefProperties.MALE_PROP));
     }
     if(props.containsKey(CorefProperties.NEUTRAL_PROP)) {
-      os.append(CorefProperties.NEUTRAL_PROP + ":" +
-            props.getProperty(CorefProperties.NEUTRAL_PROP));
+      os.append(CorefProperties.NEUTRAL_PROP + ':').append(props.getProperty(CorefProperties.NEUTRAL_PROP));
     }
     if(props.containsKey(CorefProperties.FEMALE_PROP)) {
-      os.append(CorefProperties.FEMALE_PROP + ":" +
-            props.getProperty(CorefProperties.FEMALE_PROP));
+      os.append(CorefProperties.FEMALE_PROP + ':').append(props.getProperty(CorefProperties.FEMALE_PROP));
     }
     if(props.containsKey(CorefProperties.PLURAL_PROP)) {
-      os.append(CorefProperties.PLURAL_PROP + ":" +
-            props.getProperty(CorefProperties.PLURAL_PROP));
+      os.append(CorefProperties.PLURAL_PROP + ':').append(props.getProperty(CorefProperties.PLURAL_PROP));
     }
     if(props.containsKey(CorefProperties.SINGULAR_PROP)) {
-      os.append(CorefProperties.SINGULAR_PROP + ":" +
-            props.getProperty(CorefProperties.SINGULAR_PROP));
+      os.append(CorefProperties.SINGULAR_PROP + ':').append(props.getProperty(CorefProperties.SINGULAR_PROP));
     }
-    os.append(CorefProperties.STATES_PROP + ":" +
-            props.getProperty(CorefProperties.STATES_PROP,
-                    DefaultPaths.DEFAULT_DCOREF_STATES));
-    os.append(CorefProperties.GENDER_NUMBER_PROP + ":" +
-            props.getProperty(CorefProperties.GENDER_NUMBER_PROP,
-                    DefaultPaths.DEFAULT_DCOREF_GENDER_NUMBER));
-    os.append(CorefProperties.COUNTRIES_PROP + ":" +
-            props.getProperty(CorefProperties.COUNTRIES_PROP,
-                    DefaultPaths.DEFAULT_DCOREF_COUNTRIES));
-    os.append(CorefProperties.STATES_PROVINCES_PROP + ":" +
-            props.getProperty(CorefProperties.STATES_PROVINCES_PROP,
-                    DefaultPaths.DEFAULT_DCOREF_STATES_AND_PROVINCES));
+    os.append(CorefProperties.STATES_PROP + ':').append(props.getProperty(CorefProperties.STATES_PROP,
+            DefaultPaths.DEFAULT_DCOREF_STATES));
+    os.append(CorefProperties.GENDER_NUMBER_PROP + ':').append(props.getProperty(CorefProperties.GENDER_NUMBER_PROP,
+            DefaultPaths.DEFAULT_DCOREF_GENDER_NUMBER));
+    os.append(CorefProperties.COUNTRIES_PROP + ':').append(props.getProperty(CorefProperties.COUNTRIES_PROP,
+            DefaultPaths.DEFAULT_DCOREF_COUNTRIES));
+    os.append(CorefProperties.STATES_PROVINCES_PROP + ':').append(props.getProperty(CorefProperties.STATES_PROVINCES_PROP,
+            DefaultPaths.DEFAULT_DCOREF_STATES_AND_PROVINCES));
     return os.toString();
   }
 

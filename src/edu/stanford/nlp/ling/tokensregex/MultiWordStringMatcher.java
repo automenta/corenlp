@@ -108,13 +108,13 @@ public class MultiWordStringMatcher {
    * @return list of integer pairs indicating the character offsets (begin, end - exclusive)
    *         at which the targetString can be find
    */
-  protected List<IntPair> findTargetStringOffsetsExct(String text, String targetString, int start, int end)
+  protected static List<IntPair> findTargetStringOffsetsExct(String text, String targetString, int start, int end)
   {
     if (start > text.length()) return null;
     if (end > text.length()) return null;
     List<IntPair> offsets = null;
     int i = text.indexOf(targetString, start);
-    if (i >= 0 && i < end) { offsets = new ArrayList<IntPair>(); }
+    if (i >= 0 && i < end) { offsets = new ArrayList<>(); }
     while (i >= 0 && i < end) {
       boolean matched = true;
       if (i > 0) {
@@ -140,7 +140,7 @@ public class MultiWordStringMatcher {
     return offsets;
   }
 
-  private CacheMap<String, Pattern> targetStringPatternCache = new CacheMap<String,Pattern>(5000);
+  private CacheMap<String, Pattern> targetStringPatternCache = new CacheMap<>(5000);
 
   public final static Comparator<String> LONGEST_STRING_COMPARATOR = new LongestStringComparator();
   public static class LongestStringComparator implements Comparator<String> {
@@ -167,7 +167,7 @@ public class MultiWordStringMatcher {
     StringBuilder sb = new StringBuilder();
     for (String s:strings) {
       if (sb.length() > 0) {
-        sb.append("|");
+        sb.append('|');
       }
       sb.append(getRegex(s));
     }
@@ -240,7 +240,7 @@ public class MultiWordStringMatcher {
 
   private static final Pattern lnrmDelimPatternAny = Pattern.compile("(?:\\p{Punct}|\\s)*");
   private static final Pattern lnrmDelimPattern = Pattern.compile("(?:\\p{Punct}|\\s)+");
-  public String getLnrmRegex(String targetString)
+  public static String getLnrmRegex(String targetString)
   {
     StringBuilder sb = new StringBuilder("(?u)(?i)");
     String[] fields = lnrmDelimPattern.split(targetString);
@@ -301,7 +301,7 @@ public class MultiWordStringMatcher {
     List<IntPair> offsets = null;
     matcher.region(start,end);
     int i = (matcher.find())? matcher.start():-1;
-    if (i >= 0 && i < end) { offsets = new ArrayList<IntPair>(); }
+    if (i >= 0 && i < end) { offsets = new ArrayList<>(); }
     while (i >= 0 && i < end) {
       boolean matched = true;
       int matchEnd = matcher.end();

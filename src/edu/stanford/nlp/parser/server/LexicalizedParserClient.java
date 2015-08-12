@@ -39,7 +39,7 @@ public class LexicalizedParserClient {
     String line;
     while ((line = reader.readLine()) != null) {
       if (result.length() > 0) {
-        result.append("\n");
+        result.append('\n');
       }
       result.append(line);
     }
@@ -56,7 +56,7 @@ public class LexicalizedParserClient {
     Socket socket = new Socket(host, port);
 
     Writer out = new OutputStreamWriter(socket.getOutputStream(), "utf-8");
-    out.write("tokenize " + query + "\n");
+    out.write("tokenize " + query + '\n');
     out.flush();
 
     String result = readResult(socket);
@@ -74,7 +74,7 @@ public class LexicalizedParserClient {
     Socket socket = new Socket(host, port);
 
     Writer out = new OutputStreamWriter(socket.getOutputStream(), "utf-8");
-    out.write("lemma " + query + "\n");
+    out.write("lemma " + query + '\n');
     out.flush();
 
     String result = readResult(socket);
@@ -94,7 +94,7 @@ public class LexicalizedParserClient {
     Socket socket = new Socket(host, port);
 
     Writer out = new OutputStreamWriter(socket.getOutputStream(), "utf-8");
-    out.write("dependencies:" + mode + " " + query + "\n");
+    out.write("dependencies:" + mode + ' ' + query + '\n');
     out.flush();
 
     String result = readResult(socket);
@@ -116,7 +116,7 @@ public class LexicalizedParserClient {
     Socket socket = new Socket(host, port);
 
     Writer out = new OutputStreamWriter(socket.getOutputStream(), "utf-8");
-    out.write("parse" + (binarized ? ":binarized " : " ") + query + "\n");
+    out.write("parse" + (binarized ? ":binarized " : " ") + query + '\n');
     out.flush();
 
     String result = readResult(socket);
@@ -133,7 +133,7 @@ public class LexicalizedParserClient {
     Socket socket = new Socket(host, port);
 
     Writer out = new OutputStreamWriter(socket.getOutputStream(), "utf-8");
-    out.write("tree " + query + "\n");
+    out.write("tree " + query + '\n');
     out.flush();
 
     ObjectInputStream ois = new ObjectInputStream(socket.getInputStream());

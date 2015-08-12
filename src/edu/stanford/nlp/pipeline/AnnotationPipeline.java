@@ -33,7 +33,7 @@ public class AnnotationPipeline implements Annotator {
     this.annotators = annotators;
     if (TIME) {
       int num = annotators.size();
-      accumulatedTime = new ArrayList<MutableLong>(num);
+      accumulatedTime = new ArrayList<>(num);
       for (int i = 0; i < num; i++) {
         accumulatedTime.add(new MutableLong());
       }
@@ -41,7 +41,7 @@ public class AnnotationPipeline implements Annotator {
   }
 
   public AnnotationPipeline() {
-    this(new ArrayList<Annotator>());
+    this(new ArrayList<>());
   }
 
   public void addAnnotator(Annotator annotator) {
@@ -239,10 +239,11 @@ public class AnnotationPipeline implements Annotator {
     String text = ("USAir said in the filings that Mr. Icahn first contacted Mr. Colodny last September to discuss the benefits of combining TWA and USAir -- either by TWA's acquisition of USAir, or USAir's acquisition of TWA.");
     Annotation a = new Annotation(text);
     ap.annotate(a);
-    System.out.println(a.get(CoreAnnotations.TokensAnnotation.class));
-    for (CoreMap sentence : a.get(CoreAnnotations.SentencesAnnotation.class)) {
-      System.out.println(sentence.get(TreeCoreAnnotations.TreeAnnotation.class));
-    }
+    //System.out.println(a.get(CoreAnnotations.TokensAnnotation.class));
+
+//    for (CoreMap sentence : a.get(CoreAnnotations.SentencesAnnotation.class)) {
+//      System.out.println(sentence.get(TreeCoreAnnotations.TreeAnnotation.class));
+//    }
 
     if (TIME) {
       System.out.println(ap.timingInformation());

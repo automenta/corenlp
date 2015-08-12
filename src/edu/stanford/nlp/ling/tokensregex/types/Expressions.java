@@ -129,8 +129,8 @@ public class Expressions {
 
   public static final String VAR_SELF = "_";
 
-  public static final Value<Boolean> TRUE = new PrimitiveValue<Boolean>(Expressions.TYPE_BOOLEAN, true);
-  public static final Value<Boolean> FALSE = new PrimitiveValue<Boolean>(Expressions.TYPE_BOOLEAN, false);
+  public static final Value<Boolean> TRUE = new PrimitiveValue<>(Expressions.TYPE_BOOLEAN, true);
+  public static final Value<Boolean> FALSE = new PrimitiveValue<>(Expressions.TYPE_BOOLEAN, false);
   public static final Value NIL = new PrimitiveValue("NIL", null);
 
   private Expressions() { } // static methods and classes
@@ -159,7 +159,7 @@ public class Expressions {
       if (obj instanceof Boolean) {
         return (Value<Boolean>) v;
       } else {
-        return new PrimitiveValue<Boolean>(Expressions.TYPE_BOOLEAN, convertValueToBoolean(v, keepNull));
+        return new PrimitiveValue<>(Expressions.TYPE_BOOLEAN, convertValueToBoolean(v, keepNull));
       }
     } else {
       return keepNull? null:FALSE;
@@ -198,7 +198,7 @@ public class Expressions {
         // TODO: Check for simpler typename provided by value
         typename = value.getClass().getName();
       }
-      return new PrimitiveValue<T>(typename, value, tags);
+      return new PrimitiveValue<>(typename, value, tags);
     }
   }
 
@@ -332,7 +332,7 @@ public class Expressions {
     }
 
     public String toString() {
-      return getType() + "(" + value + ")";
+      return getType() + '(' + value + ')';
     }
 
     @Override
@@ -429,7 +429,7 @@ public class Expressions {
     }
 
     public String toString() {
-      return getType() + "(" + value + ")";
+      return getType() + '(' + value + ')';
     }
 
     public boolean hasValue() {
@@ -614,9 +614,9 @@ public class Expressions {
           Object v = get();
           if (v instanceof String) {
             // TODO: depending if TYPE_STRING, use string version...
-            return new PrimitiveValue<List>(TYPE_TOKENS, mr.groupNodes((String) v));
+            return new PrimitiveValue<>(TYPE_TOKENS, mr.groupNodes((String) v));
           } else if (v instanceof Integer) {
-            return new PrimitiveValue<List>(TYPE_TOKENS, mr.groupNodes((Integer) v));
+            return new PrimitiveValue<>(TYPE_TOKENS, mr.groupNodes((Integer) v));
           } else {
             throw new UnsupportedOperationException("String match result must be referred to by group id");
           }
@@ -625,7 +625,7 @@ public class Expressions {
           Object v = get();
           if (v instanceof Integer) {
             String str = mr.group((Integer) get());
-            return new PrimitiveValue<String>(TYPE_STRING, str);
+            return new PrimitiveValue<>(TYPE_STRING, str);
           } else {
             throw new UnsupportedOperationException("String match result must be referred to by group id");
           }
@@ -680,7 +680,7 @@ public class Expressions {
     }
 
     public Expression assign(Expression expr) {
-      List<Expression> newParams = new ArrayList<Expression>(params);
+      List<Expression> newParams = new ArrayList<>(params);
       newParams.add(expr);
       Expression res = new FunctionCallExpression(function, newParams);
       res.setTags(tags);
@@ -717,7 +717,7 @@ public class Expressions {
 
   public static class NotExpression extends FunctionCallExpression {
     public NotExpression(Expression expr) {
-      super("Not", Arrays.asList(expr));
+      super("Not", Collections.singletonList(expr));
     }
   }
 
@@ -818,12 +818,12 @@ public class Expressions {
 
     public ListExpression(String typename, String... tags) {
       super(typename, tags);
-      this.exprs = new ArrayList<Expression>();
+      this.exprs = new ArrayList<>();
     }
 
     public ListExpression(String typename, List<Expression> exprs, String... tags) {
       super(typename, tags);
-      this.exprs = new ArrayList<Expression>(exprs);
+      this.exprs = new ArrayList<>(exprs);
     }
 
     public void addAll(List<Expression> exprs) {
@@ -837,11 +837,11 @@ public class Expressions {
     }
 
     public Value evaluate(Env env, Object... args) {
-      List<Value> values = new ArrayList<Value>(exprs.size());
+      List<Value> values = new ArrayList<>(exprs.size());
       for (Expression s:exprs) {
         values.add(s.evaluate(env, args));
       };
-      return new PrimitiveValue<List<Value>>(typename, values);
+      return new PrimitiveValue<>(typename, values);
     }
   }
 
@@ -856,8 +856,7 @@ public class Expressions {
             try {
               Class<?> type = (Class<?>) paramTypes[i].getField("TYPE").get(null);
               if (type.equals(targetParamTypes[i])) { compatible = true; }
-            } catch (NoSuchFieldException ex2) {
-            } catch (IllegalAccessException ex2) {
+            } catch (NoSuchFieldException | IllegalAccessException ex2) {
             }
           }
           if (!compatible) break;
@@ -895,7 +894,7 @@ public class Expressions {
     public Expression simplify(Env env)
     {
       boolean paramsAllHasValue = true;
-      List<Expression> simplifiedParams = new ArrayList<Expression>(params.size());
+      List<Expression> simplifiedParams = new ArrayList<>(params.size());
       for (Expression param:params) {
         Expression simplified = param.simplify(env);
         simplifiedParams.add(simplified);
@@ -921,13 +920,13 @@ public class Expressions {
       }
       if (funcValue instanceof ValueFunction) {
         ValueFunction f = (ValueFunction) funcValue;
-        List<Value> evaled = new ArrayList<Value>();
+        List<Value> evaled = new ArrayList<>();
         for (Expression param:params) {
           evaled.add(param.evaluate(env, args));
         }
         return f.apply(env, evaled);
       } else if (funcValue instanceof Collection) {
-        List<Value> evaled = new ArrayList<Value>();
+        List<Value> evaled = new ArrayList<>();
         for (Expression param:params) {
           evaled.add(param.evaluate(env, args));
         }
@@ -938,17 +937,17 @@ public class Expressions {
           }
         }
         StringBuilder sb = new StringBuilder();
-        sb.append("Cannot find function matching args: " + function + NEWLINE);
-        sb.append("Args are: " + StringUtils.join(evaled, ",") + NEWLINE);
+        sb.append("Cannot find function matching args: ").append(function).append(NEWLINE);
+        sb.append("Args are: ").append(StringUtils.join(evaled, ",")).append(NEWLINE);
         if (fs.size() > 0) {
-          sb.append("Options are:\n" + StringUtils.join(fs, NEWLINE));
+          sb.append("Options are:\n").append(StringUtils.join(fs, NEWLINE));
         } else {
           sb.append("No options");
         }
         throw new RuntimeException(sb.toString());
       } else if (funcValue instanceof Class) {
         Class c = (Class) funcValue;
-        List<Value> evaled = new ArrayList<Value>();
+        List<Value> evaled = new ArrayList<>();
         for (Expression param:params) {
           evaled.add(param.evaluate(env, args));
         }
@@ -975,7 +974,7 @@ public class Expressions {
         if (paramsNotNull) {
           Object obj = MetaClass.create(c).createInstance(objs);
           if (obj != null) {
-            return new PrimitiveValue<Object>(function, obj);
+            return new PrimitiveValue<>(function, obj);
           }
         }
         try {
@@ -997,12 +996,8 @@ public class Expressions {
             }
           }
           Object obj = constructor.newInstance(objs);
-          return new PrimitiveValue<Object>(function, obj);
-        } catch (InvocationTargetException ex) {
-          throw new RuntimeException("Cannot instantiate " + c, ex);
-        } catch (InstantiationException ex) {
-          throw new RuntimeException("Cannot instantiate " + c, ex);
-        } catch (IllegalAccessException ex) {
+          return new PrimitiveValue<>(function, obj);
+        } catch (InvocationTargetException | IllegalAccessException | InstantiationException ex) {
           throw new RuntimeException("Cannot instantiate " + c, ex);
         }
       } else {
@@ -1051,7 +1046,7 @@ public class Expressions {
     public Expression simplify(Env env)
     {
       boolean paramsAllHasValue = true;
-      List<Expression> simplifiedParams = new ArrayList<Expression>(params.size());
+      List<Expression> simplifiedParams = new ArrayList<>(params.size());
       for (Expression param:params) {
         Expression simplified = param.simplify(env);
         simplifiedParams.add(simplified);
@@ -1073,7 +1068,7 @@ public class Expressions {
       if (evaledObj == null || evaledObj.get() == null) return null;
       Object mainObj = evaledObj.get();
       Class c = mainObj.getClass();
-      List<Value> evaled = new ArrayList<Value>();
+      List<Value> evaled = new ArrayList<>();
       for (Expression param:params) {
         evaled.add(param.evaluate(env, args));
       }
@@ -1117,10 +1112,8 @@ public class Expressions {
       }
       try {
         Object res = method.invoke(mainObj, objs);
-        return new PrimitiveValue<Object>(function, res);
-      } catch (InvocationTargetException ex) {
-        throw new RuntimeException("Cannot evaluate method " + function + " on object " + mainObj, ex);
-      } catch (IllegalAccessException ex) {
+        return new PrimitiveValue<>(function, res);
+      } catch (InvocationTargetException | IllegalAccessException ex) {
         throw new RuntimeException("Cannot evaluate method " + function + " on object " + mainObj, ex);
       }
     }
@@ -1164,7 +1157,7 @@ public class Expressions {
   */
   public static class CompositeValue extends SimpleCachedExpression<Map<String,Expression>> implements Value<Map<String,Expression>>{
     public CompositeValue(String... tags) {
-      super(TYPE_COMPOSITE, new HashMap<String, Expression>(), tags);//Generics.<String,Expression>newHashMap()
+      super(TYPE_COMPOSITE, new HashMap<>(), tags);//Generics.<String,Expression>newHashMap()
     }
 
     public CompositeValue(Map<String, Expression> m, boolean isEvaluated, String... tags) {
@@ -1273,10 +1266,8 @@ public class Expressions {
                     }
                   }
                 }
-                return new PrimitiveValue<Object>(typeName, obj);
-              } catch (InstantiationException ex) {
-                throw new RuntimeException("Cannot instantiate " + c, ex);
-              } catch (IllegalAccessException ex) {
+                return new PrimitiveValue<>(typeName, obj);
+              } catch (InstantiationException | IllegalAccessException ex) {
                 throw new RuntimeException("Cannot instantiate " + c, ex);
               }
             } else if (typeValue.get() != null){
@@ -1288,10 +1279,8 @@ public class Expressions {
                 Method m = c.getMethod("create", CompositeValue.class);
                 CompositeValue evaluatedCv = cv.evaluateNoTypeConversion(env, args);
                 try {
-                  return new PrimitiveValue<Object>(typeName, m.invoke(typeValue.get(), evaluatedCv));
-                } catch (InvocationTargetException ex) {
-                  throw new RuntimeException("Cannot instantiate " + c, ex);
-                } catch (IllegalAccessException ex) {
+                  return new PrimitiveValue<>(typeName, m.invoke(typeValue.get(), evaluatedCv));
+                } catch (InvocationTargetException | IllegalAccessException ex) {
                   throw new RuntimeException("Cannot instantiate " + c, ex);
                 }
               } catch (NoSuchMethodException ex) {}
@@ -1320,14 +1309,14 @@ public class Expressions {
               }
             }
             case TYPE_STRING:
-              return new PrimitiveValue<String>(TYPE_STRING, (String) value.get());
+              return new PrimitiveValue<>(TYPE_STRING, (String) value.get());
             case TYPE_REGEX:
               return new RegexValue((String) value.get());
             /* } else if (TYPE_TOKEN_REGEX.equals(type)) {
        return new PrimitiveValue<TokenSequencePattern>(TYPE_TOKEN_REGEX, (TokenSequencePattern) value.get()); */
             case TYPE_NUMBER:
               if (value.get() instanceof Number) {
-                return new PrimitiveValue<Number>(TYPE_NUMBER, (Number) value.get());
+                return new PrimitiveValue<>(TYPE_NUMBER, (Number) value.get());
               } else if (value.get() instanceof String) {
                 String str = (String) value.get();
                 if (str.contains(".")) {
@@ -1350,7 +1339,7 @@ public class Expressions {
 
     public CompositeValue simplifyNoTypeConversion(Env env, Object... args) {
       Map<String, Expression> m = value;
-      Map<String, Expression> res = new HashMap<String, Expression>(m.size());//Generics.newHashMap (m.size());
+      Map<String, Expression> res = new HashMap<>(m.size());//Generics.newHashMap (m.size());
       for (Map.Entry<String, Expression> stringExpressionEntry : m.entrySet()) {
         res.put(stringExpressionEntry.getKey(), stringExpressionEntry.getValue().simplify(env));
       }
@@ -1359,7 +1348,7 @@ public class Expressions {
 
     private CompositeValue evaluateNoTypeConversion(Env env, Object... args) {
       Map<String, Expression> m = value;
-      Map<String, Expression> res = new HashMap<String, Expression>(m.size());//Generics.newHashMap (m.size());
+      Map<String, Expression> res = new HashMap<>(m.size());//Generics.newHashMap (m.size());
       for (Map.Entry<String, Expression> stringExpressionEntry : m.entrySet()) {
         res.put(stringExpressionEntry.getKey(), stringExpressionEntry.getValue().evaluate(env, args));
       }
@@ -1370,7 +1359,7 @@ public class Expressions {
       Value v = attemptTypeConversion(this, env, args);
       if (v != null) return v;
       Map<String, Expression> m = value;
-      Map<String, Expression> res = new HashMap<String, Expression>(m.size());//Generics.newHashMap (m.size());
+      Map<String, Expression> res = new HashMap<>(m.size());//Generics.newHashMap (m.size());
       for (Map.Entry<String, Expression> stringExpressionEntry : m.entrySet()) {
         res.put(stringExpressionEntry.getKey(), stringExpressionEntry.getValue().evaluate(env, args));
       }

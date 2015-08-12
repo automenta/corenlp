@@ -70,7 +70,7 @@ public class ChineseUnknownWordModel extends BaseUnknownWordModel {
                                  Index<String> wordIndex,
                                  Index<String> tagIndex) {
     this(op, lex, wordIndex, tagIndex,
-         new ClassicCounter<IntTaggedWord>(),
+            new ClassicCounter<>(),
          Generics.<Label,ClassicCounter<String>>newHashMap(),
          Generics.<String,Float>newHashMap(),
          false, Generics.<String>newHashSet());
@@ -179,7 +179,7 @@ public class ChineseUnknownWordModel extends BaseUnknownWordModel {
         } else if (useGT) {
           logProb = scoreGT(tag);
         } else {
-          if (VERBOSE) System.err.println("Warning: no unknown word model in place!\nGiving the combination " + word + " " + tag + " zero probability.");
+          if (VERBOSE) System.err.println("Warning: no unknown word model in place!\nGiving the combination " + word + ' ' + tag + " zero probability.");
           logProb = Float.NEGATIVE_INFINITY; // should never get this!
         }
     }
@@ -224,7 +224,7 @@ public class ChineseUnknownWordModel extends BaseUnknownWordModel {
     }
 
     System.out.println("Testing tagged word");
-    ClassicCounter<TaggedWord> c = new ClassicCounter<TaggedWord>();
+    ClassicCounter<TaggedWord> c = new ClassicCounter<>();
     TaggedWord tw1 = new TaggedWord("w", "t");
     c.incrementCount(tw1);
     TaggedWord tw2 = new TaggedWord("w", "t2");

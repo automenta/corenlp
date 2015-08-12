@@ -58,12 +58,8 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
     this.unsupDropoutScale = unsupDropoutScale;
     if (unsupDropoutData != null) {
       this.totalData = new int[data.length + unsupDropoutData.length][][][];
-      for (int i=0; i<data.length; i++) {
-        this.totalData[i] = data[i];
-      }
-      for (int i=0; i<unsupDropoutData.length; i++) {
-        this.totalData[i+unsupDropoutStartIndex] = unsupDropoutData[i];
-      }
+      System.arraycopy(data, 0, this.totalData, 0, data.length);
+      System.arraycopy(unsupDropoutData, 0, this.totalData, 0 + unsupDropoutStartIndex, unsupDropoutData.length);
     } else {
       this.totalData = data;
     }
@@ -78,8 +74,8 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
     edgeLabelIndexSize = edgeLabelIndex.size();
     Index<CRFLabel> nodeLabelIndex = labelIndices.get(0);
     nodeLabelIndexSize = nodeLabelIndex.size();
-    currPrevLabelsMap = new HashMap<Integer, List<Integer>>();
-    currNextLabelsMap = new HashMap<Integer, List<Integer>>();
+    currPrevLabelsMap = new HashMap<>();
+    currNextLabelsMap = new HashMap<>();
     edgeLabels = new int[edgeLabelIndexSize][];
     for (int k=0; k < edgeLabelIndexSize; k++) {
       int[] labelPair = edgeLabelIndex.get(k).getLabel();
@@ -87,16 +83,16 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
       int curr = labelPair[1];
       int prev = labelPair[0];
       if (!currPrevLabelsMap.containsKey(curr))
-        currPrevLabelsMap.put(curr, new ArrayList<Integer>(numClasses));
+        currPrevLabelsMap.put(curr, new ArrayList<>(numClasses));
       currPrevLabelsMap.get(curr).add(prev);
       if (!currNextLabelsMap.containsKey(prev))
-        currNextLabelsMap.put(prev, new ArrayList<Integer>(numClasses));
+        currNextLabelsMap.put(prev, new ArrayList<>(numClasses));
       currNextLabelsMap.get(prev).add(curr);
     }
   }
 
   private Map<Integer, double[]> sparseE(Set<Integer> activeFeatures) {
-    Map<Integer, double[]> aMap = new HashMap<Integer, double[]>(activeFeatures.size());
+    Map<Integer, double[]> aMap = new HashMap<>(activeFeatures.size());
     for (int f: activeFeatures) {
       // System.err.printf("aMap.put(%d, new double[%d])\n", f, map[f]+1);
       aMap.put(f,new double[map[f] == 0 ? nodeLabelIndexSize : edgeLabelIndexSize]);
@@ -105,7 +101,7 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
   }
 
   private Map<Integer, double[]> sparseE(int[] activeFeatures) {
-    Map<Integer, double[]> aMap = new HashMap<Integer, double[]>(activeFeatures.length);
+    Map<Integer, double[]> aMap = new HashMap<>(activeFeatures.length);
     for (int f: activeFeatures) {
       // System.err.printf("aMap.put(%d, new double[%d])\n", f, map[f]+1);
       aMap.put(f,new double[map[f] == 0 ? nodeLabelIndexSize : edgeLabelIndexSize]);
@@ -159,7 +155,7 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
         int label = docLabels[i];
         double p = cliqueTree.condLogProbGivenPrevious(i, label, given);
         if (VERBOSE) {
-          System.err.println("P(" + label + "|" + ArrayMath.toString(given) + ")=" + Math.exp(p));
+          System.err.println("P(" + label + '|' + ArrayMath.toString(given) + ")=" + Math.exp(p));
         }
         prob += p;
         System.arraycopy(given, 1, given, 0, given.length - 1);
@@ -174,7 +170,7 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
     Map<Integer, double[]> EForADoc = sparseE(activeFeatures);
     List<Map<Integer, double[]>> EForADocPos = null;
     if (dropoutApprox) {
-      EForADocPos = new ArrayList<Map<Integer, double[]>>(docData.length);
+      EForADocPos = new ArrayList<>(docData.length);
     }
 
     if (!skipExpectedCountCalc) {
@@ -208,8 +204,7 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
               for (int toCopyInto: aList) {
                 double[] arr = EForADocPosAtI.get(fIndex);
                 double[] targetArr = new double[arr.length];
-                for (int q=0; q < arr.length; q++)
-                  targetArr[q] = arr[q];
+                System.arraycopy(arr, 0, targetArr, 0, arr.length);
                 EForADocPosAtI.put(toCopyInto, targetArr);
               }
             }
@@ -225,8 +220,7 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
         for (int toCopyInto: aList) {
           double[] arr = EForADoc.get(key);
           double[] targetArr = new double[arr.length];
-          for (int i=0; i < arr.length; i++)
-            targetArr[i] = arr[i];
+          System.arraycopy(arr, 0, targetArr, 0, arr.length);
           EForADoc.put(toCopyInto, targetArr);
         }
       }
@@ -253,10 +247,10 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
       }
     }
 
-    return new Quadruple<Integer, Double, Map<Integer, double[]>, Map<Integer, double[]>>(docIndex, prob, EForADoc, dropoutPriorGrad);
+    return new Quadruple<>(docIndex, prob, EForADoc, dropoutPriorGrad);
   }
 
-  private void increScore(Map<Integer, double[]> aMap, int fIndex, int k, double val) {
+  private static void increScore(Map<Integer, double[]> aMap, int fIndex, int k, double val) {
     aMap.get(fIndex)[k] += val;
   }
 
@@ -273,17 +267,17 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
     int macroDocPosCount = 0;
 
     System.err.println("initializing data feature hash, sup-data size: " + data.length + ", unsup data size: " + (totalData.length-data.length));
-    dataFeatureHash = new ArrayList<List<Set<Integer>>>(totalData.length);
-    condensedMap = new ArrayList<Map<Integer, List<Integer>>>(totalData.length);
+    dataFeatureHash = new ArrayList<>(totalData.length);
+    condensedMap = new ArrayList<>(totalData.length);
     dataFeatureHashByDoc = new int[totalData.length][];
     for (int m=0; m < totalData.length; m++) {
-      Map<Integer, Integer> occurPos = new HashMap<Integer, Integer>();
+      Map<Integer, Integer> occurPos = new HashMap<>();
 
       int[][][] aDoc = totalData[m];
-      List<Set<Integer>> aList = new ArrayList<Set<Integer>>(aDoc.length);
-      Set<Integer> setOfFeatures = new HashSet<Integer>();
+      List<Set<Integer>> aList = new ArrayList<>(aDoc.length);
+      Set<Integer> setOfFeatures = new HashSet<>();
       for (int i=0; i< aDoc.length; i++) { // positions in docI
-        Set<Integer> aSet = new HashSet<Integer>();
+        Set<Integer> aSet = new HashSet<>();
         int[][] dataI = aDoc[i];
         for (int j=0; j < dataI.length; j++) {
           int[] dataJ = dataI[j];
@@ -308,7 +302,7 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
         if (DEBUG3)
           System.err.println("Before condense, activeFeatures = " + setOfFeatures.size());
         // examine all singletons, merge ones in the same position
-        Map<Integer, List<Integer>> condensedFeaturesMap = new HashMap<Integer, List<Integer>>();
+        Map<Integer, List<Integer>> condensedFeaturesMap = new HashMap<>();
         int[] representFeatures = new int[aDoc.length];
         Arrays.fill(representFeatures, -1);
 
@@ -318,7 +312,7 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
           if (pos != -1) {
             if (representFeatures[pos] == -1) { // use this as representFeatures
               representFeatures[pos] = key;
-              condensedFeaturesMap.put(key, new ArrayList<Integer>());
+              condensedFeaturesMap.put(key, new ArrayList<>());
             } else { // condense this one
               int rep = representFeatures[pos];
               condensedFeaturesMap.get(rep).add(key);
@@ -642,8 +636,7 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
         for (int toCopyInto: aList) {
           double[] arr = dropoutPriorGrad.get(key);
           double[] targetArr = new double[arr.length];
-          for (int i=0; i < arr.length; i++)
-            targetArr[i] = arr[i];
+          System.arraycopy(arr, 0, targetArr, 0, arr.length);
           dropoutPriorGrad.put(toCopyInto, targetArr);
         }
       }
@@ -724,11 +717,11 @@ public class CRFLogConditionalObjectiveFunctionWithDropout extends CRFLogConditi
     clear2D(dropoutPriorGradTotal);
 
     MulticoreWrapper<Pair<Integer, Boolean>, Quadruple<Integer, Double, Map<Integer, double[]>, Map<Integer, double[]>>> wrapper =
-      new MulticoreWrapper<Pair<Integer, Boolean>, Quadruple<Integer, Double, Map<Integer, double[]>, Map<Integer, double[]>>>(multiThreadGrad, dropoutPriorThreadProcessor);
+            new MulticoreWrapper<>(multiThreadGrad, dropoutPriorThreadProcessor);
     // supervised part
     for (int m = 0; m < totalData.length; m++) {
       boolean submitIsUnsup = (m >= unsupDropoutStartIndex);
-      wrapper.put(new Pair<Integer, Boolean>(m, submitIsUnsup));
+      wrapper.put(new Pair<>(m, submitIsUnsup));
       while (wrapper.peek()) {
         Quadruple<Integer, Double, Map<Integer, double[]>, Map<Integer, double[]>> result = wrapper.poll();
         int docIndex = result.first();

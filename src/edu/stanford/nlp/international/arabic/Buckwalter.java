@@ -139,7 +139,7 @@ public class Buckwalter implements SerializableFunction<String,String> {
       b2uMap.put(charB, charU);
     }
 
-    if (DEBUG) unmappable = new ClassicCounter<String>();
+    if (DEBUG) unmappable = new ClassicCounter<>();
   }
 
   public Buckwalter(boolean unicodeToBuckwalter) {
@@ -147,9 +147,9 @@ public class Buckwalter implements SerializableFunction<String,String> {
     unicode2Buckwalter = unicodeToBuckwalter;
   }
 
-  public void suppressBuckDigitConversion(boolean b) { SUPPRESS_DIGIT_MAPPING_IN_B2A = b; }
+  public static void suppressBuckDigitConversion(boolean b) { SUPPRESS_DIGIT_MAPPING_IN_B2A = b; }
 
-  public void suppressBuckPunctConversion(boolean b) { SUPPRESS_PUNC_MAPPING_IN_B2A = b; }
+  public static void suppressBuckPunctConversion(boolean b) { SUPPRESS_PUNC_MAPPING_IN_B2A = b; }
 
   public String apply(String in) { return convert(in, unicode2Buckwalter); }
 
@@ -198,7 +198,7 @@ public class Buckwalter implements SerializableFunction<String,String> {
           result.append(outCh);
         }
       }
-      result.append(" ");
+      result.append(' ');
     }
 
     return result.toString().trim();

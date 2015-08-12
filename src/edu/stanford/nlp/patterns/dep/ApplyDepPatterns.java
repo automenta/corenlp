@@ -3,12 +3,8 @@ package edu.stanford.nlp.patterns.dep;
 import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import edu.stanford.nlp.ling.IndexedWord;
-import edu.stanford.nlp.ling.tokensregex.TokenSequenceMatcher;
-import edu.stanford.nlp.ling.tokensregex.TokenSequencePattern;
 import edu.stanford.nlp.patterns.*;
-import edu.stanford.nlp.patterns.surface.SurfacePattern;
 import edu.stanford.nlp.semgraph.SemanticGraph;
-import edu.stanford.nlp.semgraph.semgrex.SemgrexMatcher;
 import edu.stanford.nlp.semgraph.semgrex.SemgrexPattern;
 import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counter;
@@ -52,8 +48,8 @@ public class ApplyDepPatterns <E extends Pattern>  implements Callable<Pair<TwoD
       // CollectionValuedMap<String, Integer> tokensMatchedPattern = new
       // CollectionValuedMap<String, Integer>();
 
-      TwoDimensionalCounter<CandidatePhrase, E> allFreq = new TwoDimensionalCounter<CandidatePhrase, E>();
-      CollectionValuedMap<E, Triple<String, Integer, Integer>> matchedTokensByPat = new CollectionValuedMap<E, Triple<String, Integer, Integer>>();
+      TwoDimensionalCounter<CandidatePhrase, E> allFreq = new TwoDimensionalCounter<>();
+      CollectionValuedMap<E, Triple<String, Integer, Integer>> matchedTokensByPat = new CollectionValuedMap<>();
 
       for (String sentid : sentids) {
         DataInstance sent = sents.get(sentid);
@@ -113,7 +109,7 @@ public class ApplyDepPatterns <E extends Pattern>  implements Callable<Pair<TwoD
               l.set(PatternsAnnotations.MatchedPattern.class, true);
 
               if(!l.containsKey(PatternsAnnotations.MatchedPatterns.class) || l.get(PatternsAnnotations.MatchedPatterns.class) == null)
-                l.set(PatternsAnnotations.MatchedPatterns.class, new HashSet<Pattern>());
+                l.set(PatternsAnnotations.MatchedPatterns.class, new HashSet<>());
 
               Pattern pSur = pEn.getValue();
               assert pSur != null : "Why is " + pEn.getValue() + " not present in the index?!";
@@ -136,11 +132,11 @@ public class ApplyDepPatterns <E extends Pattern>  implements Callable<Pair<TwoD
                   if (label == null
                     || l.get(constVars.getAnswerClass().get(label)) == null
                     || !l.get(constVars.getAnswerClass().get(label)).equals(
-                    label.toString())) {
+                          label)) {
                     useWordNotLabeled = true;
                   }
-                  phrase += " " + l.word();
-                  phraseLemma += " " + l.lemma();
+                  phrase += ' ' + l.word();
+                  phraseLemma += ' ' + l.lemma();
                   addedindices[i-s] = true;
                 }
               }
@@ -153,8 +149,8 @@ public class ApplyDepPatterns <E extends Pattern>  implements Callable<Pair<TwoD
             }
             if (!doNotUse && useWordNotLabeled) {
 
-              matchedTokensByPat.add(pEn.getValue(), new Triple<String, Integer, Integer>(
-                sentid, s, e -1 ));
+              matchedTokensByPat.add(pEn.getValue(), new Triple<>(
+                      sentid, s, e - 1));
               if (useWordNotLabeled) {
                 phrase = phrase.trim();
                 phraseLemma = phraseLemma.trim();
@@ -164,7 +160,7 @@ public class ApplyDepPatterns <E extends Pattern>  implements Callable<Pair<TwoD
           }
         }
       }
-      return new Pair<TwoDimensionalCounter<CandidatePhrase, E>, CollectionValuedMap<E, Triple<String, Integer, Integer>>>(allFreq, matchedTokensByPat);
+      return new Pair<>(allFreq, matchedTokensByPat);
 
 
     }
@@ -181,22 +177,22 @@ public class ApplyDepPatterns <E extends Pattern>  implements Callable<Pair<TwoD
 
     //TODO: look at the ignoreCommonTags flag
     ExtractPhraseFromPattern extract = new ExtractPhraseFromPattern(false, PatternFactory.numWordsCompoundMapped.get(label));
-    Collection<IntPair> outputIndices = new ArrayList<IntPair>();
+    Collection<IntPair> outputIndices = new ArrayList<>();
     boolean findSubTrees = true;
     List<CoreLabel> tokensC = sent.getTokens();
     //TODO: see if you can get rid of this (only used for matchedGraphs)
 
-    List<String> tokens = tokensC.stream().map(x -> x.word()).collect(Collectors.toList());
+    List<String> tokens = tokensC.stream().map(CoreLabel::word).collect(Collectors.toList());
 
-    List<String> outputPhrases =new ArrayList<String>();
+    List<String> outputPhrases = new ArrayList<>();
 
-    List<ExtractedPhrase> extractedPhrases = new ArrayList<ExtractedPhrase>();
+    List<ExtractedPhrase> extractedPhrases = new ArrayList<>();
 
     Function<Pair<IndexedWord, SemanticGraph>, Counter<String>> extractFeatures = new Function<Pair<IndexedWord, SemanticGraph>, Counter<String>>() {
       @Override
       public Counter<String> apply(Pair<IndexedWord, SemanticGraph> indexedWordSemanticGraphPair) {
         //TODO: make features;
-        Counter<String> feat = new ClassicCounter<String>();
+        Counter<String> feat = new ClassicCounter<>();
         IndexedWord vertex = indexedWordSemanticGraphPair.first();
         SemanticGraph graph = indexedWordSemanticGraphPair.second();
         List<Pair<GrammaticalRelation, IndexedWord>> pt = graph.parentPairs(vertex);
@@ -281,7 +277,7 @@ public class ApplyDepPatterns <E extends Pattern>  implements Callable<Pair<TwoD
   }
 
 
-  boolean  containsStopWord(CoreLabel l, Set<String> commonEngWords, java.util.regex.Pattern ignoreWordRegex) {
+  static boolean  containsStopWord(CoreLabel l, Set<String> commonEngWords, java.util.regex.Pattern ignoreWordRegex) {
       // if(useWordResultCache.containsKey(l.word()))
       // return useWordResultCache.get(l.word());
 

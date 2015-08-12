@@ -1,11 +1,12 @@
 package edu.stanford.nlp.util;
 
+import com.gs.collections.impl.map.mutable.UnifiedMap;
+import edu.stanford.nlp.ling.CoreAnnotations;
 import edu.stanford.nlp.ling.CoreLabel;
 import junit.framework.TestCase;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import edu.stanford.nlp.ling.CoreAnnotations;
 
 /**
  * Test various operations of the ArrayCoreMap: equals, toString, etc.
@@ -288,7 +289,7 @@ public class ArrayCoreMapTest extends TestCase {
     foo.set(CoreAnnotations.LemmaAnnotation.class, "fool");
 
     // Lemma gets removed with word
-    ArrayCoreMap copy = new ArrayCoreMap(foo);
+    UnifiedMap copy = new UnifiedMap(foo);
     assertEquals(copy, foo);
     foo.setWord("foo");
     assertEquals(copy, foo);  // same word set
@@ -320,18 +321,18 @@ public class ArrayCoreMapTest extends TestCase {
     // Check equals
     foo.setWord("bar");
     foo.setWord("foo");
-    ArrayCoreMap nulledCopy = new ArrayCoreMap(foo);
+    UnifiedMap nulledCopy = new UnifiedMap(foo);
     assertEquals(nulledCopy, foo);
     foo.remove(CoreAnnotations.LemmaAnnotation.class);
     assertEquals(nulledCopy, foo);
   }
 
   public void testCopyConstructor() {
-    ArrayCoreMap biff = new ArrayCoreMap();
-    biff.set(CoreAnnotations.TextAnnotation.class, "foo");
-    biff.set(CoreAnnotations.PartOfSpeechAnnotation.class, "B");
-    biff.set(CoreAnnotations.LemmaAnnotation.class, "fozzle");
-    ArrayCoreMap boff = new ArrayCoreMap(biff);
+    UnifiedMap biff = new UnifiedMap();
+    biff.put(CoreAnnotations.TextAnnotation.class, "foo");
+    biff.put(CoreAnnotations.PartOfSpeechAnnotation.class, "B");
+    biff.put(CoreAnnotations.LemmaAnnotation.class, "fozzle");
+    UnifiedMap boff = new UnifiedMap(biff);
     assertEquals(3, boff.size());
     assertEquals(biff, boff);
     assertEquals("fozzle", boff.get(CoreAnnotations.LemmaAnnotation.class));

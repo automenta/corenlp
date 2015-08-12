@@ -111,7 +111,7 @@ public class CollocationFinder {
       for (int i : matchingColl.indicesOfConstituentChildren) {
         String strToAppend = mergeLeavesIntoCollocatedString(allChildren[i]);
         mutatedString.append(strToAppend);
-        mutatedString.append("_");
+        mutatedString.append('_');
       }
       mutatedString = mutatedString.deleteCharAt(mutatedString.length() - 1);
 
@@ -163,7 +163,7 @@ public class CollocationFinder {
     //ArrayList<String> strs = new ArrayList<String>();
     for (Collocation c: collocationCollector) {
       String cs = c.collocationString;
-      pw.println(cs+" ("+(c.span.first()+1)+","+(c.span.second()+1)+")");
+      pw.println(cs+" ("+(c.span.first()+1)+ ',' +(c.span.second()+1)+ ')');
     }
   }
 
@@ -185,7 +185,7 @@ public class CollocationFinder {
     Label headLabel = hf.determineHead(t).label();
     int leftSistersBuffer = 0; //measures the length of sisters in words when reading
     for (int i = 0; i < children.size();i++){
-      ArrayList<Integer> childConstituents = new ArrayList<Integer>();
+      ArrayList<Integer> childConstituents = new ArrayList<>();
       childConstituents.add(i);
       Tree subtree = children.get(i);
       int currWindowLength = 0; //measures the length in words of the current collocation.
@@ -221,9 +221,9 @@ public class CollocationFinder {
                 testString);
           }
         } else if (wordNetContains(testString.toString())) {
-          Pair <Integer, Integer> c = new Pair<Integer,Integer>(leftMostLeaf+leftSistersBuffer,leftMostLeaf+leftSistersBuffer+currWindowLength-1);
+          Pair <Integer, Integer> c = new Pair<>(leftMostLeaf + leftSistersBuffer, leftMostLeaf + leftSistersBuffer + currWindowLength - 1);
 
-          ArrayList<Integer> childConstituentsClone = new ArrayList<Integer>(childConstituents);
+          ArrayList<Integer> childConstituentsClone = new ArrayList<>(childConstituents);
           Collocation col = new Collocation(c,t,childConstituentsClone,testString.toString(),headLabel);
           collocationCollector.add(col);
           if (DEBUG) {
@@ -239,9 +239,9 @@ public class CollocationFinder {
                 testStringNonStemmed);
           }
         } else if (wordNetContains(testStringNonStemmed.toString())) {
-          Pair <Integer, Integer> c = new Pair<Integer,Integer>(leftMostLeaf+leftSistersBuffer,leftMostLeaf+leftSistersBuffer+currWindowLength-1);
+          Pair <Integer, Integer> c = new Pair<>(leftMostLeaf + leftSistersBuffer, leftMostLeaf + leftSistersBuffer + currWindowLength - 1);
 
-          ArrayList<Integer> childConstituentsClone = new ArrayList<Integer>(childConstituents);
+          ArrayList<Integer> childConstituentsClone = new ArrayList<>(childConstituents);
           Collocation col = new Collocation(c,t,childConstituentsClone,testStringNonStemmed.toString(),headLabel);
           collocationCollector.add(col);
           if (DEBUG) {
@@ -250,7 +250,7 @@ public class CollocationFinder {
                 "; childConstituents is: " + c);
           }
         }
-        testStringNonStemmed.append("_");
+        testStringNonStemmed.append('_');
       }
       leftSistersBuffer+=thisSubtreeLength;
     }
@@ -263,7 +263,7 @@ public class CollocationFinder {
     WordTag firstWord = list.remove(0);
     s.append(firstWord.word());
     for(WordTag wt : list) {
-      s.append("_");
+      s.append('_');
       s.append(wt.word());
     }
     //err.println("Expressing this as:"+s.toString());
@@ -364,7 +364,7 @@ public class CollocationFinder {
 
     @Override
     public String toString() {
-      return collocationString + indicesOfConstituentChildren + "/" +
+      return collocationString + indicesOfConstituentChildren + '/' +
              headLabel;
     }
 

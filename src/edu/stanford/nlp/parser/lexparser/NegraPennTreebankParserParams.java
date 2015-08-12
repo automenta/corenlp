@@ -230,7 +230,7 @@ public class NegraPennTreebankParserParams extends AbstractTreebankParserParams 
       return t;
     }
 
-    List<String> annotations = new ArrayList<String>();
+    List<String> annotations = new ArrayList<>();
 
     CoreLabel lab = (CoreLabel) t.label();
     String word = lab.word();
@@ -365,7 +365,7 @@ public class NegraPennTreebankParserParams extends AbstractTreebankParserParams 
 
   private List<String> childBasicCats(Tree t) {
     Tree[] kids = t.children();
-    List<String> l = new ArrayList<String>();
+    List<String> l = new ArrayList<>();
     for (int i = 0, n = kids.length; i < n; i++) {
       l.add(basicCat(kids[i].label().value()));
     }

@@ -73,30 +73,30 @@ public class RNNTrainOptions implements Serializable {
   public String toString() {
     StringBuilder result = new StringBuilder();
     result.append("TRAIN OPTIONS\n");
-    result.append("batchSize=" + batchSize + "\n");
-    result.append("epochs=" + epochs + "\n");
-    result.append("debugOutputEpochs=" + debugOutputEpochs + "\n");
-    result.append("maxTrainTimeSeconds=" + maxTrainTimeSeconds + "\n");
-    result.append("learningRate=" + learningRate + "\n");
-    result.append("scalingForInit=" + scalingForInit + "\n");
+    result.append("batchSize=").append(batchSize).append('\n');
+    result.append("epochs=").append(epochs).append('\n');
+    result.append("debugOutputEpochs=").append(debugOutputEpochs).append('\n');
+    result.append("maxTrainTimeSeconds=").append(maxTrainTimeSeconds).append('\n');
+    result.append("learningRate=").append(learningRate).append('\n');
+    result.append("scalingForInit=").append(scalingForInit).append('\n');
     if (classWeights == null) {
       result.append("classWeights=null\n");
     } else {
       result.append("classWeights=");
       result.append(classWeights[0]);
       for (int i = 1; i < classWeights.length; ++i) {
-        result.append("," + classWeights[i]);
+        result.append(",").append(classWeights[i]);
       }
-      result.append("\n");
+      result.append('\n');
     }
-    result.append("regTransformMatrix=" + regTransformMatrix + "\n");
-    result.append("regTransformTensor=" + regTransformTensor + "\n");
-    result.append("regClassification=" + regClassification + "\n");
-    result.append("regWordVector=" + regWordVector + "\n");
-    result.append("initialAdagradWeight=" + initialAdagradWeight + "\n");
-    result.append("adagradResetFrequency=" + adagradResetFrequency + "\n");
-    result.append("shuffleMatrices=" + shuffleMatrices + "\n");
-    result.append("initialMatrixLogPath=" + initialMatrixLogPath + "\n");
+    result.append("regTransformMatrix=").append(regTransformMatrix).append('\n');
+    result.append("regTransformTensor=").append(regTransformTensor).append('\n');
+    result.append("regClassification=").append(regClassification).append('\n');
+    result.append("regWordVector=").append(regWordVector).append('\n');
+    result.append("initialAdagradWeight=").append(initialAdagradWeight).append('\n');
+    result.append("adagradResetFrequency=").append(adagradResetFrequency).append('\n');
+    result.append("shuffleMatrices=").append(shuffleMatrices).append('\n');
+    result.append("initialMatrixLogPath=").append(initialMatrixLogPath).append('\n');
     return result.toString();
   }
 

@@ -33,12 +33,12 @@ public class Env {
   /**
    * Mapping of variable names to their values
    */
-  Map<String, Object> variables = new HashMap<String, Object>();//Generics.newHashMap();
+  Map<String, Object> variables = new HashMap<>();//Generics.newHashMap();
 
   /**
    * Mapping of per thread temporary variables to their values
    */
-  ThreadLocal<Map<String,Object>> threadLocalVariables = new ThreadLocal<Map<String,Object>>();
+  ThreadLocal<Map<String,Object>> threadLocalVariables = new ThreadLocal<>();
   /**
    * Mapping of variables that can be expanded in a regular expression for strings,
    *   to their regular expressions.
@@ -48,12 +48,12 @@ public class Env {
    *   the name of the variable to be replaced, and a <code>String</code> representing the
    *   regular expression (escaped) that is used to replace the name of the variable.
    */
-  Map<String, Pair<Pattern,String>> stringRegexVariables = new HashMap<String, Pair<Pattern, String>>();//Generics.newHashMap();
+  Map<String, Pair<Pattern,String>> stringRegexVariables = new HashMap<>();//Generics.newHashMap();
 
   /**
    * Default parameters (used when reading in rules for {@link SequenceMatchRules}.
    */
-  public Map<String, Object> defaults = new HashMap<String, Object>();//Generics.newHashMap();
+  public Map<String, Object> defaults = new HashMap<>();//Generics.newHashMap();
 
   /**
    * Default flags to use for string regular expressions match
@@ -260,14 +260,14 @@ public class Env {
     }
     Pattern varPattern = Pattern.compile(Pattern.quote(var));
     String replace = Matcher.quoteReplacement(regex);
-    stringRegexVariables.put(var, new Pair<Pattern, String>(varPattern, replace));
+    stringRegexVariables.put(var, new Pair<>(varPattern, replace));
   }
   public String expandStringRegex(String regex)
   {
     // Replace all variables in regex
     String expanded = regex;
-    for (String v:stringRegexVariables.keySet()) {
-      Pair<Pattern,String> p = stringRegexVariables.get(v);
+    for (Map.Entry<String, Pair<Pattern, String>> stringPairEntry : stringRegexVariables.entrySet()) {
+      Pair<Pattern,String> p = stringPairEntry.getValue();
       expanded = p.first().matcher(expanded).replaceAll(p.second());
     }
     return expanded;
@@ -360,11 +360,11 @@ public class Env {
   public void push(String name, Object value) {
     Map<String,Object> vars = threadLocalVariables.get();
     if (vars == null) {
-      threadLocalVariables.set(vars = new HashMap<String, Object>());//Generics.newHashMap());
+      threadLocalVariables.set(vars = new HashMap<>());//Generics.newHashMap());
     }
     Stack<Object> stack = (Stack<Object>) vars.get(name);
     if (stack == null) {
-      vars.put(name, stack = new Stack<Object>());
+      vars.put(name, stack = new Stack<>());
     }
     stack.push(value);
   }

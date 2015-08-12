@@ -24,7 +24,7 @@ public class UnknownWordPrinter implements Eval {
   final DVModel model;
   final SimpleMatrix unk;
 
-  final TreeSet<String> unkWords = new TreeSet<String>();
+  final TreeSet<String> unkWords = new TreeSet<>();
 
   public UnknownWordPrinter(DVModel model) {
     this.model = model;
@@ -43,7 +43,7 @@ public class UnknownWordPrinter implements Eval {
 
   @Override
   public void evaluate(Tree guess, Tree gold, PrintWriter pw, double weight) {
-    List<Label> words = guess.yield();
+    List<? extends Label> words = guess.yield();
     int pos = 0;
     for (Label word : words) {
       ++pos;

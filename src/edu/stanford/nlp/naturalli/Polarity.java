@@ -67,7 +67,7 @@ public class Polarity {
    *
    * @return The projected relation, once passed through an operator with the given specifications.
    */
-  private NaturalLogicRelation project(NaturalLogicRelation input, Monotonicity mono, MonotonicityType type) {
+  private static NaturalLogicRelation project(NaturalLogicRelation input, Monotonicity mono, MonotonicityType type) {
     switch (input) {
       case EQUIVALENT:
         return NaturalLogicRelation.EQUIVALENT;

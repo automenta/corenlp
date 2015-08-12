@@ -98,7 +98,7 @@ public class Comparators {
     }
 
     public static <C extends Comparable> Comparator<List<C>> getListComparator() {
-      return (list1, list2) -> compareLists(list1, list2);
+      return Comparators::compareLists;
     }
 
     /**
@@ -115,11 +115,11 @@ public class Comparators {
     }
 
     public static Comparator<boolean[]> getBooleanArrayComparator() {
-      return (a1, a2) -> ArrayUtils.compareBooleanArrays(a1, a2);
+      return ArrayUtils::compareBooleanArrays;
     }
 
     public static <C extends Comparable> Comparator<C[]> getArrayComparator() {
-      return (a1, a2) -> ArrayUtils.compareArrays(a1, a2);
+      return ArrayUtils::compareArrays;
     }
 
   }

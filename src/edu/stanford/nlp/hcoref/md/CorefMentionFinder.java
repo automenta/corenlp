@@ -81,7 +81,7 @@ public abstract class CorefMentionFinder {
           if (beginIndex >= 0) {
             IntPair mSpan = new IntPair(beginIndex, endIndex);
             int dummyMentionId = -1;
-            Mention m = new Mention(dummyMentionId, beginIndex, endIndex, sent, basicDependency, collapsedDependency, new ArrayList<CoreLabel>(sent.subList(beginIndex, endIndex)));
+            Mention m = new Mention(dummyMentionId, beginIndex, endIndex, sent, basicDependency, collapsedDependency, new ArrayList<>(sent.subList(beginIndex, endIndex)));
             mentions.add(m);
             mentionSpanSet.add(mSpan);
             beginIndex = -1;
@@ -124,13 +124,13 @@ public abstract class CorefMentionFinder {
       spanToMentionSubTree.put(new IntPair(beginIdx, endIdx), m2);
     }
 
-    for(IntPair mSpan : spanToMentionSubTree.keySet()){
-      if(!mentionSpanSet.contains(mSpan) && !insideNE(mSpan, namedEntitySpanSet)) {
+    for(Map.Entry<IntPair, Tree> intPairTreeEntry : spanToMentionSubTree.entrySet()){
+      if(!mentionSpanSet.contains(intPairTreeEntry.getKey()) && !insideNE(intPairTreeEntry.getKey(), namedEntitySpanSet)) {
         int dummyMentionId = -1;
-        Mention m = new Mention(dummyMentionId, mSpan.get(0), mSpan.get(1), sent, basicDependency, collapsedDependency,
-                                new ArrayList<CoreLabel>(sent.subList(mSpan.get(0), mSpan.get(1))), spanToMentionSubTree.get(mSpan));
+        Mention m = new Mention(dummyMentionId, intPairTreeEntry.getKey().get(0), intPairTreeEntry.getKey().get(1), sent, basicDependency, collapsedDependency,
+                new ArrayList<>(sent.subList(intPairTreeEntry.getKey().get(0), intPairTreeEntry.getKey().get(1))), intPairTreeEntry.getValue());
         mentions.add(m);
-        mentionSpanSet.add(mSpan);
+        mentionSpanSet.add(intPairTreeEntry.getKey());
       }
     }
   }
@@ -295,7 +295,7 @@ public abstract class CorefMentionFinder {
 
           StringBuilder sb = new StringBuilder();
           for(int k=0 ; k < len ; k++) {
-            sb.append(tokens.get(k+j).word()).append(" ");
+            sb.append(tokens.get(k+j).word()).append(' ');
           }
           String phrase = sb.toString().trim();
           int beginIndex = j;
@@ -333,7 +333,7 @@ public abstract class CorefMentionFinder {
             Mention m = new Mention(dummyMentionId, beginIndex, endIndex, tokens,
                 sent.get(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class),
                 sent.get(SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation.class),
-                new ArrayList<CoreLabel>(tokens.subList(beginIndex, endIndex)));
+                    new ArrayList<>(tokens.subList(beginIndex, endIndex)));
             mentions.add(m);
             mentionSpanSet.add(span);
           }
@@ -347,7 +347,7 @@ public abstract class CorefMentionFinder {
     for(IntPair p : namedEntitySpanSet) {
       StringBuilder sb = new StringBuilder();
       for(int idx=p.get(0) ; idx < p.get(1) ; idx++) {
-        sb.append(tokens.get(idx).word()).append(" ");
+        sb.append(tokens.get(idx).word()).append(' ');
       }
       String str = sb.toString().trim();
       if(str.endsWith(" 's")) {
@@ -376,7 +376,7 @@ public abstract class CorefMentionFinder {
           Mention m = new Mention(dummyMentionId, g.startIndex, g.endIndex, tokens,
               sent.get(SemanticGraphCoreAnnotations.BasicDependenciesAnnotation.class),
               sent.get(SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation.class),
-              new ArrayList<CoreLabel>(tokens.subList(g.startIndex, g.endIndex)));
+                  new ArrayList<>(tokens.subList(g.startIndex, g.endIndex)));
           mentions.add(m);
           mentionSpanSet.add(pair);
         }
@@ -402,7 +402,7 @@ public abstract class CorefMentionFinder {
 
       int start = m.headIndex - m.startIndex;
       if (start < 0 || start >= m.originalSpan.size()) {
-        Redwood.log("Invalid index for head " + start + "=" + m.headIndex + "-" + m.startIndex
+        Redwood.log("Invalid index for head " + start + '=' + m.headIndex + '-' + m.startIndex
                 + ": originalSpan=[" + StringUtils.joinWords(m.originalSpan, " ") + "], head=" + m.headWord);
         Redwood.log("Setting head string to entire mention");
         m.headIndex = m.startIndex;
@@ -452,7 +452,7 @@ public abstract class CorefMentionFinder {
     // context, so as to make the parser work better :-)
     if (allowReparsing) {
       int approximateness = 0;
-      List<CoreLabel> extentTokens = new ArrayList<CoreLabel>();
+      List<CoreLabel> extentTokens = new ArrayList<>();
       extentTokens.add(initCoreLabel("It"));
       extentTokens.add(initCoreLabel("was"));
       final int ADDED_WORDS = 2;
@@ -532,7 +532,7 @@ public abstract class CorefMentionFinder {
         return findPartialSpan(kid, start);
       }
     }
-    throw new RuntimeException("Shouldn't happen: " + start + " " + root);
+    throw new RuntimeException("Shouldn't happen: " + start + ' ' + root);
   }
 
   private static Tree funkyFindLeafWithApproximateSpan(Tree root, String token, int index, int approximateness) {
@@ -550,8 +550,8 @@ public abstract class CorefMentionFinder {
     // this shouldn't happen
     //    throw new RuntimeException("RuleBasedCorefMentionFinder: ERROR: Failed to find head token");
     Redwood.log("RuleBasedCorefMentionFinder: Failed to find head token:\n" +
-                       "Tree is: " + root + "\n" +
-                       "token = |" + token + "|" + index + "|, approx=" + approximateness);
+                       "Tree is: " + root + '\n' +
+                       "token = |" + token + '|' + index + "|, approx=" + approximateness);
     for (Tree leaf : leaves) {
       if (token.equals(leaf.value())) {
         // System.err.println("Found it at position " + ind + "; returning " + leaf);
@@ -580,7 +580,7 @@ public abstract class CorefMentionFinder {
     sent.set(CoreAnnotations.TokensAnnotation.class, tokens);
     sent.set(ParserAnnotations.ConstraintAnnotation.class, constraints);
     Annotation doc = new Annotation("");
-    List<CoreMap> sents = new ArrayList<CoreMap>(1);
+    List<CoreMap> sents = new ArrayList<>(1);
     sents.add(sent);
     doc.set(CoreAnnotations.SentencesAnnotation.class, sents);
     getParser().annotate(doc);
@@ -709,8 +709,8 @@ public abstract class CorefMentionFinder {
         matchedPattern = patternIdx;
       }
     }
-    sbLog.append("PLEONASTIC IT: mention ID: "+m.mentionID +"\thastwin: "+m.hasTwin+"\tpleonastic it? "+isPleonastic+"\tcorrect? "+(m.hasTwin!=isPleonastic)+"\tmatched pattern: "+matchedPattern+"\n");
-    sbLog.append(m.contextParseTree.pennString()).append("\n");
+    sbLog.append("PLEONASTIC IT: mention ID: ").append(m.mentionID).append("\thastwin: ").append(m.hasTwin).append("\tpleonastic it? ").append(isPleonastic).append("\tcorrect? ").append(m.hasTwin != isPleonastic).append("\tmatched pattern: ").append(matchedPattern).append('\n');
+    sbLog.append(m.contextParseTree.pennString()).append('\n');
     sbLog.append("PLEONASTIC IT END\n");
 
     return isPleonastic;

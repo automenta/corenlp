@@ -94,12 +94,12 @@ public class SemanticGraphFormatter {
         index+=1;
         out.append("root_").append(index).append("> ");
         formatSGNode(sg, root, 9);
-        out.append("\n");
+        out.append('\n');
       }
     }
     String result = out.toString();
     if (!result.startsWith("[")) {
-      result = "[" + result + "]";
+      result = '[' + result + ']';
     }
     return result;
   }
@@ -182,7 +182,7 @@ public class SemanticGraphFormatter {
     }
     for (SemanticGraphEdge depcy : sg.getOutEdgesSorted(node)) {
       IndexedWord dep = depcy.getDependent();
-      out.append("\n");
+      out.append('\n');
       out.append(StringUtils.repeat(SPACE, spaces));
       int sp = spaces;
       if (showRelns) {
@@ -203,12 +203,12 @@ public class SemanticGraphFormatter {
   private String formatLabel(IndexedWord node) {
     String s = node.word();
     if (showIndices) {
-      s = node.sentIndex()+":"+node.index()+"-"+s;
+      s = node.sentIndex()+":"+node.index()+ '-' +s;
     }
     if (showTags) {
       String tag = node.tag();
       if (tag != null && tag.length() > 0) {
-        s += "/" + tag;
+        s += '/' + tag;
       }
     }
     if (showAnnos) {

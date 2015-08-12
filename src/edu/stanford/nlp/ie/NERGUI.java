@@ -542,7 +542,7 @@ public class NERGUI {
 
   }
 
-  public void exit() {
+  public static void exit() {
     // ask if they're sure?
     System.exit(-1);
   }
@@ -577,20 +577,20 @@ public class NERGUI {
   public static String colorToHTML(Color color) {
     String r = Integer.toHexString(color.getRed());
     if (r.length() == 0) { r = "00"; }
-    else if (r.length() == 1) { r = "0" + r; }
+    else if (r.length() == 1) { r = '0' + r; }
     else if (r.length() > 2) { throw new IllegalArgumentException("invalid hex color for red"+r); }
 
     String g = Integer.toHexString(color.getGreen());
     if (g.length() == 0) { g = "00"; }
-    else if (g.length() == 1) { g = "0" + g; }
+    else if (g.length() == 1) { g = '0' + g; }
     else if (g.length() > 2) { throw new IllegalArgumentException("invalid hex color for green"+g); }
 
     String b = Integer.toHexString(color.getBlue());
     if (b.length() == 0) { b = "00"; }
-    else if (b.length() == 1) { b = "0" + b; }
+    else if (b.length() == 1) { b = '0' + b; }
     else if (b.length() > 2) { throw new IllegalArgumentException("invalid hex color for blue"+b); }
 
-    return "#"+r+g+b;
+    return '#' +r+g+b;
   }
 
   static class ColorIcon implements Icon {

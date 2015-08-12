@@ -103,7 +103,7 @@ public class BiLexPCFGParser implements KBestViterbiParser {
       return tf.newTreeNode(label, childList);
     }
     // binary
-    List<Tree> children = new ArrayList<Tree>();
+    List<Tree> children = new ArrayList<>();
     if (edge.backHook.isPreHook()) {
       children.add(extractParse(edge.backEdge));
       children.add(extractParse(edge.backHook.backEdge));
@@ -130,7 +130,7 @@ public class BiLexPCFGParser implements KBestViterbiParser {
 
 
   // Added by Dan Zeman to store the list of N best trees.
-  protected List<Edge> nGoodTrees = new LinkedList<Edge>();
+  protected List<Edge> nGoodTrees = new LinkedList<>();
 
 
 
@@ -143,9 +143,9 @@ public class BiLexPCFGParser implements KBestViterbiParser {
    * @return The list of k best trees
    */
   public List<ScoredObject<Tree>> getKGoodParses(int k) {
-    List<ScoredObject<Tree>> nGoodTreesList = new ArrayList<ScoredObject<Tree>>(op.testOptions.printFactoredKGood);
+    List<ScoredObject<Tree>> nGoodTreesList = new ArrayList<>(op.testOptions.printFactoredKGood);
     for (Edge e : nGoodTrees) {
-      nGoodTreesList.add(new ScoredObject<Tree>(extractParse(e), e.iScore));
+      nGoodTreesList.add(new ScoredObject<>(extractParse(e), e.iScore));
     }
     return nGoodTreesList;
   }
@@ -238,7 +238,7 @@ public class BiLexPCFGParser implements KBestViterbiParser {
             System.err.println("New backEdge: " + tempEdge.backEdge + " iE " + scorer.iScore(tempEdge.backEdge));
             System.err.println("New backHook: " + tempEdge.backHook + " i " + tempEdge.backHook.iScore + " o " + tempEdge.backHook.oScore + " s " + tempEdge.backHook.score());
             System.err.println("ERROR: Formed " + resultEdge + " i " + tempEdge.iScore + " o " + resultEdge.oScore + " s " + resultEdge.score());
-            System.err.println("ERROR: Formed " + resultEdge + " " + (resultEdge == tempEdge ? "new" : "old") + " " + tempEdge.iScore + " was " + back + " better? " + better(tempEdge.iScore, back));
+            System.err.println("ERROR: Formed " + resultEdge + ' ' + (resultEdge == tempEdge ? "new" : "old") + ' ' + tempEdge.iScore + " was " + back + " better? " + better(tempEdge.iScore, back));
           }
         }
       }
@@ -617,7 +617,7 @@ public class BiLexPCFGParser implements KBestViterbiParser {
   }
 
   protected List<Item> makeInitialItems(List<? extends HasWord> wordList) {
-    List<Item> itemList = new ArrayList<Item>();
+    List<Item> itemList = new ArrayList<>();
     int length = wordList.size();
     int numTags = tagIndex.size();
     words = new int[length];
@@ -625,7 +625,7 @@ public class BiLexPCFGParser implements KBestViterbiParser {
     int terminalCount = 0;
     originalLabels = new CoreLabel[wordList.size()];
     for (int i = 0; i < length; i++) {
-      taggedWordList[i] = new ArrayList<IntTaggedWord>(numTags);
+      taggedWordList[i] = new ArrayList<>(numTags);
       HasWord wordObject = wordList.get(i);
       if (wordObject instanceof CoreLabel) {
         originalLabels[i] = (CoreLabel) wordObject;
@@ -636,7 +636,7 @@ public class BiLexPCFGParser implements KBestViterbiParser {
       String wordContextStr = null;
       if(wordObject instanceof HasContext) {
         wordContextStr = ((HasContext) wordObject).originalText();
-        if("".equals(wordContextStr))
+        if(wordContextStr != null && wordContextStr.isEmpty())
           wordContextStr = null;
       }
 
@@ -720,7 +720,7 @@ public class BiLexPCFGParser implements KBestViterbiParser {
   protected void initialize(List<? extends HasWord> words) {
     length = words.size();
     interner = new Interner();
-    agenda = new ArrayHeap<Item>(ScoredComparator.DESCENDING_COMPARATOR);
+    agenda = new ArrayHeap<>(ScoredComparator.DESCENDING_COMPARATOR);
     chart = new HookChart();
     setGoal(length);
     List<Item> initialItems = makeInitialItems(words);
@@ -863,7 +863,7 @@ public class BiLexPCFGParser implements KBestViterbiParser {
       if (VERBOSE && item.score() != Double.NEGATIVE_INFINITY) {
         System.err.printf("Removing from agenda: %s score i %.2f + o %.2f = %.2f\n", item, item.iScore, item.oScore, item.score());
         if (item.backEdge != null) {
-          System.err.println("  Backtrace: " + item.backEdge.toString() + " " + (item.isEdge() ? (((Edge) item).backHook != null ? ((Edge) item).backHook.toString() : "") : ""));
+          System.err.println("  Backtrace: " + item.backEdge.toString() + ' ' + (item.isEdge() ? (((Edge) item).backHook != null ? ((Edge) item).backHook.toString() : "") : ""));
         }
       }
       processItem(item);
@@ -955,7 +955,7 @@ public class BiLexPCFGParser implements KBestViterbiParser {
       Hook resultHook = tempHook;
       //Hook resultHook = (Hook)interner.intern(tempHook);
       if (VERBOSE) {
-        System.err.println("Formed " + resultHook + " " + (resultHook == tempHook ? "new" : "old") + " " + tempHook.iScore + " was " + resultHook.iScore);
+        System.err.println("Formed " + resultHook + ' ' + (resultHook == tempHook ? "new" : "old") + ' ' + tempHook.iScore + " was " + resultHook.iScore);
       }
       if (resultHook == tempHook) {
         relaxHook3++;

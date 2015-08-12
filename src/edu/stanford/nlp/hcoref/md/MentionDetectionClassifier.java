@@ -29,7 +29,7 @@ public class MentionDetectionClassifier implements Serializable {
   }
 
   public static Counter<String> extractFeatures(Mention p, Set<Mention> shares, Set<String> neStrings, Dictionaries dict, Properties props) {
-    Counter<String> features = new ClassicCounter<String>();
+    Counter<String> features = new ClassicCounter<>();
     
     String span = p.lowercaseNormalizedSpanString();
     String ner = p.headWord.ner();
@@ -89,7 +89,7 @@ public class MentionDetectionClassifier implements Serializable {
   public double probabilityOf(Mention p, Set<Mention> shares, Set<String> neStrings, Dictionaries dict, Properties props) {
     try {
       boolean dummyLabel = false;
-      RVFDatum<Boolean, String> datum = new RVFDatum<Boolean, String>(extractFeatures(p, shares, neStrings, dict, props), dummyLabel);
+      RVFDatum<Boolean, String> datum = new RVFDatum<>(extractFeatures(p, shares, neStrings, dict, props), dummyLabel);
       return rf.probabilityOfTrue(datum);
     } catch (Exception e) {
       throw new RuntimeException(e);
@@ -119,10 +119,10 @@ public class MentionDetectionClassifier implements Serializable {
       }
       
       Set<Mention> remove = Generics.newHashSet();
-      for(int hPos : headPositions.keySet()) {
-        Set<Mention> shares = headPositions.get(hPos);
+      for(Map.Entry<Integer, Set<Mention>> integerSetEntry : headPositions.entrySet()) {
+        Set<Mention> shares = integerSetEntry.getValue();
         if(shares.size() > 1) {
-          Counter<Mention> probs = new ClassicCounter<Mention>();
+          Counter<Mention> probs = new ClassicCounter<>();
           for(Mention p : shares) {
             double trueProb = probabilityOf(p, shares, neStrings, dict, props);
             probs.incrementCount(p, trueProb);

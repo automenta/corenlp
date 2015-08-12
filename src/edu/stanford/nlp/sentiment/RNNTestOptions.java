@@ -18,9 +18,9 @@ public class RNNTestOptions implements Serializable {
   public String toString() {
     StringBuilder result = new StringBuilder();
     result.append("TEST OPTIONS\n");
-    result.append("ngramRecordSize=" + ngramRecordSize + "\n");
-    result.append("ngramRecordMaximumLength=" + ngramRecordMaximumLength + "\n");
-    result.append("printLengthAccuracies=" + printLengthAccuracies + "\n");
+    result.append("ngramRecordSize=").append(ngramRecordSize).append('\n');
+    result.append("ngramRecordMaximumLength=").append(ngramRecordMaximumLength).append('\n');
+    result.append("printLengthAccuracies=").append(printLengthAccuracies).append('\n');
     return result.toString();
   }
 

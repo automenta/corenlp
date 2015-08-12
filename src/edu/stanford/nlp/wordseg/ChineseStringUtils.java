@@ -216,7 +216,7 @@ public class ChineseStringUtils {
       Pattern p = puncsPat[i];
       Character punc = puncs[i];
       Matcher m = p.matcher(ans);
-      ans = m.replaceAll(" "+punc+" ");
+      ans = m.replaceAll(" "+punc+ ' ');
     }
     ans = ans.trim();
     return ans;
@@ -232,7 +232,7 @@ public class ChineseStringUtils {
       for(int i = 0; i < puncs.length; i++) {
         Character punc = puncs[i];
         if (punc == '(' || punc == ')') { // escape
-          puncsPat[i] = Pattern.compile(WHITE + "\\" + punc + WHITE);
+          puncsPat[i] = Pattern.compile(WHITE + '\\' + punc + WHITE);
         } else {
           puncsPat[i] = Pattern.compile(WHITE + punc + WHITE);
         }
@@ -243,7 +243,7 @@ public class ChineseStringUtils {
       Pattern p = puncsPat[i];
       Character punc = puncs[i];
       Matcher m = p.matcher(ans);
-      ans = m.replaceAll(" "+punc+" ");
+      ans = m.replaceAll(" "+punc+ ' ');
     }
     ans = ans.trim();
     return ans;
@@ -298,14 +298,14 @@ public class ChineseStringUtils {
       Character colon = colons[i];
       Pattern p = colonsPat[i];
       Matcher m = p.matcher(ans);
-      ans = m.replaceAll(" "+colon+" ");
+      ans = m.replaceAll(" "+colon+ ' ');
     }
 
     if (colonsWhitePat == null) {
       colonsWhitePat = new Pattern[colons.length];
       for (int i = 0; i < colons.length; i++) {
         Character colon = colons[i];
-        colonsWhitePat[i] = Pattern.compile("("+numPat+")" + WHITEPLUS + colon + WHITEPLUS + "("+numPat+")");
+        colonsWhitePat[i] = Pattern.compile('(' +numPat+ ')' + WHITEPLUS + colon + WHITEPLUS + '(' +numPat+ ')');
       }
     }
     // second , combine "5:6" patterns
@@ -336,7 +336,7 @@ public class ChineseStringUtils {
 
     // second , combine "6%" patterns
     if (percentsWhitePat==null) {
-      percentsWhitePat = Pattern.compile("(" + numPat + ")" + percentStr);
+      percentsWhitePat = Pattern.compile('(' + numPat + ')' + percentStr);
     }
     Matcher m2 = percentsWhitePat.matcher(ans);
     ans = m2.replaceAll("$1$2");
@@ -347,21 +347,21 @@ public class ChineseStringUtils {
   private static String processDots(String ans, String numPat) {
     /* all "\d\.\d" patterns */
     String dots = "[\ufe52\u2027\uff0e.]";
-    Pattern p = Pattern.compile("("+numPat+")" + WHITEPLUS + "("+dots+")" + WHITEPLUS + "("+numPat+")");
+    Pattern p = Pattern.compile('(' +numPat+ ')' + WHITEPLUS + '(' +dots+ ')' + WHITEPLUS + '(' +numPat+ ')');
     Matcher m = p.matcher(ans);
     while(m.find()) {
     ans = m.replaceAll("$1$2$3");
       m = p.matcher(ans);
     }
 
-    p = Pattern.compile("("+numPat+")("+dots+")" + WHITEPLUS + "("+numPat+")");
+    p = Pattern.compile('(' +numPat+")("+dots+ ')' + WHITEPLUS + '(' +numPat+ ')');
     m = p.matcher(ans);
     while (m.find()) {
       ans = m.replaceAll("$1$2$3");
       m = p.matcher(ans);
     }
 
-    p = Pattern.compile("("+numPat+")" + WHITEPLUS + "("+dots+")("+numPat+")");
+    p = Pattern.compile('(' +numPat+ ')' + WHITEPLUS + '(' +dots+")("+numPat+ ')');
     m = p.matcher(ans);
     while(m.find()) {
       ans = m.replaceAll("$1$2$3");
@@ -383,7 +383,7 @@ public class ChineseStringUtils {
     ans = ans.replaceAll(",", " , ");
     ans = ans.replaceAll("  ", " ");
     if (DEBUG) EncodingPrintWriter.err.println("ANS (before comma norm): "+ans, "UTF-8");
-    Pattern p = Pattern.compile("("+numPat+")" + WHITE + "("+commas+")" + WHITE + "("+numPat+"{3}" + nonNumPat+")");
+    Pattern p = Pattern.compile('(' +numPat+ ')' + WHITE + '(' +commas+ ')' + WHITE + '(' +numPat+"{3}" + nonNumPat+ ')');
     // cdm: I added the {3} to be a crude fix so it wouldn't joint back
     // up small numbers.  Only proper thousands markers.  But it's a
     // crude hack, which should be done better.
@@ -467,14 +467,14 @@ public class ChineseStringUtils {
 
       /* "\u2014\u2014\u2014" and "\u2026\u2026" should be together */
 
-      String[] puncPatterns = {"\u2014" + WHITE + "\u2014" + WHITE + "\u2014", "\u2026" + WHITE + "\u2026"};
+      String[] puncPatterns = {'\u2014' + WHITE + '\u2014' + WHITE + '\u2014', '\u2026' + WHITE + '\u2026'};
       String[] correctPunc = {"\u2014\u2014\u2014", "\u2026\u2026"};
       //String[] puncPatterns = {"\u2014 \u2014 \u2014", "\u2026 \u2026"};
 
       for (int i = 0; i < puncPatterns.length; i++) {
         Pattern p = Pattern.compile(WHITE + puncPatterns[i]+ WHITE);
         Matcher m = p.matcher(ans);
-        ans = m.replaceAll(" "+correctPunc[i]+" ");
+        ans = m.replaceAll(' ' +correctPunc[i]+ ' ');
       }
     }
     ans = ans.trim();
@@ -523,14 +523,14 @@ public class ChineseStringUtils {
 
     /* "\u2014\u2014\u2014" and "\u2026\u2026" should be together */
 
-    String[] puncPatterns = {"\u2014" + WHITE + "\u2014" + WHITE + "\u2014", "\u2026" + WHITE + "\u2026"};
+    String[] puncPatterns = {'\u2014' + WHITE + '\u2014' + WHITE + '\u2014', '\u2026' + WHITE + '\u2026'};
     String[] correctPunc = {"\u2014\u2014\u2014", "\u2026\u2026"};
     //String[] puncPatterns = {"\u2014 \u2014 \u2014", "\u2026 \u2026"};
 
     for (int i = 0; i < puncPatterns.length; i++) {
       Pattern p = Pattern.compile(WHITE + puncPatterns[i]+ WHITE);
       Matcher m = p.matcher(ans);
-      ans = m.replaceAll(" "+correctPunc[i]+" ");
+      ans = m.replaceAll(' ' +correctPunc[i]+ ' ');
     }
     ans = ans.trim();
 

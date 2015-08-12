@@ -112,7 +112,7 @@ public class XMLOutputter extends AnnotationOutputter {
     //
     if(annotation.get(CoreAnnotations.SentencesAnnotation.class) != null){
       int sentCount = 1;
-      for (CoreMap sentence: annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
+      for (CoreMap sentence: (Iterable<CoreMap>)annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
         Element sentElem = new Element("sentence", NAMESPACE_URI);
         sentElem.addAttribute(new Attribute("id", Integer.toString(sentCount)));
         Integer lineNumber = sentence.get(CoreAnnotations.LineNumberAnnotation.class);
@@ -408,18 +408,18 @@ public class XMLOutputter extends AnnotationOutputter {
 
     if (token.containsKey(CoreAnnotations.TrueCaseAnnotation.class)) {
       Element cur = new Element("TrueCase", curNS);
-      cur.appendChild(token.get(CoreAnnotations.TrueCaseAnnotation.class));
+      cur.appendChild(token.get(CoreAnnotations.TrueCaseAnnotation.class).toString());
       wordInfo.appendChild(cur);
     }
     if (token.containsKey(CoreAnnotations.TrueCaseTextAnnotation.class)) {
       Element cur = new Element("TrueCaseText", curNS);
-      cur.appendChild(token.get(CoreAnnotations.TrueCaseTextAnnotation.class));
+      cur.appendChild(token.get(CoreAnnotations.TrueCaseTextAnnotation.class).toString());
       wordInfo.appendChild(cur);
     }
 
     if (token.containsKey(SentimentCoreAnnotations.SentimentClass.class)) {
       Element cur = new Element("sentiment", curNS);
-      cur.appendChild(token.get(SentimentCoreAnnotations.SentimentClass.class));
+      cur.appendChild(token.get(SentimentCoreAnnotations.SentimentClass.class).toString());
       wordInfo.appendChild(cur);
     }
 

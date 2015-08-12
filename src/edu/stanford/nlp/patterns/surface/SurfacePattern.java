@@ -128,7 +128,7 @@ public class SurfacePattern extends Pattern implements Serializable, Comparable<
     if (nextContext != null)
       nextContextStr = StringUtils.join(nextContext, " ");
 
-    return (prevContextStr + " " + getToken().getTokenStr(notAllowedClasses) + " " + nextContextStr).trim();
+    return (prevContextStr + ' ' + getToken().getTokenStr(notAllowedClasses) + ' ' + nextContextStr).trim();
   }
 
   public String toString(String morePreviousPattern, String moreNextPattern, List<String> notAllowedClasses) {
@@ -140,7 +140,7 @@ public class SurfacePattern extends Pattern implements Serializable, Comparable<
     if (nextContext != null)
       nextContextStr = StringUtils.join(nextContext, " ");
 
-    return (prevContextStr + " " + morePreviousPattern + " " + getToken().getTokenStr(notAllowedClasses) + " " + moreNextPattern + " " + nextContextStr)
+    return (prevContextStr + ' ' + morePreviousPattern + ' ' + getToken().getTokenStr(notAllowedClasses) + ' ' + moreNextPattern + ' ' + nextContextStr)
         .trim();
   }
 
@@ -245,7 +245,7 @@ public class SurfacePattern extends Pattern implements Serializable, Comparable<
 //  static Pattern p2 = Pattern.compile(Pattern.quote("[") + "\\s*" + Pattern.quote("{") + "\\s*(.*)\\s*:\\s*(.*)\\s*" + Pattern.quote("}") + "\\s*"
 //      + Pattern.quote("]"));
 
-  public String[] getSimplerTokens(Token[] p){
+  public static String[] getSimplerTokens(Token[] p){
     if (p == null)
       return null;
 

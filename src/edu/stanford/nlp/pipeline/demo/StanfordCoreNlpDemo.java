@@ -96,13 +96,13 @@ public class StanfordCoreNlpDemo {
           annotation.get(CorefCoreAnnotations.CorefChainAnnotation.class);
       if (corefChains == null) { return; }
       for (Map.Entry<Integer,CorefChain> entry: corefChains.entrySet()) {
-        out.println("Chain " + entry.getKey() + " ");
+        out.println("Chain " + entry.getKey() + ' ');
         for (CorefChain.CorefMention m : entry.getValue().getMentionsInTextualOrder()) {
           // We need to subtract one since the indices count from 1 but the Lists start from 0
           List<CoreLabel> tokens = sentences.get(m.sentNum - 1).get(CoreAnnotations.TokensAnnotation.class);
           // We subtract two for end: one for 0-based indexing, and one because we want last token of mention not one following.
           out.println("  " + m + ", i.e., 0-based character offsets [" + tokens.get(m.startIndex - 1).beginPosition() +
-                  ", " + tokens.get(m.endIndex - 2).endPosition() + ")");
+                  ", " + tokens.get(m.endIndex - 2).endPosition() + ')');
         }
       }
     }

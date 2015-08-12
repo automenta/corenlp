@@ -326,7 +326,7 @@ public class ChineseTreebankParserParams extends AbstractTreebankParserParams {
         } else if (ChineseTreebankLanguagePack.chineseOtherAcceptFilter().test(word)) {
           tag = tag + "-OTHER";
         } else {
-          printlnErr("Unknown punct (you should add it to CTLP): " + tag + " |" + word + "|");
+          printlnErr("Unknown punct (you should add it to CTLP): " + tag + " |" + word + '|');
         }
       } else if (chineseSplitDouHao) {   // only split DouHao
         if (ChineseTreebankLanguagePack.chineseDouHaoAcceptFilter().test(word) && baseTag.equals("PU")) {
@@ -346,10 +346,10 @@ public class ChineseTreebankParserParams extends AbstractTreebankParserParams {
       }
 
       if ((chineseSelectiveTagPA || chineseVerySelectiveTagPA) && (baseTag.equals("CC") || baseTag.equals("P"))) {
-        tag += "-" + baseParentStr;
+        tag += '-' + baseParentStr;
       }
       if (chineseSelectiveTagPA && (baseTag.equals("VV"))) {
-        tag += "-" + baseParentStr;
+        tag += '-' + baseParentStr;
       }
 
       if (markMultiNtag && tag.startsWith("N")) {
@@ -392,7 +392,7 @@ public class ChineseTreebankParserParams extends AbstractTreebankParserParams {
       }
 
       if (gpaAD && baseTag.equals("AD")) {
-        tag += "~" + baseGrandParentStr;
+        tag += '~' + baseGrandParentStr;
         //System.out.println("Found AD with grandparent " + grandParentStr); // testing
       }
 
@@ -824,7 +824,7 @@ public class ChineseTreebankParserParams extends AbstractTreebankParserParams {
 
 
   private List<String> listBasicCategories(List<String> l) {
-    List<String> l1 = new ArrayList<String>();
+    List<String> l1 = new ArrayList<>();
     for (String s : l) {
       l1.add(ctlp.basicCategory(s));
     }

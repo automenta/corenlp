@@ -49,7 +49,7 @@ public class GaleP4LexMapper implements Mapper {
     parentTagsToEscape.add("-NONE-");
   }
 
-  private String mapUtf8(String element) {
+  private static String mapUtf8(String element) {
     //Remove diacritics
     Matcher rmDiacritics = utf8Diacritics.matcher(element);
     element = rmDiacritics.replaceAll("");
@@ -75,7 +75,7 @@ public class GaleP4LexMapper implements Mapper {
     return element;
   }
 
-  private String mapBuckwalter(String element) {
+  private static String mapBuckwalter(String element) {
     //Remove diacritics
     Matcher rmDiacritics = bwDiacritics.matcher(element);
     element = rmDiacritics.replaceAll("");

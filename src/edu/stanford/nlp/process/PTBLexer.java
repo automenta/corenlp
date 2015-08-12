@@ -27216,7 +27216,7 @@ class PTBLexer {
       String key = (String) item.getKey();
       String value = (String) item.getValue();
       boolean val = Boolean.valueOf(value);
-      if ("".equals(key)) {
+      if (key != null && key.isEmpty()) {
         // allow an empty item
       } else if ("invertible".equals(key)) {
         invertible = val;
@@ -27273,20 +27273,27 @@ class PTBLexer {
       } else if ("escapeForwardSlashAsterisk".equals(key)) {
         escapeForwardSlashAsterisk = val;
       } else if ("untokenizable".equals(key)) {
-        if (value.equals("noneDelete")) {
-          untokenizable = UntokenizableOptions.NONE_DELETE;
-        } else if (value.equals("firstDelete")) {
-          untokenizable = UntokenizableOptions.FIRST_DELETE;
-        } else if (value.equals("allDelete")) {
-          untokenizable = UntokenizableOptions.ALL_DELETE;
-        } else if (value.equals("noneKeep")) {
-          untokenizable = UntokenizableOptions.NONE_KEEP;
-        } else if (value.equals("firstKeep")) {
-          untokenizable = UntokenizableOptions.FIRST_KEEP;
-        } else if (value.equals("allKeep")) {
-          untokenizable = UntokenizableOptions.ALL_KEEP;
-        } else {
-        throw new IllegalArgumentException("PTBLexer: Invalid option value in constructor: " + key + ": " + value);
+        switch (value) {
+          case "noneDelete":
+            untokenizable = UntokenizableOptions.NONE_DELETE;
+            break;
+          case "firstDelete":
+            untokenizable = UntokenizableOptions.FIRST_DELETE;
+            break;
+          case "allDelete":
+            untokenizable = UntokenizableOptions.ALL_DELETE;
+            break;
+          case "noneKeep":
+            untokenizable = UntokenizableOptions.NONE_KEEP;
+            break;
+          case "firstKeep":
+            untokenizable = UntokenizableOptions.FIRST_KEEP;
+            break;
+          case "allKeep":
+            untokenizable = UntokenizableOptions.ALL_KEEP;
+            break;
+          default:
+            throw new IllegalArgumentException("PTBLexer: Invalid option value in constructor: " + key + ": " + value);
         }
       } else if ("strictTreebank3".equals(key)) {
         strictTreebank3 = val;
@@ -27794,7 +27801,7 @@ class PTBLexer {
    *
    * @param   errorCode  the code of the errormessage to display
    */
-  private void zzScanError(int errorCode) {
+  private static void zzScanError(int errorCode) {
     String message;
     try {
       message = ZZ_ERROR_MSG[errorCode];

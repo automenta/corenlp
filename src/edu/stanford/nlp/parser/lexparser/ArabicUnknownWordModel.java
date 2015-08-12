@@ -48,7 +48,7 @@ public class ArabicUnknownWordModel extends BaseUnknownWordModel {
   public ArabicUnknownWordModel(Options op, Lexicon lex,
                                 Index<String> wordIndex,
                                 Index<String> tagIndex) {
-    this(op, lex, wordIndex, tagIndex, new ClassicCounter<IntTaggedWord>());
+    this(op, lex, wordIndex, tagIndex, new ClassicCounter<>());
   }
 
   @Override
@@ -137,7 +137,7 @@ public class ArabicUnknownWordModel extends BaseUnknownWordModel {
       sb.append(ArabicUnknownWordSignatures.pastTenseVerbNumberSuffix(word));
       sb.append(ArabicUnknownWordSignatures.presentTenseVerbNumberSuffix(word));
       String ans = ArabicUnknownWordSignatures.abstractionNounSuffix(word);
-      if (! "".equals(ans)) {
+      if (ans != null && !ans.isEmpty()) {
         sb.append(ans);
       } else {
         sb.append(ArabicUnknownWordSignatures.taaMarbuuTaSuffix(word));
@@ -171,7 +171,7 @@ public class ArabicUnknownWordModel extends BaseUnknownWordModel {
       sb.append(ArabicUnknownWordSignatures.pastTenseVerbNumberSuffix(word));
       sb.append(ArabicUnknownWordSignatures.presentTenseVerbNumberSuffix(word));
       String ans = ArabicUnknownWordSignatures.abstractionNounSuffix(word);
-      if (! "".equals(ans)) {
+      if (ans != null && !ans.isEmpty()) {
         sb.append(ans);
       } else {
         sb.append(ArabicUnknownWordSignatures.taaMarbuuTaSuffix(word));

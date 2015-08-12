@@ -20,7 +20,7 @@ import java.util.ArrayList;
  * An ArrayList of Feature
  */
 public class Features {
-  private ArrayList<Feature> f = new ArrayList<Feature>();
+  private ArrayList<Feature> f = new ArrayList<>();
   private static int maxValue = 11000000;
 
   public Features() {
@@ -87,8 +87,8 @@ public class Features {
       if (!s.endsWith("</fSize>")) {
         throw e1;
       }
-      int index1 = s.indexOf(">");
-      int index2 = s.lastIndexOf("<");
+      int index1 = s.indexOf('>');
+      int index2 = s.lastIndexOf('<');
       String fSt = s.substring(index1 + 1, index2);
       System.out.println(fSt);
       int number = Integer.parseInt(fSt);
@@ -101,16 +101,16 @@ public class Features {
 
         int indSp = -1;
         int current = 0;
-        while ((indSp = line.indexOf(" ")) > -1) {
+        while ((indSp = line.indexOf(' ')) > -1) {
           int x = Integer.parseInt(line.substring(0, indSp));
           line = line.substring(indSp + 1);
-          indSp = line.indexOf(" ");
+          indSp = line.indexOf(' ');
           if (indSp == -1) {
             indSp = line.length();
           }
           int y = Integer.parseInt(line.substring(0, indSp));
           line = line.substring(indSp + 1);
-          indSp = line.indexOf(" ");
+          indSp = line.indexOf(' ');
           if (indSp == -1) {
             indSp = line.length();
           }

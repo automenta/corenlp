@@ -54,6 +54,7 @@ public class CoreAnnotations {
     public Class<String> getType() {
       return String.class;
     }
+
   }
 
 

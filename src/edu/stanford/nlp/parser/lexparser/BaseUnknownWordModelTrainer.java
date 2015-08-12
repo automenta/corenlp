@@ -41,10 +41,10 @@ public class BaseUnknownWordModelTrainer
                                  Index<String> tagIndex, double totalTrees) {
     super.initializeTraining(op, lex, wordIndex, tagIndex, totalTrees);
 
-    seenCounter = new ClassicCounter<IntTaggedWord>();
-    unSeenCounter = new ClassicCounter<IntTaggedWord>();
+    seenCounter = new ClassicCounter<>();
+    unSeenCounter = new ClassicCounter<>();
     tagHash = Generics.newHashMap();
-    tc = new ClassicCounter<Label>();
+    tc = new ClassicCounter<>();
     c = Generics.newHashMap();
     seenEnd = Generics.newHashSet();
 
@@ -86,7 +86,7 @@ public class BaseUnknownWordModelTrainer
 
     Label tag = new Tag(tw.tag());
     if ( ! c.containsKey(tag)) {
-      c.put(tag, new ClassicCounter<String>());
+      c.put(tag, new ClassicCounter<>());
     }
     c.get(tag).incrementCount(subString, weight);
 
@@ -113,23 +113,23 @@ public class BaseUnknownWordModelTrainer
       unknownGTTrainer.finishTraining();
     }
 
-    for (Label tag : c.keySet()) {
+    for (Map.Entry<Label, ClassicCounter<String>> labelClassicCounterEntry : c.entrySet()) {
       /* outer iteration is over tags */
-      ClassicCounter<String> wc = c.get(tag); // counts for words given a tag
+      ClassicCounter<String> wc = labelClassicCounterEntry.getValue(); // counts for words given a tag
 
-      if (!tagHash.containsKey(tag)) {
-        tagHash.put(tag, new ClassicCounter<String>());
+      if (!tagHash.containsKey(labelClassicCounterEntry.getKey())) {
+        tagHash.put(labelClassicCounterEntry.getKey(), new ClassicCounter<>());
       }
 
       /* the UNKNOWN sequence is assumed to be seen once in each tag */
       // This is sort of broken, but you can regard it as a Dirichlet prior.
-      tc.incrementCount(tag);
+      tc.incrementCount(labelClassicCounterEntry.getKey());
       wc.setCount(unknown, 1.0);
 
       /* inner iteration is over words */
       for (String end : wc.keySet()) {
-        double prob = Math.log((wc.getCount(end)) / (tc.getCount(tag)));  // p(sig|tag)
-        tagHash.get(tag).setCount(end, prob);
+        double prob = Math.log((wc.getCount(end)) / (tc.getCount(labelClassicCounterEntry.getKey())));  // p(sig|tag)
+        tagHash.get(labelClassicCounterEntry.getKey()).setCount(end, prob);
         //if (Test.verbose)
         //EncodingPrintWriter.out.println(tag + " rewrites as " + end + " endchar with probability " + prob,encoding);
       }

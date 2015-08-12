@@ -58,14 +58,14 @@ public class FTBDataset extends AbstractDataset {
   /**
    * Return the ID of this tree according to the Candito split files.
    */
-  private String getCanditoTreeID(Tree t) {
+  private static String getCanditoTreeID(Tree t) {
     String canditoName = null;
     if (t.label() instanceof CoreLabel) {
       String fileName = ((CoreLabel) t.label()).docID();
       fileName = fileName.substring(0, fileName.lastIndexOf('.'));
       String ftbID = ((CoreLabel) t.label()).get(CoreAnnotations.SentenceIDAnnotation.class);
       if (fileName != null && ftbID != null) {
-        canditoName = fileName + "-" + ftbID;
+        canditoName = fileName + '-' + ftbID;
       } else {
         throw new NullPointerException("fileName " + fileName + ", ftbID " + ftbID);
       }
@@ -96,7 +96,7 @@ public class FTBDataset extends AbstractDataset {
 
       preprocessMWEs();
 
-      List<TregexPattern> badTrees = new ArrayList<TregexPattern>();
+      List<TregexPattern> badTrees = new ArrayList<>();
       //These trees appear in the Candito training set
       //They are mangled by the TreeCorrector, so discard them ahead of time.
       badTrees.add(TregexPattern.compile("@SENT <: @PUNC"));
@@ -165,16 +165,16 @@ public class FTBDataset extends AbstractDataset {
   private void preprocessMWEs() {
 
     TwoDimensionalCounter<String,String> labelTerm =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
     TwoDimensionalCounter<String,String> termLabel =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
     TwoDimensionalCounter<String,String> labelPreterm =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
     TwoDimensionalCounter<String,String> pretermLabel =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
 
     TwoDimensionalCounter<String,String> unigramTagger =
-      new TwoDimensionalCounter<String,String>();
+            new TwoDimensionalCounter<>();
 
     for (Tree t : treebank) {
       MWEPreprocessor.countMWEStatistics(t, unigramTagger,

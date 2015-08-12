@@ -49,7 +49,7 @@ public class GrammarCoverageChecker {
     StringBuilder sb = new StringBuilder();
     sb.append(localTree.value()).append(" -> ");
     for (int i = 0; i < localTree.children().length - 1; i++) {
-      sb.append(localTree.children()[i].value()).append(" ");
+      sb.append(localTree.children()[i].value()).append(' ');
     }
     sb.append(localTree.children()[localTree.children().length - 1].value());
     return sb.toString();
@@ -65,7 +65,7 @@ public class GrammarCoverageChecker {
       // first we create the synthetic parent of the leftmost child
       String nextChild = children[0].value();
       // childState = stateIndex.indexOf(nextChild);
-      String current = "@" + parent + "| [ [" + nextChild + "] ";
+      String current = '@' + parent + "| [ [" + nextChild + "] ";
       int currentState = stateIndex.indexOf(current);
       List<UnaryRule> rules = pd.ug.rulesByParent(currentState);
       UnaryRule ur = rules.get(0);

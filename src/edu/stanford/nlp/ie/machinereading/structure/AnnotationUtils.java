@@ -56,7 +56,7 @@ public class AnnotationUtils {
    * @param useSubTypes
    */
   public static List<List<CoreLabel>> entityMentionsToCoreLabels(CoreMap dataset, Set<String> annotationsToSkip, boolean useSubTypes, boolean useBIO) {
-    List<List<CoreLabel>> retVal = new ArrayList<List<CoreLabel>>();
+    List<List<CoreLabel>> retVal = new ArrayList<>();
     List<CoreMap> sentences = dataset.get(CoreAnnotations.SentencesAnnotation.class);
 
     for (CoreMap sentence : sentences) {
@@ -108,7 +108,7 @@ public class AnnotationUtils {
     }
     */
     // use the token CoreLabels not the parser data => more robust
-    List<CoreLabel> labels = new ArrayList<CoreLabel>();
+    List<CoreLabel> labels = new ArrayList<>();
     for(CoreLabel l: sentence.get(CoreAnnotations.TokensAnnotation.class)){
       CoreLabel nl = new CoreLabel(l);
       if (addAnswerAnnotation) {
@@ -131,7 +131,7 @@ public class AnnotationUtils {
           if(entity.getHead() != null){
             for(int i = entity.getHeadTokenStart(); i < entity.getHeadTokenEnd(); i ++){
               String tag = entity.getType();
-              if(useSubTypes && entity.getSubType() != null) tag += "-" + entity.getSubType();
+              if(useSubTypes && entity.getSubType() != null) tag += '-' + entity.getSubType();
               if(useBIO){
                 if(i == entity.getHeadTokenStart()) tag = "B-" + tag;
                 else tag = "I-" + tag;
@@ -172,7 +172,7 @@ public class AnnotationUtils {
   public static void addSentence(CoreMap dataset, CoreMap sentence) {
     List<CoreMap> sents = dataset.get(CoreAnnotations.SentencesAnnotation.class);
     if(sents == null){
-      sents = new ArrayList<CoreMap>();
+      sents = new ArrayList<>();
       dataset.set(CoreAnnotations.SentencesAnnotation.class, sents);
     }
     sents.add(sentence);
@@ -181,7 +181,7 @@ public class AnnotationUtils {
   public static void addSentences(CoreMap dataset, List<CoreMap> sentences) {
     List<CoreMap> sents = dataset.get(CoreAnnotations.SentencesAnnotation.class);
     if(sents == null){
-      sents = new ArrayList<CoreMap>();
+      sents = new ArrayList<>();
       dataset.set(CoreAnnotations.SentencesAnnotation.class, sents);
     }
     for(CoreMap sentence: sentences){
@@ -197,7 +197,7 @@ public class AnnotationUtils {
     Annotation newDataset = new Annotation("");
 
     List<CoreMap> sents = dataset.get(CoreAnnotations.SentencesAnnotation.class);
-    List<CoreMap> newSents = new ArrayList<CoreMap>();
+    List<CoreMap> newSents = new ArrayList<>();
     if(sents != null){
       for(CoreMap sent: sents){
         if(! (sent instanceof Annotation)){
@@ -229,11 +229,11 @@ public class AnnotationUtils {
 
     // deep copy of all mentions lists
     List<EntityMention> ents = sentence.get(MachineReadingAnnotations.EntityMentionsAnnotation.class);
-    if(ents != null) newSent.set(MachineReadingAnnotations.EntityMentionsAnnotation.class, new ArrayList<EntityMention>(ents));
+    if(ents != null) newSent.set(MachineReadingAnnotations.EntityMentionsAnnotation.class, new ArrayList<>(ents));
     List<RelationMention> rels = sentence.get(MachineReadingAnnotations.RelationMentionsAnnotation.class);
-    if(rels != null) newSent.set(MachineReadingAnnotations.RelationMentionsAnnotation.class, new ArrayList<RelationMention>(rels));
+    if(rels != null) newSent.set(MachineReadingAnnotations.RelationMentionsAnnotation.class, new ArrayList<>(rels));
     List<EventMention> evs = sentence.get(MachineReadingAnnotations.EventMentionsAnnotation.class);
-    if(evs != null) newSent.set(MachineReadingAnnotations.EventMentionsAnnotation.class, new ArrayList<EventMention>(evs));
+    if(evs != null) newSent.set(MachineReadingAnnotations.EventMentionsAnnotation.class, new ArrayList<>(evs));
 
     return newSent;
   }
@@ -252,7 +252,7 @@ public class AnnotationUtils {
    */
   public static List<RelationMention> getRelations(RelationMentionFactory factory, CoreMap sentence, ExtractionObject... args) {
     List<RelationMention> relationMentions = sentence.get(MachineReadingAnnotations.RelationMentionsAnnotation.class);
-    List<RelationMention> matchingRelationMentions = new ArrayList<RelationMention>();
+    List<RelationMention> matchingRelationMentions = new ArrayList<>();
     if (relationMentions != null) {
       for (RelationMention rel : relationMentions) {
         if (rel.argsMatch(args)) {
@@ -272,7 +272,7 @@ public class AnnotationUtils {
    */
   public static List<RelationMention> getAllRelations(RelationMentionFactory factory, CoreMap sentence, boolean createUnrelatedRelations) {
     List<RelationMention> relationMentions = sentence.get(MachineReadingAnnotations.RelationMentionsAnnotation.class);
-    List<RelationMention> allRelations = new ArrayList<RelationMention>();
+    List<RelationMention> allRelations = new ArrayList<>();
     if(relationMentions != null) allRelations.addAll(relationMentions);
     if(createUnrelatedRelations){
       allRelations.addAll(getAllUnrelatedRelations(factory, sentence, true));
@@ -284,7 +284,7 @@ public class AnnotationUtils {
 
     List<RelationMention> relationMentions = (checkExisting ? sentence.get(MachineReadingAnnotations.RelationMentionsAnnotation.class) : null);
     List<EntityMention> entityMentions = sentence.get(MachineReadingAnnotations.EntityMentionsAnnotation.class);
-    List<RelationMention> nonRelations = new ArrayList<RelationMention>();
+    List<RelationMention> nonRelations = new ArrayList<>();
 
     //
     // scan all possible arguments
@@ -317,7 +317,7 @@ public class AnnotationUtils {
   public static void addEntityMention(CoreMap sentence, EntityMention arg) {
     List<EntityMention> l = sentence.get(MachineReadingAnnotations.EntityMentionsAnnotation.class);
     if(l == null){
-      l = new ArrayList<EntityMention>();
+      l = new ArrayList<>();
       sentence.set(MachineReadingAnnotations.EntityMentionsAnnotation.class, l);
     }
     l.add(arg);
@@ -326,20 +326,20 @@ public class AnnotationUtils {
   public static void addEntityMentions(CoreMap sentence, Collection<EntityMention> args) {
     List<EntityMention> l = sentence.get(MachineReadingAnnotations.EntityMentionsAnnotation.class);
     if(l == null){
-      l = new ArrayList<EntityMention>();
+      l = new ArrayList<>();
       sentence.set(MachineReadingAnnotations.EntityMentionsAnnotation.class, l);
     }
     l.addAll(args);
   }
 
-  public List<EntityMention> getEntityMentions(CoreMap sent) {
+  public static List<EntityMention> getEntityMentions(CoreMap sent) {
     return Collections.unmodifiableList(sent.get(MachineReadingAnnotations.EntityMentionsAnnotation.class));
   }
 
   public static void addRelationMention(CoreMap sentence, RelationMention arg) {
     List<RelationMention> l = sentence.get(MachineReadingAnnotations.RelationMentionsAnnotation.class);
     if(l == null){
-      l = new ArrayList<RelationMention>();
+      l = new ArrayList<>();
       sentence.set(MachineReadingAnnotations.RelationMentionsAnnotation.class, l);
     }
     l.add(arg);
@@ -348,20 +348,20 @@ public class AnnotationUtils {
   public static void addRelationMentions(CoreMap sentence, Collection<RelationMention> args) {
     List<RelationMention> l = sentence.get(MachineReadingAnnotations.RelationMentionsAnnotation.class);
     if(l == null){
-      l = new ArrayList<RelationMention>();
+      l = new ArrayList<>();
       sentence.set(MachineReadingAnnotations.RelationMentionsAnnotation.class, l);
     }
     l.addAll(args);
   }
 
-  public List<RelationMention> getRelationMentions(CoreMap sent) {
+  public static List<RelationMention> getRelationMentions(CoreMap sent) {
     return Collections.unmodifiableList(sent.get(MachineReadingAnnotations.RelationMentionsAnnotation.class));
   }
 
   public static void addEventMention(CoreMap sentence, EventMention arg) {
     List<EventMention> l = sentence.get(MachineReadingAnnotations.EventMentionsAnnotation.class);
     if(l == null){
-      l = new ArrayList<EventMention>();
+      l = new ArrayList<>();
       sentence.set(MachineReadingAnnotations.EventMentionsAnnotation.class, l);
     }
     l.add(arg);
@@ -370,13 +370,13 @@ public class AnnotationUtils {
   public static void addEventMentions(CoreMap sentence, Collection<EventMention> args) {
     List<EventMention> l = sentence.get(MachineReadingAnnotations.EventMentionsAnnotation.class);
     if(l == null){
-      l = new ArrayList<EventMention>();
+      l = new ArrayList<>();
       sentence.set(MachineReadingAnnotations.EventMentionsAnnotation.class, l);
     }
     l.addAll(args);
   }
 
-  public List<EventMention> getEventMentions(CoreMap sent) {
+  public static List<EventMention> getEventMentions(CoreMap sent) {
     return Collections.unmodifiableList(sent.get(MachineReadingAnnotations.EventMentionsAnnotation.class));
   }
 
@@ -410,10 +410,10 @@ public class AnnotationUtils {
    */
   public static String getTextContent(CoreMap sent, Span span) {
     List<CoreLabel> tokens = sent.get(CoreAnnotations.TokensAnnotation.class);
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     assert(span != null);
     for(int i = span.start(); i < span.end(); i ++){
-      if(i > span.start()) buf.append(" ");
+      if(i > span.start()) buf.append(' ');
       buf.append(tokens.get(i).word());
     }
     return buf.toString();
@@ -422,13 +422,13 @@ public class AnnotationUtils {
   public static String sentenceToString(CoreMap sent) {
     StringBuilder sb = new StringBuilder(512);
     List<CoreLabel> tokens = sent.get(CoreAnnotations.TokensAnnotation.class);
-    sb.append("\"" + StringUtils.join(tokens, " ") + "\"");
-    sb.append("\n");
+    sb.append('"').append(StringUtils.join(tokens, " ")).append('"');
+    sb.append('\n');
 
     List<RelationMention> relationMentions = sent.get(MachineReadingAnnotations.RelationMentionsAnnotation.class);
     if(relationMentions != null){
       for (RelationMention rel : relationMentions) {
-        sb.append("\n");
+        sb.append('\n');
         sb.append(rel);
       }
     }
@@ -439,15 +439,15 @@ public class AnnotationUtils {
   }
 
   public static String tokensAndNELabelsToString(CoreMap sentence) {
-    StringBuffer os = new StringBuffer();
+    StringBuilder os = new StringBuilder();
     List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
     if(tokens != null){
       boolean first = true;
       for(CoreLabel token: tokens) {
-        if(! first) os.append(" ");
+        if(! first) os.append(' ');
         os.append(token.word());
         if(token.ner() != null && ! token.ner().equals("O")){
-          os.append("/" + token.ner());
+          os.append('/').append(token.ner());
         }
         first = false;
       }
@@ -457,7 +457,7 @@ public class AnnotationUtils {
 
   public static String datasetToString(CoreMap dataset){
     List<CoreMap> sents = dataset.get(CoreAnnotations.SentencesAnnotation.class);
-    StringBuffer b = new StringBuffer();
+    StringBuilder b = new StringBuilder();
     if(sents != null){
       for(CoreMap sent: sents){
         b.append(sentenceToString(sent));
@@ -482,11 +482,11 @@ public class AnnotationUtils {
   */
 
   public static String tokensToString(List<CoreLabel> tokens) {
-    StringBuffer os = new StringBuffer();
+    StringBuilder os = new StringBuilder();
     boolean first = true;
     for(CoreLabel t: tokens){
-      if(! first) os.append(" ");
-      os.append(t.word() + "{" + t.beginPosition() + ", " + t.endPosition() + "}");
+      if(! first) os.append(' ');
+      os.append(t.word()).append('{').append(t.beginPosition()).append(", ").append(t.endPosition()).append('}');
       first = false;
     }
     return os.toString();

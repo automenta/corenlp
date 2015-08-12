@@ -78,7 +78,7 @@ public final class MemoryTreebank extends Treebank implements FileProcessor, Lis
    */
   public MemoryTreebank(TreeReaderFactory trf) {
     super(trf);
-    parseTrees = new ArrayList<Tree>();
+    parseTrees = new ArrayList<>();
   }
 
 
@@ -91,7 +91,7 @@ public final class MemoryTreebank extends Treebank implements FileProcessor, Lis
    */
   public MemoryTreebank(TreeReaderFactory trf, String encoding) {
     super(trf, encoding);
-    parseTrees = new ArrayList<Tree>();
+    parseTrees = new ArrayList<>();
   }
 
   /**
@@ -128,7 +128,7 @@ public final class MemoryTreebank extends Treebank implements FileProcessor, Lis
    */
   public MemoryTreebank(int initialCapacity, TreeReaderFactory trf) {
     super(initialCapacity, trf);
-    parseTrees = new ArrayList<Tree>(initialCapacity);
+    parseTrees = new ArrayList<>(initialCapacity);
   }
 
 
@@ -169,7 +169,7 @@ public final class MemoryTreebank extends Treebank implements FileProcessor, Lis
       String info = bits[2];
       CollectionValuedMap<Integer,String> cvm = srlMap.get(filename);
       if (cvm == null) {
-        cvm = new CollectionValuedMap<Integer,String>();
+        cvm = new CollectionValuedMap<>();
         srlMap.put(filename, cvm);
       }
       cvm.add(treeNum, info);
@@ -192,9 +192,9 @@ public final class MemoryTreebank extends Treebank implements FileProcessor, Lis
     if (this.srlMap != null) {
       // there must be a better way ...
       String filename = file.getAbsolutePath();
-      for (String suffix : this.srlMap.keySet()) {
-        if (filename.endsWith(suffix)) {
-          srlMap = this.srlMap.get(suffix);
+      for (Map.Entry<String, CollectionValuedMap<Integer, String>> stringCollectionValuedMapEntry : this.srlMap.entrySet()) {
+        if (filename.endsWith(stringCollectionValuedMapEntry.getKey())) {
+          srlMap = this.srlMap.get(stringCollectionValuedMapEntry.getKey());
           break;
         }
       }
@@ -240,7 +240,7 @@ public final class MemoryTreebank extends Treebank implements FileProcessor, Lis
               for (int i = 4; i < bits.length; i++) {
                 String arg = bits[i];
                 String[] bits1;
-                if (arg.indexOf("ARGM") >= 0) {
+                if (arg.contains("ARGM")) {
                   bits1 = arg.split("-");
                 } else {
                   bits1 = arg.split("-");
@@ -474,7 +474,7 @@ public final class MemoryTreebank extends Treebank implements FileProcessor, Lis
    */
   public static void main(String[] args) {
     Timing.startTime();
-    Treebank treebank = new MemoryTreebank(in -> new PennTreeReader(in));
+    Treebank treebank = new MemoryTreebank(PennTreeReader::new);
     treebank.loadPath(args[0]);
     Timing.endTime();
     System.out.println(treebank);

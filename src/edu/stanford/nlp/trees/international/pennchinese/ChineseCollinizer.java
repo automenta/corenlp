@@ -47,53 +47,57 @@ public class ChineseCollinizer implements TreeTransformer {
   }
 
   private Tree transformTree(Tree tree, boolean isRoot) {
-    String label = tree.label().value();
+    while (true) {
+      String label = tree.label().value();
 
-    // System.err.println("ChineseCollinizer: Node label is " + label);
+      // System.err.println("ChineseCollinizer: Node label is " + label);
 
-    if (tree.isLeaf()) {
-      if (deletePunct && ctlp.isPunctuationWord(label)) {
+      if (tree.isLeaf()) {
+        if (deletePunct && ctlp.isPunctuationWord(label)) {
+          return null;
+        } else {
+          return tf.newLeaf(new StringLabel(label));
+        }
+      }
+      if (tree.isPreTerminal() && deletePunct && ctlp.isPunctuationTag(label)) {
+        // System.out.println("Deleting punctuation");
         return null;
-      } else {
-        return tf.newLeaf(new StringLabel(label));
       }
-    }
-    if (tree.isPreTerminal() && deletePunct && ctlp.isPunctuationTag(label)) {
-      // System.out.println("Deleting punctuation");
-      return null;
-    }
-    List<Tree> children = new ArrayList<Tree>();
+      List<Tree> children = new ArrayList<>();
 
-    if (label.matches("ROOT.*") && tree.numChildren() == 1) { // keep non-unary roots for now
-      return transformTree(tree.children()[0], true);
-    }
-
-    //System.out.println("Enhanced label is " + label);
-
-    // remove all functional and machine-generated annotations
-    label = label.replaceFirst("[^A-Z].*$", "");
-    // merge parentheticals with adverb phrases
-    label = label.replaceFirst("PRN", "ADVP");
-
-    //System.out.println("New label is " + label);
-
-    for (int cNum = 0; cNum < tree.children().length; cNum++) {
-      Tree child = tree.children()[cNum];
-      Tree newChild = transformTree(child, false);
-      if (newChild != null) {
-        children.add(newChild);
+      if (label.matches("ROOT.*") && tree.numChildren() == 1) { // keep non-unary roots for now
+        tree = tree.children()[0];
+        isRoot = true;
+        continue;
       }
-    }
-    // We don't delete the root because there are trees in the
-    // Chinese treebank that only have punctuation in them!!!
-    if (children.isEmpty() && ! isRoot) {
-      if (VERBOSE) {
-        System.err.println("ChineseCollinizer: all children of " + label +
-                           " deleted; returning null");
+
+      //System.out.println("Enhanced label is " + label);
+
+      // remove all functional and machine-generated annotations
+      label = label.replaceFirst("[^A-Z].*$", "");
+      // merge parentheticals with adverb phrases
+      label = label.replaceFirst("PRN", "ADVP");
+
+      //System.out.println("New label is " + label);
+
+      for (int cNum = 0; cNum < tree.children().length; cNum++) {
+        Tree child = tree.children()[cNum];
+        Tree newChild = transformTree(child, false);
+        if (newChild != null) {
+          children.add(newChild);
+        }
       }
-      return null;
+      // We don't delete the root because there are trees in the
+      // Chinese treebank that only have punctuation in them!!!
+      if (children.isEmpty() && !isRoot) {
+        if (VERBOSE) {
+          System.err.println("ChineseCollinizer: all children of " + label +
+                  " deleted; returning null");
+        }
+        return null;
+      }
+      return tf.newTreeNode(new StringLabel(label), children);
     }
-    return tf.newTreeNode(new StringLabel(label), children);
   }
 
 }

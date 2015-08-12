@@ -49,17 +49,17 @@ public class GoogleNGramsSQLBacked {
     if(connection == null) {
       assert googleNgram_dbname != null : "set googleNgram_dbname variable through the properties file";
       connection = DriverManager.getConnection(
-        "jdbc:postgresql://" + googleNgram_hostname + "/" + googleNgram_dbname, googleNgram_username, "");
+        "jdbc:postgresql://" + googleNgram_hostname + '/' + googleNgram_dbname, googleNgram_username, "");
     }
   }
 
   static String escapeString(String str){
-    return "$"+escapetag+"$"+ str + "$"+escapetag+"$" ;
+    return '$' +escapetag+ '$' + str + '$' +escapetag+ '$';
   }
 
   public static boolean existsTable(String tablename) throws SQLException {
     if(existingTablenames == null){
-      existingTablenames = new HashSet<String>();
+      existingTablenames = new HashSet<>();
       DatabaseMetaData md = connection.getMetaData();
       ResultSet rs = md.getTables(null, null, "%", null);
       while (rs.next()) {
@@ -109,7 +109,7 @@ public class GoogleNGramsSQLBacked {
 
   public static List<Pair<String, Long>> getCounts(Collection<String> strs) throws SQLException {
     connect();
-    List<Pair<String, Long>> counts = new ArrayList<Pair<String, Long>>();
+    List<Pair<String, Long>> counts = new ArrayList<>();
     String query = "";
     for(String str: strs) {
       str = str.trim();
@@ -159,7 +159,7 @@ public class GoogleNGramsSQLBacked {
         throw new RuntimeException("Table " + table + " does not exist in the database! Run the following commands in the psql prompt:" +
           "create table GoogleNgrams_<NGRAM> (phrase text primary key not null, count bigint not null); create index phrase_<NGRAM> on GoogleNgrams_<NGRAM>(phrase);");
 
-      for(String line: IOUtils.readLines(new File(dir + "/" + n + "gms/vocab_cs.gz"), GZIPInputStream.class)){
+      for(String line: IOUtils.readLines(new File(dir + '/' + n + "gms/vocab_cs.gz"), GZIPInputStream.class)){
         String[] tok = line.split("\t");
         String q = "INSERT INTO " + table + " (phrase, count) VALUES (" + escapeString(tok[0]) +" , " + tok[1]+");";
         stmt.execute(q);
@@ -175,7 +175,7 @@ public class GoogleNGramsSQLBacked {
       connect();
       Statement stmt = connection.createStatement();
       String table = tablenamePrefix + ngram;
-      String q = "select count(*) from " + table+";";
+      String q = "select count(*) from " + table+ ';';
       ResultSet s = stmt.executeQuery(q);
       if(s.next()){
         return s.getInt(1);

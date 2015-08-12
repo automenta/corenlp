@@ -81,7 +81,7 @@ public class EnglishUnknownWordModel extends BaseUnknownWordModel {
   public EnglishUnknownWordModel(Options op, Lexicon lex,
                                  Index<String> wordIndex,
                                  Index<String> tagIndex) {
-    this(op, lex, wordIndex, tagIndex, new ClassicCounter<IntTaggedWord>());
+    this(op, lex, wordIndex, tagIndex, new ClassicCounter<>());
   }
 
   @Override
@@ -141,7 +141,7 @@ public class EnglishUnknownWordModel extends BaseUnknownWordModel {
     int sig = wordIndex.addToIndex(uwSig);
     if (DEBUG_UWM) {
       System.err.println("Signature (" + unknownLevel + "): mapped " + word +
-                         " (" + index + ") to " + uwSig + " (" + sig + ")");
+                         " (" + index + ") to " + uwSig + " (" + sig + ')');
     }
     return sig;
   }

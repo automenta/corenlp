@@ -109,30 +109,30 @@ public class CorefSystem {
     /*
        run coref
     */
-    MulticoreWrapper<Pair<Document, CorefSystem>, StringBuilder[]> wrapper = new MulticoreWrapper<Pair<Document, CorefSystem>, StringBuilder[]>(
-        nThreads, new ThreadsafeProcessor<Pair<Document, CorefSystem>, StringBuilder[]>() {
-          @Override
-          public StringBuilder[] process(Pair<Document, CorefSystem> input) {
-            try {
-              Document document = input.first;
-              CorefSystem cs = input.second;
-              
-              StringBuilder[] outputs = new StringBuilder[4];    // conll output and logs
-              
-              cs.coref(document, outputs);
-              
-              return outputs;
-              
-            } catch (Exception e) {
-              throw new RuntimeException(e);
-            }
-          }
-          
-          @Override
-          public ThreadsafeProcessor<Pair<Document, CorefSystem>, StringBuilder[]> newInstance() {
-            return this;
-          }
-        });
+    MulticoreWrapper<Pair<Document, CorefSystem>, StringBuilder[]> wrapper = new MulticoreWrapper<>(
+            nThreads, new ThreadsafeProcessor<Pair<Document, CorefSystem>, StringBuilder[]>() {
+      @Override
+      public StringBuilder[] process(Pair<Document, CorefSystem> input) {
+        try {
+          Document document = input.first;
+          CorefSystem cs = input.second;
+
+          StringBuilder[] outputs = new StringBuilder[4];    // conll output and logs
+
+          cs.coref(document, outputs);
+
+          return outputs;
+
+        } catch (Exception e) {
+          throw new RuntimeException(e);
+        }
+      }
+
+      @Override
+      public ThreadsafeProcessor<Pair<Document, CorefSystem>, StringBuilder[]> newInstance() {
+        return this;
+      }
+    });
     
     Date startTime = null;
     if(CorefProperties.checkTime(props)) {
@@ -253,7 +253,7 @@ public class CorefSystem {
   }
   
   /** extract final coreference output from coreference document format */
-  public Map<Integer, CorefChain> makeCorefOutput(Document document) {
+  public static Map<Integer, CorefChain> makeCorefOutput(Document document) {
     Map<Integer, CorefChain> result = Generics.newHashMap();
     for(CorefCluster c : document.corefClusters.values()) {
       result.put(c.clusterID, new CorefChain(c, document.positions));
@@ -262,7 +262,7 @@ public class CorefSystem {
   }
 
   /** Remove singletons, appositive, predicate nominatives, relative pronouns */
-  public void postProcessing(Document document) {
+  public static void postProcessing(Document document) {
     Set<Mention> removeSet = Generics.newHashSet();
     Set<Integer> removeClusterSet = Generics.newHashSet();
 
@@ -302,9 +302,9 @@ public class CorefSystem {
   public static List<List<Mention>> filterMentionsWithSingletonClusters(Document document, List<List<Mention>> mentions)
   {
 
-    List<List<Mention>> res = new ArrayList<List<Mention>>(mentions.size());
+    List<List<Mention>> res = new ArrayList<>(mentions.size());
     for (List<Mention> ml:mentions) {
-      List<Mention> filtered = new ArrayList<Mention>();
+      List<Mention> filtered = new ArrayList<>();
       for (Mention m:ml) {
         CorefCluster cluster = document.corefClusters.get(m.corefClusterID);
         if (cluster != null && cluster.getCorefMentions().size() > 1) {

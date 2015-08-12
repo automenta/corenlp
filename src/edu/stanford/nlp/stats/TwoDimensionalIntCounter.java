@@ -63,7 +63,7 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
   public IntCounter<K2> getCounter(K1 o) {
     IntCounter<K2> c = map.get(o);
     if (c == null) {
-      c = new IntCounter<K2>(innerMF);
+      c = new IntCounter<>(innerMF);
       c.setDefaultReturnValue(defaultValue);
       map.put(o, c);
     }
@@ -181,9 +181,9 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
   }
 
   public IntCounter<K1> totalCounts() {
-    IntCounter<K1> tc = new IntCounter<K1>();
-    for (K1 k1:map.keySet()) {
-      tc.setCount(k1, map.get(k1).totalCount());
+    IntCounter<K1> tc = new IntCounter<>();
+    for (Map.Entry<K1, IntCounter<K2>> k1IntCounterEntry : map.entrySet()) {
+      tc.setCount(k1IntCounterEntry.getKey(), k1IntCounterEntry.getValue().totalCount());
     }
     return tc;
   }
@@ -211,8 +211,8 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
   @SuppressWarnings({"unchecked"})
   public static <K1,K2> TwoDimensionalIntCounter<K2,K1> reverseIndexOrder(TwoDimensionalIntCounter<K1,K2> cc) {
     // the typing on the outerMF is violated a bit, but it'll work....
-    TwoDimensionalIntCounter<K2,K1> result = new TwoDimensionalIntCounter<K2,K1>(
-        (MapFactory)cc.outerMF, (MapFactory)cc.innerMF);
+    TwoDimensionalIntCounter<K2,K1> result = new TwoDimensionalIntCounter<>(
+            (MapFactory) cc.outerMF, (MapFactory) cc.innerMF);
 
     for (K1 key1 : cc.firstKeySet()) {
       IntCounter<K2> c = cc.getCounter(key1);
@@ -239,7 +239,7 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
       IntCounter<K2> c = getCounter(key1);
       for (K2 key2 : c.keySet()) {
         double score = c.getCount(key2);
-        buff.append(key1).append("\t").append(key2).append("\t").append(score).append("\n");
+        buff.append(key1).append('\t').append(key2).append('\t').append(score).append('\n');
       }
     }
     return buff.toString();
@@ -247,8 +247,8 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
 
   @SuppressWarnings({"unchecked"})
   public String toMatrixString(int cellSize) {
-    List<K1> firstKeys = new ArrayList<K1>(firstKeySet());
-    List<K2> secondKeys = new ArrayList<K2>(secondKeySet());
+    List<K1> firstKeys = new ArrayList<>(firstKeySet());
+    List<K2> secondKeys = new ArrayList<>(secondKeySet());
     Collections.sort((List<? extends Comparable>)firstKeys);
     Collections.sort((List<? extends Comparable>)secondKeys);
     int[][] counts = toMatrix(firstKeys, secondKeys);
@@ -271,8 +271,8 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
 
   @SuppressWarnings({"unchecked"})
   public String toCSVString(NumberFormat nf) {
-    List<K1> firstKeys = new ArrayList<K1>(firstKeySet());
-    List<K2> secondKeys = new ArrayList<K2>(secondKeySet());
+    List<K1> firstKeys = new ArrayList<>(firstKeySet());
+    List<K2> secondKeys = new ArrayList<>(secondKeySet());
     Collections.sort((List<? extends Comparable>)firstKeys);
     Collections.sort((List<? extends Comparable>)secondKeys);
     StringBuilder b = new StringBuilder();
@@ -281,7 +281,7 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
     for (int j = 0; j < secondKeys.size(); j++) {
       headerRow[j + 1] = secondKeys.get(j).toString();
     }
-    b.append(StringUtils.toCSVString(headerRow)).append("\n");
+    b.append(StringUtils.toCSVString(headerRow)).append('\n');
     for (K1 rowLabel : firstKeys) {
       String[] row = new String[secondKeys.size() + 1];
       row[0] = rowLabel.toString();
@@ -289,7 +289,7 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
         K2 colLabel = secondKeys.get(j);
         row[j + 1] = nf.format(getCount(rowLabel, colLabel));
       }
-      b.append(StringUtils.toCSVString(row)).append("\n");
+      b.append(StringUtils.toCSVString(row)).append('\n');
     }
     return b.toString();
   }
@@ -297,8 +297,8 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
   public static <CK1 extends Comparable<CK1>, CK2 extends Comparable<CK2>> String toCSVString(
           TwoDimensionalIntCounter<CK1, CK2> counter,
           NumberFormat nf, Comparator<CK1> key1Comparator, Comparator<CK2> key2Comparator) {
-    List<CK1> firstKeys = new ArrayList<CK1>(counter.firstKeySet());
-    List<CK2> secondKeys = new ArrayList<CK2>(counter.secondKeySet());
+    List<CK1> firstKeys = new ArrayList<>(counter.firstKeySet());
+    List<CK2> secondKeys = new ArrayList<>(counter.secondKeySet());
     Collections.sort(firstKeys, key1Comparator);
     Collections.sort(secondKeys, key2Comparator);
     StringBuilder b = new StringBuilder();
@@ -337,12 +337,12 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
   }
 
   public IntCounter<Pair<K1, K2>> flatten() {
-    IntCounter<Pair<K1, K2>> result = new IntCounter<Pair<K1, K2>>();
+    IntCounter<Pair<K1, K2>> result = new IntCounter<>();
     result.setDefaultReturnValue(defaultValue);
     for (K1 key1 : firstKeySet()) {
       IntCounter<K2> inner = getCounter(key1);
       for (K2 key2 : inner.keySet()) {
-        result.setCount(new Pair<K1, K2>(key1, key2), inner.getIntCount(key2));
+        result.setCount(new Pair<>(key1, key2), inner.getIntCount(key2));
       }
     }
     return result;

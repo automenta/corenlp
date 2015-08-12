@@ -43,7 +43,7 @@ public class HebrewTreeNormalizer extends BobChrisTreeNormalizer {
     //Add start symbol so that the root has only one sub-state. Escape any enclosing brackets.
     //If the "tree" consists entirely of enclosing brackets e.g. ((())) then this method
     //will return null. In this case, readers e.g. PennTreeReader will try to read the next tree.
-    while(tree != null && (tree.value() == null || tree.value().equals("")) && tree.numChildren() <= 1)
+    while(tree != null && (tree.value() == null || tree.value().isEmpty()) && tree.numChildren() <= 1)
       tree = tree.firstChild();
 
     if(tree != null && !tree.value().equals(tlp.startSymbol()))

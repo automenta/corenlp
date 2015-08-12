@@ -247,7 +247,7 @@ public class Config
    * @return A {@link edu.stanford.nlp.international.Language}
    *         or {@code null} if no instance matches the given string.
    */
-  private Language getLanguage(String languageStr) {
+  private static Language getLanguage(String languageStr) {
     for (Language l : Language.values()) {
       if (l.name().equalsIgnoreCase(languageStr))
         return l;

@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import edu.stanford.nlp.ie.machinereading.common.SimpleTokenize;
@@ -63,17 +64,17 @@ public class AceDocument extends AceElement {
 
     mEntities = Generics.newHashMap();
     mEntityMentions = Generics.newHashMap();
-    mSentenceEntityMentions = new ArrayList<ArrayList<AceEntityMention>>();
+    mSentenceEntityMentions = new ArrayList<>();
 
     mRelations = Generics.newHashMap();
     mRelationMentions = Generics.newHashMap();
-    mSentenceRelationMentions = new ArrayList<ArrayList<AceRelationMention>>();
+    mSentenceRelationMentions = new ArrayList<>();
 
     mEvents = Generics.newHashMap();
     mEventMentions = Generics.newHashMap();
-    mSentenceEventMentions = new ArrayList<ArrayList<AceEventMention>>();
+    mSentenceEventMentions = new ArrayList<>();
     
-    mTokens = new Vector<AceToken>();
+    mTokens = new Vector<>();
   }
 
   public void setPrefix(String p) {
@@ -86,17 +87,17 @@ public class AceDocument extends AceElement {
   }
 
   public void setSource(String p) {
-    if (p.indexOf("bc/") >= 0)
+    if (p.contains("bc/"))
       mSource = "broadcast conversation";
-    else if (p.indexOf("bn/") >= 0)
+    else if (p.contains("bn/"))
       mSource = "broadcast news";
-    else if (p.indexOf("cts/") >= 0)
+    else if (p.contains("cts/"))
       mSource = "telephone";
-    else if (p.indexOf("nw/") >= 0)
+    else if (p.contains("nw/"))
       mSource = "newswire";
-    else if (p.indexOf("un/") >= 0)
+    else if (p.contains("un/"))
       mSource = "usenet";
-    else if (p.indexOf("wl/") >= 0)
+    else if (p.contains("wl/"))
       mSource = "weblog";
     else {
       System.err.println("WARNING: Unknown source for doc: " + p);
@@ -231,26 +232,25 @@ public class AceDocument extends AceElement {
     appendOffset(buffer, offset);
     buffer.append("<!DOCTYPE source_file SYSTEM \"apf.v5.1.2.dtd\">\n");
     appendOffset(buffer, offset);
-    buffer.append("<source_file URI=\"" + mId + ".sgm\" SOURCE=\"" + mSource
-        + "\" TYPE=\"text\" AUTHOR=\"LDC\" ENCODING=\"UTF-8\">\n");
+    buffer.append("<source_file URI=\"").append(mId).append(".sgm\" SOURCE=\"").append(mSource).append("\" TYPE=\"text\" AUTHOR=\"LDC\" ENCODING=\"UTF-8\">\n");
     appendOffset(buffer, offset);
-    buffer.append("<document DOCID=\"" + getId() + "\">\n");
+    buffer.append("<document DOCID=\"").append(getId()).append("\">\n");
 
     // display all entities
     Set<String> entKeys = mEntities.keySet();
-    for (String key : entKeys) {
-      AceEntity e = mEntities.get(key);
+    for (Map.Entry<String, AceEntity> stringAceEntityEntry : mEntities.entrySet()) {
+      AceEntity e = stringAceEntityEntry.getValue();
       buffer.append(e.toXml(offset));
-      buffer.append("\n");
+      buffer.append('\n');
     }
 
     // display all relations
     Set<String> relKeys = mRelations.keySet();
-    for (String key : relKeys) {
-      AceRelation r = mRelations.get(key);
+    for (Map.Entry<String, AceRelation> stringAceRelationEntry : mRelations.entrySet()) {
+      AceRelation r = stringAceRelationEntry.getValue();
       if (!r.getType().equals(AceRelation.NIL_LABEL)) {
         buffer.append(r.toXml(offset));
-        buffer.append("\n");
+        buffer.append('\n');
       }
     }
     
@@ -264,7 +264,7 @@ public class AceDocument extends AceElement {
   }
 
   private String tokensWithByteSpan(int start, int end) {
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     boolean doPrint = false;
     buf.append("...");
     for (int i = 0; i < mTokens.size(); i++) {
@@ -280,7 +280,7 @@ public class AceDocument extends AceElement {
       }
 
       if (doPrint) {
-        buf.append(" " + mTokens.get(i).display());
+        buf.append(' ').append(mTokens.get(i).display());
       }
     }
     buf.append("...");
@@ -296,8 +296,8 @@ public class AceDocument extends AceElement {
     // match the head and extent of entity mentions
     //
     Set<String> keys = mEntityMentions.keySet();
-    for (String key : keys) {
-      AceEntityMention m = mEntityMentions.get(key);
+    for (Map.Entry<String, AceEntityMention> stringAceEntityMentionEntry : mEntityMentions.entrySet()) {
+      AceEntityMention m = stringAceEntityMentionEntry.getValue();
 
       //
       // match the head charseq to 1+ phrase(s)
@@ -305,8 +305,8 @@ public class AceDocument extends AceElement {
       try {
         m.getHead().match(mTokens);
       } catch (MatchException e) {
-        mLog.severe("READER ERROR: Failed to match entity mention head: " + "[" + m.getHead().getText() + ", "
-            + m.getHead().getByteStart() + ", " + m.getHead().getByteEnd() + "]");
+        mLog.severe("READER ERROR: Failed to match entity mention head: " + '[' + m.getHead().getText() + ", "
+            + m.getHead().getByteStart() + ", " + m.getHead().getByteEnd() + ']');
         mLog.severe("Document tokens: " + tokensWithByteSpan(m.getHead().getByteStart(), m.getHead().getByteEnd()));
         mLog.severe("Document prefix: " + filePrefix);
         System.exit(1);
@@ -318,8 +318,8 @@ public class AceDocument extends AceElement {
       try {
         m.getExtent().match(mTokens);
       } catch (MatchException e) {
-        mLog.severe("READER ERROR: Failed to match entity mention extent: " + "[" + m.getExtent().getText() + ", "
-            + m.getExtent().getByteStart() + ", " + m.getExtent().getByteEnd() + "]");
+        mLog.severe("READER ERROR: Failed to match entity mention extent: " + '[' + m.getExtent().getText() + ", "
+            + m.getExtent().getByteStart() + ", " + m.getExtent().getByteEnd() + ']');
         mLog.severe("Document tokens: " + tokensWithByteSpan(m.getExtent().getByteStart(), m.getExtent().getByteEnd()));
         System.exit(1);
       }
@@ -332,8 +332,8 @@ public class AceDocument extends AceElement {
     
     // we need to do this for events as well since they may not have any AceEntityMentions associated with them (if they have no arguments)
     Set<String> eventKeys = mEventMentions.keySet();
-    for (String key : eventKeys) {
-      AceEventMention m = mEventMentions.get(key);
+    for (Map.Entry<String, AceEventMention> stringAceEventMentionEntry : mEventMentions.entrySet()) {
+      AceEventMention m = stringAceEventMentionEntry.getValue();
       
       //
       // match the extent charseq to 1+ phrase(s)
@@ -341,8 +341,8 @@ public class AceDocument extends AceElement {
       try {
         m.getExtent().match(mTokens);
       } catch (MatchException e) {
-        mLog.severe("READER ERROR: Failed to match event mention extent: " + "[" + m.getExtent().getText() + ", "
-            + m.getExtent().getByteStart() + ", " + m.getExtent().getByteEnd() + "]");
+        mLog.severe("READER ERROR: Failed to match event mention extent: " + '[' + m.getExtent().getText() + ", "
+            + m.getExtent().getByteStart() + ", " + m.getExtent().getByteEnd() + ']');
         mLog.severe("Document tokens: " + tokensWithByteSpan(m.getExtent().getByteStart(), m.getExtent().getByteEnd()));
         System.exit(1);
       }
@@ -360,7 +360,9 @@ public class AceDocument extends AceElement {
    */
   public static AceDocument parseDocument(String prefix, boolean usePredictedBoundaries) throws java.io.IOException,
       org.xml.sax.SAXException, javax.xml.parsers.ParserConfigurationException {
-    mLog.fine("Reading document " + prefix);
+    if (mLog.isLoggable(Level.FINE)) {
+      mLog.fine("Reading document " + prefix);
+    }
     AceDocument doc = null;
 
     //
@@ -424,9 +426,9 @@ public class AceDocument extends AceElement {
 
       // adjust the number of rows if necessary
       while (sentence >= doc.mSentenceEntityMentions.size()) {
-        doc.mSentenceEntityMentions.add(new ArrayList<AceEntityMention>());
-        doc.mSentenceRelationMentions.add(new ArrayList<AceRelationMention>());
-        doc.mSentenceEventMentions.add(new ArrayList<AceEventMention>());
+        doc.mSentenceEntityMentions.add(new ArrayList<>());
+        doc.mSentenceRelationMentions.add(new ArrayList<>());
+        doc.mSentenceEventMentions.add(new ArrayList<>());
       }
 
       // store the entity mentions in increasing order:
@@ -495,9 +497,9 @@ public class AceDocument extends AceElement {
        * won't have created rows in mSentence*Mentions
        */
       while (sentence >= doc.mSentenceEntityMentions.size()) {
-        doc.mSentenceEntityMentions.add(new ArrayList<AceEntityMention>());
-        doc.mSentenceRelationMentions.add(new ArrayList<AceRelationMention>());
-        doc.mSentenceEventMentions.add(new ArrayList<AceEventMention>());
+        doc.mSentenceEntityMentions.add(new ArrayList<>());
+        doc.mSentenceRelationMentions.add(new ArrayList<>());
+        doc.mSentenceEventMentions.add(new ArrayList<>());
       }
 
       // store the event mentions in increasing order
@@ -528,7 +530,9 @@ public class AceDocument extends AceElement {
   //
   public static AceDocument parseDocument(String prefix, boolean usePredictedBoundaries, String AceVersion) throws java.io.IOException,
       org.xml.sax.SAXException, javax.xml.parsers.ParserConfigurationException {
-    mLog.fine("Reading document " + prefix);
+    if (mLog.isLoggable(Level.FINE)) {
+      mLog.fine("Reading document " + prefix);
+    }
     AceDocument doc = null;
 
     //
@@ -592,9 +596,9 @@ public class AceDocument extends AceElement {
 
       // adjust the number of rows if necessary
       while (sentence >= doc.mSentenceEntityMentions.size()) {
-        doc.mSentenceEntityMentions.add(new ArrayList<AceEntityMention>());
-        doc.mSentenceRelationMentions.add(new ArrayList<AceRelationMention>());
-        doc.mSentenceEventMentions.add(new ArrayList<AceEventMention>());
+        doc.mSentenceEntityMentions.add(new ArrayList<>());
+        doc.mSentenceRelationMentions.add(new ArrayList<>());
+        doc.mSentenceEventMentions.add(new ArrayList<>());
       }
 
       // store the entity mentions in increasing order:
@@ -627,8 +631,8 @@ public class AceDocument extends AceElement {
     // construct the mRelationEntityMentions matrix
     //
     Set<String> relKeys = mRelationMentions.keySet();
-    for (String key : relKeys) {
-      AceRelationMention rm = mRelationMentions.get(key);
+    for (Map.Entry<String, AceRelationMention> stringAceRelationMentionEntry : mRelationMentions.entrySet()) {
+      AceRelationMention rm = stringAceRelationMentionEntry.getValue();
       int sentence = mTokens.get(rm.getArg(0).getHead().getTokenStart()).getSentence();
 
       //
@@ -747,7 +751,7 @@ public class AceDocument extends AceElement {
 
   private void readRawBytes(String fileName) throws IOException {
     BufferedReader in = new BufferedReader(new FileReader(fileName));
-    StringBuffer buf = new StringBuffer();
+    StringBuilder buf = new StringBuilder();
     int c;
     while ((c = in.read()) >= 0)
       buf.append((char) c);
@@ -763,7 +767,7 @@ public class AceDocument extends AceElement {
     //
     // read Massi's B-ENT, I-ENT, or O labels
     //
-    ArrayList<String> labels = new ArrayList<String>();
+    ArrayList<String> labels = new ArrayList<>();
     String line;
     while ((line = is.readLine()) != null) {
       ArrayList<String> tokens = SimpleTokenize.tokenize(line);
@@ -797,7 +801,7 @@ public class AceDocument extends AceElement {
         // by Edgar. Otherwise type/subtype could be safely set to "none".
         //
         String label = labels.get(startToken);
-        int dash = label.indexOf("-", 2);
+        int dash = label.indexOf('-', 2);
         if (dash <= 2 || dash >= label.length()) {
           throw new RuntimeException(label);
         }

@@ -45,8 +45,7 @@ public class CoordinationPattern extends SemgrexPattern {
   public void addRelnToNodeCoord(SemgrexPattern child) {
     if (isNodeCoord) {
       for (SemgrexPattern c : children) {
-        List<SemgrexPattern> newChildren = new ArrayList<SemgrexPattern>();
-        newChildren.addAll(c.getChildren());
+        List<SemgrexPattern> newChildren = new ArrayList<>(c.getChildren());
         newChildren.add(child);
         c.setChild(new CoordinationPattern(false, newChildren, true));
       }
@@ -68,7 +67,7 @@ public class CoordinationPattern extends SemgrexPattern {
       sb.append('?');
     }
     sb.append((isConj ? "and" : "or"));
-    sb.append(" ");
+    sb.append(' ');
     sb.append((isNodeCoord ? "node coordination" : "reln coordination"));
     return sb.toString();
   }
@@ -260,7 +259,7 @@ public class CoordinationPattern extends SemgrexPattern {
     public String toString() {
       String ret = "coordinate matcher for: ";
       for (SemgrexMatcher child : children)
-        ret += child.toString() + " ";
+        ret += child.toString() + ' ';
       return ret;
     }
 

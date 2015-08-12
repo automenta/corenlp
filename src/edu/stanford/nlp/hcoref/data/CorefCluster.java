@@ -95,7 +95,7 @@ public class CorefCluster implements Serializable{
     // Register mentions
     corefMentions.addAll(mentions);
     // Get list of mentions in textual order
-    List<Mention> sortedMentions = new ArrayList<Mention>(mentions.size());
+    List<Mention> sortedMentions = new ArrayList<>(mentions.size());
     sortedMentions.addAll(mentions);
     Collections.sort(sortedMentions, new CorefChain.MentionComparator());
     // Set default for first / representative mention
@@ -170,7 +170,7 @@ public class CorefCluster implements Serializable{
   public void printCorefCluster(){
     Redwood.log("debug-cluster", "Cluster ID: "+clusterID+"\tNumbers: "+numbers+"\tGenders: "+genders+"\tanimacies: "+animacies);
     Redwood.log("debug-cluster", "NE: "+nerStrings+"\tfirst Mention's ID: "+firstMention.mentionID+"\tHeads: "+heads+"\twords: "+words);
-    TreeMap<Integer, Mention> forSortedPrint = new TreeMap<Integer, Mention>();
+    TreeMap<Integer, Mention> forSortedPrint = new TreeMap<>();
     for(Mention m : this.corefMentions){
       forSortedPrint.put(m.mentionID, m);
     }
@@ -178,11 +178,11 @@ public class CorefCluster implements Serializable{
       String rep = (representative == m)? "*":"";
       if(m.goldCorefClusterID==-1){
         Redwood.log("debug-cluster", rep + "mention-> id:"+m.mentionID+"\toriginalRef: "
-                +m.originalRef+"\t"+m.spanToString() +"\tsentNum: "+m.sentNum+"\tstartIndex: "
+                +m.originalRef+ '\t' +m.spanToString() +"\tsentNum: "+m.sentNum+"\tstartIndex: "
                 +m.startIndex+"\tType: "+m.mentionType+"\tNER: "+m.nerString);
       } else{
         Redwood.log("debug-cluster", rep + "mention-> id:"+m.mentionID+"\toriginalClusterID: "
-                +m.goldCorefClusterID+"\t"+m.spanToString() +"\tsentNum: "+m.sentNum+"\tstartIndex: "
+                +m.goldCorefClusterID+ '\t' +m.spanToString() +"\tsentNum: "+m.sentNum+"\tstartIndex: "
                 +m.startIndex +"\toriginalRef: "+m.originalRef+"\tType: "+m.mentionType+"\tNER: "+m.nerString);
       }
     }
@@ -198,7 +198,7 @@ public class CorefCluster implements Serializable{
 
   @Override
   public String toString(){
-    return corefMentions.toString()+"="+clusterID;
+    return corefMentions.toString()+ '=' +clusterID;
   }
 
 }

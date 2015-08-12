@@ -87,9 +87,7 @@ public class XMLUtils {
         }
         sents.add(builtUp);
       }
-    } catch (IOException e) {
-      System.err.println(e);
-    } catch (ParserConfigurationException e) {
+    } catch (IOException | ParserConfigurationException e) {
       System.err.println(e);
     }
     return sents;
@@ -136,9 +134,7 @@ public class XMLUtils {
         Element element = (Element)nodeList.item(i);
         sents.add(element);
       }
-    } catch (IOException e) {
-      System.err.println(e);
-    } catch (ParserConfigurationException e) {
+    } catch (IOException | ParserConfigurationException e) {
       System.err.println(e);
     }
     return sents;
@@ -248,7 +244,7 @@ public class XMLUtils {
           break;
         }
         if (markLineBreaks && XMLUtils.isBreaking(parseTag(tag))) {
-          result.append("\n");
+          result.append('\n');
           if (mapBack != null) {
             mapBack.add(Integer.valueOf(-position));
           }
@@ -301,7 +297,7 @@ public class XMLUtils {
     try {
       ret = new XMLTag(s);
     } catch (Exception e) {
-      System.err.println("Failed to handle |" + s + "|");
+      System.err.println("Failed to handle |" + s + '|');
     }
     return ret;
   }
@@ -1105,7 +1101,7 @@ public class XMLUtils {
       StringBuilder sb = new StringBuilder(msg);
       sb.append(": ");
       String str = ex.getMessage();
-      if (str.lastIndexOf(".") == str.length() - 1) {
+      if (str.lastIndexOf('.') == str.length() - 1) {
         str = str.substring(0, str.length() - 1);
       }
       sb.append(str);
@@ -1116,7 +1112,7 @@ public class XMLUtils {
       } else if (ex.getPublicId() != null) {
         sb.append(" in entity from publicID ").append(ex.getPublicId());
       }
-      sb.append(".");
+      sb.append('.');
       return sb.toString();
     }
 

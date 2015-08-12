@@ -116,12 +116,15 @@ public class IndexedWord implements AbstractCoreLabel, Comparable<IndexedWord> {
     copy.original = this;
     return copy;
   }
-  
+
   public IndexedWord makeSoftCopy() {
-    if (original != null) {
-      return original.makeSoftCopy();
-    } else {
-      return makeSoftCopy(++numCopies);
+    IndexedWord result = this;
+    while (true) {
+      if (result.original != null) {
+        result = result.original;
+      } else {
+        return result.makeSoftCopy(++numCopies);
+      }
     }
   }
   

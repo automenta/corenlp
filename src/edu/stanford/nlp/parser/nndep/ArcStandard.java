@@ -31,9 +31,9 @@ public class ArcStandard extends ParsingSystem {
 
     // TODO store these as objects!
     for (String label : labels)
-      transitions.add("L(" + label + ")");
+      transitions.add("L(" + label + ')');
     for (String label : labels)
-      transitions.add("R(" + label + ")");
+      transitions.add("R(" + label + ')');
 
     transitions.add("S");
   }
@@ -99,15 +99,15 @@ public class ArcStandard extends ParsingSystem {
     int w1 = c.getStack(1);
     int w2 = c.getStack(0);
     if (w1 > 0 && dTree.getHead(w1) == w2)
-      return "L(" + dTree.getLabel(w1) + ")";
+      return "L(" + dTree.getLabel(w1) + ')';
     else if (w1 >= 0 && dTree.getHead(w2) == w1 && !c.hasOtherChild(w2, dTree))
-      return "R(" + dTree.getLabel(w2) + ")";
+      return "R(" + dTree.getLabel(w2) + ')';
     else
       return "S";
   }
 
   // NOTE: unused. need to check the correctness again.
-  public boolean canReach(Configuration c, DependencyTree dTree) {
+  public static boolean canReach(Configuration c, DependencyTree dTree) {
     int n = c.getSentenceSize();
     for (int i = 1; i <= n; ++i)
       if (c.getHead(i) != Config.NONEXIST && c.getHead(i) != dTree.getHead(i))

@@ -3,6 +3,7 @@ package edu.stanford.nlp.ie.machinereading.domains.ace.reader;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -24,8 +25,7 @@ public class AceSentenceSegmenter extends DomReader {
 
   static {
     // set up sentenceFinalPuncSet
-    for (int i = 0; i < sentenceFinalPunc.length; i++)
-      sentenceFinalPuncSet.add(sentenceFinalPunc[i]);
+    Collections.addAll(sentenceFinalPuncSet, sentenceFinalPunc);
   }
 
   /**
@@ -35,16 +35,16 @@ public class AceSentenceSegmenter extends DomReader {
   public static List<List<AceToken>> tokenizeAndSegmentSentences(String filenamePrefix)
       throws IOException, SAXException, ParserConfigurationException {
 
-    List<List<AceToken>> sentences = new ArrayList<List<AceToken>>();
+    List<List<AceToken>> sentences = new ArrayList<>();
     File inputFile = new File(filenamePrefix + AceDocument.ORIG_EXT);
     String input  =IOUtils.slurpFile(inputFile);
 
     // now we can split the text into tokens
-    RobustTokenizer<Word> tokenizer = new RobustTokenizer<Word>(input);
+    RobustTokenizer<Word> tokenizer = new RobustTokenizer<>(input);
     List<WordToken> tokenList = tokenizer.tokenizeToWordTokens();
 
     // and group the tokens into sentences
-    ArrayList<AceToken> currentSentence = new ArrayList<AceToken>();
+    ArrayList<AceToken> currentSentence = new ArrayList<>();
     int quoteCount = 0;
     for (int i = 0; i < tokenList.size(); i ++){
       WordToken token = tokenList.get(i);
@@ -56,7 +56,7 @@ public class AceSentenceSegmenter extends DomReader {
       // if (token.getNewLineCount() > 1 || AceToken.isSgml(tokenText)) {
       if(AceToken.isSgml(tokenText)) {
         if (currentSentence.size() > 0) sentences.add(currentSentence);
-        currentSentence = new ArrayList<AceToken>();
+        currentSentence = new ArrayList<>();
         quoteCount = 0;
       }
 
@@ -73,14 +73,14 @@ public class AceSentenceSegmenter extends DomReader {
           i ++;
         }
         if (currentSentence.size() > 0) sentences.add(currentSentence);
-        currentSentence = new ArrayList<AceToken>();
+        currentSentence = new ArrayList<>();
         quoteCount = 0;
       }
       
       // start a new sentence when we hit an SGML tag
       else if(AceToken.isSgml(tokenText)) {
         if (currentSentence.size() > 0) sentences.add(currentSentence);
-        currentSentence = new ArrayList<AceToken>();
+        currentSentence = new ArrayList<>();
         quoteCount = 0;
       }
     }
@@ -106,6 +106,6 @@ public class AceSentenceSegmenter extends DomReader {
     
     List<List<AceToken>> sentences = tokenizeAndSegmentSentences(testFilename);
     for (List<AceToken> sentence : sentences)
-      System.out.println("s: [" + sentence + "]");
+      System.out.println("s: [" + sentence + ']');
   }
 }

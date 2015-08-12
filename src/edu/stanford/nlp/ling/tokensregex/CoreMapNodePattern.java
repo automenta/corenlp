@@ -22,7 +22,7 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
     this.annotationPatterns = annotationPatterns;
   }
 
-  public CoreMapNodePattern(Pair<Class, NodePattern>... annotationPatterns) {
+  public CoreMapNodePattern(Pair<Class, NodePattern> annotationPatterns) {
     this.annotationPatterns = Arrays.asList(annotationPatterns);
   }
 
@@ -52,21 +52,21 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
   }
 
   public static CoreMapNodePattern valueOf(String textAnnotationPattern, int flags) {
-    CoreMapNodePattern p = new CoreMapNodePattern(new ArrayList<Pair<Class, NodePattern>>(1));
+    CoreMapNodePattern p = new CoreMapNodePattern(new ArrayList<>(1));
     p.add(CoreAnnotations.TextAnnotation.class,
             newStringRegexPattern(textAnnotationPattern, flags));
     return p;
   }
 
   public static CoreMapNodePattern valueOf(Env env, String textAnnotationPattern) {
-    CoreMapNodePattern p = new CoreMapNodePattern(new ArrayList<Pair<Class, NodePattern>>(1));
+    CoreMapNodePattern p = new CoreMapNodePattern(new ArrayList<>(1));
     p.add(CoreAnnotations.TextAnnotation.class,
             newStringRegexPattern(textAnnotationPattern, (env != null)? env.defaultStringPatternFlags: 0));
     return p;
   }
 
   public static CoreMapNodePattern valueOf(Pattern textAnnotationPattern) {
-    CoreMapNodePattern p = new CoreMapNodePattern(new ArrayList<Pair<Class, NodePattern>>(1));
+    CoreMapNodePattern p = new CoreMapNodePattern(new ArrayList<>(1));
     p.add(CoreAnnotations.TextAnnotation.class,
             new StringAnnotationRegexPattern(textAnnotationPattern));
     return p;
@@ -77,10 +77,10 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
   }
 
   public static CoreMapNodePattern valueOf(Env env, Map<String, String> attributes) {
-    CoreMapNodePattern p = new CoreMapNodePattern(new ArrayList<Pair<Class,NodePattern>>(attributes.size()));
-    for (String attr:attributes.keySet()) {
-      String value = attributes.get(attr);
-      Class c = EnvLookup.lookupAnnotationKey(env, attr);
+    CoreMapNodePattern p = new CoreMapNodePattern(new ArrayList<>(attributes.size()));
+    for (Map.Entry<String, String> stringStringEntry : attributes.entrySet()) {
+      String value = stringStringEntry.getValue();
+      Class c = EnvLookup.lookupAnnotationKey(env, stringStringEntry.getKey());
       if (c != null) {
         if (value.startsWith("\"") && value.endsWith("\"")) {
           value = value.substring(1, value.length()-1);
@@ -115,7 +115,7 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
                 }
               }
               if (!ok) {
-                throw new IllegalArgumentException("Invalid value " + value + " for key: " + attr);
+                throw new IllegalArgumentException("Invalid value " + value + " for key: " + stringStringEntry.getKey());
               }
               break;
           }
@@ -140,10 +140,10 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
         } else if (value.matches("[A-Za-z0-9_+-.]+")) {
           p.add(c, new StringAnnotationPattern(value, env.defaultStringMatchFlags));
         } else {
-          throw new IllegalArgumentException("Invalid value " + value + " for key: " + attr);
+          throw new IllegalArgumentException("Invalid value " + value + " for key: " + stringStringEntry.getKey());
         }
       } else {
-        throw new IllegalArgumentException("Unknown annotation key: " + attr);
+        throw new IllegalArgumentException("Unknown annotation key: " + stringStringEntry.getKey());
       }
     }
     return p;
@@ -170,7 +170,7 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
 
   @Override
   public Object matchWithResult(CoreMap token) {
-    Map<Class,Object> matchResults = new HashMap<Class, Object>();//Generics.newHashMap();
+    Map<Class,Object> matchResults = new HashMap<>();//Generics.newHashMap();
     if (match(token, matchResults)) {
       return matchResults;
     } else {
@@ -255,7 +255,7 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
     }
 
     public String toString() {
-      return ":" + pattern.toString();
+      return ':' + pattern.toString();
     }
   }
 
@@ -296,7 +296,7 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
     }
 
     public String toString() {
-      return ":/" + pattern.pattern() + "/";
+      return ":/" + pattern.pattern() + '/';
     }
   }
 
@@ -350,7 +350,7 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
     }
 
     public String toString() {
-      return ":" + target;
+      return ':' + target;
     }
   }
 
@@ -360,7 +360,7 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
     public StringInSetAnnotationPattern(Set<String> targets, int flags) {
       this.flags = flags;
       // if ignoreCase/normalize is true - convert targets to lowercase/normalized
-      this.targets = new HashSet<String>(targets.size());
+      this.targets = new HashSet<>(targets.size());
       for (String target:targets) {
         this.targets.add(getNormalized(target));
       }
@@ -433,7 +433,7 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
     }
 
     public String toString() {
-      return " " + cmpType + " " + value;
+      return " " + cmpType + ' ' + value;
     }
   }
 

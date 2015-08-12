@@ -76,13 +76,13 @@ public class ApproxMatch<K,V> extends MultiMatch<K,V> {
 
   public String toString() {
     StringBuilder sb = new StringBuilder();
-    sb.append("(");
+    sb.append('(');
     sb.append(super.toString());
-    sb.append(",").append(cost);
+    sb.append(',').append(cost);
     if (alignments != null) {
-      sb.append(", [").append(StringUtils.join(alignments, ", ")).append("]");
+      sb.append(", [").append(StringUtils.join(alignments, ", ")).append(']');
     }
-    sb.append(")");
+    sb.append(')');
     return sb.toString();
   }
 }

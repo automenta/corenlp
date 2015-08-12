@@ -149,7 +149,7 @@ public class OpenIE implements Annotator {
     if (clauseSplitter.isPresent()) {
       return clauseSplitter.get().apply(tree, assumedTruth).topClauses(splitterThreshold);
     } else {
-      return Collections.EMPTY_LIST;
+      return Collections.emptyList();
     }
   }
 
@@ -160,7 +160,7 @@ public class OpenIE implements Annotator {
   @SuppressWarnings("unchecked")
   public List<SentenceFragment> entailmentsFromClause(SentenceFragment clause) {
     if (clause.parseTree.size() == 0) {
-      return Collections.EMPTY_LIST;
+      return Collections.emptyList();
     } else {
       // Get the forward entailments
       List<SentenceFragment> list = new ArrayList<>();
@@ -255,8 +255,8 @@ public class OpenIE implements Annotator {
     List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
     if (tokens.size() < 2) {
       System.err.println("Very short sentence (<2 tokens); " + this.getClass().getSimpleName() + " is skipping it.");
-      sentence.set(NaturalLogicAnnotations.RelationTriplesAnnotation.class, Collections.EMPTY_LIST);
-      sentence.set(NaturalLogicAnnotations.EntailedSentencesAnnotation.class, Collections.EMPTY_LIST);
+      sentence.set(NaturalLogicAnnotations.RelationTriplesAnnotation.class, Collections.<RelationTriple>emptyList());
+      sentence.set(NaturalLogicAnnotations.EntailedSentencesAnnotation.class, Collections.<SentenceFragment>emptyList());
     } else {
       SemanticGraph parse = sentence.get(SemanticGraphCoreAnnotations.CollapsedDependenciesAnnotation.class);
       if (parse == null) {
@@ -268,8 +268,8 @@ public class OpenIE implements Annotator {
       List<RelationTriple> extractions = segmenter.extract(parse, tokens);
       if (tokens.size() > 63) {
         System.err.println("Very long sentence (>63 tokens); " + this.getClass().getSimpleName() + " is not attempting to extract clauses.");
-        sentence.set(NaturalLogicAnnotations.RelationTriplesAnnotation.class, Collections.EMPTY_LIST);
-        sentence.set(NaturalLogicAnnotations.EntailedSentencesAnnotation.class, Collections.EMPTY_LIST);
+        sentence.set(NaturalLogicAnnotations.RelationTriplesAnnotation.class, Collections.<RelationTriple>emptyList());
+        sentence.set(NaturalLogicAnnotations.EntailedSentencesAnnotation.class, Collections.<SentenceFragment>emptyList());
       } else {
         List<SentenceFragment> clauses = clausesInSentence(sentence);
         List<SentenceFragment> fragments = entailmentsFromClauses(clauses);
@@ -370,7 +370,7 @@ public class OpenIE implements Annotator {
    */
   private static void processDocument(AnnotationPipeline pipeline, String docid, String document) {
     // Error checks
-    if (document.trim().equals("")) {
+    if (document.trim().isEmpty()) {
       return;
     }
 
@@ -389,7 +389,7 @@ public class OpenIE implements Annotator {
               System.out.println(extraction.toReverbString(docid, sentence));
               break;
             case OLLIE:
-              System.out.println(extraction.confidenceGloss() + ": (" + extraction.subjectGloss() + "; " + extraction.relationGloss() + "; " + extraction.objectGloss() + ")");
+              System.out.println(extraction.confidenceGloss() + ": (" + extraction.subjectGloss() + "; " + extraction.relationGloss() + "; " + extraction.objectGloss() + ')');
               break;
             case DEFAULT:
               System.out.println(extraction.toString());
@@ -420,31 +420,31 @@ public class OpenIE implements Annotator {
     String[] filesToProcess;
     if (FILELIST != null) {
       filesToProcess = IOUtils.linesFromFile(FILELIST.getPath()).stream().map(String::trim).toArray(String[]::new);
-    } else if (!"".equals(props.getProperty("", ""))) {
+    } else if (props.getProperty("", "") != null && !props.getProperty("", "").isEmpty()) {
       filesToProcess = props.getProperty("", "").split("\\s+");
     } else {
       filesToProcess = new String[0];
     }
 
     // Tweak the arguments
-    if ("".equals(props.getProperty("annotators", ""))) {
+    if (props.getProperty("annotators", "") != null && props.getProperty("annotators", "").isEmpty()) {
       props.setProperty("annotators", "tokenize,ssplit,pos,depparse,natlog,openie");
     }
-    if ("".equals(props.getProperty("depparse.extradependencies", ""))) {
+    if (props.getProperty("depparse.extradependencies", "") != null && props.getProperty("depparse.extradependencies", "").isEmpty()) {
       props.setProperty("depparse.extradependencies", "ref_only_uncollapsed");
     }
-    if ("".equals(props.getProperty("parse.extradependencies", ""))) {
+    if (props.getProperty("parse.extradependencies", "") != null && props.getProperty("parse.extradependencies", "").isEmpty()) {
       props.setProperty("parse.extradependencies", "ref_only_uncollapsed");
     }
-    if ("".equals(props.getProperty("tokenize.class", ""))) {
+    if (props.getProperty("tokenize.class", "") != null && props.getProperty("tokenize.class", "").isEmpty()) {
       props.setProperty("tokenize.class", "WhitespaceTokenizer");
     }
-    if ("".equals(props.getProperty("tokenize.language", ""))) {
+    if (props.getProperty("tokenize.language", "") != null && props.getProperty("tokenize.language", "").isEmpty()) {
       props.setProperty("tokenize.language", "en");
     }
     // Tweak properties for console mode.
     // In particular, in this mode we can assume every line of standard in is a new sentence.
-    if (filesToProcess.length == 0 && "".equals(props.getProperty("ssplit.isOneSentence", ""))) {
+    if (filesToProcess.length == 0 && props.getProperty("ssplit.isOneSentence", "") != null && props.getProperty("ssplit.isOneSentence", "").isEmpty()) {
       props.setProperty("ssplit.isOneSentence", "ref_only_uncollapsed");
     }
     // Some error checks on the arguments
@@ -484,7 +484,7 @@ public class OpenIE implements Annotator {
       // This will prevent a nasty surprise 10 hours into a running job...
       for (String file : filesToProcess) {
         if (!new File(file).exists() || !new File(file).canRead()) {
-          System.err.println("ERROR: Cannot read file (or file does not exist: '" + file + "'");
+          System.err.println("ERROR: Cannot read file (or file does not exist: '" + file + '\'');
         }
       }
       // Actually process the files.

@@ -128,7 +128,7 @@ public class ForwardEntailerSearchProblem {
   @SuppressWarnings("unchecked")
   public List<SentenceFragment> search() {
     if (parseTree.vertexSet().size() > 63) {
-      return Collections.EMPTY_LIST;
+      return Collections.emptyList();
     } else {
       return searchImplementation().stream()
           .map(x -> new SentenceFragment(x.tree, truthOfPremise, false).changeScore(x.confidence))
@@ -202,7 +202,7 @@ public class ForwardEntailerSearchProblem {
         numIters += 1;
         if (numIters > 100) {
           System.err.println("ERROR: tree has apparent depth > 100");
-          return Collections.EMPTY_LIST;
+          return Collections.emptyList();
         }
       }
     }
@@ -211,7 +211,7 @@ public class ForwardEntailerSearchProblem {
     List<SearchResult> results = new ArrayList<>();
     if (!determinerRemovals.isEmpty()) {
       if (andsToAdd.isEmpty()) {
-        double score = Math.pow(weights.deletionProbability("det"), (double) determinerRemovals.size());
+        double score = Math.pow(NaturalLogicWeights.deletionProbability("det"), (double) determinerRemovals.size());
         assert !Double.isNaN(score);
         assert !Double.isInfinite(score);
         results.add(new SearchResult(parseTree, determinerRemovals, score));
@@ -223,7 +223,7 @@ public class ForwardEntailerSearchProblem {
         }
         assert Util.isTree(treeWithAnds);
         results.add(new SearchResult(treeWithAnds, determinerRemovals,
-            Math.pow(weights.deletionProbability("det"), (double) determinerRemovals.size())));
+            Math.pow(NaturalLogicWeights.deletionProbability("det"), (double) determinerRemovals.size())));
       }
     }
 
@@ -240,7 +240,7 @@ public class ForwardEntailerSearchProblem {
       return results;
     }
     Stack<SearchState> fringe = new Stack<>();
-    fringe.push(new SearchState(0l, 0, parseTree, null, null, 1.0));
+    fringe.push(new SearchState(0L, 0, parseTree, null, null, 1.0));
 
     // Start the search
     int numTicks = 0;
@@ -260,7 +260,7 @@ public class ForwardEntailerSearchProblem {
       int numIters = 0;
       while (nextIndex < topologicalVertices.size()) {
         IndexedWord nextWord = topologicalVertices.get(nextIndex);
-        if (  ((state.deletionMask >>> (indexToMaskIndex[nextWord.index() - 1])) & 0x1l) == 0) {
+        if (  ((state.deletionMask >>> (indexToMaskIndex[nextWord.index() - 1])) & 0x1L) == 0) {
           fringe.push(new SearchState(state.deletionMask, nextIndex, state.tree, null, state, state.score));
           break;
         } else {
@@ -309,9 +309,9 @@ public class ForwardEntailerSearchProblem {
           long newMask = state.deletionMask;
           for (IndexedWord vertex : state.tree.descendants(currentWord)) {
             impl.removeVertex(vertex);
-            newMask |= (0x1l << (indexToMaskIndex[vertex.index() - 1]));
+            newMask |= (0x1L << (indexToMaskIndex[vertex.index() - 1]));
             assert indexToMaskIndex[vertex.index() - 1] < 64;
-            assert ((newMask >>> (indexToMaskIndex[vertex.index() - 1])) & 0x1l) == 1;
+            assert ((newMask >>> (indexToMaskIndex[vertex.index() - 1])) & 0x1L) == 1;
           }
           return Pair.makePair(impl, newMask);
         });
@@ -339,7 +339,7 @@ public class ForwardEntailerSearchProblem {
             IndexedWord nextWord = topologicalVertices.get(nextIndex);
             long newMask = treeWithDeletionsAndNewMask.get().second;
             SemanticGraph treeWithDeletions = treeWithDeletionsAndNewMask.get().first;
-            if (  ((newMask >>> (indexToMaskIndex[nextWord.index() - 1])) & 0x1l) == 0) {
+            if (  ((newMask >>> (indexToMaskIndex[nextWord.index() - 1])) & 0x1L) == 0) {
               assert treeWithDeletions.containsVertex(topologicalVertices.get(nextIndex));
               fringe.push(new SearchState(newMask, nextIndex, treeWithDeletions, null, state, newScore));
               break;

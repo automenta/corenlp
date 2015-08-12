@@ -19,7 +19,7 @@ public class Token implements Serializable {
   //Can be semgrex.Env but does not matter
   //static public Env env = TokenSequencePattern.getNewEnv();
 
-  static Map<Class, String> class2KeyMapping = new ConcurrentHashMap<Class, String>();
+  static Map<Class, String> class2KeyMapping = new ConcurrentHashMap<>();
 
   //All the restrictions of a token: for example, word:xyz
   Map<Class, String> classORrestrictions;
@@ -46,16 +46,16 @@ public class Token implements Serializable {
   public Map<String, String> classORRestrictionsAsString(){
     if(classORrestrictions== null || classORrestrictions.isEmpty())
       return null;
-    Map<String, String> str = new HashMap<String, String>();
+    Map<String, String> str = new HashMap<>();
     for(Map.Entry<Class, String> en: classORrestrictions.entrySet()){
-       str.put(class2KeyMapping.get(en.getKey()), en.getValue().toString());
+       str.put(class2KeyMapping.get(en.getKey()), en.getValue());
     }
     return str;
   }
 
 
 
-  String[] trim(String[] p) {
+  static String[] trim(String[] p) {
 
     if (p == null)
       return null;
@@ -80,19 +80,19 @@ public class Token implements Serializable {
     String str = "";
     if(classORrestrictions!= null && !this.classORrestrictions.isEmpty()) {
       for (Map.Entry<Class, String> en : this.classORrestrictions.entrySet()) {
-        String orgVal = en.getValue().toString();
+        String orgVal = en.getValue();
         String val;
 
 
         if(!alphaNumeric.matcher(orgVal).matches())
-          val = "/" + Pattern.quote(orgVal.replaceAll("/","\\\\/"))+ "/";
+          val = '/' + Pattern.quote(orgVal.replaceAll("/","\\\\/"))+ '/';
         else
           val = orgVal;
 
         if (str.isEmpty())
-          str = "{" + class2KeyMapping.get(en.getKey()) + ":" + val + "}";
+          str = '{' + class2KeyMapping.get(en.getKey()) + ':' + val + '}';
         else
-          str += " | " + "{" + class2KeyMapping.get(en.getKey()) + ":" + val + "}";
+          str += " | " + '{' + class2KeyMapping.get(en.getKey()) + ':' + val + '}';
       }
     }
     return str.trim();
@@ -102,25 +102,25 @@ public class Token implements Serializable {
     String str = "";
     if(classORrestrictions!= null && !this.classORrestrictions.isEmpty()) {
       for (Map.Entry<Class, String> en : this.classORrestrictions.entrySet()) {
-        String orgVal = en.getValue().toString();
+        String orgVal = en.getValue();
         String val;
 
 
         if(!alphaNumeric.matcher(orgVal).matches())
-          val = "/" + Pattern.quote(orgVal.replaceAll("/","\\\\/"))+ "/";
+          val = '/' + Pattern.quote(orgVal.replaceAll("/","\\\\/"))+ '/';
         else
-          val = "\"" + orgVal +"\"";
+          val = '"' + orgVal + '"';
 
         if (str.isEmpty())
-          str = "{" + class2KeyMapping.get(en.getKey()) + ":" + val + "}";
+          str = '{' + class2KeyMapping.get(en.getKey()) + ':' + val + '}';
         else
-          str += " | " + "{" + class2KeyMapping.get(en.getKey()) + ":" + val + "}";
+          str += " | " + '{' + class2KeyMapping.get(en.getKey()) + ':' + val + '}';
       }
-      str = "[" + str + "]";
+      str = '[' + str + ']';
     }else if(envBindBooleanRestriction != null && !envBindBooleanRestriction.isEmpty())
       str = envBindBooleanRestriction;
     if(numMinOcc != 1 || numMaxOcc != 1)
-     str+="{"+numMinOcc+","+numMaxOcc+"}";
+     str+="{"+numMinOcc+ ',' +numMaxOcc+ '}';
     return str.trim();
   }
 
@@ -130,9 +130,9 @@ public class Token implements Serializable {
     if(classORrestrictions!= null && !this.classORrestrictions.isEmpty()) {
       for (Map.Entry<Class, String> en : this.classORrestrictions.entrySet()) {
         if (str.isEmpty())
-          str = en.getValue().toString();
+          str = en.getValue();
         else
-          str += "|" + en.getValue().toString();
+          str += '|' + en.getValue();
       }
 
     }else if(envBindBooleanRestriction != null && !envBindBooleanRestriction.isEmpty()){
@@ -166,7 +166,7 @@ public class Token implements Serializable {
     if(this.envBindBooleanRestriction != null && !this.envBindBooleanRestriction.isEmpty())
       throw new RuntimeException("cannot add restriction to something that is binding to an env variable");
     if(classORrestrictions == null)
-      classORrestrictions = new TreeMap<Class, String>(new ClassComparator());
+      classORrestrictions = new TreeMap<>(new ClassComparator());
     assert value!=null;
     classORrestrictions.put(classR, value);
   }
@@ -209,7 +209,7 @@ public class Token implements Serializable {
     return key;
   }
 
-  public class ClassComparator implements Serializable, Comparator<Class>{
+  public static class ClassComparator implements Serializable, Comparator<Class>{
     @Override
     public int compare(Class o1, Class o2) {
       return o1.toString().compareTo(o2.toString());

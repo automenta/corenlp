@@ -68,7 +68,7 @@ public class BinarizerAnnotator implements Annotator {
   /**
    * Recursively check that a tree is not already binarized.
    */
-  private boolean isBinarized(Tree tree) {
+  private static boolean isBinarized(Tree tree) {
     if (tree.isLeaf()) {
       return true;
     }

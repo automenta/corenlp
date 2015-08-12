@@ -157,7 +157,7 @@ public class ChineseEnglishWordMap implements Serializable {
 
     for (String t : trans) {
       t = normalize(t);
-      if ( ! t.equals("")) {
+      if (!t.isEmpty()) {
         set.add(t);
       }
     }
@@ -181,17 +181,17 @@ public class ChineseEnglishWordMap implements Serializable {
             Set<String> oldtrans = map.get(word);
             for (String t : trans) {
               t = normalize(t);
-              if ( ! t.equals("")) {
+              if (!t.isEmpty()) {
                 if ( ! oldtrans.contains(t)) {
                   oldtrans.add(t);
                 }
               }
             }
           } else {
-            Set<String> transList = new LinkedHashSet<String>(Arrays.asList(trans));
+            Set<String> transList = new LinkedHashSet<>(Arrays.asList(trans));
             String normW = normalize(word);
             Set<String> normSet = normalize(transList);
-            if ( ! normW.equals("") && normSet.size() > 0) {
+            if (!normW.isEmpty() && normSet.size() > 0) {
               map.put(normW, normSet);
             }
           }
@@ -266,7 +266,7 @@ public class ChineseEnglishWordMap implements Serializable {
         Set<String> entry = rMap.get(trans);
         if (entry == null) {
           // reduce default size as most will be small
-          Set<String> toAdd = new LinkedHashSet<String>(6);
+          Set<String> toAdd = new LinkedHashSet<>(6);
           toAdd.add(k);
           rMap.put(trans, toAdd);
         } else {
@@ -288,7 +288,7 @@ public class ChineseEnglishWordMap implements Serializable {
       Set<String> addList = me.getValue();
       Set<String> origList = map.get(k);
       if (origList == null) {
-        map.put(k, new LinkedHashSet<String>(addList));
+        map.put(k, new LinkedHashSet<>(addList));
         Set<String> newList = map.get(k);
         if (newList != null && newList.size() != 0) {
           newTrans+=addList.size();
@@ -370,7 +370,7 @@ public class ChineseEnglishWordMap implements Serializable {
         } else if (cewm.containsKey(word)) {
           coveredWords++;
           if (allTranslations) {
-            List<String> trans = new ArrayList<String>(cewm.getAllTranslations(word));
+            List<String> trans = new ArrayList<>(cewm.getAllTranslations(word));
             for (String s : trans) {
               pw.print((trans.indexOf(s) > 0 ? "|" : "") + s);
             }

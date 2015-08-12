@@ -13,7 +13,7 @@ public class UnorderedPair<T1,T2> extends Pair<T1,T2> {
 
   @Override
   public String toString() {
-    return "{" + first + "," + second + "}";
+    return "{" + first + ',' + second + '}';
   }
 
   @SuppressWarnings("unchecked")

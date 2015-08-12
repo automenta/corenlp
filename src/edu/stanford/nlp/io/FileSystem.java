@@ -154,7 +154,7 @@ public final class FileSystem {
     testDir.mkdir();
     
     try {
-      copyFile(new File(testFileName),new File(testDirName + "/" + testFileName));
+      copyFile(new File(testFileName),new File(testDirName + '/' + testFileName));
     } catch (IOException e) {
       System.err.println("Copy failed");
       System.exit(-1);
@@ -180,7 +180,7 @@ public final class FileSystem {
     }
     
     try {
-      gzipFile(new File(String.format(testDirName + ".tar")), new File(testDirName + ".tar.gz"));
+      gzipFile(new File(testDirName + ".tar"), new File(testDirName + ".tar.gz"));
     } catch (IOException e) {
       System.err.println("gzip command failed");
       System.exit(-1);

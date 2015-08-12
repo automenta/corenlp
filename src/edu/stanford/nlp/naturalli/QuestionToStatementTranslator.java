@@ -257,7 +257,7 @@ public class QuestionToStatementTranslator {
    *
    * @see edu.stanford.nlp.naturalli.QuestionToStatementTranslator#triggerWhNNIs
    */
-  private List<CoreLabel> processWhNNIs(TokenSequenceMatcher matcher) {
+  private static List<CoreLabel> processWhNNIs(TokenSequenceMatcher matcher) {
     List<CoreLabel> sentence = (List<CoreLabel>) matcher.groupNodes("$answer_type");
     for (CoreLabel lbl : sentence) {
       lbl.set(UnknownTokenMarker.class, true);
@@ -290,9 +290,8 @@ public class QuestionToStatementTranslator {
    * @see edu.stanford.nlp.naturalli.QuestionToStatementTranslator#triggerWhNNHave
    */
   private List<CoreLabel> processWhNNHave(TokenSequenceMatcher matcher) {
-    List<CoreLabel> sentence = new ArrayList<>();
+    List<CoreLabel> sentence = new ArrayList<>((Collection<CoreLabel>) matcher.groupNodes("$pre_verb"));
     // Add prefix
-    sentence.addAll((Collection<CoreLabel>) matcher.groupNodes("$pre_verb"));
 
     // Add have/do
     List<CoreLabel> have = (List<CoreLabel>) matcher.groupNodes("$have");
@@ -360,7 +359,7 @@ public class QuestionToStatementTranslator {
    *
    * @see edu.stanford.nlp.naturalli.QuestionToStatementTranslator#triggerWhNNHaveNN
    */
-  private List<CoreLabel> processWhNNHaveNN(TokenSequenceMatcher matcher) {
+  private static List<CoreLabel> processWhNNHaveNN(TokenSequenceMatcher matcher) {
     List<CoreLabel> sentence = (List<CoreLabel>) matcher.groupNodes("$answer_type");
     for (CoreLabel lbl : sentence) {
       lbl.set(UnknownTokenMarker.class, true);
@@ -843,7 +842,7 @@ public class QuestionToStatementTranslator {
    * @see edu.stanford.nlp.naturalli.QuestionToStatementTranslator#triggerWhenDo
    */
   private List<CoreLabel> processWhatHave(TokenSequenceMatcher matcher) {
-    List<CoreLabel> sentence = new ArrayList<CoreLabel>();
+    List<CoreLabel> sentence = new ArrayList<>();
 
     // Grab the prefix of the sentence
     List<CoreLabel> preVerb = (List<CoreLabel>) matcher.groupNodes("$pre_verb");

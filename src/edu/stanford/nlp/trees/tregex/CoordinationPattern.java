@@ -44,11 +44,11 @@ class CoordinationPattern extends TregexPattern {
         sb.append(node.toString());
       }
       if (isNegated()) {
-        sb.append(")");
+        sb.append(')');
       }
     } else {
       if (isNegated()) {
-        sb.append("!");
+        sb.append('!');
       }
       sb.append('[');
       for (Iterator<TregexPattern> iter = children.iterator(); iter.hasNext();) {

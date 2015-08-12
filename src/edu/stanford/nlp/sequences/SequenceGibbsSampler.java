@@ -87,7 +87,7 @@ public class SequenceGibbsSampler implements BestSequenceFinder {
       if (score>bestScore) {
         best = sequence;
         bestScore = score;
-        System.err.println("found new best ("+bestScore+")");
+        System.err.println("found new best ("+bestScore+ ')');
         System.err.println(ArrayMath.toString(best));
       }
     }
@@ -143,7 +143,7 @@ public class SequenceGibbsSampler implements BestSequenceFinder {
         }      
       }
       if (i % 50 == 0) {
-        if (verbose > 1) System.err.println("itr " + i + ": " + bestScore + "\t");
+        if (verbose > 1) System.err.println("itr " + i + ": " + bestScore + '\t');
       }
       if (verbose>0) System.err.print(".");
     }
@@ -178,7 +178,7 @@ public class SequenceGibbsSampler implements BestSequenceFinder {
   public List<int[]> collectSamples(SequenceModel model, int numSamples, int sampleInterval, int[] initialSequence) {
     if (verbose>0) System.err.print("Collecting samples");
     listener.setInitialSequence(initialSequence);
-    List<int[]> result = new ArrayList<int[]>();
+    List<int[]> result = new ArrayList<>();
     int[] sequence = initialSequence;
     for (int i=0; i<numSamples; i++) {
       sequence = copy(sequence); // so we don't change the initial, or the one we just stored
@@ -249,7 +249,7 @@ public class SequenceGibbsSampler implements BestSequenceFinder {
         }
       } else if (samplingStyle == CHROMATIC_SAMPLING) {
         // make copies of the sequences and merge at the end
-        List<Pair<Integer, Integer>> results = new ArrayList<Pair<Integer, Integer>>();
+        List<Pair<Integer, Integer>> results = new ArrayList<>();
         for (List<Integer> indieList: partition) {
           if (indieList.size() <= chromaticSize) {
             for (int pos: indieList) {
@@ -257,24 +257,25 @@ public class SequenceGibbsSampler implements BestSequenceFinder {
               sequence[pos] = newPosProb.first();
             }
           } else {
-            MulticoreWrapper<List<Integer>, List<Pair<Integer, Integer>>> wrapper = new MulticoreWrapper<List<Integer>, List<Pair<Integer, Integer>>>(chromaticSize, 
-                new ThreadsafeProcessor<List<Integer>, List<Pair<Integer, Integer>>>() {
-              @Override
-              public List<Pair<Integer, Integer>> process(List<Integer> posList) {
-                List<Pair<Integer, Integer>> allPos = new ArrayList<Pair<Integer, Integer>>(posList.size());
-                Pair<Integer, Double> newPosProb = null;
-                for (int pos: posList) {
-                  newPosProb = samplePositionHelper(model, sequence, pos, temperature); 
-                  // returns the position to sample in first place and new label in second place
-                  allPos.add(new Pair<Integer, Integer>(pos, newPosProb.first()));
-                }
-                return allPos;
-              }
-              @Override
-              public ThreadsafeProcessor<List<Integer>, List<Pair<Integer, Integer>>> newInstance() {
-                return this;
-              }
-            });
+            MulticoreWrapper<List<Integer>, List<Pair<Integer, Integer>>> wrapper = new MulticoreWrapper<>(chromaticSize,
+                    new ThreadsafeProcessor<List<Integer>, List<Pair<Integer, Integer>>>() {
+                      @Override
+                      public List<Pair<Integer, Integer>> process(List<Integer> posList) {
+                        List<Pair<Integer, Integer>> allPos = new ArrayList<>(posList.size());
+                        Pair<Integer, Double> newPosProb = null;
+                        for (int pos : posList) {
+                          newPosProb = samplePositionHelper(model, sequence, pos, temperature);
+                          // returns the position to sample in first place and new label in second place
+                          allPos.add(new Pair<>(pos, newPosProb.first()));
+                        }
+                        return allPos;
+                      }
+
+                      @Override
+                      public ThreadsafeProcessor<List<Integer>, List<Pair<Integer, Integer>>> newInstance() {
+                        return this;
+                      }
+                    });
             results.clear();
             int interval = Math.max(1, indieList.size() / chromaticSize);
             for (int begin = 0, end = 0, indieListSize = indieList.size(); end < indieListSize; begin += interval) {
@@ -339,7 +340,7 @@ public class SequenceGibbsSampler implements BestSequenceFinder {
    * @param pos the position to sample.
    * @param temperature the temperature to control annealing
    */
-  private Pair<Integer, Double> samplePositionHelper(SequenceModel model, int[] sequence, int pos, double temperature) {
+  private static Pair<Integer, Double> samplePositionHelper(SequenceModel model, int[] sequence, int pos, double temperature) {
     double[] distribution = model.scoresOf(sequence, pos);
     if (temperature!=1.0) {
       if (temperature==0.0) {
@@ -357,7 +358,7 @@ public class SequenceGibbsSampler implements BestSequenceFinder {
     ArrayMath.expInPlace(distribution);
     int newTag = ArrayMath.sampleFromDistribution(distribution, random);
     double newProb = distribution[newTag];
-    return new Pair<Integer, Double>(newTag, newProb);
+    return new Pair<>(newTag, newProb);
   }
 
   /**
@@ -388,7 +389,7 @@ public class SequenceGibbsSampler implements BestSequenceFinder {
       out.print(StringUtils.padOrTrim(s, 10));
       for (int j = 0; j < samples.size(); j++) {
         int[] sequence = (int[]) samples.get(j);
-        out.print(" " + StringUtils.padLeft(sequence[i], 2));
+        out.print(' ' + StringUtils.padLeft(sequence[i], 2));
       }
       out.println();
     }

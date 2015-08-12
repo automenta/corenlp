@@ -18,7 +18,7 @@ public class ConfusionMatrixTSV {
     }
 
     try {
-      ConfusionMatrix<String> cm = new ConfusionMatrix<String>();
+      ConfusionMatrix<String> cm = new ConfusionMatrix<>();
 
       String answersFile = args[0];
       BufferedReader br = new BufferedReader(
@@ -37,8 +37,6 @@ public class ConfusionMatrixTSV {
 
       System.out.println(cm.toString());
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();

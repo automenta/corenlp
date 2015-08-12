@@ -64,7 +64,7 @@ public class DefaultPaths {
    */
   public static void main(String[] args) throws IllegalAccessException {
     for (Field field : DefaultPaths.class.getFields()) {
-      System.out.println(field.getName() + "\t" + field.get(null));
+      System.out.println(field.getName() + '\t' + field.get(null));
     }
   }
   

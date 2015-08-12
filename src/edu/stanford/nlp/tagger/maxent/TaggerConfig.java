@@ -192,7 +192,7 @@ public class TaggerConfig extends Properties /* Inherits implementation of Seria
     //on command line/in props file
     //Get the path to the model (or the path where you'd like to save the model); this is necessary for training, testing, and tagging
     this.setProperty("model", props.getProperty("model", this.getProperty("model", "")).trim());
-    if ( ! (this.getMode() == Mode.DUMP) && this.getProperty("model").equals("")) {
+    if ( ! (this.getMode() == Mode.DUMP) && this.getProperty("model").isEmpty()) {
       throw new RuntimeException("'model' parameter must be specified");
     }
 
@@ -225,7 +225,7 @@ public class TaggerConfig extends Properties /* Inherits implementation of Seria
     this.setProperty("closedClassTagThreshold", props.getProperty("closedClassTagThreshold", this.getProperty("closedClassTagThreshold")));
 
     this.setProperty("arch", props.getProperty("arch", this.getProperty("arch")));
-    if (this.getMode() == Mode.TRAIN && this.getProperty("arch").equals("")) {
+    if (this.getMode() == Mode.TRAIN && this.getProperty("arch").isEmpty()) {
       throw new IllegalArgumentException("No architecture specified; " +
                                          "set the -arch flag with " +
                                          "the features to be used");
@@ -330,7 +330,7 @@ public class TaggerConfig extends Properties /* Inherits implementation of Seria
   }
 
   private static String[] wsvStringToStringArray(String str) {
-    if (str == null || str.equals("")) {
+    if (str == null || str.isEmpty()) {
       return StringUtils.EMPTY_STRING_ARRAY;
     } else {
       return str.split("\\s+");

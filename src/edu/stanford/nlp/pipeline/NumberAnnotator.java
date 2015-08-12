@@ -53,7 +53,7 @@ public class NumberAnnotator implements Annotator {
   }
 
   public NumberAnnotator(String name, Properties props) {
-    String property = name + "." + BACKGROUND_SYMBOL_PROPERTY;
+    String property = name + '.' + BACKGROUND_SYMBOL_PROPERTY;
     BACKGROUND_SYMBOL = props.getProperty(property, DEFAULT_BACKGROUND_SYMBOL);
     boolean useSUTime = PropertiesUtils.getBool(props,
         NumberSequenceClassifier.USE_SUTIME_PROPERTY,
@@ -70,7 +70,8 @@ public class NumberAnnotator implements Annotator {
 
     if (annotation.containsKey(CoreAnnotations.SentencesAnnotation.class)) {
       // classify tokens for each sentence
-      for (CoreMap sentence : annotation.get(CoreAnnotations.SentencesAnnotation.class)) {
+      Iterable<CoreMap> cl = annotation.get(CoreAnnotations.SentencesAnnotation.class);
+      for (CoreMap sentence : cl) {
         List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
         doOneSentenceNew(tokens, annotation, sentence);
       }
@@ -85,7 +86,7 @@ public class NumberAnnotator implements Annotator {
     }
   }
 
-  private void doOneSentenceNew(List<CoreLabel> words, Annotation doc, CoreMap sentence) {
+  private void doOneSentenceNew(List<CoreLabel> words, CoreMap doc, CoreMap sentence) {
     List<CoreLabel> newWords = NumberSequenceClassifier.copyTokens(words, sentence);
 
     nsc.classifyWithGlobalInformation(newWords, doc, sentence);

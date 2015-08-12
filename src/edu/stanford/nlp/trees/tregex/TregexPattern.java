@@ -454,7 +454,7 @@ public abstract class TregexPattern implements Serializable {
       result = TregexPatternCompiler.defaultCompiler.compile(tregex);
     } catch (TregexParseException ex) {
       if (verbose) {
-        System.err.println("Could not parse " + tregex + ":");
+        System.err.println("Could not parse " + tregex + ':');
         ex.printStackTrace();
       }
     }
@@ -504,11 +504,11 @@ public abstract class TregexPattern implements Serializable {
   private static final Pattern codePattern = Pattern.compile("([0-9]+):([0-9]+)");
 
   private static void extractSubtrees(List<String> codeStrings, String treeFile) {
-    List<Pair<Integer,Integer>> codes = new ArrayList<Pair<Integer,Integer>>();
+    List<Pair<Integer,Integer>> codes = new ArrayList<>();
     for(String s : codeStrings) {
       Matcher m = codePattern.matcher(s);
       if(m.matches())
-        codes.add(new Pair<Integer,Integer>(Integer.parseInt(m.group(1)),Integer.parseInt(m.group(2))));
+        codes.add(new Pair<>(Integer.parseInt(m.group(1)), Integer.parseInt(m.group(2))));
       else
         throw new RuntimeException("Error: illegal node code " + s);
     }
@@ -899,21 +899,7 @@ public abstract class TregexPattern implements Serializable {
     private final TreeNormalizer tn;
 
     public TRegexTreeReaderFactory() {
-      this(new TreeNormalizer() {
-        /**
-         *
-         */
-        private static final long serialVersionUID = -2998972954089638189L;
-
-        @Override
-        public String normalizeNonterminal(String str) {
-          if (str == null) {
-            return "";
-          } else {
-            return str;
-          }
-        }
-      });
+      this(new MyTreeNormalizer());
     }
 
     public TRegexTreeReaderFactory(TreeNormalizer tn) {
@@ -924,5 +910,20 @@ public abstract class TregexPattern implements Serializable {
       return new PennTreeReader(new BufferedReader(in), new LabeledScoredTreeFactory(), tn);
     }
 
+    private static class MyTreeNormalizer extends TreeNormalizer {
+      /**
+       *
+       */
+      private static final long serialVersionUID = -2998972954089638189L;
+
+      @Override
+      public String normalizeNonterminal(String str) {
+        if (str == null) {
+          return "";
+        } else {
+          return str;
+        }
+      }
+    }
   } // end class TRegexTreeReaderFactory
 }

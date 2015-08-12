@@ -105,7 +105,7 @@ public class SentimentPipeline {
       return index;
     }
 
-    out.print("  " + index + ":");
+    out.print("  " + index + ':');
     SimpleMatrix vector = RNNCoreAnnotations.getNodeVector(tree);
     for (int i = 0; i < vector.getNumElements(); ++i) {
       out.print("  " + NF.format(vector.get(i)));
@@ -127,7 +127,7 @@ public class SentimentPipeline {
       return index;
     }
 
-    out.print("  " + index + ":");
+    out.print("  " + index + ':');
     SimpleMatrix vector = RNNCoreAnnotations.getPredictions(tree);
     for (int i = 0; i < vector.getNumElements(); ++i) {
       out.print("  " + NF.format(vector.get(i)));
@@ -275,7 +275,7 @@ public class SentimentPipeline {
         argIndex += 2;
       } else if (args[argIndex].equalsIgnoreCase("-output")) {
         String[] formats = args[argIndex + 1].split(",");
-        outputFormats = new ArrayList<Output>();
+        outputFormats = new ArrayList<>();
         for (String format : formats) {
           outputFormats.add(Output.valueOf(format.toUpperCase()));
         }

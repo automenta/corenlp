@@ -69,7 +69,7 @@ public class ParserAnnotatorUtils {
    */
   public static void setMissingTags(CoreMap sentence, Tree tree) {
     List<TaggedWord> taggedWords = null;
-    List<Label> leaves = null;
+    List<? extends Label> leaves = null;
     List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
     for (int i = 0, size = tokens.size(); i < size; ++i) {
       CoreLabel token = tokens.get(i);

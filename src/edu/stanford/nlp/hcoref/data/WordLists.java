@@ -1,6 +1,7 @@
 package edu.stanford.nlp.hcoref.data;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Set;
 
 import edu.stanford.nlp.util.Generics;
@@ -207,7 +208,7 @@ public class WordLists {
   public static final Set<String> quantifiers2Zh = Generics.newHashSet(Arrays.asList( "每", "所有" ));
   public static final Set<String> determinersZh = Generics.newHashSet(Arrays.asList( "这", "这个", "这些", "那", "那个", "那些" ));
   public static final Set<String> negationsZh = Generics.newHashSet(Arrays.asList( "不", "没", "否", "如果", "可能", "输", "失败", "否认" ));
-  public static final Set<String> neg_relationsZh = Generics.newHashSet(Arrays.asList(""));
+  public static final Set<String> neg_relationsZh = Generics.newHashSet(Collections.singletonList(""));
   public static final Set<String> modalsZh = Generics.newHashSet(Arrays.asList( "能", "可能", "可以", "应该", "必须" ));
   public static final Set<String> titleWordsZh = Generics.newHashSet(Arrays.asList(
       "总统", "总理", "顾问", "部长", "市长", "省长", "先生", "外长", "教授", "副总理", "副总统",

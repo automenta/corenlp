@@ -37,7 +37,7 @@ public class TreeFromFile {
       sentId = ((CoreLabel)t.label()).sentIndex();
       filename = ((CoreLabel)t.label()).docID();
 
-      if(sentId != -1 && filename != null && !filename.equals(""))
+      if(sentId != -1 && filename != null && !filename.isEmpty())
       	sentence = String.format("%s-%d   %s", filename,sentId,sentence);
     }
   }

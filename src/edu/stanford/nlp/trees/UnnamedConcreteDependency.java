@@ -89,11 +89,11 @@ public class UnnamedConcreteDependency extends UnnamedDependency {
   public String toString(String format) {
     switch (format) {
       case "xml":
-        String govIdxStr = " idx=\"" + headIndex + "\"";
-        String depIdxStr = " idx=\"" + depIndex + "\"";
-        return "  <dep>\n    <governor" + govIdxStr + ">" + XMLUtils.escapeXML(governor().value()) + "</governor>\n    <dependent" + depIdxStr + ">" + XMLUtils.escapeXML(dependent().value()) + "</dependent>\n  </dep>";
+        String govIdxStr = " idx=\"" + headIndex + '"';
+        String depIdxStr = " idx=\"" + depIndex + '"';
+        return "  <dep>\n    <governor" + govIdxStr + '>' + XMLUtils.escapeXML(governor().value()) + "</governor>\n    <dependent" + depIdxStr + '>' + XMLUtils.escapeXML(dependent().value()) + "</dependent>\n  </dep>";
       case "predicate":
-        return "dep(" + governor() + "," + dependent() + ")";
+        return "dep(" + governor() + ',' + dependent() + ')';
       default:
         return toString();
     }

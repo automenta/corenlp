@@ -92,14 +92,14 @@ public class Execution {
 
     private FilenameFilter filter;
     private File[] dir;
-    private Stack<File[]> parents = new Stack<File[]>();
-    private Stack<Integer> indices = new Stack<Integer>();
+    private Stack<File[]> parents = new Stack<>();
+    private Stack<Integer> indices = new Stack<>();
 
     private int toReturn = -1;
 
     public LazyFileIterator(File path, final String filter) {
       this(path, (file, name) -> {
-        String filePath = (file.getPath() + "/" + name);
+        String filePath = (file.getPath() + '/' + name);
         return new File(filePath).isDirectory() || filePath.matches(filter);
       });
     }
@@ -172,9 +172,9 @@ public class Execution {
     //--Verbose
     if (verbose) {
       Option opt = f.getAnnotation(Option.class);
-      StringBuilder b = new StringBuilder("setting ").append(f.getDeclaringClass().getName()).append("#").append(f.getName()).append(" ");
+      StringBuilder b = new StringBuilder("setting ").append(f.getDeclaringClass().getName()).append('#').append(f.getName()).append(' ');
       if (opt != null) {
-        b.append("[").append(opt.name()).append("] ");
+        b.append('[').append(opt.name()).append("] ");
       }
       b.append("to: ").append(value);
       log(b.toString());
@@ -220,13 +220,13 @@ public class Execution {
       }
     } catch (IllegalArgumentException e) {
       err(e);
-      fatal("Cannot assign option field: " + f.getDeclaringClass().getCanonicalName() + "." + f.getName() + " value: " + value + " cause: " + e.getMessage());
+      fatal("Cannot assign option field: " + f.getDeclaringClass().getCanonicalName() + '.' + f.getName() + " value: " + value + " cause: " + e.getMessage());
     } catch (IllegalAccessException e) {
       err(e);
-      fatal("Cannot access option field: " + f.getDeclaringClass().getCanonicalName() + "." + f.getName());
+      fatal("Cannot access option field: " + f.getDeclaringClass().getCanonicalName() + '.' + f.getName());
     } catch (Exception e) {
       err(e);
-      fatal("Cannot assign option field: " + f.getDeclaringClass().getCanonicalName() + "." + f.getName() + " value: " + value + " cause: " + e.getMessage());
+      fatal("Cannot assign option field: " + f.getDeclaringClass().getCanonicalName() + '.' + f.getName() + " value: " + value + " cause: " + e.getMessage());
     }
   }
 
@@ -265,7 +265,7 @@ public class Execution {
 
   public static Class<?>[] getVisibleClasses() {
     //--Variables
-    List<Class<?>> classes = new ArrayList<Class<?>>();
+    List<Class<?>> classes = new ArrayList<>();
     // (get classpath)
     String pathSep = System.getProperty("path.separator");
     String[] cp = System.getProperties().getProperty("java.class.path",
@@ -314,7 +314,7 @@ public class Execution {
               } catch (ClassNotFoundException ex) {
                 warn("Could not load class in jar: " + f + " at path: " + clazz);
               } catch (NoClassDefFoundError ex) {
-                debug("Could not scan class: " + clazz + " (in jar: " + f + ")");
+                debug("Could not scan class: " + clazz + " (in jar: " + f + ')');
               }
             }
           }
@@ -350,7 +350,7 @@ public class Execution {
       boolean ensureAllOptions) {
 
     //--Create Class->Object Mapping
-    Map<Class, Object> class2object = new HashMap<Class, Object>();
+    Map<Class, Object> class2object = new HashMap<>();
     if (instances != null) {
       for (int i = 0; i < classes.length; ++i) {
         assert instances[i].getClass() == classes[i];
@@ -366,15 +366,15 @@ public class Execution {
     }
 
     //--Get Fillable Options
-    Map<String, Field> canFill = new HashMap<String, Field>();
-    Map<String, Pair<Boolean, Boolean>> required = new HashMap<String, Pair<Boolean, Boolean>>(); /* <exists, is_set> */
-    Map<String, String> interner = new HashMap<String, String>();
+    Map<String, Field> canFill = new HashMap<>();
+    Map<String, Pair<Boolean, Boolean>> required = new HashMap<>(); /* <exists, is_set> */
+    Map<String, String> interner = new HashMap<>();
     for (Class c : classes) {
       Field[] fields;
       try {
         fields = scrapeFields(c);
       } catch (Throwable e) {
-        debug("Could not check fields for class: " + c.getName() + "  (caused by " + e.getClass() + ": " + e.getMessage() + ")");
+        debug("Could not check fields for class: " + c.getName() + "  (caused by " + e.getClass() + ": " + e.getMessage() + ')');
         continue;
       }
 
@@ -396,12 +396,12 @@ public class Execution {
           }
           //(add main name)
           String name = o.name().toLowerCase();
-          if (name.equals("")) {
+          if (name.isEmpty()) {
             name = f.getName().toLowerCase();
           }
           if (canFill.containsKey(name)) {
-            String name1 = canFill.get(name).getDeclaringClass().getCanonicalName() + "." + canFill.get(name).getName();
-            String name2 = f.getDeclaringClass().getCanonicalName() + "." + f.getName();
+            String name1 = canFill.get(name).getDeclaringClass().getCanonicalName() + '.' + canFill.get(name).getName();
+            String name2 = f.getDeclaringClass().getCanonicalName() + '.' + f.getName();
             if (!name1.equals(name2)) {
               fatal("Multiple declarations of option " + name + ": " + name1 + " and " + name2);
             } else {
@@ -412,7 +412,7 @@ public class Execution {
           required.put(name, mark);
           interner.put(name, name);
           //(add alternate names)
-          if (!o.alt().equals("")) {
+          if (!o.alt().isEmpty()) {
             for (String alt : o.alt().split(" *, *")) {
               alt = alt.toLowerCase();
               if (canFill.containsKey(alt) && !alt.equals(name))
@@ -431,11 +431,11 @@ public class Execution {
     }
 
     //--Fill Options
-    for (Object rawKey : options.keySet()) {
-      String rawKeyStr = rawKey.toString();
-      String key = rawKey.toString().toLowerCase();
+    for (Map.Entry<Object, Object> objectObjectEntry : options.entrySet()) {
+      String rawKeyStr = objectObjectEntry.getKey().toString();
+      String key = objectObjectEntry.getKey().toString().toLowerCase();
       // (get values)
-      String value = options.get(rawKey).toString();
+      String value = objectObjectEntry.getValue().toString();
       assert value != null;
       Field target = canFill.get(key);
       // (mark required option as fulfilled)
@@ -463,20 +463,20 @@ public class Execution {
           try {
             clazz = ClassLoader.getSystemClassLoader().loadClass(className);
           } catch (Exception e) {
-            err("Could not set option: " + rawKey + "; either the option is mistyped, not defined, or the class " + className + " does not exist.");
+            err("Could not set option: " + objectObjectEntry.getKey() + "; either the option is mistyped, not defined, or the class " + className + " does not exist.");
           }
           // get the field
           if (clazz != null) {
             try {
               target = clazz.getField(fieldName);
             } catch (Exception e) {
-              err("Could not set option: " + rawKey + "; no such field: " + fieldName + " in class: " + className);
+              err("Could not set option: " + objectObjectEntry.getKey() + "; no such field: " + fieldName + " in class: " + className);
             }
             if (target != null) {
-              log("option overrides " + target + " to '" + value + "'");
+              log("option overrides " + target + " to '" + value + '\'');
               fillField(class2object.get(target.getDeclaringClass()), target, value);
             } else {
-              err("Could not set option: " + rawKey + "; no such field: " + fieldName + " in class: " + className);
+              err("Could not set option: " + objectObjectEntry.getKey() + "; no such field: " + fieldName + " in class: " + className);
             }
           }
         }
@@ -485,11 +485,11 @@ public class Execution {
 
     //--Ensure Required
     boolean good = true;
-    for (String key : required.keySet()) {
-      Pair<Boolean, Boolean> mark = required.get(key);
+    for (Map.Entry<String, Pair<Boolean, Boolean>> stringPairEntry : required.entrySet()) {
+      Pair<Boolean, Boolean> mark = stringPairEntry.getValue();
       if (mark.first && !mark.second) {
-        err("Missing required option: " + interner.get(key) + "   <in class: " + canFill.get(key).getDeclaringClass() + ">");
-        required.put(key, Pair.makePair(true, true));  //don't duplicate error messages
+        err("Missing required option: " + interner.get(stringPairEntry.getKey()) + "   <in class: " + canFill.get(stringPairEntry.getKey()).getDeclaringClass() + '>');
+        required.put(stringPairEntry.getKey(), Pair.makePair(true, true));  //don't duplicate error messages
         good = false;
       }
     }
@@ -658,9 +658,9 @@ public class Execution {
   public static void usageAndExit(String[] expectedArgs) {
     String clazz = threadRootClass();
     StringBuilder b = new StringBuilder();
-    b.append("USAGE: ").append(clazz).append(" ");
+    b.append("USAGE: ").append(clazz).append(' ');
     for (String arg : expectedArgs) {
-      b.append(arg).append(" ");
+      b.append(arg).append(' ');
     }
     System.out.println(b.toString());
     System.exit(0);
@@ -671,17 +671,17 @@ public class Execution {
     String clazz = threadRootClass();
     StringBuilder b = new StringBuilder();
     b.append("USAGE: ").append(clazz).append("\n\t");
-    for (String arg : argToFlagsMap.keySet()) {
-      String[] flags = argToFlagsMap.get(arg);
+    for (Map.Entry<String, String[]> stringEntry : argToFlagsMap.entrySet()) {
+      String[] flags = stringEntry.getValue();
       if (flags == null || flags.length == 0) {
         throw new IllegalArgumentException(
-            "No flags registered for arg: " + arg);
+            "No flags registered for arg: " + stringEntry.getKey());
       }
-      b.append("{");
+      b.append('{');
       for (int i = 0; i < flags.length - 1; i++) {
-        b.append(flags[i]).append(",");
+        b.append(flags[i]).append(',');
       }
-      b.append(flags[flags.length - 1]).append("}");
+      b.append(flags[flags.length - 1]).append('}');
     }
     System.out.println(b.toString());
     System.exit(0);

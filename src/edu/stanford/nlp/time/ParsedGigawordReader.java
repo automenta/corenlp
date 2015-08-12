@@ -41,7 +41,7 @@ public class ParsedGigawordReader implements Iterable<Annotation> {
   public Iterator<Annotation> iterator() {
     return new Iterator<Annotation>() {
       private Iterator<BufferedReader> readers = Iterables.transform(files,
-          file -> IOUtils.readerFromFile(file)).iterator();
+              IOUtils::readerFromFile).iterator();
 
       private BufferedReader reader = findReader();
       private Annotation annotation = findAnnotation();
@@ -71,42 +71,44 @@ public class ParsedGigawordReader implements Iterable<Annotation> {
       }
 
       private Annotation findAnnotation() {
-        if (this.reader == null) {
-          return null;
-        }
-        try {
-          String line;
-          StringBuilder doc = new StringBuilder();
-          while ((line = this.reader.readLine()) != null) {
-            doc.append(line);
-            doc.append('\n');
+        while (true) {
+          if (this.reader == null) {
+            return null;
+          }
+          try {
+            String line;
+            StringBuilder doc = new StringBuilder();
+            while ((line = this.reader.readLine()) != null) {
+              doc.append(line);
+              doc.append('\n');
 //            if(line.contains("<DOC id")){
 //              System.err.println(line);
 //            }
-            if (line.equals("</DOC>")) {
-              break;
+              if (line.equals("</DOC>")) {
+                break;
+              }
+              if (line.contains("</DOC>")) {
+                throw new RuntimeException(String.format("invalid line '%s'", line));
+              }
             }
-            if (line.contains("</DOC>")) {
-              throw new RuntimeException(String.format("invalid line '%s'", line));
+            if (line == null) {
+              this.reader.close();
+              this.reader = findReader();
             }
-          }
-          if (line == null) {
-            this.reader.close();
-            this.reader = findReader();
-          }
-          String xml = doc.toString().replaceAll("&", "&amp;");
-          if(xml == null || xml.equals("")) {
-            return findAnnotation();
-          }
+            String xml = doc.toString().replaceAll("&", "&amp;");
+            if (xml == null || xml.isEmpty()) {
+              continue;
+            }
 
-          xml = xml.replaceAll("num=([0-9]+) (.*)", "num=\"$1\" $2");
-          xml = xml.replaceAll("sid=(.*)>", "sid=\"$1\">");
-          xml = xml.replaceAll("</SENT>\n</DOC>", "</SENT>\n</TEXT>\n</DOC>");
-          xml = new String(xml.getBytes(), "UTF8");
-          //System.err.println("This is what goes in:\n" + xml);
-          return toAnnotation(xml);
-        } catch (IOException e) {
-          throw new RuntimeIOException(e);
+            xml = xml.replaceAll("num=([0-9]+) (.*)", "num=\"$1\" $2");
+            xml = xml.replaceAll("sid=(.*)>", "sid=\"$1\">");
+            xml = xml.replaceAll("</SENT>\n</DOC>", "</SENT>\n</TEXT>\n</DOC>");
+            xml = new String(xml.getBytes(), "UTF8");
+            //System.err.println("This is what goes in:\n" + xml);
+            return toAnnotation(xml);
+          } catch (IOException e) {
+            throw new RuntimeIOException(e);
+          }
         }
       }
     };
@@ -180,23 +182,21 @@ public class ParsedGigawordReader implements Iterable<Annotation> {
       Builder parser = new Builder();
       StringReader in = new StringReader(xml);
       docElem = parser.build(in).getRootElement();
-    } catch (ParsingException e) {
-      throw new RuntimeException(String.format("error:\n%s\ninput:\n%s", e, xml));
-    } catch(IOException e) {
+    } catch (ParsingException | IOException e) {
       throw new RuntimeException(String.format("error:\n%s\ninput:\n%s", e, xml));
     }
 
     Element textElem = docElem.getFirstChildElement("TEXT");
     StringBuilder text = new StringBuilder();
     int offset = 0;
-    List<CoreMap> sentences = new ArrayList<CoreMap>();
+    List<CoreMap> sentences = new ArrayList<>();
     Elements sentenceElements = textElem.getChildElements("SENT");
     for (int crtsent = 0; crtsent < sentenceElements.size(); crtsent ++){
       Element sentElem = sentenceElements.get(crtsent);
       CoreMap sentence = new ArrayCoreMap();
       sentence.set(CoreAnnotations.CharacterOffsetBeginAnnotation.class, offset);
       Tree tree = Tree.valueOf(sentElem.getChild(0).getValue()); // XXX ms: is this the same as sentElem.getText() in JDOM?
-      List<CoreLabel> tokens = new ArrayList<CoreLabel>();
+      List<CoreLabel> tokens = new ArrayList<>();
       List<Tree> preTerminals = preTerminals(tree);
       for (Tree preTerminal: preTerminals) {
         String posTag = preTerminal.value();
@@ -240,7 +240,7 @@ public class ParsedGigawordReader implements Iterable<Annotation> {
   // It depends on whether the code is somehow using preterminals with multiple children.
 
   private static List<Tree> preTerminals(Tree tree) {
-    List<Tree> preTerminals = new ArrayList<Tree>();
+    List<Tree> preTerminals = new ArrayList<>();
     for (Tree descendant: tree) {
       if (isPreterminal(descendant)) {
         preTerminals.add(descendant);

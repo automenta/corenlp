@@ -48,7 +48,7 @@ public class BinaryHeadFinder implements HeadFinder {
     throw new IllegalStateException("BinaryHeadFinder: unexpected tree: " + t);
   }
 
-  private Tree determineBinaryHead(Tree t) {
+  private static Tree determineBinaryHead(Tree t) {
     if (t.numChildren() == 1) {
       return t.firstChild();
     } else {

@@ -133,7 +133,7 @@ public class PrettyLogger {
       }
       log(channels, description, arrayCopy);
     } else {
-      if (!description.equals("")) {
+      if (!description.isEmpty()) {
         description += ": ";
       }
       channels.log(description + obj);
@@ -171,7 +171,7 @@ public class PrettyLogger {
       channels.log("(empty)");
     } else {
       // convert keys to sorted list, if possible
-      List<K> keys = new LinkedList<K>();
+      List<K> keys = new LinkedList<>();
       for (K key : mapping.keySet()) {
         keys.add(key);
       }

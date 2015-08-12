@@ -27,7 +27,7 @@ public class CTBunkDict {
 
 
   private CTBunkDict() {
-    readCTBunkDict("/u/nlp/data/pos-tagger/dictionary" + "/" + defaultFilename);
+    readCTBunkDict("/u/nlp/data/pos-tagger/dictionary" + '/' + defaultFilename);
   }
 
 

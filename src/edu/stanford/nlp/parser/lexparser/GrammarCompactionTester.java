@@ -78,7 +78,7 @@ public class GrammarCompactionTester {
       op.trainOptions.postSplitters = ParentAnnotationStats.getSplitCategories(annotatedTB, op.trainOptions.selectivePostSplitCutOff, op.tlpParams.treebankLanguagePack());
     }
 
-    List<Tree> trainTrees = new ArrayList<Tree>();
+    List<Tree> trainTrees = new ArrayList<>();
     HeadFinder hf = null;
     if (op.trainOptions.leftToRight) {
       hf = new LeftHeadFinder();
@@ -106,7 +106,7 @@ public class GrammarCompactionTester {
     System.out.println("Currently " + new Date());
     System.out.print("Invoked with arguments:");
     for (int i = 0; i < args.length; i++) {
-      System.out.print(" " + args[i]);
+      System.out.print(' ' + args[i]);
     }
 
     System.out.println();
@@ -438,10 +438,10 @@ public class GrammarCompactionTester {
     }
   */
 
-  public Pair<UnaryGrammar, BinaryGrammar> translateAndSort(Pair<UnaryGrammar, BinaryGrammar> grammar, Index<String> oldIndex, Index<String> newIndex) {
+  public static Pair<UnaryGrammar, BinaryGrammar> translateAndSort(Pair<UnaryGrammar, BinaryGrammar> grammar, Index<String> oldIndex, Index<String> newIndex) {
     System.out.println("oldIndex.size()" + oldIndex.size() + " newIndex.size()" + newIndex.size());
     UnaryGrammar ug = grammar.first;
-    List<UnaryRule> unaryRules = new ArrayList<UnaryRule>();
+    List<UnaryRule> unaryRules = new ArrayList<>();
     for (UnaryRule rule : ug.rules()) {
       rule.parent = translate(rule.parent, oldIndex, newIndex);
       rule.child = translate(rule.child, oldIndex, newIndex);
@@ -456,7 +456,7 @@ public class GrammarCompactionTester {
     newUG.purgeRules();
 
     BinaryGrammar bg = grammar.second;
-    List<BinaryRule> binaryRules = new ArrayList<BinaryRule>();
+    List<BinaryRule> binaryRules = new ArrayList<>();
     for (BinaryRule rule : bg.rules()) {
       rule.parent = translate(rule.parent, oldIndex, newIndex);
       rule.leftChild = translate(rule.leftChild, oldIndex, newIndex);
@@ -479,7 +479,7 @@ public class GrammarCompactionTester {
   }
 
   // WTF is this?
-  public int changeIfNecessary(int i, Index<String> n) {
+  public static int changeIfNecessary(int i, Index<String> n) {
     String s = n.get(i);
     if (s.equals("NP^PP")) {
       System.out.println("changed");
@@ -488,7 +488,7 @@ public class GrammarCompactionTester {
     return i;
   }
 
-  public boolean equalsBinary(List<BinaryRule> l1, List<BinaryRule> l2) {
+  public static boolean equalsBinary(List<BinaryRule> l1, List<BinaryRule> l2) {
     // put each into a map to itself
     Map<BinaryRule, BinaryRule> map1 = Generics.newHashMap();
     for (BinaryRule o : l1) {
@@ -516,7 +516,7 @@ public class GrammarCompactionTester {
     return isEqual;
   }
 
-  public boolean equalsUnary(List<UnaryRule> l1, List<UnaryRule> l2) {
+  public static boolean equalsUnary(List<UnaryRule> l1, List<UnaryRule> l2) {
     // put each into a map to itself
     Map<UnaryRule, UnaryRule> map1 = Generics.newHashMap();
     for (UnaryRule o : l1) {
@@ -630,10 +630,10 @@ public class GrammarCompactionTester {
     TransducerGraph.GraphProcessor normalizer = new TransducerGraph.NormalizingGraphProcessor(false);
     TransducerGraph.GraphProcessor quasiDeterminizer = new QuasiDeterminizer();
     AutomatonMinimizer exactMinimizer = new FastExactAutomatonMinimizer();
-    for (String key : allTrainPaths.keySet()) {
-      System.out.println("creating graph for " + key);
-      List<List<String>> paths = allTrainPaths.get(key);
-      ClassicCounter<List<String>> pathCounter = new ClassicCounter<List<String>>();
+    for (Map.Entry<String, List<List<String>>> stringListEntry : allTrainPaths.entrySet()) {
+      System.out.println("creating graph for " + stringListEntry.getKey());
+      List<List<String>> paths = stringListEntry.getValue();
+      ClassicCounter<List<String>> pathCounter = new ClassicCounter<>();
       for (List<String> o : paths) {
         pathCounter.incrementCount(o);
       }
@@ -647,7 +647,7 @@ public class GrammarCompactionTester {
         continue;
       }
       System.out.println("initial graph has " + numArcs + " arcs and " + numNodes + " nodes.");
-      GrammarCompactor.writeFile(result, "unminimized", key);
+      GrammarCompactor.writeFile(result, "unminimized", stringListEntry.getKey());
       // do exact minimization
       result = normalizer.processGraph(result); // normalize it so that exact minimization works properly
       result = quasiDeterminizer.processGraph(result); // push probabilities left or down
@@ -659,7 +659,7 @@ public class GrammarCompactionTester {
       numNodes = result.getNodes().size();
 
       System.out.println("after exact minimization graph has " + numArcs + " arcs and " + numNodes + " nodes.");
-      GrammarCompactor.writeFile(result, "exactminimized", key);
+      GrammarCompactor.writeFile(result, "exactminimized", stringListEntry.getKey());
 
       // do additional lossy minimization
       /*
@@ -676,7 +676,7 @@ public class GrammarCompactionTester {
   }
 
   private static ClassicCounter<List<String>> removeLowCountPaths(ClassicCounter<List<String>> paths, double thresh) {
-    ClassicCounter<List<String>> result = new ClassicCounter<List<String>>();
+    ClassicCounter<List<String>> result = new ClassicCounter<>();
     int numRetained = 0;
     for (List<String> path : paths.keySet()) {
       double count = paths.getCount(path);

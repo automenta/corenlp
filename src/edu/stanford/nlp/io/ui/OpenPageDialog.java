@@ -123,7 +123,7 @@ public class OpenPageDialog extends javax.swing.JDialog {
         enableOpenButton();
       }
     });
-    urlTextField.addActionListener(evt -> urlTextFieldActionPerformed(evt));
+    urlTextField.addActionListener(this::urlTextFieldActionPerformed);
 
     jPanel3.add(urlTextField);
 
@@ -133,17 +133,17 @@ public class OpenPageDialog extends javax.swing.JDialog {
 
     openButton.setText("Open");
     openButton.setEnabled(false);
-    openButton.addActionListener(evt -> openButtonActionPerformed(evt));
+    openButton.addActionListener(this::openButtonActionPerformed);
 
     jPanel2.add(openButton);
 
     cancelButton.setText("Cancel");
-    cancelButton.addActionListener(evt -> cancelButtonActionPerformed(evt));
+    cancelButton.addActionListener(this::cancelButtonActionPerformed);
 
     jPanel2.add(cancelButton);
 
     browseButton.setText("Browse");
-    browseButton.addActionListener(evt -> browseButtonActionPerformed(evt));
+    browseButton.addActionListener(this::browseButtonActionPerformed);
 
     jPanel2.add(browseButton);
 

@@ -72,7 +72,7 @@ public final class DFSATransition<T,S> implements Scored {
 
   @Override
   public String toString() {
-    return "[" + transitionID + "]" + source + " -" + input + ":" + output + "-> " + target;
+    return "[" + transitionID + ']' + source + " -" + input + ':' + output + "-> " + target;
   }
 
 }

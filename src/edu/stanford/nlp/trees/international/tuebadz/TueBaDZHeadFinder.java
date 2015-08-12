@@ -28,7 +28,7 @@ public class TueBaDZHeadFinder extends AbstractCollinsHeadFinder {
     super(new TueBaDZLanguagePack());
     String excluded = String.valueOf(tlp.labelAnnotationIntroducingCharacters());
 //    if(excluded.indexOf("-") >= 0) {
-     excluded = "-" + excluded.replaceAll("-", ""); // - can only appear at the beginning of a regex character class
+     excluded = '-' + excluded.replaceAll("-", ""); // - can only appear at the beginning of a regex character class
 //    }
     headMarkedPattern = Pattern.compile("^[^" + excluded + "]*:HD");
     headMarkedPattern2 = Pattern.compile("^[^" + excluded + "]*-HD");
@@ -162,7 +162,7 @@ public class TueBaDZHeadFinder extends AbstractCollinsHeadFinder {
      if (DEBUG) {
        System.err.println("Looking for head of " + t.label() +
                           "; value is |" + t.label().value() + "|, " +
-                          " baseCat is |" + motherCat + "|");
+                          " baseCat is |" + motherCat + '|');
      }
      // We know we have nonterminals underneath
      // (a bit of a Penn Treebank assumption, but).
@@ -172,7 +172,7 @@ public class TueBaDZHeadFinder extends AbstractCollinsHeadFinder {
      if (how == null) {
        if (DEBUG) {
          System.err.println("Warning: No rule found for " + motherCat +
-                            " (first char: " + motherCat.charAt(0) + ")");
+                            " (first char: " + motherCat.charAt(0) + ')');
          System.err.println("Known nonterms are: " + nonTerminalInfo.keySet());
        }
        if (defaultRule != null) {

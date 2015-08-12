@@ -42,7 +42,7 @@ public class TreeToMorfette {
   
       for (Tree tree1; (tree1 = tr.readTree()) != null;) {
         List<Label> pretermYield = tree1.preTerminalYield();
-        List<Label> yield = tree1.yield();
+        List<? extends Label> yield = tree1.yield();
         int yieldLen = yield.size();
         for (int i = 0; i < yieldLen; ++i) {
           CoreLabel rawToken = (CoreLabel) yield.get(i);
@@ -51,7 +51,7 @@ public class TreeToMorfette {
           Pair<String,String> lemmaMorph = MorphoFeatureSpecification.splitMorphString(word, morphStr);
           String lemma = lemmaMorph.first();
           String morph = lemmaMorph.second();
-          if (morph == null || morph.equals("") || morph.equals("XXX")) {
+          if (morph == null || morph.isEmpty() || morph.equals("XXX")) {
             morph = ((CoreLabel) pretermYield.get(i)).value();
           }
           System.out.printf("%s %s %s%n", word, lemma, morph);
@@ -62,8 +62,6 @@ public class TreeToMorfette {
       tr.close();
       
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();

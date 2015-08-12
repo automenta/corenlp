@@ -67,7 +67,7 @@ public class NamedDependency extends UnnamedDependency {
       case "xml":
         return "  <dep>\n    <governor>" + XMLUtils.escapeXML(governor().value()) + "</governor>\n    <dependent>" + XMLUtils.escapeXML(dependent().value()) + "</dependent>\n  </dep>";
       case "predicate":
-        return "dep(" + governor() + "," + dependent() + "," + name() + ")";
+        return "dep(" + governor() + ',' + dependent() + ',' + name() + ')';
       default:
         return toString();
     }

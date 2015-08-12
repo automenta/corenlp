@@ -69,27 +69,27 @@ public class TreebankFactoredLexiconStats {
     }
 
     // Counters
-    Counter<String> wordTagCounter = new ClassicCounter<String>(30000);
-    Counter<String> morphTagCounter = new ClassicCounter<String>(500);
+    Counter<String> wordTagCounter = new ClassicCounter<>(30000);
+    Counter<String> morphTagCounter = new ClassicCounter<>(500);
 //    Counter<String> signatureTagCounter = new ClassicCounter<String>();
-    Counter<String> morphCounter = new ClassicCounter<String>(500);
-    Counter<String> wordCounter = new ClassicCounter<String>(30000);
-    Counter<String> tagCounter = new ClassicCounter<String>(300);
+    Counter<String> morphCounter = new ClassicCounter<>(500);
+    Counter<String> wordCounter = new ClassicCounter<>(30000);
+    Counter<String> tagCounter = new ClassicCounter<>(300);
 
-    Counter<String> lemmaCounter = new ClassicCounter<String>(25000);
-    Counter<String> lemmaTagCounter = new ClassicCounter<String>(25000);
+    Counter<String> lemmaCounter = new ClassicCounter<>(25000);
+    Counter<String> lemmaTagCounter = new ClassicCounter<>(25000);
 
-    Counter<String> richTagCounter = new ClassicCounter<String>(1000);
+    Counter<String> richTagCounter = new ClassicCounter<>(1000);
 
-    Counter<String> reducedTagCounter = new ClassicCounter<String>(500);
+    Counter<String> reducedTagCounter = new ClassicCounter<>(500);
 
-    Counter<String> reducedTagLemmaCounter = new ClassicCounter<String>(500);
+    Counter<String> reducedTagLemmaCounter = new ClassicCounter<>(500);
 
     Map<String,Set<String>> wordLemmaMap = Generics.newHashMap();
 
-    TwoDimensionalIntCounter<String,String> lemmaReducedTagCounter = new TwoDimensionalIntCounter<String,String>(30000);
-    TwoDimensionalIntCounter<String,String> reducedTagTagCounter = new TwoDimensionalIntCounter<String,String>(500);
-    TwoDimensionalIntCounter<String,String> tagReducedTagCounter = new TwoDimensionalIntCounter<String,String>(300);
+    TwoDimensionalIntCounter<String,String> lemmaReducedTagCounter = new TwoDimensionalIntCounter<>(30000);
+    TwoDimensionalIntCounter<String,String> reducedTagTagCounter = new TwoDimensionalIntCounter<>(500);
+    TwoDimensionalIntCounter<String,String> tagReducedTagCounter = new TwoDimensionalIntCounter<>(300);
 
     int numTrees = 0;
     for (Tree tree : tb) {
@@ -99,7 +99,7 @@ public class TreebankFactoredLexiconStats {
         }
       }
       List<Label> pretermList = tree.preTerminalYield();
-      List<Label> yield = tree.yield();
+      List<? extends Label> yield = tree.yield();
       assert yield.size() == pretermList.size();
 
       int yieldLen = yield.size();
@@ -133,7 +133,7 @@ public class TreebankFactoredLexiconStats {
         wordCounter.incrementCount(word);
         tagCounter.incrementCount(tag);
 
-        reducedTag = reducedTag.equals("") ? "NONE" : reducedTag;
+        reducedTag = reducedTag.isEmpty() ? "NONE" : reducedTag;
         if (wordLemmaMap.containsKey(word)) {
           wordLemmaMap.get(word).add(lemma);
         } else {
@@ -170,11 +170,11 @@ public class TreebankFactoredLexiconStats {
       String word = wordLemmas.getKey();
       Set<String> lemmas = wordLemmas.getValue();
       if (lemmas.size() == 0) {
-        sbNoLemma.append("NO LEMMAS FOR WORD: " + word + "\n");
+        sbNoLemma.append("NO LEMMAS FOR WORD: ").append(word).append('\n');
         continue;
       }
       if (lemmas.size() > 1) {
-        sbMultLemmas.append("MULTIPLE LEMMAS: " + word + " " + setToString(lemmas) + "\n");
+        sbMultLemmas.append("MULTIPLE LEMMAS: ").append(word).append(' ').append(setToString(lemmas)).append('\n');
         continue;
       }
       String lemma = lemmas.iterator().next();
@@ -193,7 +193,7 @@ public class TreebankFactoredLexiconStats {
     System.out.println(sbNoLemma.toString());
     System.out.println(sbMultLemmas.toString());
     System.out.println("==================");
-    List<String> tags = new ArrayList<String>(tagReducedTagCounter.firstKeySet());
+    List<String> tags = new ArrayList<>(tagReducedTagCounter.firstKeySet());
     Collections.sort(tags);
     for (String tag : tags) {
       System.out.println(tag);
@@ -210,11 +210,11 @@ public class TreebankFactoredLexiconStats {
 
   private static String setToString(Set<String> set) {
     StringBuilder sb = new StringBuilder();
-    sb.append("[");
+    sb.append('[');
     for (String string : set) {
-      sb.append(string).append(" ");
+      sb.append(string).append(' ');
     }
-    sb.append("]");
+    sb.append(']');
     return sb.toString();
   }
 }

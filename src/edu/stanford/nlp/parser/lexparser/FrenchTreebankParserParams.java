@@ -483,7 +483,7 @@ public class FrenchTreebankParserParams extends TregexPoweredTreebankParserParam
         if( ! kid.isPreTerminal())
           throw new RuntimeException("Not POS sequence for tree: " + t.toString());
         String tag = doBasicCat ? tlp.basicCategory(kid.value()) : kid.value();
-        sb.append(tag).append(" ");
+        sb.append(tag).append(' ');
       }
 
       if(mwCounter.getCount(t.value(), sb.toString().trim()) > cutoff)
@@ -601,7 +601,7 @@ public class FrenchTreebankParserParams extends TregexPoweredTreebankParserParam
 
 
   private void loadMWMap(String filename) {
-    mwCounter = new TwoDimensionalCounter<String,String>();
+    mwCounter = new TwoDimensionalCounter<>();
 
     try {
       BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(new File(filename)), "UTF-8"));
@@ -617,8 +617,6 @@ public class FrenchTreebankParserParams extends TregexPoweredTreebankParserParam
       System.err.printf("%s: Loaded %d lines from %s into MWE counter%n", this.getClass().getName(),nLines,filename);
 
     } catch (UnsupportedEncodingException e) {
-      e.printStackTrace();
-    } catch (FileNotFoundException e) {
       e.printStackTrace();
     } catch (IOException e) {
       e.printStackTrace();
@@ -661,7 +659,7 @@ public class FrenchTreebankParserParams extends TregexPoweredTreebankParserParam
       try {
         HeadFinder hf = (HeadFinder) Class.forName(args[i + 1]).newInstance();
         setHeadFinder(hf);
-        optionsString.append("HeadFinder: " + args[i + 1] + "\n");
+        optionsString.append("HeadFinder: ").append(args[i + 1]).append('\n');
 
       } catch (Exception e) {
         System.err.println(e);

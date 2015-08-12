@@ -28,6 +28,7 @@ package edu.stanford.nlp.dcoref;
 
 import java.io.Serializable;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import edu.stanford.nlp.dcoref.Dictionaries.Animacy;
@@ -90,7 +91,7 @@ public class CorefCluster implements Serializable{
     // Register mentions
     corefMentions.addAll(mentions);
     // Get list of mentions in textual order
-    List<Mention> sortedMentions = new ArrayList<Mention>(mentions.size());
+    List<Mention> sortedMentions = new ArrayList<>(mentions.size());
     sortedMentions.addAll(mentions);
     Collections.sort(sortedMentions, new CorefChain.MentionComparator());
     // Set default for first / representative mention
@@ -158,7 +159,9 @@ public class CorefCluster implements Serializable{
       to.firstMention = from.firstMention;
     }
     if(from.representative.moreRepresentativeThan(to.representative)) to.representative = from.representative;
-    SieveCoreferenceSystem.logger.finer("merged clusters: "+toID+" += "+from.clusterID);
+    if (SieveCoreferenceSystem.logger.isLoggable(Level.FINER)) {
+      SieveCoreferenceSystem.logger.finer("merged clusters: "+toID+" += "+from.clusterID);
+    }
     to.printCorefCluster(SieveCoreferenceSystem.logger);
     from.printCorefCluster(SieveCoreferenceSystem.logger);
     SieveCoreferenceSystem.logger.finer("");
@@ -166,22 +169,28 @@ public class CorefCluster implements Serializable{
 
   /** Print cluster information */
   public void printCorefCluster(Logger logger){
-    logger.finer("Cluster ID: "+clusterID+"\tNumbers: "+numbers+"\tGenders: "+genders+"\tanimacies: "+animacies);
-    logger.finer("NE: "+nerStrings+"\tfirst Mention's ID: "+firstMention.mentionID+"\tHeads: "+heads+"\twords: "+words);
-    TreeMap<Integer, Mention> forSortedPrint = new TreeMap<Integer, Mention>();
+    if (logger.isLoggable(Level.FINER)) {
+      logger.finer("Cluster ID: "+clusterID+"\tNumbers: "+numbers+"\tGenders: "+genders+"\tanimacies: "+animacies);
+      logger.finer("NE: "+nerStrings+"\tfirst Mention's ID: "+firstMention.mentionID+"\tHeads: "+heads+"\twords: "+words);
+    }
+    TreeMap<Integer, Mention> forSortedPrint = new TreeMap<>();
     for(Mention m : this.corefMentions){
       forSortedPrint.put(m.mentionID, m);
     }
     for(Mention m : forSortedPrint.values()){
       String rep = (representative == m)? "*":"";
       if(m.goldCorefClusterID==-1){
-        logger.finer(rep + "mention-> id:"+m.mentionID+"\toriginalRef: "
-                +m.originalRef+"\t"+m.spanToString() +"\tsentNum: "+m.sentNum+"\tstartIndex: "
-                +m.startIndex+"\tType: "+m.mentionType+"\tNER: "+m.nerString);
+        if (logger.isLoggable(Level.FINER)) {
+          logger.finer(rep + "mention-> id:"+m.mentionID+"\toriginalRef: "
+                  +m.originalRef+"\t"+m.spanToString() +"\tsentNum: "+m.sentNum+"\tstartIndex: "
+                  +m.startIndex+"\tType: "+m.mentionType+"\tNER: "+m.nerString);
+        }
       } else{
-        logger.finer(rep + "mention-> id:"+m.mentionID+"\toriginalClusterID: "
-                +m.goldCorefClusterID+"\t"+m.spanToString() +"\tsentNum: "+m.sentNum+"\tstartIndex: "
-                +m.startIndex +"\toriginalRef: "+m.originalRef+"\tType: "+m.mentionType+"\tNER: "+m.nerString);
+        if (logger.isLoggable(Level.FINER)) {
+          logger.finer(rep + "mention-> id:"+m.mentionID+"\toriginalClusterID: "
+                  +m.goldCorefClusterID+"\t"+m.spanToString() +"\tsentNum: "+m.sentNum+"\tstartIndex: "
+                  +m.startIndex +"\toriginalRef: "+m.originalRef+"\tType: "+m.mentionType+"\tNER: "+m.nerString);
+        }
       }
     }
   }

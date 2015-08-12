@@ -117,7 +117,7 @@ public class BasicDatum<LabelType, FeatureType> implements Datum<LabelType, Feat
    */
   @Override
   public String toString() {
-    return ("BasicDatum[features=" + asFeatures() + ",labels=" + labels() + "]");
+    return ("BasicDatum[features=" + asFeatures() + ",labels=" + labels() + ']');
   }
 
 

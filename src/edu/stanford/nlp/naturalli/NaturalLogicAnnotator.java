@@ -68,7 +68,7 @@ public class NaturalLogicAnnotator extends SentenceAnnotator {
     for (Operator q : Operator.values()) {
       String[] tokens = q.surfaceForm.split("\\s+");
       if (!tokens[tokens.length - 1].startsWith("_")) {
-        singleWordQuantifiers.add("(" + tokens[tokens.length - 1].toLowerCase() + ")");
+        singleWordQuantifiers.add('(' + tokens[tokens.length - 1].toLowerCase() + ')');
       }
     }
     QUANTIFIER = "[ {lemma:/" + StringUtils.join(singleWordQuantifiers, "|") + "/}=quantifier | {pos:CD}=quantifier ]";
@@ -80,14 +80,14 @@ public class NaturalLogicAnnotator extends SentenceAnnotator {
   private static final List<SemgrexPattern> PATTERNS = Collections.unmodifiableList(new ArrayList<SemgrexPattern>() {{
     // { All cats eat mice,
     //   All cats want milk }
-    add(SemgrexPattern.compile("{}=pivot >"+GEN_SUBJ+" ({}=subject >>"+DET+" "+QUANTIFIER+") >"+GEN_OBJ+" {}=object"));
+    add(SemgrexPattern.compile("{}=pivot >"+GEN_SUBJ+" ({}=subject >>"+DET+ ' ' +QUANTIFIER+") >"+GEN_OBJ+" {}=object"));
     // { All cats are in boxes,
     //   All cats voted for Obama,
     //   All cats have voted for Obama }
-    add(SemgrexPattern.compile("{pos:/V.*/}=pivot >"+GEN_SUBJ+" ({}=subject >>"+DET+" "+QUANTIFIER+") >"+GEN_PREP+" {}=object"));
+    add(SemgrexPattern.compile("{pos:/V.*/}=pivot >"+GEN_SUBJ+" ({}=subject >>"+DET+ ' ' +QUANTIFIER+") >"+GEN_PREP+" {}=object"));
     // { All cats are cute,
     //   All cats can purr }
-    add(SemgrexPattern.compile("{}=object >"+GEN_SUBJ+" ({}=subject >>"+DET+" "+QUANTIFIER+") >"+GEN_COP+" {}=pivot"));
+    add(SemgrexPattern.compile("{}=object >"+GEN_SUBJ+" ({}=subject >>"+DET+ ' ' +QUANTIFIER+") >"+GEN_COP+" {}=pivot"));
     // { Everyone at Stanford likes cats,
     //   Everyone who is at Stanford likes cats }
     add(SemgrexPattern.compile("{}=pivot >"+GEN_SUBJ+" ( "+QUANTIFIER+" >"+GEN_CLAUSE+" {}=subject ) >"+GEN_OBJ+" {}=object"));
@@ -121,7 +121,7 @@ public class NaturalLogicAnnotator extends SentenceAnnotator {
    * A pattern for just trivial unary quantification, in case a quantifier doesn't match any of the patterns in
    * {@link edu.stanford.nlp.naturalli.NaturalLogicAnnotator#PATTERNS}.
    */
-  private static SemgrexPattern UNARY_PATTERN = SemgrexPattern.compile("{pos:/N.*/}=subject >"+DET+" "+QUANTIFIER);
+  private static SemgrexPattern UNARY_PATTERN = SemgrexPattern.compile("{pos:/N.*/}=subject >"+DET+ ' ' +QUANTIFIER);
 
   /** A helper method for
    * {@link NaturalLogicAnnotator#getModifierSubtreeSpan(edu.stanford.nlp.semgraph.SemanticGraph, edu.stanford.nlp.ling.IndexedWord)} and
@@ -293,7 +293,7 @@ public class NaturalLogicAnnotator extends SentenceAnnotator {
    * @param quantifier The word at which we matched a quantifier.
    * @return An optional triple consisting of the particular quantifier we matched, as well as the span of that quantifier in the sentence.
    */
-  private Optional<Triple<Operator,Integer,Integer>> validateQuantiferByHead(CoreMap sentence, IndexedWord quantifier) {
+  private static Optional<Triple<Operator,Integer,Integer>> validateQuantiferByHead(CoreMap sentence, IndexedWord quantifier) {
     // Some useful variables
     List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);
     Function<CoreLabel, String> glossFn = (label) -> "CD".equals(label.tag()) ? "--NUM--" : label.lemma();
@@ -476,7 +476,7 @@ public class NaturalLogicAnnotator extends SentenceAnnotator {
    *
    * @param sentence As in {@link edu.stanford.nlp.naturalli.NaturalLogicAnnotator#doOneSentence(edu.stanford.nlp.pipeline.Annotation, edu.stanford.nlp.util.CoreMap)}
    */
-  private void annotatePolarity(CoreMap sentence) {
+  private static void annotatePolarity(CoreMap sentence) {
     // Collect all the operators in this sentence
     List<OperatorSpec> operators = new ArrayList<>();
     List<CoreLabel> tokens = sentence.get(CoreAnnotations.TokensAnnotation.class);

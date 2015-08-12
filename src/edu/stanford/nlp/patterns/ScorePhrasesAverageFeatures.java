@@ -1,7 +1,6 @@
 package edu.stanford.nlp.patterns;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -12,7 +11,6 @@ import edu.stanford.nlp.stats.ClassicCounter;
 import edu.stanford.nlp.stats.Counter;
 import edu.stanford.nlp.stats.Counters;
 import edu.stanford.nlp.stats.TwoDimensionalCounter;
-import edu.stanford.nlp.util.GoogleNGramsSQLBacked;
 import edu.stanford.nlp.util.logging.Redwood;
 
 /**
@@ -27,14 +25,14 @@ public class ScorePhrasesAverageFeatures<E extends Pattern> extends PhraseScorer
   }
 
 
-  private TwoDimensionalCounter<CandidatePhrase, ScorePhraseMeasures> phraseScoresNormalized = new TwoDimensionalCounter<CandidatePhrase, ScorePhraseMeasures>();
+  private TwoDimensionalCounter<CandidatePhrase, ScorePhraseMeasures> phraseScoresNormalized = new TwoDimensionalCounter<>();
 
   
   @Override
   public Counter<CandidatePhrase> scorePhrases(String label, TwoDimensionalCounter<CandidatePhrase, E> terms,
       TwoDimensionalCounter<CandidatePhrase, E> wordsPatExtracted, Counter<E> allSelectedPatterns,
       Set<CandidatePhrase> alreadyIdentifiedWords, boolean forLearningPatterns) {
-    Map<CandidatePhrase, Counter<ScorePhraseMeasures>> scores = new HashMap<CandidatePhrase, Counter<ScorePhraseMeasures>>();
+    Map<CandidatePhrase, Counter<ScorePhraseMeasures>> scores = new HashMap<>();
     if (Data.domainNGramsFile != null)
       Data.loadDomainNGrams();
 
@@ -42,7 +40,7 @@ public class ScorePhrasesAverageFeatures<E extends Pattern> extends PhraseScorer
     Redwood.log(ConstantsAndVariables.extremedebug, "Considering terms: " + terms.firstKeySet());
 
     // calculate TF-IDF like scores
-    Counter<CandidatePhrase> tfidfScores = new ClassicCounter<CandidatePhrase>();
+    Counter<CandidatePhrase> tfidfScores = new ClassicCounter<>();
     if (constVars.usePhraseEvalPatWtByFreq) {
       for (Entry<CandidatePhrase, ClassicCounter<E>> en : terms.entrySet()) {
         double score = getPatTFIDFScore(en.getKey(), en.getValue(), allSelectedPatterns);
@@ -52,11 +50,11 @@ public class ScorePhrasesAverageFeatures<E extends Pattern> extends PhraseScorer
       Counters.divideInPlace(tfidfScores, Data.processedDataFreq);
     }
 
-    Counter<CandidatePhrase> externalFeatWtsNormalized = new ClassicCounter<CandidatePhrase>();
-    Counter<CandidatePhrase> domainNgramNormScores = new ClassicCounter<CandidatePhrase>();
-    Counter<CandidatePhrase> googleNgramNormScores = new ClassicCounter<CandidatePhrase>();
-    Counter<CandidatePhrase> editDistanceOtherBinaryScores = new ClassicCounter<CandidatePhrase>();
-    Counter<CandidatePhrase> editDistanceSameBinaryScores = new ClassicCounter<CandidatePhrase>();
+    Counter<CandidatePhrase> externalFeatWtsNormalized = new ClassicCounter<>();
+    Counter<CandidatePhrase> domainNgramNormScores = new ClassicCounter<>();
+    Counter<CandidatePhrase> googleNgramNormScores = new ClassicCounter<>();
+    Counter<CandidatePhrase> editDistanceOtherBinaryScores = new ClassicCounter<>();
+    Counter<CandidatePhrase> editDistanceSameBinaryScores = new ClassicCounter<>();
 
     for (CandidatePhrase gc : terms.firstKeySet()) {
       String g = gc.getPhrase();
@@ -108,7 +106,7 @@ public class ScorePhrasesAverageFeatures<E extends Pattern> extends PhraseScorer
     for (CandidatePhrase word : terms.firstKeySet()) {
       if (alreadyIdentifiedWords.contains(word))
         continue;
-      Counter<ScorePhraseMeasures> scoreslist = new ClassicCounter<ScorePhraseMeasures>();
+      Counter<ScorePhraseMeasures> scoreslist = new ClassicCounter<>();
       assert normTFIDFScores.containsKey(word) : "NormTFIDF score does not contain" + word;
       double tfscore = normTFIDFScores.getCount(word);
       scoreslist.setCount(ScorePhraseMeasures.PATWTBYFREQ, tfscore);
@@ -166,7 +164,7 @@ public class ScorePhrasesAverageFeatures<E extends Pattern> extends PhraseScorer
       scores.put(word, scoreslist);
       phraseScoresNormalized.setCounter(word, scoreslist);
     }
-    Counter<CandidatePhrase> phraseScores = new ClassicCounter<CandidatePhrase>();
+    Counter<CandidatePhrase> phraseScores = new ClassicCounter<>();
     for (Entry<CandidatePhrase, Counter<ScorePhraseMeasures>> wEn : scores
         .entrySet()) {
       Double avgScore = Counters.mean(wEn.getValue());

@@ -55,7 +55,7 @@ public class ChineseMarkovWordSegmenter implements WordSegmenter {
   public void initializeTraining(double numTrees) {
     lex.initializeTraining(numTrees);
 
-    this.initial = new ClassicCounter<String>();
+    this.initial = new ClassicCounter<>();
     this.ruleCounter = new GeneralizedCounter(2);
   }
 
@@ -113,7 +113,7 @@ public class ChineseMarkovWordSegmenter implements WordSegmenter {
   private ArrayList<TaggedWord> basicSegmentWords(String s) {
     // We don't want to accidentally register words that we don't know
     // about in the wordIndex, so we wrap it with a DeltaIndex
-    DeltaIndex<String> deltaWordIndex = new DeltaIndex<String>(wordIndex);
+    DeltaIndex<String> deltaWordIndex = new DeltaIndex<>(wordIndex);
     int length = s.length();
     //    Set<String> POSes = (Set<String>) POSDistribution.keySet();  // 1.5
     // best score of span
@@ -164,7 +164,7 @@ public class ChineseMarkovWordSegmenter implements WordSegmenter {
       }
     }
 
-    List<TaggedWord> words = new ArrayList<TaggedWord>();
+    List<TaggedWord> words = new ArrayList<>();
     int start = 0;
     while (start < length) {
       int end = splitBacktrace[start][length];
@@ -179,7 +179,7 @@ public class ChineseMarkovWordSegmenter implements WordSegmenter {
       start = end;
     }
 
-    return new ArrayList<TaggedWord>(words);
+    return new ArrayList<>(words);
   }
 
   /** Do max language model markov segmentation.
@@ -198,7 +198,7 @@ public class ChineseMarkovWordSegmenter implements WordSegmenter {
   private ArrayList<HasWord> segmentWordsWithMarkov(String s) {
     // We don't want to accidentally register words that we don't know
     // about in the wordIndex, so we wrap it with a DeltaIndex
-    DeltaIndex<String> deltaWordIndex = new DeltaIndex<String>(wordIndex);
+    DeltaIndex<String> deltaWordIndex = new DeltaIndex<>(wordIndex);
     int length = s.length();
     //    Set<String> POSes = (Set<String>) POSDistribution.keySet();  // 1.5
     int numTags = POSes.size();
@@ -261,7 +261,7 @@ public class ChineseMarkovWordSegmenter implements WordSegmenter {
       }
     }
     int nextPOS = ArrayMath.argmax(scores[0][length]);
-    ArrayList<HasWord> words = new ArrayList<HasWord>();
+    ArrayList<HasWord> words = new ArrayList<>();
 
     int start = 0;
     while (start < length) {
@@ -285,7 +285,7 @@ public class ChineseMarkovWordSegmenter implements WordSegmenter {
 
   private Distribution<Integer> getSegmentedWordLengthDistribution(Treebank tb) {
     // CharacterLevelTagExtender ext = new CharacterLevelTagExtender();
-    ClassicCounter<Integer> c = new ClassicCounter<Integer>();
+    ClassicCounter<Integer> c = new ClassicCounter<>();
     for (Iterator iterator = tb.iterator(); iterator.hasNext();) {
       Tree gold = (Tree) iterator.next();
       StringBuilder goldChars = new StringBuilder();

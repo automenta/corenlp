@@ -116,7 +116,7 @@ public class SpanishTokenizer<T extends HasWord> extends AbstractTokenizer<T> {
 
 
   /* Copies the CoreLabel cl with the new word part */
-  private CoreLabel copyCoreLabel(CoreLabel cl, String part) {
+  private static CoreLabel copyCoreLabel(CoreLabel cl, String part) {
     CoreLabel newLabel = new CoreLabel(cl);
     newLabel.setWord(part);
     newLabel.setValue(part);
@@ -139,20 +139,26 @@ public class SpanishTokenizer<T extends HasWord> extends AbstractTokenizer<T> {
     String second;
 
     String lowered = word.toLowerCase();
-    if (lowered.equals("del") || lowered.equals("al")) {
-      first = word.substring(0, lowered.length() - 1);
-      char lastChar = word.charAt(lowered.length() - 1);
-      if (Character.isLowerCase(lastChar))
-        second = "el";
-      else second = "EL";
-    } else if (lowered.equals("conmigo") || lowered.equals("consigo")) {
-			first = word.substring(0, 3);
-			second = word.charAt(3) + "í";
-		} else if (lowered.equals("contigo")) {
-      first = word.substring(0, 3);
-      second = word.substring(3, 5);
-    } else {
-      throw new IllegalArgumentException("Invalid contraction provided to processContraction");
+    switch (lowered) {
+      case "del":
+      case "al":
+        first = word.substring(0, lowered.length() - 1);
+        char lastChar = word.charAt(lowered.length() - 1);
+        if (Character.isLowerCase(lastChar))
+          second = "el";
+        else second = "EL";
+        break;
+      case "conmigo":
+      case "consigo":
+        first = word.substring(0, 3);
+        second = word.charAt(3) + "í";
+        break;
+      case "contigo":
+        first = word.substring(0, 3);
+        second = word.substring(3, 5);
+        break;
+      default:
+        throw new IllegalArgumentException("Invalid contraction provided to processContraction");
     }
 
     compoundBuffer.add(copyCoreLabel(cl, second));
@@ -197,11 +203,11 @@ public class SpanishTokenizer<T extends HasWord> extends AbstractTokenizer<T> {
    * recommended factory method
    */
   public static <T extends HasWord> TokenizerFactory<T> factory(LexedTokenFactory<T> factory, String options) {
-    return new SpanishTokenizerFactory<T>(factory, options);
+    return new SpanishTokenizerFactory<>(factory, options);
   }
 
   public static <T extends HasWord> TokenizerFactory<T> factory(LexedTokenFactory<T> factory) {
-    return new SpanishTokenizerFactory<T>(factory, ANCORA_OPTIONS);
+    return new SpanishTokenizerFactory<>(factory, ANCORA_OPTIONS);
   }
 
   /**
@@ -223,7 +229,7 @@ public class SpanishTokenizer<T extends HasWord> extends AbstractTokenizer<T> {
     protected boolean splitContractionOption = false;
 
     public static TokenizerFactory<CoreLabel> newCoreLabelTokenizerFactory() {
-      return new SpanishTokenizerFactory<CoreLabel>(new CoreLabelTokenFactory());
+      return new SpanishTokenizerFactory<>(new CoreLabelTokenFactory());
     }
 
 
@@ -236,7 +242,7 @@ public class SpanishTokenizer<T extends HasWord> extends AbstractTokenizer<T> {
      */
     public static <T extends HasWord> SpanishTokenizerFactory<T> newSpanishTokenizerFactory(
       LexedTokenFactory<T> factory, String options) {
-      return new SpanishTokenizerFactory<T>(factory, options);
+      return new SpanishTokenizerFactory<>(factory, options);
     }
 
 
@@ -261,7 +267,7 @@ public class SpanishTokenizer<T extends HasWord> extends AbstractTokenizer<T> {
 
     @Override
     public Tokenizer<T> getTokenizer(Reader r) {
-      return new SpanishTokenizer<T>(r, factory, lexerProperties, splitCompoundOption, splitVerbOption, splitContractionOption);
+      return new SpanishTokenizer<>(r, factory, lexerProperties, splitCompoundOption, splitVerbOption, splitContractionOption);
     }
 
     /**
@@ -277,33 +283,45 @@ public class SpanishTokenizer<T extends HasWord> extends AbstractTokenizer<T> {
       for (String option : optionList) {
         String[] fields = option.split("=");
         if (fields.length == 1) {
-          if (fields[0].equals("splitAll")) {
-            splitCompoundOption = true;
-            splitVerbOption = true;
-            splitContractionOption = true;
-          } else if (fields[0].equals("splitCompounds")) {
-            splitCompoundOption = true;
-          } else if (fields[0].equals("splitVerbs")) {
-            splitVerbOption = true;
-          } else if (fields[0].equals("splitContractions")) {
-            splitContractionOption = true;
-          } else {
-            lexerProperties.setProperty(option, "true");
+          switch (fields[0]) {
+            case "splitAll":
+              splitCompoundOption = true;
+              splitVerbOption = true;
+              splitContractionOption = true;
+              break;
+            case "splitCompounds":
+              splitCompoundOption = true;
+              break;
+            case "splitVerbs":
+              splitVerbOption = true;
+              break;
+            case "splitContractions":
+              splitContractionOption = true;
+              break;
+            default:
+              lexerProperties.setProperty(option, "true");
+              break;
           }
 
         } else if (fields.length == 2) {
-          if (fields[0].equals("splitAll")) {
-            splitCompoundOption = Boolean.valueOf(fields[1]);
-            splitVerbOption = Boolean.valueOf(fields[1]);
-            splitContractionOption = Boolean.valueOf(fields[1]);
-          } else if (fields[0].equals("splitCompounds")) {
-            splitCompoundOption = Boolean.valueOf(fields[1]);
-          } else if (fields[0].equals("splitVerbs")) {
-            splitVerbOption = Boolean.valueOf(fields[1]);
-          } else if (fields[0].equals("splitContractions")) {
-            splitContractionOption = Boolean.valueOf(fields[1]);
-          } else {
-            lexerProperties.setProperty(fields[0], fields[1]);
+          switch (fields[0]) {
+            case "splitAll":
+              splitCompoundOption = Boolean.valueOf(fields[1]);
+              splitVerbOption = Boolean.valueOf(fields[1]);
+              splitContractionOption = Boolean.valueOf(fields[1]);
+              break;
+            case "splitCompounds":
+              splitCompoundOption = Boolean.valueOf(fields[1]);
+              break;
+            case "splitVerbs":
+              splitVerbOption = Boolean.valueOf(fields[1]);
+              break;
+            case "splitContractions":
+              splitContractionOption = Boolean.valueOf(fields[1]);
+              break;
+            default:
+              lexerProperties.setProperty(fields[0], fields[1]);
+              break;
           }
 
         } else {
@@ -388,7 +406,7 @@ public class SpanishTokenizer<T extends HasWord> extends AbstractTokenizer<T> {
     final TokenizerFactory<CoreLabel> tf = SpanishTokenizer.coreLabelFactory();
     String orthoOptions = options.containsKey("ancora") ? ANCORA_OPTIONS : "";
     if (options.containsKey("options")) {
-      orthoOptions = orthoOptions.length() == 0 ? options.getProperty("options") : orthoOptions + "," + options;
+      orthoOptions = orthoOptions.length() == 0 ? options.getProperty("options") : orthoOptions + ',' + options;
     }
     final boolean tokens = PropertiesUtils.getBool(options, "tokens", false);
     if ( ! tokens) {

@@ -164,8 +164,8 @@ public class TreePrint {
       dependencyWordFilter = Filters.acceptFilter();
       puncFilter = Filters.acceptFilter();
     } else {
-      dependencyFilter = new Dependencies.DependentPuncTagRejectFilter<Label, Label, Object>(tlp.punctuationTagRejectFilter());
-      dependencyWordFilter = new Dependencies.DependentPuncWordRejectFilter<Label, Label, Object>(tlp.punctuationWordRejectFilter());
+      dependencyFilter = new Dependencies.DependentPuncTagRejectFilter<>(tlp.punctuationTagRejectFilter());
+      dependencyWordFilter = new Dependencies.DependentPuncWordRejectFilter<>(tlp.punctuationWordRejectFilter());
       //Universal dependencies filter punction by tags
       puncFilter = generateOriginalDependencies ? tlp.punctuationWordRejectFilter() : tlp.punctuationTagRejectFilter();
     }
@@ -245,7 +245,7 @@ public class TreePrint {
       // Parsing didn't succeed.
       if (inXml) {
         pw.print("<s");
-        if (id != null && ! "".equals(id)) {
+        if (id != null && !id.isEmpty()) {
           pw.print(" id=\"" + XMLUtils.escapeXML(id) + '\"');
         }
         pw.println(" skipped=\"true\"/>");
@@ -256,7 +256,7 @@ public class TreePrint {
     } else {
       if (inXml) {
         pw.print("<s");
-        if (id != null && ! "".equals(id)) {
+        if (id != null && !id.isEmpty()) {
           pw.print(" id=\"" + XMLUtils.escapeXML(id) + '\"');
         }
         pw.println(">");
@@ -294,7 +294,7 @@ public class TreePrint {
         // Parsing didn't succeed.
         if (inXml) {
           pw.print("<s");
-          if (id != null && ! "".equals(id)) {
+          if (id != null && !id.isEmpty()) {
             pw.print(" id=\"" + XMLUtils.escapeXML(id) + '\"');
           }
           pw.print(" n=\"");
@@ -309,7 +309,7 @@ public class TreePrint {
       } else {
         if (inXml) {
           pw.print("<s");
-          if (id != null && ! "".equals(id)) {
+          if (id != null && !id.isEmpty()) {
             pw.print(" id=\"");
             pw.print(XMLUtils.escapeXML(id));
             pw.print('\"');
@@ -354,7 +354,7 @@ public class TreePrint {
 
     if (formats.containsKey("words")) {
       if (inXml) {
-        ArrayList<Label> sentUnstemmed = outputTree.yield();
+        ArrayList<? extends Label> sentUnstemmed = outputTree.yield();
         pw.println("  <words>");
         int i = 1;
         for (Label w : sentUnstemmed) {
@@ -472,7 +472,7 @@ public class TreePrint {
                                                  CoreLabel.factory());
         indexedTree.indexLeaves();
         Set<Dependency<Label, Label, Object>> depsSet = indexedTree.mapDependencies(dependencyWordFilter, hf);
-        List<Dependency<Label, Label, Object>> sortedDeps = new ArrayList<Dependency<Label, Label, Object>>(depsSet);
+        List<Dependency<Label, Label, Object>> sortedDeps = new ArrayList<>(depsSet);
         Collections.sort(sortedDeps, Dependencies.dependencyIndexComparator());
         pw.println("<dependencies style=\"untyped\">");
         for (Dependency<Label, Label, Object> d : sortedDeps) {
@@ -642,7 +642,7 @@ public class TreePrint {
               if (foundRoot) { throw new RuntimeException(); }
               foundRoot = true;
             }
-            pw.println(index+"\t"+word+"\t"+tag+"\t"+parent);
+            pw.println(index+"\t"+word+ '\t' +tag+ '\t' +parent);
             index++;
           }
           pw.println();
@@ -688,7 +688,7 @@ public class TreePrint {
     if (gsf != null) {
       GrammaticalStructure gs = gsf.newGrammaticalStructure(tree);
       Collection<TypedDependency> deps = gs.typedDependencies(GrammaticalStructure.Extras.NONE);
-      List<Dependency<Label, Label, Object>> sortedDeps = new ArrayList<Dependency<Label, Label, Object>>();
+      List<Dependency<Label, Label, Object>> sortedDeps = new ArrayList<>();
       for (TypedDependency dep : deps) {
         sortedDeps.add(new NamedDependency(dep.gov(), dep.dep(), dep.reln().toString()));
       }
@@ -696,7 +696,7 @@ public class TreePrint {
       return sortedDeps;
     } else {
       Set<Dependency<Label, Label, Object>> depsSet = tree.mapDependencies(filter, hf, "root");
-      List<Dependency<Label, Label, Object>> sortedDeps = new ArrayList<Dependency<Label, Label, Object>>(depsSet);
+      List<Dependency<Label, Label, Object>> sortedDeps = new ArrayList<>(depsSet);
       Collections.sort(sortedDeps, Dependencies.dependencyIndexComparator());
       return sortedDeps;
     }
@@ -938,7 +938,7 @@ public class TreePrint {
     CoreLabel.OutputFormat labelFormat = (includeTags) ? CoreLabel.OutputFormat.VALUE_TAG_INDEX : CoreLabel.OutputFormat.VALUE_INDEX;
     StringBuilder buf = new StringBuilder();
     if (extraSep) {
-      List<TypedDependency> extraDeps =  new ArrayList<TypedDependency>();
+      List<TypedDependency> extraDeps = new ArrayList<>();
       for (TypedDependency td : dependencies) {
         if (td.extra()) {
           extraDeps.add(td);
@@ -996,8 +996,8 @@ public class TreePrint {
       if (copyDep > 0) {
         depCopy = " copy=\"" + copyDep + '\"';
       }
-      String govTagAttribute = (includeTags && govTag != null) ? " tag=\"" + govTag + "\"" : "";
-      String depTagAttribute = (includeTags && depTag != null) ? " tag=\"" + depTag + "\"" : "";
+      String govTagAttribute = (includeTags && govTag != null) ? " tag=\"" + govTag + '"' : "";
+      String depTagAttribute = (includeTags && depTag != null) ? " tag=\"" + depTag + '"' : "";
       // add an attribute if the typed dependency is an extra relation (do not preserve the tree structure)
       String extraAttr = "";
       if (extra) {

@@ -414,14 +414,14 @@ public class QuoteAnnotator implements Annotator {
             e.second() + start + 1));
       }
     } else {
-      for (String qKind : quotesMap.keySet()) {
-        for (Pair<Integer, Integer> q : quotesMap.get(qKind)) {
-          if (q.first() < q.second() - qKind.length() * 2) {
-            String toPass = text.substring(q.first() + qKind.length(),
-                q.second() - qKind.length());
-            String qKindToPass = DIRECTED_QUOTES.containsKey(qKind) || qKind.equals("`") ? null : qKind;
+      for (Map.Entry<String, List<Pair<Integer, Integer>>> stringListEntry : quotesMap.entrySet()) {
+        for (Pair<Integer, Integer> q : stringListEntry.getValue()) {
+          if (q.first() < q.second() - stringListEntry.getKey().length() * 2) {
+            String toPass = text.substring(q.first() + stringListEntry.getKey().length(),
+                q.second() - stringListEntry.getKey().length());
+            String qKindToPass = DIRECTED_QUOTES.containsKey(stringListEntry.getKey()) || stringListEntry.getKey().equals("`") ? null : stringListEntry.getKey();
             List<Pair<Integer, Integer>> embedded = recursiveQuotes(toPass,
-                q.first() + qKind.length() + offset, qKindToPass);
+                q.first() + stringListEntry.getKey().length() + offset, qKindToPass);
             for (Pair<Integer, Integer> e : embedded) {
               // don't add offset here because the
               // recursive method already added it

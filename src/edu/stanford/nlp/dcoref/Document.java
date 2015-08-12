@@ -27,13 +27,8 @@
 package edu.stanford.nlp.dcoref;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.logging.Level;
 
 import edu.stanford.nlp.dcoref.Dictionaries.Number;
 import edu.stanford.nlp.dcoref.Dictionaries.Person;
@@ -187,7 +182,7 @@ public class Document implements Serializable {
             int speakerMentionID = Integer.parseInt(speaker);
             if (utter != 0) {
               // Add pairs of mention id and the mention id of the speaker
-              speakerPairs.add(new Pair<Integer, Integer>(m.mentionID, speakerMentionID));
+              speakerPairs.add(new Pair<>(m.mentionID, speakerMentionID));
 //              speakerPairs.add(new Pair<Integer, Integer>(speakerMentionID, m.mentionID));
             }
           } catch (Exception e){
@@ -235,8 +230,8 @@ public class Document implements Serializable {
         if (allPredictedMentions.containsKey(m.mentionID)) {
           SieveCoreferenceSystem.logger.warning("WARNING: Already contain mention " + m.mentionID);
           Mention m1 = allPredictedMentions.get(m.mentionID);
-          SieveCoreferenceSystem.logger.warning("OLD mention: " + m1.spanToString() + "[" + m1.startIndex + "," + m1.endIndex + "]");
-          SieveCoreferenceSystem.logger.warning("NEW mention: " + m.spanToString() + "[" + m.startIndex + "," + m.endIndex + "]");
+          SieveCoreferenceSystem.logger.warning("OLD mention: " + m1.spanToString() + '[' + m1.startIndex + ',' + m1.endIndex + ']');
+          SieveCoreferenceSystem.logger.warning("NEW mention: " + m.spanToString() + '[' + m.startIndex + ',' + m.endIndex + ']');
           //          SieveCoreferenceSystem.debugPrintMentions(System.err, "PREDICTED ORDERED", predictedOrderedMentionsBySentence);
 //          SieveCoreferenceSystem.debugPrintMentions(System.err, "GOLD ORDERED", goldOrderedMentionsBySentence);
         }
@@ -250,7 +245,7 @@ public class Document implements Serializable {
         m.sentNum = i;
 
         assert(!corefClusters.containsKey(m.mentionID));
-        corefClusters.put(m.mentionID, new CorefCluster(m.mentionID, Generics.newHashSet(Arrays.asList(m))));
+        corefClusters.put(m.mentionID, new CorefCluster(m.mentionID, Generics.newHashSet(Collections.singletonList(m))));
         m.corefClusterID = m.mentionID;
 
         IntTuple headPosition = new IntTuple(2);
@@ -271,7 +266,7 @@ public class Document implements Serializable {
   // Update incompatibles for two clusters that are about to be merged
   public void mergeIncompatibles(CorefCluster to, CorefCluster from) {
     List<Pair<Pair<Integer,Integer>, Pair<Integer,Integer>>> replacements =
-            new ArrayList<Pair<Pair<Integer,Integer>, Pair<Integer,Integer>>>();
+            new ArrayList<>();
     for (Pair<Integer, Integer> p : incompatibleClusters) {
       Integer other = null;
       if (p.first == from.clusterID) {
@@ -347,19 +342,19 @@ public class Document implements Serializable {
       // For CoNLL training there are some documents with gold mentions with the same position offsets
       // See /scr/nlp/data/conll-2011/v2/data/train/data/english/annotations/nw/wsj/09/wsj_0990.v2_auto_conll
       //  (Packwood - Roth)
-      CollectionValuedMap<IntPair, Mention> goldMentionPositions = new CollectionValuedMap<IntPair, Mention>();
+      CollectionValuedMap<IntPair, Mention> goldMentionPositions = new CollectionValuedMap<>();
       for(Mention g : golds) {
         IntPair ip = new IntPair(g.startIndex, g.endIndex);
         if (goldMentionPositions.containsKey(ip)) {
           StringBuilder existingMentions = new StringBuilder();
           for (Mention eg: goldMentionPositions.get(ip)) {
             if (existingMentions.length() > 0) {
-              existingMentions.append(",");
+              existingMentions.append(',');
             }
             existingMentions.append(eg.mentionID);
           }
           SieveCoreferenceSystem.logger.warning("WARNING: gold mentions with the same offsets: " + ip
-                  + " mentions=" + g.mentionID + "," + existingMentions + ", " + g.spanToString());
+                  + " mentions=" + g.mentionID + ',' + existingMentions + ", " + g.spanToString());
         }
         //assert(!goldMentionPositions.containsKey(ip));
         goldMentionPositions.add(new IntPair(g.startIndex, g.endIndex), g);
@@ -393,12 +388,12 @@ public class Document implements Serializable {
       for(Mention g : golds) {
         goldMentionPositions.put(new IntPair(g.startIndex, g.endIndex), g);
         if(!goldMentionHeadPositions.containsKey(g.headIndex)) {
-          goldMentionHeadPositions.put(g.headIndex, new LinkedList<Mention>());
+          goldMentionHeadPositions.put(g.headIndex, new LinkedList<>());
         }
         goldMentionHeadPositions.get(g.headIndex).add(g);
       }
 
-      List<Mention> remains = new ArrayList<Mention>();
+      List<Mention> remains = new ArrayList<>();
       for (Mention p : predicts) {
         IntPair pos = new IntPair(p.startIndex, p.endIndex);
         if(goldMentionPositions.containsKey(pos)) {
@@ -520,7 +515,7 @@ public class Document implements Serializable {
   /** Extract gold coref link information */
   protected void extractGoldLinks() {
     //    List<List<Mention>> orderedMentionsBySentence = this.getOrderedMentions();
-    List<Pair<IntTuple, IntTuple>> links = new ArrayList<Pair<IntTuple,IntTuple>>();
+    List<Pair<IntTuple, IntTuple>> links = new ArrayList<>();
 
     // position of each mention in the input matrix, by id
     Map<Integer, IntTuple> positions = Generics.newHashMap();
@@ -534,7 +529,7 @@ public class Document implements Serializable {
         pos.set(0, i);
         pos.set(1, j);
         positions.put(id, pos);
-        antecedents.put(id, new ArrayList<IntTuple>());
+        antecedents.put(id, new ArrayList<>());
       }
     }
 
@@ -570,14 +565,14 @@ public class Document implements Serializable {
               IntTuple missed = new IntTuple(2);
               missed.set(0, k);
               missed.set(1, l);
-              if (links.contains(new Pair<IntTuple, IntTuple>(missed, dst))) {
+              if (links.contains(new Pair<>(missed, dst))) {
                 antecedents.get(id).add(missed);
-                links.add(new Pair<IntTuple, IntTuple>(src, missed));
+                links.add(new Pair<>(src, missed));
               }
             }
           }
 
-          links.add(new Pair<IntTuple, IntTuple>(src, dst));
+          links.add(new Pair<>(src, dst));
 
           assert (antecedents.get(id) != null);
           antecedents.get(id).add(dst);
@@ -586,7 +581,7 @@ public class Document implements Serializable {
           assert (ants != null);
           for (IntTuple ant : ants) {
             antecedents.get(id).add(ant);
-            links.add(new Pair<IntTuple, IntTuple>(src, ant));
+            links.add(new Pair<>(src, ant));
           }
         }
       }
@@ -602,7 +597,7 @@ public class Document implements Serializable {
         String w = l.get(CoreAnnotations.TextAnnotation.class);
 
         boolean noSpeakerInfo = !l.containsKey(CoreAnnotations.SpeakerAnnotation.class)
-        || l.get(CoreAnnotations.SpeakerAnnotation.class).equals("")
+        || l.get(CoreAnnotations.SpeakerAnnotation.class).isEmpty()
         || l.get(CoreAnnotations.SpeakerAnnotation.class).startsWith("PER");
 
         if(w.equals("``")
@@ -653,8 +648,8 @@ public class Document implements Serializable {
   }
   private void findSpeakersInArticle(Dictionaries dict) {
     List<CoreMap> sentences = annotation.get(CoreAnnotations.SentencesAnnotation.class);
-    Pair<Integer, Integer> beginQuotation = new Pair<Integer, Integer>();
-    Pair<Integer, Integer> endQuotation = new Pair<Integer, Integer>();
+    Pair<Integer, Integer> beginQuotation = new Pair<>();
+    Pair<Integer, Integer> endQuotation = new Pair<>();
     boolean insideQuotation = false;
     int utterNum = -1;
 
@@ -751,7 +746,7 @@ public class Document implements Serializable {
         }
       }
     }
-    List<CoreMap> paragraph = new ArrayList<CoreMap>();
+    List<CoreMap> paragraph = new ArrayList<>();
     int paragraphUtterIndex = 0;
     String nextParagraphSpeaker = "";
     int paragraphOffset = 0;
@@ -761,7 +756,7 @@ public class Document implements Serializable {
         nextParagraphSpeaker = findParagraphSpeaker(paragraph, paragraphUtterIndex, nextParagraphSpeaker, paragraphOffset, dict);
         paragraphUtterIndex = currentUtter;
         paragraphOffset += paragraph.size();
-        paragraph = new ArrayList<CoreMap>();
+        paragraph = new ArrayList<>();
       }
       paragraph.add(sent);
     }
@@ -771,7 +766,7 @@ public class Document implements Serializable {
   private String findParagraphSpeaker(List<CoreMap> paragraph,
       int paragraphUtterIndex, String nextParagraphSpeaker, int paragraphOffset, Dictionaries dict) {
     if(!speakers.containsKey(paragraphUtterIndex)) {
-      if(!nextParagraphSpeaker.equals("")) {
+      if(!nextParagraphSpeaker.isEmpty()) {
         speakers.put(paragraphUtterIndex, nextParagraphSpeaker);
       } else {  // find the speaker of this paragraph (John, nbc news)
         CoreMap lastSent = paragraph.get(paragraph.size()-1);
@@ -794,7 +789,7 @@ public class Document implements Serializable {
             }
           }
         }
-        if(!hasVerb && !speaker.equals("")) {
+        if(!hasVerb && !speaker.isEmpty()) {
           speakers.put(paragraphUtterIndex, speaker);
         }
       }
@@ -866,8 +861,10 @@ public class Document implements Serializable {
     for(Mention g : allGoldMentions.values()) {
       if(!g.twinless) foundGoldCount++;
     }
-    SieveCoreferenceSystem.logger.fine("# of found gold mentions: "+foundGoldCount + " / # of gold mentions: "+allGoldMentions.size());
-    SieveCoreferenceSystem.logger.fine("gold mentions == ");
+    if (SieveCoreferenceSystem.logger.isLoggable(Level.FINE)) {
+      SieveCoreferenceSystem.logger.fine("# of found gold mentions: "+foundGoldCount + " / # of gold mentions: "+allGoldMentions.size());
+      SieveCoreferenceSystem.logger.fine("gold mentions == ");
+    }
   }
 
 }

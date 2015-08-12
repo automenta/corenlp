@@ -72,7 +72,7 @@ public class BuildBinarizedDataset {
         }
       }
       if (found) {
-        spanToLabels.put(new Pair<Integer, Integer>(i, i + pieces.length - 1), pieces[0]);
+        spanToLabels.put(new Pair<>(i, i + pieces.length - 1), pieces[0]);
       }
     }
   }
@@ -182,7 +182,7 @@ public class BuildBinarizedDataset {
       DocumentPreprocessor document = new DocumentPreprocessor(sin);
       document.setSentenceFinalPuncWords(new String[] {"\n"});
       List<HasWord> tokens = document.iterator().next();
-      Integer mainLabel = new Integer(tokens.get(0).word());
+      int mainLabel = new Integer(tokens.get(0).word());
       //System.out.print("Main Sentence Label: " + mainLabel.toString() + "; ");
       tokens = tokens.subList(1, tokens.size());
       //System.err.println(tokens);

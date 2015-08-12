@@ -58,7 +58,7 @@ public class CorpusDictionary {
         wordDetectorLine = wordDetectorLine.trim();
         int newLeng = wordDetectorLine.length();
         if (newLeng != origLeng) {
-          EncodingPrintWriter.err.println("Line " + i + " of " + filename + " has leading/trailing whitespace: |" + wordDetectorLine + "|", "UTF-8");
+          EncodingPrintWriter.err.println("Line " + i + " of " + filename + " has leading/trailing whitespace: |" + wordDetectorLine + '|', "UTF-8");
         }
         if (newLeng == 0) {
           EncodingPrintWriter.err.println("Line " + i + " of " + filename + " is empty", "UTF-8");

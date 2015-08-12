@@ -43,24 +43,32 @@ class ShiftReduceUtils {
     return headLabel.index() - 1;
   }
 
-  /** Returns a 0-based index of the left leaf of the tree.  Assumes the leaves had been indexed from 1 */
+  /**
+   * Returns a 0-based index of the left leaf of the tree.  Assumes the leaves had been indexed from 1
+   */
   static int leftIndex(Tree tree) {
-    if (tree.isLeaf()) {
-      CoreLabel label = ErasureUtils.uncheckedCast(tree.label());
-      return label.index() - 1;
-    }
+    while (true) {
+      if (tree.isLeaf()) {
+        CoreLabel label = ErasureUtils.uncheckedCast(tree.label());
+        return label.index() - 1;
+      }
 
-    return leftIndex(tree.children()[0]);
+      tree = tree.children()[0];
+    }
   }
 
-  /** Returns a 0-based index of the right leaf of the tree.  Assumes the leaves had been indexed from 1 */
+  /**
+   * Returns a 0-based index of the right leaf of the tree.  Assumes the leaves had been indexed from 1
+   */
   static int rightIndex(Tree tree) {
-    if (tree.isLeaf()) {
-      CoreLabel label = ErasureUtils.uncheckedCast(tree.label());
-      return label.index() - 1;
-    }
+    while (true) {
+      if (tree.isLeaf()) {
+        CoreLabel label = ErasureUtils.uncheckedCast(tree.label());
+        return label.index() - 1;
+      }
 
-    return rightIndex(tree.children()[tree.children().length - 1]);
+      tree = tree.children()[tree.children().length - 1];
+    }
   }
 
   static boolean constraintMatchesTreeTop(Tree top, ParserConstraint constraint) {

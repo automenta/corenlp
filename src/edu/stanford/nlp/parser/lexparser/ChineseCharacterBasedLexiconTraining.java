@@ -53,9 +53,9 @@ public class ChineseCharacterBasedLexiconTraining {
   protected static final NumberFormat formatter = new DecimalFormat("0.000");
 
   public static void printStats(Collection<Tree> trees, PrintWriter pw) {
-    ClassicCounter<Integer> wordLengthCounter = new ClassicCounter<Integer>();
-    ClassicCounter<TaggedWord> wordCounter = new ClassicCounter<TaggedWord>();
-    ClassicCounter<Symbol> charCounter = new ClassicCounter<Symbol>();
+    ClassicCounter<Integer> wordLengthCounter = new ClassicCounter<>();
+    ClassicCounter<TaggedWord> wordCounter = new ClassicCounter<>();
+    ClassicCounter<Symbol> charCounter = new ClassicCounter<>();
     int counter = 0;
     for (Tree tree : trees) {
       counter++;
@@ -79,13 +79,13 @@ public class ChineseCharacterBasedLexiconTraining {
     Set<Symbol> singletonChars = Counters.keysBelow(charCounter, 1.5);
     Set<TaggedWord> singletonWords = Counters.keysBelow(wordCounter, 1.5);
 
-    ClassicCounter<String> singletonWordPOSes = new ClassicCounter<String>();
+    ClassicCounter<String> singletonWordPOSes = new ClassicCounter<>();
     for (TaggedWord taggedWord : singletonWords) {
       singletonWordPOSes.incrementCount(taggedWord.tag());
     }
     Distribution<String> singletonWordPOSDist = Distribution.getDistribution(singletonWordPOSes);
 
-    ClassicCounter<Character> singletonCharRads = new ClassicCounter<Character>();
+    ClassicCounter<Character> singletonCharRads = new ClassicCounter<>();
     for (Symbol s : singletonChars) {
       singletonCharRads.incrementCount(Character.valueOf(RadicalMap.getRadical(s.getCh())));
     }
@@ -136,7 +136,7 @@ public class ChineseCharacterBasedLexiconTraining {
     ChineseTreebankParserParams ctpp = new ChineseTreebankParserParams();
     for (int i = 0; i < args.length; i++) {
       ctpp.setOptionFlag(args, i);
-      System.err.print(" " + args[i]);
+      System.err.print(' ' + args[i]);
     }
     System.err.println();
     Options op = new Options(ctpp);
@@ -188,7 +188,7 @@ public class ChineseCharacterBasedLexiconTraining {
         lp = LexicalizedParser.trainFromTreebank(parserArgs[0], trainFilt, op);
         if (parserArgs.length == 3) {
           String filename = parserArgs[2];
-          System.err.println("Writing parser in serialized format to file " + filename + " ");
+          System.err.println("Writing parser in serialized format to file " + filename + ' ');
           System.err.flush();
           ObjectOutputStream out = IOUtils.writeStreamFromString(filename);
           out.writeObject(lp);
@@ -219,8 +219,8 @@ public class ChineseCharacterBasedLexiconTraining {
     if (argMap.containsKey("-lex")) {
       String[] lexArgs = (argMap.get("-lex"));
       if (lexArgs.length > 1) {
-        Index<String> wordIndex = new HashIndex<String>();
-        Index<String> tagIndex = new HashIndex<String>();
+        Index<String> wordIndex = new HashIndex<>();
+        Index<String> tagIndex = new HashIndex<>();
         lex = ctpp.lex(op, wordIndex, tagIndex);
         MemoryTreebank rawTrainTreebank = op.tlpParams.memoryTreebank();
         FileFilter trainFilt = new NumberRangesFileFilter(lexArgs[1], false);
@@ -245,7 +245,7 @@ public class ChineseCharacterBasedLexiconTraining {
         System.err.println("Done training lexicon.");
         if (lexArgs.length == 3) {
           String filename = lexArgs.length == 3 ? lexArgs[2] : "parsers/chineseCharLex.ser.gz";
-          System.err.println("Writing lexicon in serialized format to file " + filename + " ");
+          System.err.println("Writing lexicon in serialized format to file " + filename + ' ');
           System.err.flush();
           ObjectOutputStream out = IOUtils.writeStreamFromString(filename);
           out.writeObject(lex);
@@ -286,7 +286,7 @@ public class ChineseCharacterBasedLexiconTraining {
       WordCatEqualityChecker eqcheck = new WordCatEqualityChecker();
       EquivalenceClassEval basicEval = new EquivalenceClassEval(eqclass, eqcheck, "basic");
       EquivalenceClassEval collinsEval = new EquivalenceClassEval(eqclass, eqcheck, "collinized");
-      List<String> evalTypes = new ArrayList<String>(3);
+      List<String> evalTypes = new ArrayList<>(3);
       boolean goodPOS = false;
       if (segmentWords) {
         evalTypes.add(WordCatConstituent.wordType);

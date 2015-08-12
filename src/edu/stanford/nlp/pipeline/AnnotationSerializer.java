@@ -79,13 +79,13 @@ public abstract class AnnotationSerializer {
     public List<IntermediateNode> nodes;
     public List<IntermediateEdge> edges;
     public IntermediateSemanticGraph() {
-      nodes = new ArrayList<IntermediateNode>();
-      edges = new ArrayList<IntermediateEdge>();
+      nodes = new ArrayList<>();
+      edges = new ArrayList<>();
     }
 
     public IntermediateSemanticGraph(List<IntermediateNode> nodes, List<IntermediateEdge> edges) {
-      this.nodes = new ArrayList<IntermediateNode>(nodes);
-      this.edges = new ArrayList<IntermediateEdge>(edges);
+      this.nodes = new ArrayList<>(nodes);
+      this.edges = new ArrayList<>(edges);
     }
 
     private static final Object LOCK = new Object();
@@ -131,11 +131,11 @@ public abstract class AnnotationSerializer {
       for(IntermediateEdge ie: edges){
         IndexedWord source = nodeMap.get(ie.source, ie.sourceCopy);
         if (source == null) {
-          throw new RuntimeIOException("Failed to find node " + ie.source + "-" + ie.sourceCopy);
+          throw new RuntimeIOException("Failed to find node " + ie.source + '-' + ie.sourceCopy);
         }
         IndexedWord target = nodeMap.get(ie.target, ie.targetCopy);
         if (target == null) {
-          throw new RuntimeIOException("Failed to find node " + ie.target + "-" + ie.targetCopy);
+          throw new RuntimeIOException("Failed to find node " + ie.target + '-' + ie.targetCopy);
         }
         assert(target != null);
         synchronized (LOCK) {

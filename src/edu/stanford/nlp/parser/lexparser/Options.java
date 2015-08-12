@@ -995,15 +995,15 @@ public class Options implements Serializable {
 
     @Override
     public String toString() {
-      return params[0] + " " + useUnknownWordSignatures + "\n" +
-        params[1] + " " + smoothInUnknownsThreshold + "\n" +
-        params[2] + " " + smartMutation + "\n" +
-        params[3] + " " + useUnicodeType + "\n" +
-        params[4] + " " + unknownSuffixSize + "\n" +
-        params[5] + " " + unknownPrefixSize + "\n" +
-        params[6] + " " + flexiTag + "\n" +
-        params[7] + " " + useSignatureForKnownSmoothing + "\n" +
-        params[8] + " " + wordClassesFile + "\n";
+      return params[0] + ' ' + useUnknownWordSignatures + '\n' +
+        params[1] + ' ' + smoothInUnknownsThreshold + '\n' +
+        params[2] + ' ' + smartMutation + '\n' +
+        params[3] + ' ' + useUnicodeType + '\n' +
+        params[4] + ' ' + unknownSuffixSize + '\n' +
+        params[5] + ' ' + unknownPrefixSize + '\n' +
+        params[6] + ' ' + flexiTag + '\n' +
+        params[7] + ' ' + useSignatureForKnownSmoothing + '\n' +
+        params[8] + ' ' + wordClassesFile + '\n';
     }
 
     public void readData(BufferedReader in) throws IOException {
@@ -1192,17 +1192,17 @@ public class Options implements Serializable {
     PrintWriter out = new PrintWriter(w);
     StringBuilder sb = new StringBuilder();
     sb.append(lexOptions.toString());
-    sb.append("parserParams ").append(tlpParams.getClass().getName()).append("\n");
-    sb.append("forceCNF ").append(forceCNF).append("\n");
-    sb.append("doPCFG ").append(doPCFG).append("\n");
-    sb.append("doDep ").append(doDep).append("\n");
-    sb.append("freeDependencies ").append(freeDependencies).append("\n");
-    sb.append("directional ").append(directional).append("\n");
-    sb.append("genStop ").append(genStop).append("\n");
-    sb.append("distance ").append(distance).append("\n");
-    sb.append("coarseDistance ").append(coarseDistance).append("\n");
-    sb.append("dcTags ").append(dcTags).append("\n");
-    sb.append("nPrune ").append(nodePrune).append("\n");
+    sb.append("parserParams ").append(tlpParams.getClass().getName()).append('\n');
+    sb.append("forceCNF ").append(forceCNF).append('\n');
+    sb.append("doPCFG ").append(doPCFG).append('\n');
+    sb.append("doDep ").append(doDep).append('\n');
+    sb.append("freeDependencies ").append(freeDependencies).append('\n');
+    sb.append("directional ").append(directional).append('\n');
+    sb.append("genStop ").append(genStop).append('\n');
+    sb.append("distance ").append(distance).append('\n');
+    sb.append("coarseDistance ").append(coarseDistance).append('\n');
+    sb.append("dcTags ").append(dcTags).append('\n');
+    sb.append("nPrune ").append(nodePrune).append('\n');
     out.print(sb.toString());
     out.flush();
   }

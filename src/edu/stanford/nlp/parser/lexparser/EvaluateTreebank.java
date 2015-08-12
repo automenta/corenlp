@@ -89,7 +89,7 @@ public class EvaluateTreebank {
   AbstractEval.ScoreEval factLL = null;
   AbstractEval kGoodLB = null;
 
-  private final List<BestOfTopKEval> topKEvals = new ArrayList<BestOfTopKEval>();
+  private final List<BestOfTopKEval> topKEvals = new ArrayList<>();
 
   private int kbestPCFG = 0;
 
@@ -428,8 +428,8 @@ public class EvaluateTreebank {
           return;
 
         } else if(treeFact.yield().size() != transGoldTree.yield().size()) {
-          List<Label> fYield = treeFact.yield();
-          List<Label> gYield = transGoldTree.yield();
+          List<? extends Label> fYield = treeFact.yield();
+          List<? extends Label> gYield = transGoldTree.yield();
           pwErr.println("WARNING: Evaluation could not be performed due to gold/parsed yield mismatch.");
           pwErr.printf("  sizes: gold: %d (transf) %d (orig); parsed: %d (transf) %d (orig).%n", gYield.size(), goldTree.yield().size(),
                        fYield.size(), tree.yield().size());
@@ -440,7 +440,7 @@ public class EvaluateTreebank {
         }
 
         if (topKEvals.size() > 0) {
-          List<Tree> transGuesses = new ArrayList<Tree>();
+          List<Tree> transGuesses = new ArrayList<>();
           int kbest = Math.min(op.testOptions.evalPCFGkBest, kbestPCFGTrees.size());
           for (ScoredObject<Tree> guess : kbestPCFGTrees.subList(0, kbest)) {
             transGuesses.add(collinizer.transformTree(guess.object()));
@@ -595,7 +595,7 @@ public class EvaluateTreebank {
 
     PrintWriter pwFileOut = null;
     if (op.testOptions.writeOutputFiles) {
-      String fname = op.testOptions.outputFilesPrefix + "." + op.testOptions.outputFilesExtension;
+      String fname = op.testOptions.outputFilesPrefix + '.' + op.testOptions.outputFilesExtension;
       try {
         pwFileOut = op.tlpParams.pw(new FileOutputStream(fname));
       } catch (IOException ioe) {
@@ -613,9 +613,9 @@ public class EvaluateTreebank {
     }
 
     if (op.testOptions.testingThreads != 1) {
-      MulticoreWrapper<List<? extends HasWord>, ParserQuery> wrapper = new MulticoreWrapper<List<? extends HasWord>, ParserQuery>(op.testOptions.testingThreads, new ParsingThreadsafeProcessor(pqFactory, pwErr));
+      MulticoreWrapper<List<? extends HasWord>, ParserQuery> wrapper = new MulticoreWrapper<>(op.testOptions.testingThreads, new ParsingThreadsafeProcessor(pqFactory, pwErr));
 
-      LinkedList<Tree> goldTrees = new LinkedList<Tree>();
+      LinkedList<Tree> goldTrees = new LinkedList<>();
       for (Tree goldTree : testTreebank) {
         List<? extends HasWord> sentence = getInputSentence(goldTree);
         goldTrees.add(goldTree);

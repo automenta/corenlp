@@ -270,15 +270,13 @@ public abstract class SemgrexPattern implements Serializable {
    */
   public static SemgrexPattern compile(String semgrex, Env env) {
     try {
-      SemgrexParser parser = new SemgrexParser(new StringReader(semgrex + "\n"));
+      SemgrexParser parser = new SemgrexParser(new StringReader(semgrex + '\n'));
       SemgrexPattern newPattern = parser.Root();
       newPattern.env = env;
       newPattern.patternString = semgrex;
       return newPattern;
-    } catch (ParseException ex) {
+    } catch (ParseException | TokenMgrError ex) {
       throw new SemgrexParseException("Error parsing semgrex pattern " + semgrex, ex);
-    } catch (TokenMgrError er) {
-      throw new SemgrexParseException("Error parsing semgrex pattern " + semgrex, er);
     }
   }
 
@@ -465,12 +463,12 @@ public abstract class SemgrexPattern implements Serializable {
         System.err.println(graph.toString(SemanticGraph.OutputFormat.LIST));
         boolean found = true;
         while (found) {
-          System.err.println("Matches at: " + matcher.getMatch().value() + "-" + matcher.getMatch().index());
+          System.err.println("Matches at: " + matcher.getMatch().value() + '-' + matcher.getMatch().index());
           List<String> nodeNames = Generics.newArrayList();
           nodeNames.addAll(matcher.getNodeNames());
           Collections.sort(nodeNames);
           for (String name : nodeNames) {
-            System.err.println("  " + name + ": " + matcher.getNode(name).value() + "-" + matcher.getNode(name).index());
+            System.err.println("  " + name + ": " + matcher.getNode(name).value() + '-' + matcher.getNode(name).index());
           }
           System.err.println();
           found = matcher.find();

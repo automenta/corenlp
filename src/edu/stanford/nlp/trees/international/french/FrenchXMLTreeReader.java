@@ -100,9 +100,7 @@ public class FrenchXMLTreeReader implements TreeReader {
       sentences = root.getElementsByTagName(NODE_SENT);
       sentIdx = 0;
 
-    } catch (SAXException e) {
-      e.printStackTrace();
-    } catch (IOException e) {
+    } catch (SAXException | IOException e) {
       e.printStackTrace();
     }
   }
@@ -137,7 +135,7 @@ public class FrenchXMLTreeReader implements TreeReader {
 
   //wsg2010: Sometimes the cat attribute is not present, in which case the POS
   //is in the attribute catint, which indicates a part of a compound / MWE
-  private String getPOS(Element node) {
+  private static String getPOS(Element node) {
     String attrPOS = node.hasAttribute(ATTR_POS) ? node.getAttribute(ATTR_POS).trim() : "";
     String attrPOSMWE = node.hasAttribute(ATTR_POS_MWE) ? node.getAttribute(ATTR_POS_MWE).trim() : "";
 
@@ -156,7 +154,7 @@ public class FrenchXMLTreeReader implements TreeReader {
    */
   private List<String> getLemma(Element node) {
     String lemma = node.getAttribute(ATTR_LEMMA);
-    if (lemma == null || lemma.equals(""))
+    if (lemma == null || lemma.isEmpty())
       return null;
     return getWordString(lemma);
   }
@@ -167,7 +165,7 @@ public class FrenchXMLTreeReader implements TreeReader {
    *
    * @param node
    */
-  private String getMorph(Element node) {
+  private static String getMorph(Element node) {
     String ee = node.getAttribute(ATTR_EE);
     return ee == null ? "" : ee;
   }
@@ -178,7 +176,7 @@ public class FrenchXMLTreeReader implements TreeReader {
    * @param node
    * @return
    */
-  private String getSubcat(Element node) {
+  private static String getSubcat(Element node) {
     String subcat = node.getAttribute(ATTR_SUBCAT);
     return subcat == null ? "" : subcat;
   }
@@ -192,8 +190,8 @@ public class FrenchXMLTreeReader implements TreeReader {
    * @param text
    */
   private List<String> getWordString(String text) {
-    List<String> toks = new ArrayList<String>();
-    if(text == null || text.equals(""))
+    List<String> toks = new ArrayList<>();
+    if(text == null || text.isEmpty())
       toks.add(EMPTY_LEAF);
     else {
       //Strip spurious parens
@@ -238,12 +236,12 @@ public class FrenchXMLTreeReader implements TreeReader {
       //Terminals can have multiple tokens (MWEs). Make these into a
       //flat structure for now.
       Tree t = null;
-      List<Tree> kids = new ArrayList<Tree>();
+      List<Tree> kids = new ArrayList<>();
       if(leafToks.size() > 1) {
         for (int i = 0; i < leafToks.size(); ++i) {
           String tok = leafToks.get(i);
           String s = treeNormalizer.normalizeTerminal(tok);
-          List<Tree> leafList = new ArrayList<Tree>();
+          List<Tree> leafList = new ArrayList<>();
           Tree leafNode = treeFactory.newLeaf(s);
           if(leafNode.label() instanceof HasWord)
             ((HasWord) leafNode.label()).setWord(s);
@@ -289,7 +287,7 @@ public class FrenchXMLTreeReader implements TreeReader {
       return t;
     }
 
-    List<Tree> kids = new ArrayList<Tree>();
+    List<Tree> kids = new ArrayList<>();
     for(Node childNode = eRoot.getFirstChild(); childNode != null; childNode = childNode.getNextSibling()) {
       if(childNode.getNodeType() != Node.ELEMENT_NODE) continue;
       Tree t = getTreeFromXML(childNode);
@@ -318,7 +316,7 @@ public class FrenchXMLTreeReader implements TreeReader {
   private Tree postProcessMWE(Tree t) {
     String tYield = Sentence.listToString(t.yield()).replaceAll("\\s+", "");
     if(tYield.matches("[\\d\\p{Punct}]*")) {
-      List<Tree> kids = new ArrayList<Tree>();
+      List<Tree> kids = new ArrayList<>();
       kids.add(treeFactory.newLeaf(tYield));
       t = treeFactory.newTreeNode(t.value(), kids);
     } else {
@@ -339,7 +337,7 @@ public class FrenchXMLTreeReader implements TreeReader {
       System.exit(-1);
     }
 
-    List<File> fileList = new ArrayList<File>();
+    List<File> fileList = new ArrayList<>();
     for(int i = 0; i < args.length; i++)
       fileList.add(new File(args[i]));
 
@@ -357,7 +355,7 @@ public class FrenchXMLTreeReader implements TreeReader {
         for(numTrees = 0; (t = tr.readTree()) != null; numTrees++) {
           String ftbID = ((CoreLabel) t.label()).get(CoreAnnotations.SentenceIDAnnotation.class);
           System.out.printf("%s-%s\t%s%n",canonicalFileName, ftbID, t.toString());
-          List<Label> leaves = t.yield();
+          List<? extends Label> leaves = t.yield();
           for(Label label : leaves) {
             if(label instanceof CoreLabel)
               morphAnalyses.add(((CoreLabel) label).originalText());
@@ -374,9 +372,6 @@ public class FrenchXMLTreeReader implements TreeReader {
 //        System.err.println(analysis);
 
       System.err.printf("%nRead %d trees%n",totalTrees);
-
-    } catch (FileNotFoundException e) {
-      e.printStackTrace();
 
     } catch (IOException e) {
       e.printStackTrace();

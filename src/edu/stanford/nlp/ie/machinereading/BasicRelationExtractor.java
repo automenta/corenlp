@@ -107,7 +107,7 @@ public class BasicRelationExtractor implements Extractor {
 
   public void trainMulticlass(GeneralDataset<String, String> trainSet) {
     if (relationExtractorClassifierType.equalsIgnoreCase("linear")) {
-      LinearClassifierFactory<String, String> lcFactory = new LinearClassifierFactory<String, String>(1e-4,false, sigma);
+      LinearClassifierFactory<String, String> lcFactory = new LinearClassifierFactory<>(1e-4, false, sigma);
       lcFactory.setVerbose(false);
       // use in-place SGD instead of QN. this is faster but much worse!
       // lcFactory.useInPlaceStochasticGradientDescent(-1, -1, 1.0);
@@ -115,7 +115,7 @@ public class BasicRelationExtractor implements Extractor {
       // lcFactory.useHybridMinimizerWithInPlaceSGD(50, -1, sigma);
       classifier = lcFactory.trainClassifier(trainSet);
     } else if (relationExtractorClassifierType.equalsIgnoreCase("svm")) {
-      SVMLightClassifierFactory<String, String> svmFactory = new SVMLightClassifierFactory<String, String>();
+      SVMLightClassifierFactory<String, String> svmFactory = new SVMLightClassifierFactory<>();
       svmFactory.setC(sigma);
       classifier = svmFactory.trainClassifier(trainSet);
     } else {
@@ -127,9 +127,11 @@ public class BasicRelationExtractor implements Extractor {
   }
 
   protected static void reportWeights(LinearClassifier<String, String> classifier, String classLabel) {
-    if (classLabel != null) logger.fine("CLASSIFIER WEIGHTS FOR LABEL " + classLabel);
+    if (classLabel != null) if (logger.isLoggable(Level.FINE)) {
+      logger.fine("CLASSIFIER WEIGHTS FOR LABEL " + classLabel);
+    }
     Map<String, Counter<String>> labelsToFeatureWeights = classifier.weightsAsMapOfCounters();
-    List<String> labels = new ArrayList<String>(labelsToFeatureWeights.keySet());
+    List<String> labels = new ArrayList<>(labelsToFeatureWeights.keySet());
     Collections.sort(labels);
     for (String label: labels) {
       Counter<String> featWeights = labelsToFeatureWeights.get(label);
@@ -137,9 +139,11 @@ public class BasicRelationExtractor implements Extractor {
       StringBuilder bos = new StringBuilder();
       bos.append("WEIGHTS FOR LABEL ").append(label).append(':');
       for (Pair<String, Double> feat: sorted) {
-        bos.append(' ').append(feat.first()).append(':').append(feat.second()+"\n");
+        bos.append(' ').append(feat.first()).append(':').append(feat.second()).append("\n");
       }
-      logger.fine(bos.toString());
+      if (logger.isLoggable(Level.FINE)) {
+        logger.fine(bos.toString());
+      }
     }
   }
 
@@ -174,7 +178,7 @@ public class BasicRelationExtractor implements Extractor {
    * This creates new RelationMention objects!
    */
   protected List<RelationMention> extractAllRelations(CoreMap sentence) {
-    List<RelationMention> extractions = new ArrayList<RelationMention>();
+    List<RelationMention> extractions = new ArrayList<>();
 
     List<RelationMention> cands = null;
     if(createUnrelatedRelations){
@@ -184,7 +188,7 @@ public class BasicRelationExtractor implements Extractor {
       // just take the candidates produced by the reader (in KBP)
       cands = sentence.get(MachineReadingAnnotations.RelationMentionsAnnotation.class);
       if(cands == null){
-        cands = new ArrayList<RelationMention>();
+        cands = new ArrayList<>();
       }
     }
 
@@ -199,12 +203,12 @@ public class BasicRelationExtractor implements Extractor {
       if (logger.isLoggable(Level.INFO)) {
         justificationOf(testDatum, pw, label);
       }
-      logger.info("Current sentence: " + AnnotationUtils.tokensAndNELabelsToString(rel.getArg(0).getSentence()) + "\n"
-              + "Classifying relation: " + rel + "\n"
+      logger.info("Current sentence: " + AnnotationUtils.tokensAndNELabelsToString(rel.getArg(0).getSentence()) + '\n'
+              + "Classifying relation: " + rel + '\n'
               + "JUSTIFICATION for label GOLD:" + rel.getType() + " SYS:" + label + " (prob:" + prob + "):\n"
               + sw.toString());
       logger.info("Justification done.");
-      RelationMention relation = relationMentionFactory.constructRelationMention(
+      RelationMention relation = RelationMentionFactory.constructRelationMention(
               rel.getObjectId(),
               sentence,
               rel.getExtent(),
@@ -228,7 +232,7 @@ public class BasicRelationExtractor implements Extractor {
   }
 
   public List<String> annotateMulticlass(List<Datum<String, String>> testDatums) {
-    List<String> predictedLabels = new ArrayList<String>();
+    List<String> predictedLabels = new ArrayList<>();
 
     for (Datum<String, String> testDatum: testDatums) {
       String label = classOf(testDatum, null);
@@ -240,8 +244,10 @@ public class BasicRelationExtractor implements Extractor {
       if (logger.isLoggable(Level.FINE)) {
         justificationOf(testDatum, pw, label);
       }
-      logger.fine("JUSTIFICATION for label GOLD:" + testDatum.label() + " SYS:" + label + " (prob:" + prob + "):\n"
-              + sw.toString() + "\nJustification done.");
+      if (logger.isLoggable(Level.FINE)) {
+        logger.fine("JUSTIFICATION for label GOLD:" + testDatum.label() + " SYS:" + label + " (prob:" + prob + "):\n"
+                + sw.toString() + "\nJustification done.");
+      }
       predictedLabels.add(label);
 
       if(! testDatum.label().equals(label)){
@@ -256,7 +262,7 @@ public class BasicRelationExtractor implements Extractor {
 
   public void annotateSentence(CoreMap sentence) {
     // this stores all relation mentions generated by this extractor
-    List<RelationMention> relations = new ArrayList<RelationMention>();
+    List<RelationMention> relations = new ArrayList<>();
 
     // extractAllRelations creates new objects for every predicted relation
     for (RelationMention rel : extractAllRelations(sentence)) {
@@ -269,7 +275,9 @@ public class BasicRelationExtractor implements Extractor {
     // caution: this removes the old list of relation mentions!
     for (RelationMention r: relations) {
       if (! r.getType().equals(RelationMention.UNRELATED)) {
-        logger.fine("Found positive relation in annotateSentence: " + r);
+        if (logger.isLoggable(Level.FINE)) {
+          logger.fine("Found positive relation in annotateSentence: " + r);
+        }
       }
     }
     sentence.set(MachineReadingAnnotations.RelationMentionsAnnotation.class, relations);
@@ -283,7 +291,7 @@ public class BasicRelationExtractor implements Extractor {
   }
 
   protected GeneralDataset<String, String> createDataset(Annotation corpus) {
-    GeneralDataset<String, String> dataset = new RVFDataset<String, String>();
+    GeneralDataset<String, String> dataset = new RVFDataset<>();
 
     for (CoreMap sentence : corpus.get(CoreAnnotations.SentencesAnnotation.class)) {
       for (RelationMention rel : AnnotationUtils.getAllRelations(relationMentionFactory, sentence, createUnrelatedRelations)) {

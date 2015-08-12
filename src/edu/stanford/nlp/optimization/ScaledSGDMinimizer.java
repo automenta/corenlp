@@ -91,7 +91,7 @@ public class ScaledSGDMinimizer<Q extends AbstractStochasticCachingDiffFunction>
   }
 
 
-  private class setFixedGain implements PropertySetter<Double>{
+  private static class setFixedGain implements PropertySetter<Double>{
     ScaledSGDMinimizer parent = null;
 
     public setFixedGain(ScaledSGDMinimizer min){parent = min;}
@@ -108,13 +108,13 @@ public class ScaledSGDMinimizer<Q extends AbstractStochasticCachingDiffFunction>
     this.quiet = true;
 
     for(int i =0;i<2; i++){
-      this.fixedGain = tuneDouble(function,initial,msPerTest,new setFixedGain(this),0.1,1.0);
+      this.fixedGain = tuneDouble(function,initial,msPerTest, new setFixedGain(this),0.1,1.0);
       gain = tuneGain(function,initial,msPerTest,1e-7,1.0);
       bSize = tuneBatch(function,initial,msPerTest,1);
       System.err.println("Results:  fixedGain: " + nf.format(this.fixedGain) + "  gain: " + nf.format(gain) + "  batch " + bSize );
     }
 
-    return new Pair<Integer,Double>(bSize, gain);
+    return new Pair<>(bSize, gain);
   }
 
   @Override
@@ -196,8 +196,8 @@ public class ScaledSGDMinimizer<Q extends AbstractStochasticCachingDiffFunction>
     diag = new double[x.length];
     memory = 1;
     for(int i=0;i<x.length;i++){diag[i]=fixedGain/gain;}
-    sList = new ArrayList<double[]>();
-    yList = new ArrayList<double[]>();
+    sList = new ArrayList<>();
+    yList = new ArrayList<>();
   }
 
   private void updateDiag(double[] diag,double[] s,double[] y){

@@ -36,13 +36,13 @@ public class Macros {
 
   public static List<Pair<String, String>> readMacros(BufferedReader bin) {
     try {
-      List<Pair<String, String>> macros = new ArrayList<Pair<String, String>>();
+      List<Pair<String, String>> macros = new ArrayList<>();
       String line;
       int lineNumber = 0;
       while ((line = bin.readLine()) != null) {
         ++lineNumber;
         String trimmed = line.trim();
-        if (trimmed.equals("") || trimmed.charAt(0) == '#') {
+        if (trimmed.isEmpty() || trimmed.charAt(0) == '#') {
           continue;
         }
         String[] pieces = line.split("\t", 2);
@@ -52,7 +52,7 @@ public class Macros {
                                              "Line number " + lineNumber +
                                              " does not match.");
         }
-        macros.add(new Pair<String, String>(pieces[0], pieces[1]));
+        macros.add(new Pair<>(pieces[0], pieces[1]));
       }
       return macros;
     } catch (IOException e) {
@@ -62,7 +62,7 @@ public class Macros {
 
   public static void addAllMacros(TregexPatternCompiler compiler,
                                   String filename, String encoding) {
-    if (filename == null || filename.equals("")) {
+    if (filename == null || filename.isEmpty()) {
       return;
     }
     for (Pair<String, String> macro : readMacros(filename, encoding)) {

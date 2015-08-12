@@ -340,8 +340,8 @@ public class SentimentModel implements Serializable {
         output.append("Binary transform matrices\n");
       }
       for (TwoDimensionalMap.Entry<String, String, SimpleMatrix> matrix : binaryTransform) {
-        if (!matrix.getFirstKey().equals("") || !matrix.getSecondKey().equals("")) {
-          output.append(matrix.getFirstKey() + " " + matrix.getSecondKey() + ":\n");
+        if (!matrix.getFirstKey().isEmpty() || !matrix.getSecondKey().isEmpty()) {
+          output.append(matrix.getFirstKey()).append(' ').append(matrix.getSecondKey()).append(":\n");
         }
         output.append(NeuralUtils.toString(matrix.getValue(), "%.8f"));
       }
@@ -354,8 +354,8 @@ public class SentimentModel implements Serializable {
         output.append("Binary transform tensors\n");
       }
       for (TwoDimensionalMap.Entry<String, String, SimpleTensor> matrix : binaryTensors) {
-        if (!matrix.getFirstKey().equals("") || !matrix.getSecondKey().equals("")) {
-          output.append(matrix.getFirstKey() + " " + matrix.getSecondKey() + ":\n");
+        if (!matrix.getFirstKey().isEmpty() || !matrix.getSecondKey().isEmpty()) {
+          output.append(matrix.getFirstKey()).append(' ').append(matrix.getSecondKey()).append(":\n");
         }
         output.append(matrix.getValue().toString("%.8f"));
       }
@@ -368,8 +368,8 @@ public class SentimentModel implements Serializable {
         output.append("Binary classification matrices\n");
       }
       for (TwoDimensionalMap.Entry<String, String, SimpleMatrix> matrix : binaryClassification) {
-        if (!matrix.getFirstKey().equals("") || !matrix.getSecondKey().equals("")) {
-          output.append(matrix.getFirstKey() + " " + matrix.getSecondKey() + ":\n");
+        if (!matrix.getFirstKey().isEmpty() || !matrix.getSecondKey().isEmpty()) {
+          output.append(matrix.getFirstKey()).append(' ').append(matrix.getSecondKey()).append(":\n");
         }
         output.append(NeuralUtils.toString(matrix.getValue(), "%.8f"));
       }
@@ -382,8 +382,8 @@ public class SentimentModel implements Serializable {
         output.append("Unary classification matrices\n");
       }
       for (Map.Entry<String, SimpleMatrix> matrix : unaryClassification.entrySet()) {
-        if (!matrix.getKey().equals("")) {
-          output.append(matrix.getKey() + ":\n");
+        if (!matrix.getKey().isEmpty()) {
+          output.append(matrix.getKey()).append(":\n");
         }
         output.append(NeuralUtils.toString(matrix.getValue(), "%.8f"));
       }
@@ -391,10 +391,10 @@ public class SentimentModel implements Serializable {
 
     output.append("Word vectors\n");
     for (Map.Entry<String, SimpleMatrix> matrix : wordVectors.entrySet()) {
-      output.append("'" + matrix.getKey() + "'");
-      output.append("\n");
+      output.append('\'').append(matrix.getKey()).append('\'');
+      output.append('\n');
       output.append(NeuralUtils.toString(matrix.getValue(), "%.8f"));
-      output.append("\n");
+      output.append('\n');
     }
 
     return output.toString();
@@ -625,9 +625,7 @@ public class SentimentModel implements Serializable {
   public static SentimentModel loadSerialized(String path) {
     try {
       return IOUtils.readObjectFromURLOrClasspathOrFileSystem(path);
-    } catch (IOException e) {
-      throw new RuntimeIOException(e);
-    } catch (ClassNotFoundException e) {
+    } catch (IOException | ClassNotFoundException e) {
       throw new RuntimeIOException(e);
     }
   }
@@ -636,7 +634,7 @@ public class SentimentModel implements Serializable {
     int curIndex = 0;
     for (TwoDimensionalMap.Entry<String, String, SimpleMatrix> entry : binaryTransform) {
       if (curIndex <= index && curIndex + entry.getValue().getNumElements() > index) {
-        System.err.println("Index " + index + " is element " + (index - curIndex) + " of binaryTransform \"" + entry.getFirstKey() + "," + entry.getSecondKey() + "\"");
+        System.err.println("Index " + index + " is element " + (index - curIndex) + " of binaryTransform \"" + entry.getFirstKey() + ',' + entry.getSecondKey() + '"');
         return;
       } else {
         curIndex += entry.getValue().getNumElements();
@@ -645,7 +643,7 @@ public class SentimentModel implements Serializable {
 
     for (TwoDimensionalMap.Entry<String, String, SimpleMatrix> entry : binaryClassification) {
       if (curIndex <= index && curIndex + entry.getValue().getNumElements() > index) {
-        System.err.println("Index " + index + " is element " + (index - curIndex) + " of binaryClassification \"" + entry.getFirstKey() + "," + entry.getSecondKey() + "\"");
+        System.err.println("Index " + index + " is element " + (index - curIndex) + " of binaryClassification \"" + entry.getFirstKey() + ',' + entry.getSecondKey() + '"');
         return;
       } else {
         curIndex += entry.getValue().getNumElements();
@@ -654,7 +652,7 @@ public class SentimentModel implements Serializable {
 
     for (TwoDimensionalMap.Entry<String, String, SimpleTensor> entry : binaryTensors) {
       if (curIndex <= index && curIndex + entry.getValue().getNumElements() > index) {
-        System.err.println("Index " + index + " is element " + (index - curIndex) + " of binaryTensor \"" + entry.getFirstKey() + "," + entry.getSecondKey() + "\"");
+        System.err.println("Index " + index + " is element " + (index - curIndex) + " of binaryTensor \"" + entry.getFirstKey() + ',' + entry.getSecondKey() + '"');
         return;
       } else {
         curIndex += entry.getValue().getNumElements();
@@ -663,7 +661,7 @@ public class SentimentModel implements Serializable {
 
     for (Map.Entry<String, SimpleMatrix> entry : unaryClassification.entrySet()) {
       if (curIndex <= index && curIndex + entry.getValue().getNumElements() > index) {
-        System.err.println("Index " + index + " is element " + (index - curIndex) + " of unaryClassification \"" + entry.getKey() + "\"");
+        System.err.println("Index " + index + " is element " + (index - curIndex) + " of unaryClassification \"" + entry.getKey() + '"');
         return;
       } else {
         curIndex += entry.getValue().getNumElements();
@@ -672,7 +670,7 @@ public class SentimentModel implements Serializable {
 
     for (Map.Entry<String, SimpleMatrix> entry : wordVectors.entrySet()) {
       if (curIndex <= index && curIndex + entry.getValue().getNumElements() > index) {
-        System.err.println("Index " + index + " is element " + (index - curIndex) + " of wordVector \"" + entry.getKey() + "\"");
+        System.err.println("Index " + index + " is element " + (index - curIndex) + " of wordVector \"" + entry.getKey() + '"');
         return;
       } else {
         curIndex += entry.getValue().getNumElements();

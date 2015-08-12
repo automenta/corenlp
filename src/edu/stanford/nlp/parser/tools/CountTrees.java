@@ -32,7 +32,7 @@ public class CountTrees {
     String nl = System.getProperty("line.separator");
     sb.append(String.format("Usage: java %s [OPTS] tree_file%s%s",CountTrees.class.getName(),nl,nl));
     sb.append("Options:\n");
-    sb.append("  -l lang    : Select language settings from " + Language.langList).append(nl);
+    sb.append("  -l lang    : Select language settings from ").append(Language.langList).append(nl);
     sb.append("  -e enc     : Encoding.").append(nl);
     sb.append("  -y len     : Only print trees with yields <= len.").append(nl);
     sb.append("  -a         : Only print the pre-terminal yields, one per line.").append(nl);
@@ -62,7 +62,7 @@ public class CountTrees {
     // Process command-line options
     Properties options = StringUtils.argsToProperties(args, optionArgDefinitions);
     String fileName = options.getProperty("");
-    if (fileName == null || fileName.equals("")) {
+    if (fileName == null || fileName.isEmpty()) {
       System.out.println(usage);
       System.exit(-1);
     }

@@ -32,7 +32,7 @@ public class JointParsingModel {
   private TreeTransformer debinarizer;
   private TreeTransformer subcategoryStripper;
   private TreePrint treePrint;
-  private static List<CoreLabel> bestSegmentationB;
+  private List<? extends CoreLabel> bestSegmentationB;
 
   private boolean serInput = false;
   private int maxSentLen = 5000;
@@ -53,7 +53,7 @@ public class JointParsingModel {
 
   private void removeDeleteSplittersFromSplitters(TreebankLanguagePack tlp) {
     if (op.trainOptions.deleteSplitters != null) {
-      List<String> deleted = new ArrayList<String>();
+      List<String> deleted = new ArrayList<>();
       for (String del : op.trainOptions.deleteSplitters) {
         String baseDel = tlp.basicCategory(del);
         boolean checkBasic = del.equals(baseDel);
@@ -87,7 +87,7 @@ public class JointParsingModel {
       op.trainOptions.splitters = ParentAnnotationStats.getSplitCategories(trainTreebank, op.trainOptions.tagSelectiveSplit, 0, op.trainOptions.selectiveSplitCutOff, op.trainOptions.tagSelectiveSplitCutOff, tlp);
       removeDeleteSplittersFromSplitters(tlp);
       if (op.testOptions.verbose) {
-        List<String> list = new ArrayList<String>(op.trainOptions.splitters);
+        List<String> list = new ArrayList<>(op.trainOptions.splitters);
         Collections.sort(list);
         System.err.println("Parent split categories: " + list);
       }
@@ -115,7 +115,7 @@ public class JointParsingModel {
 
     //Tree transformation
     //
-    List<Tree> binaryTrainTrees = new ArrayList<Tree>();
+    List<Tree> binaryTrainTrees = new ArrayList<>();
     for (Tree tree : trainTreebank) {
       tree = binarizer.transformTree(tree);
       if (tree.yield().size() - 1 <= trainLengthLimit) {
@@ -140,7 +140,7 @@ public class JointParsingModel {
     List<Tree> binaryTrainTrees = getAnnotatedBinaryTreebankFromTreebank(trainTreebank);
     Timing.tick("done.");
 
-    Index<String> stateIndex = new HashIndex<String>();
+    Index<String> stateIndex = new HashIndex<>();
 
     System.err.print("Extracting PCFG...");
     Extractor<Pair<UnaryGrammar,BinaryGrammar>> bgExtractor = new BinaryGrammarExtractor(op, stateIndex);
@@ -154,8 +154,8 @@ public class JointParsingModel {
     Timing.tick("done.");
 
     System.err.print("Extracting Lexicon...");
-    Index<String> wordIndex = new HashIndex<String>();
-    Index<String> tagIndex = new HashIndex<String>();
+    Index<String> wordIndex = new HashIndex<>();
+    Index<String> tagIndex = new HashIndex<>();
     Lexicon lex = op.tlpParams.lex(op, wordIndex, tagIndex);
     lex.initializeTraining(binaryTrainTrees.size());
     lex.train(binaryTrainTrees);
@@ -217,7 +217,7 @@ public class JointParsingModel {
         Tree rawTree = null;
         if(op.doPCFG && pparser.parse(lattice)) {
           rawTree = pparser.getBestParse(); //1best segmentation
-          bestSegmentationB = rawTree.yield(new ArrayList<CoreLabel>()); //has boundary symbol
+          bestSegmentationB = rawTree.yield(new ArrayList()); //has boundary symbol
 
           if(op.doDep && dparser.parse(bestSegmentationB)) {
             System.err.printf("%s: Dependency parse succeeded!%n", this.getClass().getName());
@@ -318,7 +318,7 @@ public class JointParsingModel {
    * pparser chart uses segmentation interstices; dparser uses 1best word
    * interstices. Convert between the two here for bparser.
    */
-  private static class GenericLatticeScorer implements LatticeScorer {
+  private class GenericLatticeScorer implements LatticeScorer {
 
     @Override
     public Item convertItemSpan(Item item) {

@@ -18,7 +18,7 @@ public class DistributionPackage {
   private String lastCreatedDistribution = "UNKNOWN";
 
   public DistributionPackage() {
-    distFiles = new ArrayList<String>();
+    distFiles = new ArrayList<>();
   }
 
   /**
@@ -46,7 +46,7 @@ public class DistributionPackage {
         for(String filename : distFiles) {
           currentFile = filename;
           File destFile = new File(filename);
-          String relativePath = distribName + "/" + destFile.getName();
+          String relativePath = distribName + '/' + destFile.getName();
           destFile = new File(relativePath);
           FileSystem.copyFile(new File(filename),destFile);
         }

@@ -328,7 +328,7 @@ public class SGDMinimizer<T extends Function> implements Minimizer<T>, HasEvalua
       say(String.valueOf(numBatches));
       say("[" + ( total.report() )/1000.0 + " s " );
       say("{" + (current.restart()/1000.0) + " s}] ");
-      sayln(" "+lastValue + " " + totalValue + " " + loss);
+      sayln(" "+lastValue + ' ' + totalValue + ' ' + loss);
 
       if (iters >= maxIterations) {
         sayln("Stochastic Optimization complete.  Stopped after max iterations");

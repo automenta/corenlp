@@ -89,16 +89,16 @@ public class ConvertMatlabModel {
       slices[i] = loadMatrix(basePath + "bin/Wt_" + (i + 1) + ".bin", basePath + "Wt_" + (i + 1) + ".txt");
     }
     SimpleTensor tensor = new SimpleTensor(slices);
-    System.err.println("W tensor size: " + tensor.numRows() + "x" + tensor.numCols() + "x" + tensor.numSlices());
+    System.err.println("W tensor size: " + tensor.numRows() + 'x' + tensor.numCols() + 'x' + tensor.numSlices());
 
     SimpleMatrix W = loadMatrix(basePath + "bin/W.bin", basePath + "W.txt");
-    System.err.println("W matrix size: " + W.numRows() + "x" + W.numCols());
+    System.err.println("W matrix size: " + W.numRows() + 'x' + W.numCols());
 
     SimpleMatrix Wcat = loadMatrix(basePath + "bin/Wcat.bin", basePath + "Wcat.txt");
-    System.err.println("W cat size: " + Wcat.numRows() + "x" + Wcat.numCols());
+    System.err.println("W cat size: " + Wcat.numRows() + 'x' + Wcat.numCols());
 
     SimpleMatrix combinedWV = loadMatrix(basePath + "bin/Wv.bin", basePath + "Wv.txt");
-    System.err.println("Word matrix size: " + combinedWV.numRows() + "x" + combinedWV.numCols());
+    System.err.println("Word matrix size: " + combinedWV.numRows() + 'x' + combinedWV.numCols());
 
     File vocabFile = new File(basePath + "vocab_1.txt");
     if (!vocabFile.exists()) {
