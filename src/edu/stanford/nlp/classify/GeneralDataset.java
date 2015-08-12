@@ -105,8 +105,9 @@ public abstract class GeneralDataset<L, F>  implements Serializable, Iterable<RV
   public float[] getFeatureCounts() {
     float[] counts = new float[featureIndex.size()];
     for (int i = 0, m = size; i < m; i++) {
+      final int[] di = data[i];
       for (int j = 0, n = data[i].length; j < n; j++) {
-        counts[data[i][j]] += 1.0;
+        counts[di[j]] += 1.0;
       }
     }
     return counts;

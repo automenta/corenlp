@@ -34,7 +34,7 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
   private MapFactory<K1,IntCounter<K2>> outerMF;
 
   // the MapFactory used to make new maps in the inner counter
-  private MapFactory<K2, MutableInteger> innerMF;
+  //private MapFactory<K2, MutableInteger> innerMF;
 
   private int defaultValue = 0;
 
@@ -63,7 +63,7 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
   public IntCounter<K2> getCounter(K1 o) {
     IntCounter<K2> c = map.get(o);
     if (c == null) {
-      c = new IntCounter<>(innerMF);
+      c = new IntCounter<>();
       c.setDefaultReturnValue(defaultValue);
       map.put(o, c);
     }
@@ -161,7 +161,9 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
    */
   public int getCount(K1 o1, K2 o2) {
     IntCounter<K2> c = getCounter(o1);
-    if (c.totalCount() == 0 && !c.keySet().contains(o2)) { return defaultReturnValue(); }
+    if (c.totalCount() == 0 && !c.keySet().contains(o2)) {
+      return defaultReturnValue();
+    }
     return c.getIntCount(o2);
   }
 
@@ -212,7 +214,7 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
   public static <K1,K2> TwoDimensionalIntCounter<K2,K1> reverseIndexOrder(TwoDimensionalIntCounter<K1,K2> cc) {
     // the typing on the outerMF is violated a bit, but it'll work....
     TwoDimensionalIntCounter<K2,K1> result = new TwoDimensionalIntCounter<>(
-            (MapFactory) cc.outerMF, (MapFactory) cc.innerMF);
+            (MapFactory) cc.outerMF, null /*(MapFactory) cc.innerMF*/);
 
     for (K1 key1 : cc.firstKeySet()) {
       IntCounter<K2> c = cc.getCounter(key1);
@@ -418,9 +420,9 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
     return outerMF;
   }
 
-  public MapFactory<K2,MutableInteger> getInnerMapFactory() {
-    return innerMF;
-  }
+//  public MapFactory<K2,MutableInteger> getInnerMapFactory() {
+//    return innerMF;
+//  }
 
   public TwoDimensionalIntCounter() {
     this(MapFactory.<K1,IntCounter<K2>>hashMapFactory(), MapFactory.<K2,MutableInteger>hashMapFactory());
@@ -435,7 +437,7 @@ public class TwoDimensionalIntCounter<K1, K2> implements Serializable {
   }
 
   public TwoDimensionalIntCounter(MapFactory<K1,IntCounter<K2>> outerFactory, MapFactory<K2,MutableInteger> innerFactory, int initialCapacity) {
-    innerMF = innerFactory;
+//    innerMF = innerFactory;
     outerMF = outerFactory;
     map = outerFactory.newMap(initialCapacity);
     total = 0;

@@ -151,36 +151,36 @@ public abstract class CoreMapAttributeAggregator
   }
   public static final CoreMapAttributeAggregator CONCAT = new ConcatAggregator(" ");
   public static final CoreMapAttributeAggregator COUNT = new CoreMapAttributeAggregator() {
-    public Object aggregate(Class key, List<? extends CoreMap> in) {
+    public Object aggregate(final Class key, List<? extends CoreMap> in) {
       return in.size();
     }
   };
   public static final CoreMapAttributeAggregator SUM = new CoreMapAttributeAggregator() {
-    public Object aggregate(Class key, List<? extends CoreMap> in) {
+    public Object aggregate(final Class key, List<? extends CoreMap> in) {
       if (in == null) return null;
       double sum = 0;
-      for (CoreMap cm:in) {
-        Object obj = cm.get(key);
-        if (obj != null) {
+      for (final CoreMap cm:in) {
+          final Object obj = cm.get(key);
+
           if (obj instanceof Number) {
             sum += ((Number) obj).doubleValue();
           } else if (obj instanceof String) {
             sum += Double.parseDouble((String) obj);
-          } else {
+          } else if (obj!=null) {
             throw new RuntimeException("Cannot sum attribute " + key + ", object of type: " + obj.getClass());
           }
-        }
+
       }
       return sum;
     }
   };
   public static final CoreMapAttributeAggregator MIN = new CoreMapAttributeAggregator() {
-    public Object aggregate(Class key, List<? extends CoreMap> in) {
+    public Object aggregate(final Class key, final List<? extends CoreMap> in) {
       if (in == null) return null;
       Comparable min = null;
-      for (CoreMap cm:in) {
-        Object obj = cm.get(key);
-        if (obj != null) {
+      for (final CoreMap cm:in) {
+          final Object obj = cm.get(key);
+
           if (obj instanceof Comparable) {
             Comparable c = (Comparable) obj;
             if (min == null) {
@@ -188,10 +188,10 @@ public abstract class CoreMapAttributeAggregator
             } else if (c.compareTo(min) < 0) {
               min = c;
             }
-          } else {
+          } else if (obj!=null) {
             throw new RuntimeException("Cannot get min of attribute " + key + ", object of type: " + obj.getClass());
           }
-        }
+
       }
       return min;
     }

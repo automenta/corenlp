@@ -1,12 +1,14 @@
 package edu.stanford.nlp.util;
 
+import com.gs.collections.impl.list.mutable.FastList;
+import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
+import edu.stanford.nlp.io.IOUtils;
+import edu.stanford.nlp.io.RuntimeIOException;
+
 import java.io.*;
 import java.util.*;
 import java.util.concurrent.Semaphore;
 import java.util.function.Supplier;
-
-import edu.stanford.nlp.io.IOUtils;
-import edu.stanford.nlp.io.RuntimeIOException;
 
 /**
  * Implements an Index that supports constant-time lookup in
@@ -34,7 +36,7 @@ public class HashIndex<E> extends AbstractCollection<E> implements Index<E>, Ran
 
   // these variables are also used in IntArrayIndex
   private final List<E> objects;  // <-- Should really almost always be an ArrayList
-  private final Map<E,Integer> indexes;
+  private final ObjectIntHashMap<E> indexes;
   private boolean locked; // = false; // Mutable
 
   private static final long serialVersionUID = 5398562825928375260L;
@@ -148,22 +150,18 @@ public class HashIndex<E> extends AbstractCollection<E> implements Index<E>, Ran
   /** {@inheritDoc} */
   @Override
   public int indexOf(E o) {
-    Integer index = indexes.get(o);
-    if (index == null) {
-        return -1;
-    }
-    return index;
+    return indexes.getIfAbsent(o, -1);
   }
 
   @Override
   public int addToIndex(E o) {
-    Integer index = indexes.get(o);
-    if (index == null) {
+    int index;
+    if ((index = indexes.getIfAbsent(o, -1)) == -1) {
       if ( ! locked) {
         try {
           semaphore.acquire();
-          index = indexes.get(o);
-          if (index == null) {
+          index = indexes.getIfAbsent(o, -1);
+          if (index == -1) {
             index = objects.size();
             objects.add(o);
             indexes.put(o, index);
@@ -192,8 +190,8 @@ public class HashIndex<E> extends AbstractCollection<E> implements Index<E>, Ran
       indexes.put(o, 0);
       return 0;
     } else {
-      Integer index = indexes.get(o);
-      if (index == null) {
+      int index = indexes.getIfAbsent(o, -1);
+      if (index == -1) {
         if (locked) {
           index = -1;
         } else {
@@ -259,8 +257,8 @@ public class HashIndex<E> extends AbstractCollection<E> implements Index<E>, Ran
    */
   @Override
   public boolean add(E o) {
-    Integer index = indexes.get(o);
-    if (index == null && ! locked) {
+    int index = indexes.getIfAbsent(o,-1);
+    if (index == -1 && ! locked) {
       index = objects.size();
       objects.add(o);
       indexes.put(o, index);
@@ -286,7 +284,7 @@ public class HashIndex<E> extends AbstractCollection<E> implements Index<E>, Ran
   public HashIndex() {
     super();
     objects = new ArrayList<>();
-    indexes = Generics.newHashMap();
+    indexes = new ObjectIntHashMap();
   }
 
   /**
@@ -295,22 +293,22 @@ public class HashIndex<E> extends AbstractCollection<E> implements Index<E>, Ran
    */
   public HashIndex(int capacity) {
     super();
-    objects = new ArrayList<>(capacity);
-    indexes = Generics.newHashMap(capacity);
+    objects = new FastList(capacity);
+    indexes = new ObjectIntHashMap(capacity);
   }
 
-  /**
-   * Create a new <code>HashIndex</code>, backed by the given collection types.
-   * @param objLookupFactory The constructor for the object lookup -- traditionally an {@link ArrayList}.
-   * @param indexLookupFactory The constructor for the index lookup -- traditionally a {@link HashMap}.
-   */
-  public HashIndex(Supplier<List<E>> objLookupFactory, Supplier<Map<E,Integer>> indexLookupFactory) {
-    this(objLookupFactory.get(), indexLookupFactory.get());
-
-  }
+//  /**
+//   * Create a new <code>HashIndex</code>, backed by the given collection types.
+//   * @param objLookupFactory The constructor for the object lookup -- traditionally an {@link ArrayList}.
+//   * @param indexLookupFactory The constructor for the index lookup -- traditionally a {@link HashMap}.
+//   */
+//  public HashIndex(Supplier<List<E>> objLookupFactory, Supplier<Map<E,Integer>> indexLookupFactory) {
+//    this(objLookupFactory.get(), indexLookupFactory.get());
+//
+//  }
 
   /** Private constructor for supporting the unmodifiable view. */
-  private HashIndex(List<E> objects, Map<E,Integer> indexes) {
+  private HashIndex(List<E> objects, ObjectIntHashMap indexes) {
     super();
     this.objects = objects;
     this.indexes = indexes;

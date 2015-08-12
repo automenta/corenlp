@@ -33,12 +33,12 @@ public class Env {
   /**
    * Mapping of variable names to their values
    */
-  Map<String, Object> variables = new HashMap<>();//Generics.newHashMap();
+  final Map<String, Object> variables = new HashMap<>();//Generics.newHashMap();
 
   /**
    * Mapping of per thread temporary variables to their values
    */
-  ThreadLocal<Map<String,Object>> threadLocalVariables = new ThreadLocal<>();
+  final static ThreadLocal<Map<String,Object>> threadLocalVariables = new ThreadLocal<>();
   /**
    * Mapping of variables that can be expanded in a regular expression for strings,
    *   to their regular expressions.
@@ -53,7 +53,7 @@ public class Env {
   /**
    * Default parameters (used when reading in rules for {@link SequenceMatchRules}.
    */
-  public Map<String, Object> defaults = new HashMap<>();//Generics.newHashMap();
+  final public Map<String, Object> defaults = new HashMap<>();//Generics.newHashMap();
 
   /**
    * Default flags to use for string regular expressions match
@@ -138,9 +138,9 @@ public class Env {
     return defaults;
   }
 
-  public void setDefaults(Map<String, Object> defaults) {
-    this.defaults = defaults;
-  }
+//  public void setDefaults(Map<String, Object> defaults) {
+//    this.defaults = defaults;
+//  }
 
   public Map<Class, CoreMapAttributeAggregator> getDefaultTokensAggregators() {
     return defaultTokensAggregators;
@@ -227,10 +227,10 @@ public class Env {
     return variables;
   }
 
-  public void setVariables(Map<String, Object> variables) {
-    this.variables = variables;
-  }
-
+//  public void setVariables(Map<String, Object> variables) {
+//    this.variables = variables;
+//  }
+//
   public void clearVariables() {
     this.variables.clear();
   }

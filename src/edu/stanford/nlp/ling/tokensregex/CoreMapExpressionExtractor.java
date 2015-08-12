@@ -193,7 +193,8 @@ public class CoreMapExpressionExtractor<T extends MatchedExpression> {
             }
           }
         } else {
-          logger.log(Level.FINE, "Ignoring inactive rule: " + aer.name); // used to be INFO but annoyed Chris/users
+          if (logger.isLoggable(Level.FINE))
+            logger.log(Level.FINE, "Ignoring inactive rule: " + aer.name); // used to be INFO but annoyed Chris/users
         }
       }
     }

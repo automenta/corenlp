@@ -394,8 +394,8 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
       LE { boolean accept(double v1, double v2) { return v1 <= v2; } };
       boolean accept(double v1, double v2) { return false; }
     }
-    CmpType cmpType;
-    double value;
+    final CmpType cmpType;
+    final double value;
 
     public NumericAnnotationPattern(double value, CmpType cmpType) {
       this.value = value;
@@ -405,32 +405,17 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
     @Override
     public boolean match(Object node) {
       if (node instanceof String) {
-        return match((String) node);
-      } else if (node instanceof Number) {
-        return match((Number) node);
-      } else {
-        return false;
-      }
-    }
-
-    public boolean match(Number number) {
-      if (number != null) {
-        return cmpType.accept(number.doubleValue(), value);
-      } else {
-        return false;
-      }
-    }
-
-    public boolean match(String str) {
-      if (str != null) {
         try {
-          double v = Double.parseDouble(str);
+          double v = Double.parseDouble((String)node);
           return cmpType.accept(v, value);
         } catch (NumberFormatException ex) {
         }
+      } else if (node instanceof Number) {
+        return cmpType.accept(((Number)node).doubleValue(), value);
       }
       return false;
     }
+
 
     public String toString() {
       return " " + cmpType + ' ' + value;
@@ -438,16 +423,16 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
   }
 
   public static class AttributesEqualMatchChecker implements SequencePattern.NodesMatchChecker<CoreMap> {
-    Collection<Class> keys;
+    final Class[] keys;
 
     public AttributesEqualMatchChecker(Class... classes) {
-      keys = CollectionUtils.asSet(classes);
+      keys = classes;
     }
 
     public boolean matches(CoreMap o1, CoreMap o2) {
-      for (Class key : keys) {
-        Object v1 = o1.get(key);
-        Object v2 = o2.get(key);
+      for (final Class key : keys) {
+        final Object v1 = o1.get(key);
+        final Object v2 = o2.get(key);
         if (v1 != null) {
           if (!v1.equals(v2)) {
             return false;
@@ -467,7 +452,7 @@ public class CoreMapNodePattern extends NodePattern<CoreMap> {
   //TODO : add this in the valueOf function of CoreMapNodePattern
   public static class IntegerAnnotationPattern extends NodePattern<Integer>{
 
-    int value;
+    final int value;
     public IntegerAnnotationPattern(int v){
       this.value = v;
     }

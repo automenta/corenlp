@@ -18,7 +18,7 @@ class VariableStrings {
 
   public VariableStrings() {
     varsToStrings = ArrayMap.newArrayMap();
-    numVarsSet = new IntCounter<>(MapFactory.<String, MutableInteger>arrayMapFactory());
+    numVarsSet = new IntCounter<>();
   }
 
   public void reset() {

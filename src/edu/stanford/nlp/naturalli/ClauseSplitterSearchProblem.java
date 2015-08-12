@@ -121,7 +121,7 @@ public class ClauseSplitterSearchProblem {
    * A mapping from edges in the tree, to an index.
    */
   @SuppressWarnings("Convert2Diamond")  // It's lying -- type inference times out with a diamond
-  private final Index<SemanticGraphEdge> edgeToIndex = new HashIndex<SemanticGraphEdge>(ArrayList::new, IdentityHashMap::new);
+  private final Index<SemanticGraphEdge> edgeToIndex = new HashIndex<SemanticGraphEdge>();//ArrayList::new, IdentityHashMap::new);
 
   /**
    * A search state.

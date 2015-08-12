@@ -13,9 +13,9 @@ public class Env implements Serializable {
   /**
    * Mapping of variable names to their values
    */
-  Map<String, Object> variables = new HashMap<>();
+  final Map<String, Object> variables;
 
-  public Env() {}
+  public Env() { variables = new HashMap<>(); }
 
   public Env(Map<String, Object> variables) {
     this.variables = variables;

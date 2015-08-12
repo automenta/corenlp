@@ -1,23 +1,18 @@
 package edu.stanford.nlp.stats;
 
-import java.io.Serializable;
-import java.text.NumberFormat;
-import java.util.AbstractCollection;
-import java.util.AbstractSet;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.Map.Entry;
-
-import edu.stanford.nlp.util.*;
-import java.util.function.Predicate;
+import com.gs.collections.api.collection.primitive.MutableIntCollection;
+import com.gs.collections.impl.map.mutable.primitive.ObjectIntHashMap;
+import edu.stanford.nlp.util.ErasureUtils;
+import edu.stanford.nlp.util.Factory;
+import edu.stanford.nlp.util.Generics;
+import edu.stanford.nlp.util.MutableInteger;
 import edu.stanford.nlp.util.logging.PrettyLogger;
 import edu.stanford.nlp.util.logging.Redwood.RedwoodChannels;
+
+import java.io.Serializable;
+import java.text.NumberFormat;
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * A specialized kind of hash table (or map) for storing numeric counts for
@@ -39,9 +34,8 @@ import edu.stanford.nlp.util.logging.Redwood.RedwoodChannels;
 public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
 
   @SuppressWarnings({"NonSerializableFieldInSerializableClass"})
-  private Map<E, MutableInteger>  map;
+  private ObjectIntHashMap<E> map;
   @SuppressWarnings("unchecked")
-  private MapFactory mapFactory;
   private int totalCount;
   private int defaultValue; // = 0;
 
@@ -57,15 +51,8 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
    * Constructs a new (empty) Counter.
    */
   public IntCounter() {
-    this(MapFactory.<E,MutableInteger>hashMapFactory());
-  }
-
-  /**
-   * Pass in a MapFactory and the map it vends will back your counter.
-   */
-  public IntCounter(MapFactory<E,MutableInteger> mapFactory) {
-    this.mapFactory = mapFactory;
-    map = mapFactory.newMap();
+    super();
+    map = new ObjectIntHashMap();
     totalCount = 0;
   }
 
@@ -77,11 +64,6 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
     addAll(c);
   }
 
-
-  // STANDARD ACCESS MODIFICATION METHODS
-  public MapFactory<E, MutableInteger> getMapFactory() {
-    return ErasureUtils.<MapFactory<E,MutableInteger>>uncheckedCast(mapFactory);
-  }
 
   public void setDefaultReturnValue(double rv) {
     defaultValue = (int) rv;
@@ -114,14 +96,13 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
    * given Filter. Passing in a filter that always returns true is equivalent
    * to calling {@link #totalCount()}.
    */
-  public int totalIntCount(Predicate<E> filter) {
-    int total = 0;
-    for (E key : map.keySet()) {
-      if (filter.test(key)) {
-        total += getIntCount(key);
-      }
-    }
-    return (total);
+  public int totalIntCount(final Predicate<E> filter) {
+    final int[] total = {0};
+    map.forEachKeyValue((k,v) -> {
+        if (filter.test(k))
+            total[0] += v;
+    });
+    return (total[0]);
   }
 
   public double totalDoubleCount(Predicate<E> filter) {
@@ -160,11 +141,11 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
    * and extracts the primitive value.
    */
   public int getIntCount(Object key) {
-    MutableInteger count =  map.get(key);
-    if (count == null) {
+    int count =  map.getIfAbsent(key, Integer.MIN_VALUE);
+    if (count == Integer.MIN_VALUE) {
       return defaultValue; // haven't seen this object before -> 0 count
     }
-    return count.intValue();
+    return count;
   }
 
   /**
@@ -182,19 +163,15 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
    * To add to a count instead of replacing it, use
    * {@link #incrementCount(Object,int)}.
    */
-  public void setCount(E key, int count) {
-    if (tempMInteger == null) {
-      tempMInteger = new MutableInteger();
-    }
-    tempMInteger.set(count);
-    tempMInteger = map.put(key, tempMInteger);
+  public int setCount(E key, int count) {
 
+    final int previous = map.getIfAbsent(key, 0);
 
-    totalCount += count;
-    if (tempMInteger != null) {
-      totalCount -= tempMInteger.intValue();
-    }
+    map.put(key, count);
 
+    totalCount += count - previous;
+
+    return previous;
   }
 
   public void setCount(E key, String s) {
@@ -229,20 +206,13 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
    * To set a count to a specific value instead of incrementing it, use
    * {@link #setCount(Object,int)}.
    */
-  public int incrementCount(E key, int count) {
-    if (tempMInteger == null) {
-      tempMInteger = new MutableInteger();
-    }
+  public int incrementCount(final E key, final int count) {
 
-    MutableInteger oldMInteger = map.put(key, tempMInteger);
+    final int newValue = map.addToValue(key, count);
+
     totalCount += count;
-    if (oldMInteger != null) {
-      count += oldMInteger.intValue();
-    }
-    tempMInteger.set(count);
-    tempMInteger = oldMInteger;
 
-    return count;
+    return newValue;
   }
 
   /**
@@ -274,9 +244,9 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
    * of incrementing them, use {@link #setCounts(Collection,int)}.
    */
   public void incrementCounts(Collection<E> keys, int count) {
-    for (E key : keys) {
-      incrementCount(key, count);
-    }
+    keys.forEach( key -> {
+        incrementCount(key, count);
+    });
   }
 
   /**
@@ -391,22 +361,19 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
    * will no longer be considered previously seen.
    */
   public double remove(E key) {
-    totalCount -= getCount(key); // subtract removed count from total (may be 0)
-    MutableInteger val = map.remove(key);
-    if (val == null) {
-      return Double.NaN;
-    } else {
-      return val.doubleValue();
+    int val = map.removeKeyIfAbsent(key, Integer.MIN_VALUE);
+    if (val!=Integer.MIN_VALUE) {
+        totalCount -= val; // subtract removed count from total (may be 0)
+        return val;
     }
+    return Double.NaN;
   }
 
   /**
    * Removes all the given keys from this Counter.
    */
   public void removeAll(Collection<E> c) {
-    for (E key : c) {
-      remove(key);
-    }
+      c.forEach(this::remove);
   }
 
   /**
@@ -429,53 +396,75 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
     return map.keySet();
   }
 
-  /**
-   * Returns a view of the doubles in this map.  Can be safely modified.
-   */
-  public Set<Map.Entry<E,Double>> entrySet() {
-    return new AbstractSet<Map.Entry<E,Double>>() {
-      @Override
-      public Iterator<Entry<E, Double>> iterator() {
-        return new Iterator<Entry<E,Double>>() {
-          final Iterator<Entry<E,MutableInteger>> inner = map.entrySet().iterator();
-
-          public boolean hasNext() {
-            return inner.hasNext();
-          }
-
-          public Entry<E, Double> next() {
-            return new Map.Entry<E,Double>() {
-              final Entry<E,MutableInteger> e = inner.next();
+  @Deprecated public Set<Map.Entry<E,Double>> entrySet() {
+      Set<Map.Entry<E,Double>> s = new HashSet();
+      map.forEachKeyValue((k,v) -> {
+          s.add(new Map.Entry<E,Double>() {
 
               public E getKey() {
-                return e.getKey();
+                return k;
               }
 
               public Double getValue() {
-                return e.getValue().doubleValue();
+                return new Double(v);
               }
 
               public Double setValue(Double value) {
-                final double old = e.getValue().doubleValue();
-                e.getValue().set(value.intValue());
-                totalCount = totalCount - (int)old + value.intValue();
-                return old;
+                  return
+                          new Double( setCount(k, value.intValue()) );
               }
-            };
-          }
-
-          public void remove() {
-            throw new UnsupportedOperationException();
-          }
-        };
-      }
-
-      @Override
-      public int size() {
-        return map.size();
-      }
-    };
+            });
+      });
+      return s;
   }
+
+//  /**
+//   * Returns a view of the doubles in this map.  Can be safely modified.
+//   */
+//  public Set<Map.Entry<E,Double>> entrySet() {
+//    return new AbstractSet<Map.Entry<E,Double>>() {
+//      @Override
+//      public Iterator<Entry<E, Double>> iterator() {
+//        return new Iterator<Entry<E,Double>>() {
+//          final Iterator<Entry<E,MutableInteger>> inner = map.keyValuesView().entrySet().iterator();
+//
+//          public boolean hasNext() {
+//            return inner.hasNext();
+//          }
+//
+//          public Entry<E, Double> next() {
+//            return new Map.Entry<E,Double>() {
+//              final Entry<E,MutableInteger> e = inner.next();
+//
+//              public E getKey() {
+//                return e.getKey();
+//              }
+//
+//              public Double getValue() {
+//                return e.getValue().doubleValue();
+//              }
+//
+//              public Double setValue(Double value) {
+//                final double old = e.getValue().doubleValue();
+//                e.getValue().set(value.intValue());
+//                totalCount = totalCount - (int)old + value.intValue();
+//                return old;
+//              }
+//            };
+//          }
+//
+//          public void remove() {
+//            throw new UnsupportedOperationException();
+//          }
+//        };
+//      }
+//
+//      @Override
+//      public int size() {
+//        return map.size();
+//      }
+//    };
+//  }
 
   // OBJECT STUFF
 
@@ -516,7 +505,7 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
     }
     for (Iterator<E> iter = list.iterator(); iter.hasNext();) {
       Object key = iter.next();
-      MutableInteger d = map.get(key);
+      int d = map.get(key);
       sb.append(key).append(keyValSeparator);
       sb.append(nf.format(d));
       if (iter.hasNext()) {
@@ -539,7 +528,7 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
     }
     for (Iterator<E> iter = list.iterator(); iter.hasNext();) {
       Object key = iter.next();
-      MutableInteger d = map.get(key);
+      int d = map.get(key);
       sb.append(key).append("=");
       sb.append(nf.format(d));
       if (iter.hasNext()) {
@@ -726,15 +715,6 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
   // For compatibilty with the Counter interface
   //
 
-  public Factory<Counter<E>> getFactory() {
-    return new Factory<Counter<E>>() {
-      private static final long serialVersionUID = 7470763055803428477L;
-
-      public Counter<E> create() {
-        return new IntCounter<>(getMapFactory());
-      }
-    };
-  }
 
   public void setCount(E key, double value) {
     setCount(key, (int)value);
@@ -750,32 +730,37 @@ public class IntCounter<E> extends AbstractCounter<E> implements Serializable {
     return totalDoubleCount();
   }
 
-  public Collection<Double> values() {
-    return new AbstractCollection<Double>() {
-      @Override
-      public Iterator<Double> iterator() {
-        return new Iterator<Double>() {
-          Iterator<MutableInteger> inner = map.values().iterator();
 
-          public boolean hasNext() {
-            return inner.hasNext();
-          }
+  @Deprecated public Collection<Double> values() {
+    List<Double> l = new ArrayList(map.size());
+    map.values().forEach( i -> l.add((double)(i)) );
+    return l;
 
-          public Double next() {
-            return inner.next().doubleValue();
-          }
-
-          public void remove() {
-            throw new UnsupportedOperationException();
-          }
-        };
-      }
-
-      @Override
-      public int size() {
-        return map.size();
-      }
-    };
+//    return new AbstractCollection<Double>() {
+//      @Override
+//      public Iterator<Double> iterator() {
+//        return new Iterator<Double>() {
+//          Iterator<MutableInteger> inner = map.values().iterator();
+//
+//          public boolean hasNext() {
+//            return inner.hasNext();
+//          }
+//
+//          public Double next() {
+//            return inner.next().doubleValue();
+//          }
+//
+//          public void remove() {
+//            throw new UnsupportedOperationException();
+//          }
+//        };
+//      }
+//
+//      @Override
+//      public int size() {
+//        return map.size();
+//      }
+//    };
   }
 
   public Iterator<E> iterator() {

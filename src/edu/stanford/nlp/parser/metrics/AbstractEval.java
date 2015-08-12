@@ -231,25 +231,11 @@ public abstract class AbstractEval implements Eval {
     private DefaultCounter<String> over = new DefaultCounter<>();
     private DefaultCounter<String> under = new DefaultCounter<>();
 
-    protected static String localize(Tree tree) {
-      if (tree.isLeaf()) {
-        return "";
-      }
-      StringBuilder sb = new StringBuilder();
-      sb.append(tree.label());
-      sb.append(" ->");
-      for (int i = 0; i < tree.children().length; i++) {
-        sb.append(' ');
-        sb.append(tree.children()[i].label());
-      }
-      return sb.toString();
-    }
-
     @Override
     protected Set<String> makeObjects(Tree tree) {
       Set<String> localTrees = Generics.newHashSet();
       for (Tree st : tree.subTreeList()) {
-        localTrees.add(localize(st));
+        localTrees.add(st.localize());
       }
       return localTrees;
     }

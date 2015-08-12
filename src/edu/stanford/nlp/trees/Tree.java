@@ -67,6 +67,18 @@ public abstract class Tree extends AbstractCollection<Tree> implements Label, La
   public Tree() {
   }
 
+  public String localize() {
+    if (isLeaf()) {
+      return "";
+    }
+    final StringBuilder sb = new StringBuilder();
+    sb.append(label()).append(" ->");
+    for (int i = 0; i < children().length; i++) {
+      sb.append(' ').append(children()[i].label());
+    }
+    return sb.toString();
+  }
+
   /**
    * Says whether a node is a leaf.  Can be used on an arbitrary
    * <code>Tree</code>.  Being a leaf is defined as having no
