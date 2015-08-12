@@ -315,11 +315,7 @@ public class CoreLabel extends DefaultCoreMap /* ArrayCoreMap*/ implements Abstr
      */
     @Override
     public <KEY extends Key<String>> String getString(Class<KEY> key) {
-        String value = get(key);
-        if (value == null) {
-            return "";
-        }
-        return value;
+        return (String)getIfAbsentValue(key, "");
     }
 
 
@@ -506,10 +502,7 @@ public class CoreLabel extends DefaultCoreMap /* ArrayCoreMap*/ implements Abstr
      */
     @Override
     public int index() {
-        Integer n = get(CoreAnnotations.IndexAnnotation.class);
-        if (n == null)
-            return -1;
-        return n;
+        return (int)getIfAbsentValue(CoreAnnotations.IndexAnnotation.class, -1);
     }
 
     /**
@@ -525,10 +518,7 @@ public class CoreLabel extends DefaultCoreMap /* ArrayCoreMap*/ implements Abstr
      */
     @Override
     public int sentIndex() {
-        Integer n = get(CoreAnnotations.SentenceIndexAnnotation.class);
-        if (n == null)
-            return -1;
-        return n;
+        return (int)getIfAbsentValue(CoreAnnotations.SentenceIndexAnnotation.class, -1);
     }
 
     /**

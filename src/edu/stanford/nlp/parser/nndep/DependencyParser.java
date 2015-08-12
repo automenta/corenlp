@@ -916,10 +916,11 @@ public class DependencyParser {
     final Configuration c = system.initialConfiguration(sentence);
 
     final double[] scores = new double[classifier.numLabels];
+    double[] hidden = new double[config.hiddenSize];
     final int[] feature = new int[config.numTokens];  // positions 0-17 hold fWord, 18-35 hold fPos, 36-47 hold fLabel
 
     while (!system.isTerminal(c)) {
-      classifier.computeScores(getFeatureArray(c, feature), scores);
+      classifier.computeScores(getFeatureArray(c, feature), scores, hidden);
 
       double optScore = Double.NEGATIVE_INFINITY;
       String optTrans = null;

@@ -118,11 +118,19 @@ public class History {
 
   @Override
   public int hashCode() {
-    StringBuilder sb = new StringBuilder();
+//    throw new RuntimeException("need better hash impl");
+
+    int h = 1;
+    for (int i = 0; i < extractors.size(); i++) {
+        h += 17 * h + getX(i).hashCode();
+    }
+    return h;
+
+    /*StringBuilder sb = new StringBuilder();
     for (int i = 0; i < extractors.size(); i++) {
       sb.append(getX(i));
     }
-    return sb.toString().hashCode();
+    return sb.toString().hashCode();*/
   }
 
 

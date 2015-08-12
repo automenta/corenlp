@@ -531,9 +531,19 @@ public class ExtractorFrames {
       super(maxPosition, true);
     }
 
+    final static ThreadLocal<StringBuilder> x = new ThreadLocal();
+
     @Override
     String extract(History h, PairsHolder pH) {
-      StringBuilder sb = new StringBuilder();
+      //StringBuilder sb = new StringBuilder();
+      StringBuilder sb = x.get();
+      if (sb == null) {
+          x.set( sb = new StringBuilder() );
+      }
+      else {
+          sb.setLength(0);
+      }
+
       if (position < 0) {
         for (int idx = position; idx < 0; idx++) {
           if (idx != position) {

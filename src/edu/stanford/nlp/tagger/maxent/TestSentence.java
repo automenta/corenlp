@@ -7,6 +7,7 @@
 
 package edu.stanford.nlp.tagger.maxent;
 
+import com.gs.collections.api.block.procedure.primitive.IntObjectProcedure;
 import com.gs.collections.impl.map.mutable.primitive.IntObjectHashMap;
 import edu.stanford.nlp.io.EncodingPrintWriter;
 import edu.stanford.nlp.io.PrintFile;
@@ -20,7 +21,6 @@ import edu.stanford.nlp.tagger.common.Tagger;
 import edu.stanford.nlp.util.ArrayUtils;
 import edu.stanford.nlp.util.ConfusionMatrix;
 import edu.stanford.nlp.util.Generics;
-import edu.stanford.nlp.util.Pair;
 
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -201,6 +201,9 @@ public class TestSentence implements SequenceModel {
      */
     protected void calculateProbs(double[][][] probabilities) {
         ArrayUtils.fill(probabilities, Double.NEGATIVE_INFINITY);
+
+        final boolean approximate = maxentTagger.hasApproximateScoring();
+
         for (int hyp = 0; hyp < kBestSize; hyp++) {
             // put the whole thing in pairs, give its beginning and end
             pairs.setSize(size);
@@ -226,13 +229,16 @@ public class TestSentence implements SequenceModel {
                 // System.err.println("tags: " + Arrays.asList(tags));
                 // System.err.println("probs: " + ArrayMath.toString(probs));
 
+                final double[] prob = probabilities[current][hyp];
+
                 for (int j = 0; j < tags.length; j++) {
                     // score the j-th tag
                     String tag = tags[j];
-                    boolean approximate = maxentTagger.hasApproximateScoring();
+
                     int tagindex = approximate ? maxentTagger.tags.getIndex(tag) : j;
                     // System.err.println("Mapped from j="+ j + " " + tag + " to " + tagindex);
-                    probabilities[current][hyp][tagindex] = probs[j];
+
+                    prob[tagindex] = probs[j];
                 }
             } // for current
         } // for hyp
@@ -468,20 +474,6 @@ public class TestSentence implements SequenceModel {
             }
         }
     }
-    private void extactuuu(String[] tags, History h, double[] scores, int kf, Extractor ex) {
-        String val = ex.extract(h);
-        int[] fAssociations = maxentTagger.fAssociations.get(kf).get(val);
-        if (fAssociations != null) {
-            for (int j = 0; j < tags.length; j++) {
-                String tag = tags[j];
-                int tagIndex = maxentTagger.tags.getIndex(tag);
-                int fNum = fAssociations[tagIndex];
-                if (fNum > -1) {
-                    scores[j] += maxentTagger.getLambdaSolve().lambda[fNum];
-                }
-            }
-        }
-    }
 
 
     // Returns an unnormalized score (in log space) for each tag
@@ -490,15 +482,16 @@ public class TestSentence implements SequenceModel {
         double[] scores = new double[tags.length];
         int szCommon = maxentTagger.extractors.size();
 
-        extractors.forEachKeyValue((kf, ex) -> {
-            extactuuu(tags, h, scores, kf, ex);
-        });
+        ExtractorIntObjectProcedure e = new ExtractorIntObjectProcedure(tags, h, scores);
+
+
+        extractors.forEachKeyValue(e);
 
         if (extractorsRare != null) {
-            extractorsRare.forEachKeyValue((kf, ex) -> {
-                extactuuu(tags, h, scores, szCommon + kf, ex);
-            });
+            extractorsRare.forEachKeyValue(e);
         }
+
+
         return scores;
     }
 
@@ -721,4 +714,31 @@ public class TestSentence implements SequenceModel {
         return arr1;
     }
 
+    private class ExtractorIntObjectProcedure implements IntObjectProcedure<Extractor> {
+        private final String[] tags;
+        private final History h;
+        private final double[] scores;
+
+        public ExtractorIntObjectProcedure(String[] tags, History h, double[] scores) {
+            this.tags = tags;
+            this.h = h;
+            this.scores = scores;
+        }
+
+        @Override
+        public void value(int kf, Extractor ex) {
+            String val = ex.extract(h);
+            int[] fAssociations = maxentTagger.fAssociations.get(kf).get(val);
+            if (fAssociations != null) {
+                for (int j = 0; j < tags.length; j++) {
+                    String tag = tags[j];
+                    int tagIndex = maxentTagger.tags.getIndex(tag);
+                    int fNum = fAssociations[tagIndex];
+                    if (fNum > -1) {
+                        scores[j] += maxentTagger.getLambdaSolve().lambda[fNum];
+                    }
+                }
+            }
+        }
+    }
 }

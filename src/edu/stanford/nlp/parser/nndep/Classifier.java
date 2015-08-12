@@ -142,6 +142,8 @@ public class Classifier {
         for (int i = 0; i < preComputed.size() && i < config.numPreComputed; ++i)
             preMap.put(preComputed.get(i), i);
 
+        preMap.compact();
+
         isTraining = dataset != null;
         if (isTraining)
             jobHandler = new MulticoreWrapper<>(config.trainingThreads, new CostFunction(), false);
@@ -206,10 +208,10 @@ public class Classifier {
                     int tok = feature.get(j);
                     int index = tok * config.numTokens + j;
 
-                    if (preMap.containsKey(index)) {
+                    int id;
+                    if ( (id = preMap.getIfAbsent(index, -1))!=-1 )  {
                         // Unit activations for this input feature value have been
                         // precomputed
-                        int id = preMap.get(index);
 
                         // Only extract activations for those nodes which are still
                         // activated (`ls`)
@@ -396,11 +398,21 @@ public class Classifier {
                 int mapX = preMap.get(x);
                 int tok = x / config.numTokens;
                 int offset = (x % config.numTokens) * config.embeddingSize;
-                for (int j = 0; j < config.hiddenSize; ++j) {
-                    double delta = gradSaved[mapX][j];
-                    for (int k = 0; k < config.embeddingSize; ++k) {
-                        gradW1[j][offset + k] += delta * E[tok][k];
-                        gradE[tok][k] += delta * W1[j][offset + k];
+
+                final double[] gt = gradE[tok];
+                final double[] et = E[tok];
+
+                final int hs = config.hiddenSize;
+                final int es = config.embeddingSize;
+
+                for (int j = 0; j < hs; ++j) {
+                    final double delta = gradSaved[mapX][j];
+                    final double[] gradw1 = gradW1[j];
+                    final double[] w1j = W1[j];
+
+                    for (int k = 0; k < es; ++k) {
+                        gradw1[offset + k] += delta * et[k];
+                        gt[k] += delta * w1j[offset + k];
                     }
                 }
             });
@@ -659,32 +671,43 @@ public class Classifier {
             int mapX = preMap.get(x);
             int tok = x / config.numTokens;
             int pos = x % config.numTokens;
-            for (int j = 0; j < config.hiddenSize; ++j)
-                for (int k = 0; k < config.embeddingSize; ++k)
-                    saved[mapX][j] += W1[j][pos * config.embeddingSize + k] * E[tok][k];
+
+            final double[] et = E[tok];
+            final double[] sm = saved[mapX];
+
+            final int pc = pos * config.embeddingSize;
+
+            for (int j = 0; j < config.hiddenSize; ++j) {
+                final double[] w1j = W1[j];
+                for (int k = 0; k < config.embeddingSize; ++k) {
+                    sm[j] += w1j[pc + k] * et[k];
+                }
+            }
         });
         System.err.println("PreComputed " + toPreCompute.size() + ", Elapsed Time: " + (System
                 .currentTimeMillis() - startTime) / 1000.0 + " (s)");
     }
 
-    double[] computeScores(int[] feature, double[] scores) {
-        return computeScores(feature, preMap, scores);
+    double[] computeScores(int[] feature, double[] scores, double[] hiddenTemp) {
+        return computeScores(feature, preMap, scores, hiddenTemp);
     }
 
     /**
      * Feed a feature vector forward through the network. Returns the
      * values of the output layer.
      */
-    private double[] computeScores(int[] feature, IntIntHashMap preMap, double[] scores /* result */) {
-        double[] hidden = new double[config.hiddenSize];
+    private double[] computeScores(int[] feature, IntIntHashMap preMap, double[] scores /* result */, double[] hidden) {
+
         int offset = 0;
         final int nt = config.numTokens;
         int hiddens = config.hiddenSize;
         int embeds = config.embeddingSize;
 
-        double[][] saved = this.saved;
-        double[][] W1 = this.W1;
+        final double[][] saved = this.saved;
+        final double[][] W1 = this.W1;
+        final double[][] W2 = this.W2;
 
+        Arrays.fill(hidden, 0);
         Arrays.fill(scores, 0);
 
         for (int j = 0; j < feature.length; ++j) {
@@ -709,17 +732,19 @@ public class Classifier {
                 for (int i = 0; i < hiddens; ++i) {
                     final double[] ww = W1[i];
 
+                    double dh = 0;
                     for (int k = 0; k < embeds; ++k) {
-                        hidden[i] += ww[offset + k] * et[k];
+                         dh += ww[offset + k] * et[k];
                     }
+                    hidden[i] += dh;
                 }
             }
             offset += config.embeddingSize;
         }
 
         for (int i = 0; i < config.hiddenSize; ++i) {
-            hidden[i] += b1[i];
-            hidden[i] = hidden[i] * hidden[i] * hidden[i];  // cube nonlinearity
+            final double hi = hidden[i];
+            hidden[i] = (hi + b1[i]) * hi*hi;  // cube nonlinearity
         }
 
 
@@ -756,10 +781,16 @@ public class Classifier {
      * @throws java.lang.IndexOutOfBoundsException (possibly) If
      *                                             {@code m1} and {@code m2} are not of the same dimensions
      */
-    private static void addInPlace(double[][] m1, double[][] m2) {
-        for (int i = 0; i < m1.length; i++)
-            for (int j = 0; j < m1[0].length; j++)
-                m1[i][j] += m2[i][j];
+    private static void addInPlace(final double[][] m1, final double[][] m2) {
+        for (int i = 0; i < m1.length; i++) {
+
+            final double[] m1i = m1[i];
+            final double[] m2i = m2[i];
+
+            for (int j = 0; j < m1[0].length; j++) {
+                m1i[j] += m2i[j];
+            }
+        }
     }
 
     /**
@@ -768,7 +799,7 @@ public class Classifier {
      * @throws java.lang.IndexOutOfBoundsException (Possibly) if
      *                                             {@code a1} and {@code a2} are not of the same dimensions
      */
-    private static void addInPlace(double[] a1, double[] a2) {
+    private static void addInPlace(final double[] a1, final double[] a2) {
         for (int i = 0; i < a1.length; i++)
             a1[i] += a2[i];
     }

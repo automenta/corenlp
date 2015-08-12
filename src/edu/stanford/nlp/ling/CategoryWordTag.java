@@ -67,7 +67,7 @@ public class CategoryWordTag extends StringLabel implements HasCategory, HasWord
     }
   }
 
-  public String category() {
+  public final String category() {
     return value();
   }
 

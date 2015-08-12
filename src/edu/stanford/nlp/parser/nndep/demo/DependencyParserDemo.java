@@ -44,7 +44,7 @@ public class DependencyParserDemo {
 
     //String text = "I can almost always tell when movies use fake dinosaurs.";
     String text = IOUtils.stringFromFile("/home/me/meta.txt");
-    text = text + text + text + text;
+    text = text + text + text + text + text + text + text;
 
     process(text, tagger, parser);
 
